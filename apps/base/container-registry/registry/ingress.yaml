@@ -8,13 +8,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-      - match: Host(`registry.staging.local.hejsan.xyz`)
+      - match: Host(`registry.local.hejsan.xyz`)
         kind: Rule
         services:
           - name: container-registry
             port: http
         middlewares:
-          - name: container-registry-cors
+     #     - name: container-registry-cors
           - name: default-headers
   tls:
     secretName: local-hejsan-xyz-tls

@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`registry.staging.local.hejsan.xyz`) && PathPrefix(`/ui`)
+  - match: Host(`registry.local.hejsan.xyz`) && PathPrefix(`/ui`)
     kind: Rule
     services:
       - name: container-registry-ui

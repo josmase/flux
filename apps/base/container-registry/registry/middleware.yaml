@@ -12,8 +12,6 @@ spec:
       - PUT
       - POST
       - DELETE
-    accessControlAllowOriginList:
-      -  https://registry-ui.staging.local.hejsan.xyz/
     accessControlAllowCredentials: true
     accessControlMaxAge: 100
     addVaryHeader: true

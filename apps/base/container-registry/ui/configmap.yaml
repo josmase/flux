@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: container-registry-ui-config
 data:
-  REGISTRY_URL: https://registry.staging.local.hejsan.xyz
+  REGISTRY_URL: https://registry.local.hejsan.xyz
   THEME: dark
     

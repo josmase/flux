@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: container-registry-ui
-          image: registry.staging.local.hejsan.xyz/joxit/docker-registry-ui:main
+          image: registry.local.hejsan.xyz/joxit/docker-registry-ui:main
           envFrom:
             - configMapRef:
                 name: container-registry-ui-config
