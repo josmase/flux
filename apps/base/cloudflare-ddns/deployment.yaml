@@ -1,0 +1,46 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cloudflare-ddns
+  labels:
+    app: cloudflare-ddns
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: cloudflare-ddns
+  template:
+    metadata:
+      labels:
+        app: cloudflare-ddns
+    spec:
+      containers:
+        - name: cloudflare-ddns
+          image: registry.staging.local.hejsan.xyz/oznu/cloudflare-ddns
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-ddns
+                  key: token
+            - name: ZONE
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-ddns
+                  key: zone
+            - name: PROXIED
+              value: "true"
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+      imagePullSecrets:
+        - name: container-registry-secret
