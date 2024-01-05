@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - cert-manager
   - weave-gitops
-  - ingress-traefik.yaml
+  - ingress-traefik
