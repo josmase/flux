@@ -6,6 +6,4 @@ resources:
 configMapGenerator:
   - name: traefik-values
     files:
-      - values.yaml=my-values.yaml
-configurations:
-  - kustomizeconfig.yaml
+      - values.yaml
