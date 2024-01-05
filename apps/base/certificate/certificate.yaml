@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: local-hejsan-xyz
+spec:
+  secretName: local-hejsan-xyz-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: "*.local.hejsan.xyz"
+  dnsNames:
+  - "local.hejsan.xyz"
+  - "*.local.hejsan.xyz"
+  - "*.staging.local.hejsan.xyz"

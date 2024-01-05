@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`blog.staging.local.hejsan.xyz`)
+    - match: Host(`blog.local.hejsan.xyz`)
       kind: Rule
       services:
         - name: blog

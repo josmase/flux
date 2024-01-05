@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`it-tools.staging.local.hejsan.xyz`)
+    - match: Host(`it-tools.local.hejsan.xyz`)
       kind: Rule
       services:
         - name: it-tools

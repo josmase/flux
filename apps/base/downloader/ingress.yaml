@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`downloader.staging.local.hejsan.xyz`)
+    - match: Host(`downloader.local.hejsan.xyz`)
       kind: Rule
       services:
         - name: downloader

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: cloudflare-ddns
-          image: registry.staging.local.hejsan.xyz/oznu/cloudflare-ddns
+          image: registry.local.hejsan.xyz/oznu/cloudflare-ddns
           env:
             - name: API_KEY
               valueFrom:
