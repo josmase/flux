@@ -3,7 +3,3 @@ kind: Kustomization
 resources:
   - release.yaml
   - source.yaml
-configMapGenerator:
-  - name: traefik-values
-    files:
-      - values.yaml
