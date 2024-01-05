@@ -7,6 +7,4 @@ commonLabels:
 resources:
   - ingress.yaml
   - default-headers.yaml
-  #- middleware.yaml
-  #- secret-dashboard.yaml
  

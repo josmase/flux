@@ -8,7 +8,6 @@ resources:
   - configmap.yaml
   - deployment.yaml
   - ingress.yaml
- # - middleware.yaml
   - service.yaml
   - persistence.yaml
   - secret.yaml

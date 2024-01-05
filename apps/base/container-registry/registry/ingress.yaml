@@ -14,7 +14,6 @@ spec:
           - name: container-registry
             port: http
         middlewares:
-     #     - name: container-registry-cors
           - name: default-headers
   tls:
     secretName: local-hejsan-xyz-tls
