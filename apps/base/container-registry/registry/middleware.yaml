@@ -1,0 +1,21 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: container-registry-cors
+spec:
+  headers:
+    customRequestHeaders:
+      Docker-Distribution-API-Version: "registry/2.0"
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+      - PUT
+      - POST
+      - DELETE
+    accessControlAllowOriginList:
+      -  https://registry-ui.staging.local.hejsan.xyz/
+    accessControlAllowCredentials: true
+    accessControlMaxAge: 100
+    addVaryHeader: true
+    
+    

@@ -4,14 +4,12 @@ kind: Kustomization
 resources:
   - ../base/traefik-dashboard
   - ../base/downloader
-  - ../base/container-registry
-  - ../base/cloudflare-ddns
+  - container-registry
+  - cloudflare-ddns
   - ../base/it-tools
   - ../base/blog
-  - ../base/cert-manager
   - ../base/actions-runner-controller
   
  #Copy from base
 patches:
-  - secret-cf-token.yaml
   - secret-runner-token.yaml

@@ -1,0 +1,64 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: container-registry
+  labels:
+    app: container-registry
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: container-registry
+  template:
+    metadata:
+      labels:
+        app: container-registry
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: container-registry-config
+        - name: htpasswd
+          configMap:
+            defaultMode: 420
+            name: container-registry-htpasswd
+        - name: registry-volume  
+          persistentVolumeClaim:
+            claimName: container-registry-pvc
+      containers:
+        - name: container-registry
+          image: "docker.io/registry:2.8"
+          imagePullPolicy: Always
+          #command: [ "/bin/sh", "-c", "cat /etc/docker/registry/config.yml && cat /auth/registry/htpasswd" ]
+          ports:
+            - name: registry
+              containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/etc/docker/registry"
+              name: "config"
+            - mountPath: "/auth/registry"
+              name: "htpasswd"
+            - mountPath: "/var/lib/registry"
+              name: "registry-volume"
+          #livenessProbe:
+          #  httpGet:
+          #    path: /v2/
+          #    port: registry
+          #readinessProbe:
+          #  httpGet:
+          #    path: /v2/
+          #    port: registry
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
