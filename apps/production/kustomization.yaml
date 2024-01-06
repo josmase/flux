@@ -9,7 +9,6 @@ resources:
   - ../base/it-tools
   - ../base/blog
   - ../base/actions-runner-controller
-  - ../base/lancache
   
  #Copy from base
 patches:
