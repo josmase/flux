@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: steam-cache
+  name: lancache
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: steam-cache
+      app: lancache
   template:
     metadata:
       labels:
-        app: steam-cache
+        app: lancache
     spec:
       containers:
-      - name: steam-cache
+      - name: lancache
         image: lancachenet/monolithic:latest
         ports:
         - containerPort: 80
         volumeMounts:
-        - name: steam-cache-storage
-          mountPath: /path/in/container  # Adjust based on your container's requirements
+        - name: lancache-storage
+          mountPath: /data/cache
         resources:
           limits:
             memory: 512Mi
@@ -27,7 +27,7 @@ spec:
           requests:
             memory: 256Mi
             cpu: "0.2"
-  volumes:
-  - name: steam-cache-storage
-    persistentVolumeClaim:
-      claimName: steam-cache-pvc
+      volumes:
+      - name: lancache-storage
+        persistentVolumeClaim:
+          claimName: lancache-pvc

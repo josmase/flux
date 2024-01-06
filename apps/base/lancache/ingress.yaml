@@ -2,17 +2,17 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: steam-cache
+  name: lancache
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`steam-cache.local.hejsan.xyz`)
+    - match: Host(`lancache.local.hejsan.xyz`)
       kind: Rule
       services:
-        - name: steam-cache
+        - name: lancache
           port: http
       middlewares:
         - name: default-headers

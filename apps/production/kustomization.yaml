@@ -9,7 +9,7 @@ resources:
   - ../base/it-tools
   - ../base/blog
   - ../base/actions-runner-controller
-  - ../base/steam-cache
+  - ../base/lancache
   
  #Copy from base
 patches:

@@ -19,18 +19,6 @@ spec:
       labels:
         app: container-registry
     spec:
-      volumes:
-        - name: config
-          configMap:
-            defaultMode: 420
-            name: container-registry-config
-        - name: htpasswd
-          configMap:
-            defaultMode: 420
-            name: container-registry-htpasswd
-        - name: registry-volume  
-          persistentVolumeClaim:
-            claimName: container-registry-pvc
       containers:
         - name: container-registry
           image: "docker.io/registry:2.8"
@@ -62,3 +50,15 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: container-registry-config
+        - name: htpasswd
+          configMap:
+            defaultMode: 420
+            name: container-registry-htpasswd
+        - name: registry-volume  
+          persistentVolumeClaim:
+            claimName: container-registry-pvc
