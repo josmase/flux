@@ -15,7 +15,6 @@ spec:
   volumeMode: Filesystem
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -23,6 +22,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  volumeMode: Filesystem
   resources:
     requests:
-      storage: 1000Gi
+      storage: 1000G
