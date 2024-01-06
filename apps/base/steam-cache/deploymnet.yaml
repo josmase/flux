@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: steam-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: steam-cache
+  template:
+    metadata:
+      labels:
+        app: steam-cache
+    spec:
+      containers:
+      - name: steam-cache
+        image: lancachenet/monolithic:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: steam-cache-storage
+          mountPath: /path/in/container  # Adjust based on your container's requirements
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+  volumes:
+  - name: steam-cache-storage
+    persistentVolumeClaim:
+      claimName: steam-cache-pvc

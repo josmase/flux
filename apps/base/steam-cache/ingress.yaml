@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: it-tools
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`steam-cache.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: steam-cache
+          port: http
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: local-hejsan-xyz-tls
