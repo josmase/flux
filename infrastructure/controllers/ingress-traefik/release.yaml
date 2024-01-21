@@ -16,8 +16,8 @@ spec:
       interval: 1m
   values: 
     commonLabels: {app: traefik}
-    image:
-      tag: v3.0.0-beta3
+   # image:
+   #   tag: v3.0.0-beta3
 
     globalArguments:
       - "--global.sendanonymoususage=false"
