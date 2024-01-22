@@ -7,3 +7,5 @@ commonLabels:
 resources:
   - ui
   - registry
+  - ui-internal
+  - registry-internal
