@@ -9,7 +9,7 @@ resources:
   - ../base/it-tools
   - ../base/blog
   - ../base/actions-runner-controller
+  - renovate-bot
   
- #Copy from base
-patches:
+patchesStrategicMerge:
   - secret-runner-token.yaml
