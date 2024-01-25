@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: container-registry-internal-ui
-          image: registry.local.hejsan.xyz/joxit/docker-registry-ui:main
+          image: registry.local.hejsan.xyz/joxit/docker-registry-ui:2.5.6-debian
           envFrom:
             - configMapRef:
                 name: container-registry-internal-ui-config

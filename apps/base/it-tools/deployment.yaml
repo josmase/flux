@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: it-tools
-        image: registry.local.hejsan.xyz/corentinth/it-tools:latest
+        image: registry.local.hejsan.xyz/corentinth/it-tools:2023.12.21-5ed3693
         resources:
             limits:
               memory: 512Mi
