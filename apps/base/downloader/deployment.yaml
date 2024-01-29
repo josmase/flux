@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: downloader
-          image: registry-internal.local.hejsan.xyz/josmase/downloader:main
+          image: registry-internal.local.hejsan.xyz/josmase/downloader:2024.01.29.202722-bf8e200
           resources:
             limits:
               memory: 512Mi
