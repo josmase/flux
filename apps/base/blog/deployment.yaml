@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: registry-internal.local.hejsan.xyz/josmase/blog:main
+          image: registry-internal.local.hejsan.xyz/josmase/blog:2024.01.29
           resources:
             limits:
               memory: 512Mi
