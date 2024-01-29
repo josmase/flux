@@ -5,3 +5,4 @@ resources:
   - weave-gitops
   - ingress-traefik
   - sealed-secrets
+  - vault
