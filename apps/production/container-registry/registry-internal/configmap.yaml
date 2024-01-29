@@ -1,0 +1,29 @@
+#username: github
+#password: password
+#htpasswd -Bbn username password
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: container-registry-internal-htpasswd
+data:
+    htpasswd: ENC[AES256_GCM,data:W+YpQ+YRWcP3rHfrWS349XDnS1WDS5uTjLIRUD/ZpMP5ZS2mezv9Xp4DYlWTWg0nrNeOFWKbft7uIo5nf986XB1EKHwh8bi9,iv:MVk9PV/Dbx99pEk59P3BpkyrypJKl6QY0dQRqmd1G5Q=,tag:Eg43W4lGdnW16yF2K29C5Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMS21UaWZ5NWc3aHhEbkZ6
+            SlM1cDFRRkxUdWlxSXJEVjJhNkh6cjY2UVVNCmNnK0R0YnZBYUZMN0djUU92ZTY0
+            Z3VUc09GSzB1UGp2SnhheVE2aXZRSGMKLS0tIDE2VzN3NTJ4c0UzY2dSQTgxNUtl
+            NWtmRVUxdTY4bVVzdnNMR0k0QlU1aWMKQ+6mDIgISlzaAiIW9NyM7D4txRIWnnr/
+            Gdno91xCQNsJYCXVxmX8bPeuUXaW9+jFqR0qpDCSGy3mV04imOeKEQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-01-29T22:48:00Z"
+    mac: ENC[AES256_GCM,data:K8R+0ngJm2I78k0hmfKcTrrQKUPnrLB4KDLT14ho6DyPN88MUiufw5jeqXOuezoubzE7ICZz7UmuFQ7OP0A1lYeXLxzaF0caXuKXXIjSnaaxhxn//CORA/CV3QnMnZdUXALlZZuEbFU7su6YemQLpSD2d37kaidGXT+Zhr4Y6dY=,iv:PlNEfCIfF74CjyEtz7XHT56c45/glOund5Ygjlsj9tI=,tag:3n3HfoCAE5M4bxIcP03Gwg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
