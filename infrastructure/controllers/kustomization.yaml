@@ -4,5 +4,3 @@ resources:
   - cert-manager
   - weave-gitops
   - ingress-traefik
-  - sealed-secrets
-  - vault
