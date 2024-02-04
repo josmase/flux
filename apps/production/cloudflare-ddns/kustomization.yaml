@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
   - ../../base/cloudflare-ddns
 
- #Copy from base
-patchesStrategicMerge:
-  - secret.yaml
+    #Copy from base
+patches:
+  - path: secret.yaml

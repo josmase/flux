@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
   - ../../../base/container-registry/proxy
 
-patchesStrategicMerge:
- - password.yaml
- - secret.yaml
+patches:
+  - path: password.yaml
+  - path: secret.yaml

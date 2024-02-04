@@ -11,6 +11,6 @@ resources:
   - ../base/actions-runner-controller
   - renovate-bot
   - mongodb
-  
-patchesStrategicMerge:
-  - secret-runner-token.yaml
+
+patches:
+  - path: secret-runner-token.yaml
