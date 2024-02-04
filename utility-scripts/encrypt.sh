@@ -1,6 +1,5 @@
 # Function to check if a command is available
-if ! command -v sops &> /dev/null 
-then
+if ! command -v sops &> /dev/null; then
     echo "sops is not installed. Will install assuming a debian system"
     
     #Get latest version
@@ -26,8 +25,9 @@ for file_path in "$@"; do
         echo "Error: File '$file_path' not found."
         exit 1
     fi
-
-    sops --age=$(cat age_public.txt) \
+    
+    SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+    sops --age=$(cat $SCRIPT_DIR/age_public.txt) \
          --encrypt --encrypted-regex '^(data|stringData)$' --in-place "$file_path"
 
     echo "Encryption complete for file: $file_path"
