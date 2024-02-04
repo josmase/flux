@@ -2,9 +2,9 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: container-registry-ui
+  name: container-registry-proxy-ui
   labels:
-    app: container-registry-ui
+    app: container-registry-proxy-ui
 spec:
   replicas: 3
   progressDeadlineSeconds: 600
@@ -13,18 +13,18 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: container-registry-ui
+      app: container-registry-proxy-ui
   template:
     metadata:
       labels:
-        app: container-registry-ui
+        app: container-registry-proxy-ui
     spec:
       containers:
-        - name: container-registry-ui
+        - name: container-registry-proxy-ui
           image: registry.local.hejsan.xyz/joxit/docker-registry-ui:2.5.6-debian
           envFrom:
             - configMapRef:
-                name: container-registry-ui-config
+                name: container-registry-proxy-ui-config
           ports:
             - name: http
               containerPort: 80
@@ -45,4 +45,4 @@ spec:
               memory: 256Mi
               cpu: "0.2"
       imagePullSecrets:
-        - name: container-registry-secret
+        - name: container-registry-proxy-secret

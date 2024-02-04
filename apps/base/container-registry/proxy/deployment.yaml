@@ -2,7 +2,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: container-registry
+  name: container-registry-proxy
   labels:
     app: container-registry
 spec:
@@ -13,14 +13,14 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: container-registry
+      app: container-registry-proxy
   template:
     metadata:
       labels:
-        app: container-registry
+        app: container-registry-proxy
     spec:
       containers:
-        - name: container-registry
+        - name: container-registry-proxy
           image: "docker.io/registry:2.8"
           imagePullPolicy: Always
           #command: [ "/bin/sh", "-c", "cat /etc/docker/registry/config.yml && cat /auth/registry/htpasswd" ]
@@ -54,11 +54,11 @@ spec:
         - name: config
           configMap:
             defaultMode: 420
-            name: container-registry-config
+            name: container-registry-proxy-config
         - name: htpasswd
           configMap:
             defaultMode: 420
-            name: container-registry-htpasswd
+            name: container-registry-proxy-htpasswd
         - name: registry-volume  
           persistentVolumeClaim:
-            claimName: container-registry-pvc
+            claimName: container-registry-proxy-pvc

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: container-registry-htpasswd
+  name: container-registry-proxy-htpasswd
 data:
   htpasswd: |-
     Replace with $ htpasswd -Bbn username password
@@ -11,7 +11,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: container-registry-config
+  name: container-registry-proxy-config
 data:
   config.yml: |-
     proxy:

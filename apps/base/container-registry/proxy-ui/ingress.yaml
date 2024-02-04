@@ -1,7 +1,7 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: container-registry-ui
+  name: container-registry-proxy-ui
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -11,7 +11,7 @@ spec:
   - match: Host(`registry.local.hejsan.xyz`) && PathPrefix(`/ui`)
     kind: Rule
     services:
-      - name: container-registry-ui
+      - name: container-registry-proxy-ui
         port: http
     middlewares:
       - name: strip-ui-prefix

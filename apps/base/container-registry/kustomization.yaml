@@ -5,7 +5,7 @@ commonLabels:
   release: container-registry
 
 resources:
-  - ui
-  - registry
-  - ui-internal
-  - registry-internal
+  - proxy
+  - proxy-ui
+  - internal
+  - internal-ui

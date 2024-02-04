@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: container-registry-ui
+  name: container-registry-proxy-ui
 spec:
   selector:
-    app: container-registry-ui
+    app: container-registry-proxy-ui
   ports:
     - name: http
       targetPort: 80
