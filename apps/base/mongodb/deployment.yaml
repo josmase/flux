@@ -1,0 +1,25 @@
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "6.0.5"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: boplats-map-user
+      db: boplats-map
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: boplats-map-user-password
+      roles:
+        - name: clusterAdmin
+          db: boplats-map
+        - name: userAdminAnyDatabase
+          db: boplats-map
+      scramCredentialsSecretName: my-scram
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib
