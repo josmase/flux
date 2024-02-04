@@ -30,8 +30,11 @@ if [ ! -e "$public_key_file" ] || [ "$force_flag" = true ]; then
     rm -f ./secrets/age.agekey $public_key_file
     age-keygen -o ./secrets/age.agekey
     age-keygen -y ./secrets/age.agekey > "$public_key_file"
+else
+    echo "Public key already exists for the secret. Skipping key generation. Use -f to force new key creation."
+fi
 
-    echo "Adding key to cluster"
+echo "Adding key to cluster"
     new_secret_yaml=$( cat ./secrets/age.agekey |
        kubectl create secret generic sops-age \
                     --namespace=flux-system \
@@ -39,6 +42,3 @@ if [ ! -e "$public_key_file" ] || [ "$force_flag" = true ]; then
                     --dry-run=client \
                     -o yaml)
     echo "$new_secret_yaml" | kubectl apply -f -
-else
-    echo "Public key already exists for the secret. Skipping key generation. Use -f to force new key creation."
-fi
