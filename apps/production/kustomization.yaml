@@ -10,6 +10,7 @@ resources:
   - ../base/blog
   - ../base/actions-runner-controller
   - renovate-bot
+  - mongodb
   
 patchesStrategicMerge:
   - secret-runner-token.yaml
