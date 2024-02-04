@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ../base/traefik-dashboard
   - ../base/downloader
-  #- container-registry
+  - container-registry
   - cloudflare-ddns
   - ../base/it-tools
   - ../base/blog
