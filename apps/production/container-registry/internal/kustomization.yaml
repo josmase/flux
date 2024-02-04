@@ -5,5 +5,5 @@ resources:
   - ../../../base/container-registry/internal
 
 patchesStrategicMerge:
- - configmap.yaml
+ - password.yaml
  - secret.yaml

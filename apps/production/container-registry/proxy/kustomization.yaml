@@ -5,5 +5,5 @@ resources:
   - ../../../base/container-registry/proxy
 
 patchesStrategicMerge:
- - configmap.yaml
+ - password.yaml
  - secret.yaml

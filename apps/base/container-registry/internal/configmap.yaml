@@ -1,13 +1,3 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: container-registry-internal-htpasswd
-data:
-  htpasswd: |-
-    Replace with $ htpasswd -Bbn username password
-
----    
 apiVersion: v1
 kind: ConfigMap
 metadata:
