@@ -1,0 +1,34 @@
+{
+  "name": "Flux",
+  "dockerFile": "Dockerfile",
+  "remoteUser": "developer",
+  "mounts": [
+    {
+      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.ssh",
+      "target": "/home/developer/.ssh",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config",
+      "target": "/home/developer/.kube/config",
+      "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history",
+      "target": "/home/developer/.zsh_history",
+      "type": "bind"
+    }
+  ],
+  "postAttachCommand": "zsh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
