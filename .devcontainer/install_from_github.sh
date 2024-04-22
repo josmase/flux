@@ -30,7 +30,22 @@ fetch_archive() {
     local filename="$2"
 
     echo "Attempting to download $url..."
-    curl -LO "$url" || true
+    # Execute curl command and store the HTTP status code in a variable
+    http_status=$(curl -s -w "%{http_code}" -o "$filename" -L "$url")
+    
+    # Check if the HTTP status code indicates that the file was not found (status code 404)
+    if [ "$http_status" -eq 404 ]; then
+        echo "File not found $url"
+        return 1
+    fi
+
+    # Check if curl encountered an error
+    if [ "$http_status" -ne 200 ]; then
+        echo "Failed to download $url. HTTP status code: $http_status"
+        rm "$filename"  # Remove the partially downloaded file
+        return 1
+    fi
+
     if [ -f "$filename" ]; then
         return 0
     else
