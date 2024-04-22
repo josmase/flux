@@ -51,7 +51,7 @@ RUN install_from_github.sh fluxcd/flux2 flux_VERSION_linux_amd64.tar.gz flux $FL
 
 # Install secret generators and managers
 ## Install sops
-RUN install_from_github.sh getsops/sops  sops-vVERSION.darwin.amd64 sops $SOPS_VERSION
+RUN install_from_github.sh getsops/sops  sops-vVERSION.linux.amd64 sops $SOPS_VERSION
 RUN apk add --no-cache \
     age${AGE_VERSION:=$AGE_VERSION}
 
