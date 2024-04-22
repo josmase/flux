@@ -1,18 +1,9 @@
+#!/bin/zsh
+
 # Function to check if a command is available
 if ! command -v sops &> /dev/null; then
-    echo "sops is not installed. Will install assuming a debian system"
-    
-    #Get latest version
-    SOPS_LATEST_VERSION=$(curl -s "https://api.github.com/repos/getsops/sops/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
-    SOAPS_URL=https://github.com/mozilla/sops/releases/latest/download/sops_${SOPS_LATEST_VERSION}_amd64.deb
-    echo "Will install from $SOAPS_URL"
-    curl -Lo sops.deb "$SOAPS_URL"
-    
-    #Install it
-    sudo apt --fix-broken install ./sops.deb
-    
-    #Cleanup
-    rm -rf sops.deb
+    echo "sops is not installed"
+    exit 1
 fi
 
 if [ "$#" -eq 0 ]; then

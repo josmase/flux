@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Function to check if a command is available
 if ! command -v age-keygen &> /dev/null
