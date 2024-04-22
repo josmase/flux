@@ -1,11 +1,5 @@
 FROM alpine:3.19.1
 
-# Copy the script into the Docker image
-COPY install_from_github.sh /usr/local/bin/install_from_github.sh
-
-# Make the script executable
-RUN chmod +x /usr/local/bin/install_from_github.sh
-
 # Define default values for tools, empty values means that they lead to the latest available version being used.
 ARG K8S_VERSION=""
 ARG K9S_VERSION=""
@@ -41,6 +35,10 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
 
 USER root
 
+# Add install_from_github to the image
+COPY install_from_github.sh /usr/local/bin/install_from_github.sh
+RUN chmod +x /usr/local/bin/install_from_github.sh
+
 # Install Kubernetes CLI
 COPY install_kubectl.sh /tmp/install_kubectl.sh
 RUN sh /tmp/install_kubectl.sh
@@ -53,7 +51,7 @@ RUN install_from_github.sh fluxcd/flux2 flux_VERSION_linux_amd64.tar.gz flux $FL
 
 # Install secret generators and managers
 ## Install sops
-RUN install_from_github.sh getsops/sops sops-vVERSION.linux.amd64 sops $SOPS_VERSION
+RUN install_from_github.sh getsops/sops  sops-vVERSION.darwin.amd64 sops $SOPS_VERSION
 RUN apk add --no-cache \
     age${AGE_VERSION:=$AGE_VERSION}
 
