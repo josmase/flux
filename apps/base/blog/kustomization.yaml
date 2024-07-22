@@ -4,7 +4,6 @@ labels:
   - includeSelectors: true
     pairs:
       app: blog
-
 resources:
   - deployment.yaml
   - service.yaml
