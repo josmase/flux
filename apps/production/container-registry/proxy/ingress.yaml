@@ -1,0 +1,19 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: container-registry-proxy
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`registry.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: container-registry-proxy
+          port: http
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: local-hejsan-xyz-tls

@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: container-registry-internal-ui-config
-data:
-  REGISTRY_URL: https://registry-internal.local.hejsan.xyz
-  THEME: dark
-    

@@ -2,8 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: default
 
+labels:
+  - includeSelectors: true
+    pairs:
+      app: container-registry
+
 resources:
   - proxy
-  - ./../../base/container-registry/proxy-ui
+  - proxy-ui
   - internal
-  - ./../../base/container-registry/internal-ui
+  - internal-ui
