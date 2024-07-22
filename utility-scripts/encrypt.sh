@@ -6,20 +6,40 @@ if ! command -v sops &> /dev/null; then
     exit 1
 fi
 
+# Check for --rotate option
+ROTATE=false
+if [ "$1" = "--rotate" ]; then
+    ROTATE=true
+    shift
+fi
+
 if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 <path_to_file1> [<path_to_file2> ...]"
+    echo "Usage: $0 [--rotate] <path_to_file1> [<path_to_file2> ...]"
     exit 1
 fi
+
+#Get the dir of the script so that keys can be found no matter where the use is running the script from.
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+# Set the private file location
+SOPS_AGE_KEY_FILE="$SCRIPT_DIR/secrets/age.agekey"
+
+# Define common parameters for sops command
+AGE_KEY=$(cat "$SCRIPT_DIR/age_public.txt")
+ENCRYPTED_REGEX='^(data|stringData)$'
+SOPS_CMD=("sops" "--age=$AGE_KEY" "--encrypted-regex=$ENCRYPTED_REGEX" "--in-place")
 
 for file_path in "$@"; do
     if [ ! -f "$file_path" ]; then
         echo "Error: File '$file_path' not found."
         exit 1
     fi
-    
-    SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-    sops --age=$(cat $SCRIPT_DIR/age_public.txt) \
-         --encrypt --encrypted-regex '^(data|stringData)$' --in-place "$file_path"
 
-    echo "Encryption complete for file: $file_path"
+    if [ "$ROTATE" = true ]; then
+        SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --rotate "$file_path"
+        echo "Rotation complete for file: $file_path"
+    else
+        SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --encrypt "$file_path"
+        echo "Encryption complete for file: $file_path"
+    fi
 done
