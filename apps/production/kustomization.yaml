@@ -2,13 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../base/traefik-dashboard
-  - ../base/downloader
+  - traefik-dashboard
+  - downloader
   - container-registry
   - cloudflare-ddns
-  - ../base/it-tools
-  - ../base/blog
-  - ../base/actions-runner-controller
+  - it-tools
+  - blog
+  - actions-runner-controller
   - renovate-bot
   - mongodb
 
