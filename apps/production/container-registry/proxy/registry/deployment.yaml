@@ -2,9 +2,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: container-registry-internal
-  labels:
-    app: container-registry-internal
+  name: container-registry-proxy
 spec:
   replicas: 1
   progressDeadlineSeconds: 600
@@ -13,14 +11,11 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: container-registry-internal
+      app: container-registry-proxy-registry
   template:
-    metadata:
-      labels:
-        app: container-registry-internal
     spec:
       containers:
-        - name: container-registry-internal
+        - name: container-registry-proxy
           image: "docker.io/registry:2.8"
           imagePullPolicy: Always
           #command: [ "/bin/sh", "-c", "cat /etc/docker/registry/config.yml && cat /auth/registry/htpasswd" ]
@@ -54,11 +49,11 @@ spec:
         - name: config
           configMap:
             defaultMode: 420
-            name: container-registry-internal-config
+            name: container-registry-proxy-config
         - name: htpasswd
           secret:
             defaultMode: 420
-            secretName: container-registry-internal-htpasswd
+            secretName: container-registry-proxy-htpasswd
         - name: registry-volume
           persistentVolumeClaim:
-            claimName: container-registry-internal-pvc
+            claimName: container-registry-proxy-pvc

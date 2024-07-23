@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: container-registry-internal
+  name: container-registry-proxy
 spec:
   selector:
-    app: container-registry-internal
+    app: container-registry-proxy-registry
   ports:
     - name: http
       targetPort: 5000

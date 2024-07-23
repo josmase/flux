@@ -3,8 +3,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: container-registry-proxy-ui
-  labels:
-    app: container-registry-proxy-ui
 spec:
   replicas: 3
   progressDeadlineSeconds: 600
@@ -15,9 +13,6 @@ spec:
     matchLabels:
       app: container-registry-proxy-ui
   template:
-    metadata:
-      labels:
-        app: container-registry-proxy-ui
     spec:
       containers:
         - name: container-registry-proxy-ui
