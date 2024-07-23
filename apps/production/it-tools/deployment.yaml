@@ -8,9 +8,6 @@ spec:
     matchLabels:
       app: it-tools
   template:
-    metadata:
-      labels:
-        app: it-tools
     spec:
       containers:
       - name: it-tools

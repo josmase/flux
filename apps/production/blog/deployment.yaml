@@ -13,9 +13,6 @@ spec:
     matchLabels:
       app: blog
   template:
-    metadata:
-      labels:
-        app: blog
     spec:
       containers:
         - name: blog

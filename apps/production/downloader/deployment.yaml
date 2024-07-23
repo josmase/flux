@@ -13,9 +13,6 @@ spec:
     matchLabels:
       app: downloader
   template:
-    metadata:
-      labels:
-        app: downloader
     spec:
       containers:
         - name: downloader
