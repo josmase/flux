@@ -4,7 +4,7 @@ apiVersion: apps/v1
 metadata:
   name: container-registry-proxy
   labels:
-    app: container-registry
+    app: container-registry-proxy
 spec:
   replicas: 1
   progressDeadlineSeconds: 600
@@ -35,14 +35,14 @@ spec:
               name: "htpasswd"
             - mountPath: "/var/lib/registry"
               name: "registry-volume"
-          #livenessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
-          #readinessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
           resources:
             limits:
               memory: 512Mi

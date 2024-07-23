@@ -30,19 +30,19 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: "/etc/docker/registry"
-              name: config
+              name: "config"
             - mountPath: "/auth/registry"
-              name: htpasswd
+              name: "htpasswd"
             - mountPath: "/var/lib/registry"
-              name: registry-volume
-          #livenessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
-          #readinessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
+              name: "registry-volume"
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: registry
           resources:
             limits:
               memory: 512Mi
