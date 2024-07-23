@@ -13,7 +13,7 @@ spec:
             - name: renovate
               # Update this to the latest available and then enable Renovate on
               # the manifest
-              image: registry.local.hejsan.xyz/renovate/renovate:35.14.4
+              image: registry-proxy.local.hejsan.xyz/renovate/renovate:35.14.4
               #env:
               #  - name: LOG_LEVEL
               #    value: trace

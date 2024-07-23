@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: container-registry-proxy-ui
-          image: registry.local.hejsan.xyz/joxit/docker-registry-ui:2.5.6-debian
+          image: registry-proxy.local.hejsan.xyz/joxit/docker-registry-ui:2.5.6-debian
           envFrom:
             - configMapRef:
                 name: container-registry-proxy-ui-config

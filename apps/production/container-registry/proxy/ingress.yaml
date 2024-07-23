@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`registry.local.hejsan.xyz`)
+    - match: Host(`registry-proxy.local.hejsan.xyz`)
       kind: Rule
       services:
         - name: container-registry-proxy
