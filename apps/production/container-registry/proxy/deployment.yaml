@@ -29,7 +29,7 @@ spec:
               containerPort: 5000
               protocol: TCP
           volumeMounts:
-            - mountPath: "/etc/distribution"
+            - mountPath: "/etc/docker/registry"
               name: "config"
             - mountPath: "/auth/registry"
               name: "htpasswd"
