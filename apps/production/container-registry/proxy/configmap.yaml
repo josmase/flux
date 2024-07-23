@@ -17,7 +17,6 @@ data:
         rootdirectory: /var/lib/registry
     http:
       addr: :5000
-      secret: asecretforlocaldevelopment
       headers:
         X-Content-Type-Options: [nosniff]
       secret: shouldNotLogThathttpSecretIsNotSet
