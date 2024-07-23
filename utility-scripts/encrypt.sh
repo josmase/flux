@@ -27,6 +27,7 @@ SOPS_AGE_KEY_FILE="$SCRIPT_DIR/secrets/age.agekey"
 # Define common parameters for sops command
 AGE_KEY=$(cat "$SCRIPT_DIR/age_public.txt")
 ENCRYPTED_REGEX='^(data|stringData)$'
+ENCRYPTED_PROPERTY_REGEX='^\s*(data|stringData)\s*:'
 SOPS_CMD=("sops" "--age=$AGE_KEY" "--encrypted-regex=$ENCRYPTED_REGEX" "--in-place")
 
 for file_path in "$@"; do
@@ -35,11 +36,18 @@ for file_path in "$@"; do
         exit 1
     fi
 
-    if [ "$ROTATE" = true ]; then
-        SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --rotate "$file_path"
-        echo "Rotation complete for file: $file_path"
+    # Check that the file contains a property that can be encrypted
+    if grep -Eq "$ENCRYPTED_PROPERTY_REGEX" "$file_path"; then
+        echo "File '$file_path' matches the pattern. Processing..."
+
+        if [ "$ROTATE" = true ]; then
+            SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --rotate "$file_path"
+            echo "Rotation complete for file: $file_path"
+        else
+            SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --encrypt "$file_path"
+            echo "Encryption complete for file: $file_path"
+        fi
     else
-        SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --encrypt "$file_path"
-        echo "Encryption complete for file: $file_path"
+        echo "File '$file_path' does not match the pattern. Skipping..."
     fi
 done
