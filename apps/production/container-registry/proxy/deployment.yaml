@@ -58,7 +58,7 @@ spec:
         - name: htpasswd
           secret:
             defaultMode: 420
-            name: container-registry-proxy-htpasswd
+            secretName: container-registry-proxy-htpasswd
         - name: registry-volume
           persistentVolumeClaim:
             claimName: container-registry-proxy-pvc
