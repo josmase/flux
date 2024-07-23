@@ -39,10 +39,10 @@ spec:
           #  httpGet:
           #    path: /v2/
           #    port: registry
-          readinessProbe:
-            httpGet:
-              path: /v2/
-              port: registry
+          #readinessProbe:
+          #  httpGet:
+          #    path: /v2/
+          #    port: registry
           resources:
             limits:
               memory: 512Mi
