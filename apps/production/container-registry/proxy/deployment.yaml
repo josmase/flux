@@ -35,10 +35,10 @@ spec:
               name: "htpasswd"
             - mountPath: "/var/lib/registry"
               name: "registry-volume"
-          livenessProbe:
-            httpGet:
-              path: /v2/
-              port: registry
+          #livenessProbe:
+          #  httpGet:
+          #    path: /v2/
+          #    port: registry
           readinessProbe:
             httpGet:
               path: /v2/
