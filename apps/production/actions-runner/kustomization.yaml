@@ -5,6 +5,7 @@ resources:
   - controller
   - scale-set
   - repository.yaml
+  - namespace.yaml
 
 commonLabels:
   app: actions-runner
