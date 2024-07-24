@@ -13,6 +13,8 @@ spec:
     runnerScaleSetName: "my-runners"
     githubConfigUrl: "https://github.com/josmase"
     githubConfigSecret: controller-manager
+    labels:
+      app.kubernetes.io/version: 0.9.3
     image:
       tag: 0.9.3
 
