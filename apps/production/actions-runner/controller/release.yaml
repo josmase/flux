@@ -8,9 +8,5 @@ spec:
     kind: OCIRepository
     name: gha-runner-scale-set-controller
     namespace: flux-system
+  version: "0.9.3"
   interval: 10m
-  values:
-    labels:
-      app.kubernetes.io/version: 0.9.3
-    image:
-      tag: 0.9.3
