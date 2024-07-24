@@ -1,0 +1,41 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: actions-runner-controller
+  namespace: actions-runner-system
+spec:
+  chart:
+    spec:
+      chart: actions-runner-controller
+      sourceRef:
+        kind: HelmRepository
+        name: actions-runner-controller
+        namespace: flux-system
+      version: "*"
+  interval: 5m
+  install:
+    createNamespace: true
+  values:
+    certManagerEnabled: true
+    scope:
+      singleNamespace: false
+    authSecret:
+      enabled: false
+    githubWebhookServer:
+      enabled: false
+    env:
+      - name: GITHUB_APP_ID
+        valueFrom:
+          secretKeyRef:
+            key: app-id
+            name: controller-manager
+      - name: GITHUB_APP_INSTALLATION_ID
+        valueFrom:
+          secretKeyRef:
+            key: installation-id
+            name: controller-manager
+      - name: GITHUB_APP_PRIVATE_KEY
+        valueFrom:
+          secretKeyRef:
+            key: private-key
+            name: controller-manager
