@@ -1,16 +1,12 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: gha-runner-scale-set
 spec:
-  chart:
-    spec:
-      chart: gha-runner-scale-set
-      sourceRef:
-        kind: HelmRepository
-        name: actions-runner
-        namespace: flux-system
-      version: "*"
+  chartRef:
+    kind: OCIRepository
+    name: gha-runner-scale-set
+    namespace: flux-system
   interval: 5m
   values:
     runnerScaleSetName: "my-runners"
