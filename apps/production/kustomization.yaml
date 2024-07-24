@@ -8,7 +8,7 @@ resources:
   - cloudflare-ddns
   - it-tools
   - blog
-  - actions-runner-controller
+  - actions-runner
   - renovate-bot
   - mongodb
 
