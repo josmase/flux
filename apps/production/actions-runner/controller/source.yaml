@@ -6,4 +6,5 @@ metadata:
 spec:
   url: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
   interval: 1h
-
+  ref:
+    tag: 0.9.3
