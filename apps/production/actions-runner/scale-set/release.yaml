@@ -13,4 +13,6 @@ spec:
     runnerScaleSetName: "my-runners"
     githubConfigUrl: "https://github.com/josmase"
     githubConfigSecret: controller-manager
+    image:
+      tag: 0.9.3
 
