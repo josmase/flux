@@ -13,20 +13,7 @@ spec:
       version: "*"
   interval: 5m
   values:
-    env:
-      - name: GITHUB_APP_ID
-        valueFrom:
-          secretKeyRef:
-            key: app-id
-            name: controller-manager
-      - name: GITHUB_APP_INSTALLATION_ID
-        valueFrom:
-          secretKeyRef:
-            key: installation-id
-            name: controller-manager
-      - name: GITHUB_APP_PRIVATE_KEY
-        valueFrom:
-          secretKeyRef:
-            key: private-key
-            name: controller-manager
+    runnerScaleSetName: "my-runners"
+    githubConfigUrl: "https://github.com/josmase"
+    githubConfigSecret: controller-manager
 
