@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - release.yaml
-  - repository.yaml
   - secret-runner-token.yaml
