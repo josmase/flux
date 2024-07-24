@@ -17,5 +17,5 @@ transformers:
     kind: NamespaceTransformer
     metadata:
       name: notImportantHere
-      namespace: actions-runner-system
+      namespace: arc-systems
     unsetOnly: true

@@ -12,16 +12,7 @@ spec:
         namespace: flux-system
       version: "*"
   interval: 5m
-  install:
-    createNamespace: true
   values:
-    certManagerEnabled: true
-    scope:
-      singleNamespace: false
-    authSecret:
-      enabled: false
-    githubWebhookServer:
-      enabled: false
     env:
       - name: GITHUB_APP_ID
         valueFrom:
