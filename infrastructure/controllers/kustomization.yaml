@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - cert-manager
   - ingress-traefik
-  - weave-gitops
   - mongodb-operator
