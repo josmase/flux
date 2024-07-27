@@ -14,16 +14,3 @@ spec:
     readOnly: false
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: container-registry-internal-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 1000G
