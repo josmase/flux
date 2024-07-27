@@ -10,17 +10,14 @@ spec:
     namespace: flux-system
   interval: 10m
   postRenderers:
-    - kustomize:
-        patches:
-          - patch: |
-              apiVersion: apps/v1
-              kind: Deployment
-              metadata:
-                name: gha-runner-scale-set-controller-gha-rs-controller
-              spec:
-                template:
+  - kustomize:
+      patches:
+        - patch: |
+            spec:
+              template:
+                metadata:
                   labels:
-                    app.kubernetes.io/version: "1"
-            target:
-              kind: Deployment
-              name: gha-runner-scale-set-controller-gha-rs-controller
+                    app.kubernetes.io/version: "1"  # Changed to valid label
+          target:
+            kind: Deployment
+            name: gha-runner-scale-set-controller-gha-rs-controller
