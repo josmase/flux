@@ -16,12 +16,11 @@ spec:
               apiVersion: apps/v1
               kind: Deployment
               metadata:
-                name: gha-runner-scale-set-controller
+                name: gha-runner-scale-set-controller-gha-rs-controller
               spec:
                 template:
-                  metadata:
-                    labels:
-                      app.kubernetes.io/version: "1"
+                  labels:
+                    app.kubernetes.io/version: "1"
             target:
               kind: Deployment
-              name: gha-runner-scale-set-controller
+              name: gha-runner-scale-set-controller-gha-rs-controller
