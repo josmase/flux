@@ -15,11 +15,5 @@ spec:
     githubConfigUrl: "https://github.com/josmase/downloader"
     githubConfigSecret: controller-manager
     containerMode:
-      type: "kubernetes"
-      kubernetesModeWorkVolumeClaim:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "gha-runner-scale-set"
-        resources:
-          requests:
-            storage: 5Gi
+      type: "dind"
 
