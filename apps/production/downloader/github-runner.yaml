@@ -1,9 +1,16 @@
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
+apiVersion: helm.toolkit.fluxcd.io/v2
+
+kind: HelmRelease
 metadata:
-  name: runnerdeploy-downloader
+  name: gha-runner-scale-set
+  namespace: arc-runners
 spec:
-  replicas: 3
-  template:
-    spec:
-      repository: josmase/downloader
+  chartRef:
+    kind: OCIRepository
+    name: gha-runner-scale-set
+    namespace: flux-system
+  interval: 5m
+  values:
+    runnerScaleSetName: "downloader"
+    githubConfigUrl: "https://github.com/josmase/downloader"
+    githubConfigSecret: controller-manager
