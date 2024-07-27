@@ -9,9 +9,6 @@ spec:
     name: gha-runner-scale-set-controller
     namespace: flux-system
   interval: 10m
-  status:
-    history:
-      chartVersion: 1
   postRenderers:
   - kustomize:
       patches:
