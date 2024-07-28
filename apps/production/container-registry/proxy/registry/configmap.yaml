@@ -26,6 +26,3 @@ data:
         interval: 10s
         threshold: 3
     auth:
-      htpasswd:
-        realm: registry-realm
-        path: /auth/registry/htpasswd
