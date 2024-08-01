@@ -23,5 +23,11 @@ data:
                 password: process.env.REGISTRY_INTERNAL_PASSWORD
             }
         ],
+        "packageRules": [
+          {
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "automerge": true
+          }
+        ],
         forkProcessing: "enabled"
     }
