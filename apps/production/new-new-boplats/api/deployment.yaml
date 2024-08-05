@@ -2,7 +2,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: new-new-boplats-frontend
+  name: new-new-boplats-api
 spec:
   replicas: 3
   progressDeadlineSeconds: 600

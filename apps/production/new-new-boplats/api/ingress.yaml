@@ -2,7 +2,7 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: new-new-boplats-frontend
+  name: new-new-boplats-api
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -12,7 +12,7 @@ spec:
     - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
       kind: Rule
       services:
-        - name: new-new-boplats-frontend
+        - name: new-new-boplats-api
           port: http
       middlewares:
         - name: default-headers
