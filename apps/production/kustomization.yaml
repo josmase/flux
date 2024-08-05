@@ -10,7 +10,7 @@ resources:
   - blog
   - actions-runner
   - renovate-bot
-  - mongodb
+  - new-new-boplats
 
 transformers:
   - |-
