@@ -25,5 +25,7 @@ spec:
                 requests:
                   memory: 256Mi
                   cpu: "0.2"
+          restartPolicy: Never
+
           imagePullSecrets:
             - name: container-registry-internal-secret
