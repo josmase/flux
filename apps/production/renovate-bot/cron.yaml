@@ -11,12 +11,7 @@ spec:
         spec:
           containers:
             - name: renovate
-              # Update this to the latest available and then enable Renovate on
-              # the manifest
               image: registry-proxy.local.hejsan.xyz/renovate/renovate:38.18.16
-              #env:
-              #  - name: LOG_LEVEL
-              #    value: trace
               volumeMounts:
                 - mountPath: /usr/src/app/
                   name: config
