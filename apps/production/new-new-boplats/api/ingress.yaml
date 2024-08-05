@@ -1,0 +1,31 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: new-new-boplats-frontend
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: new-new-boplats-frontend
+          port: http
+      middlewares:
+        - name: default-headers
+        - name: strip-ui-internal-prefix
+  tls:
+    secretName: local-hejsan-xyz-tls
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-ui-internal-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - "/api"

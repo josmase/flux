@@ -1,0 +1,30 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: new-new-boplats-frontend
+spec:
+  replicas: 3
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: new-new-boplats-frontend
+  template:
+    spec:
+      containers:
+        - name: new-new-boplats-frontend
+          image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-frontend:0.0.1
+          environment:
+            API_URL: /api
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+      imagePullSecrets:
+        - name: container-registry-internal-secret

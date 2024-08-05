@@ -1,0 +1,35 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: new-new-boplats-database
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "6.0.5"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: new-new-boplats-api-user
+      db: new-new-boplats
+      passwordSecretRef:
+        name: new-new-boplats-api-user-password
+      roles:
+        - name: clusterAdmin
+          db: new-new-boplats
+        - name: userAdminAnyDatabase
+          db: new-new-boplats
+      scramCredentialsSecretName: my-scram
+    - name: new-new-boplats-scraper-user
+      db: new-new-boplats
+      passwordSecretRef:
+        name: new-new-boplats-scraper-user-password
+      roles:
+        - name: clusterAdmin
+          db: new-new-boplats
+        - name: userAdminAnyDatabase
+          db: new-new-boplats
+      scramCredentialsSecretName: my-scram
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib
+

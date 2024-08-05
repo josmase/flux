@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+
+kind: HelmRelease
+metadata:
+  name: gha-runner-scale-set-new-new-boplats
+  namespace: arc-runners
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: gha-runner-scale-set
+    namespace: flux-system
+  interval: 5m
+  values:
+    runnerScaleSetName: "new-new-boplats"
+    githubConfigUrl: "https://github.com/josmase/boplats-map"
+    githubConfigSecret: controller-manager
+    containerMode:
+      type: "dind"
+

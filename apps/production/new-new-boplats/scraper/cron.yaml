@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: new-new-boplats-scraper
+spec:
+  schedule: "1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: new-new-boplats-scraoer
+              image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-scraper:0.0.1
+              env:
+                - name: "DB_URI"
+                  valueFrom:
+                    secretKeyRef:
+                      name: new-new-boplats-database-new-new-boplats-new-new-boplats-scraper-user
+                      key: connectionString.standardSrv
+              resources:
+                limits:
+                  memory: 512Mi
+                  cpu: "1"
+                requests:
+                  memory: 256Mi
+                  cpu: "0.2"
+          imagePullSecrets:
+            - name: container-registry-internal-secret
