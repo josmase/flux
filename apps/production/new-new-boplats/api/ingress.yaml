@@ -16,7 +16,7 @@ spec:
           port: http
       middlewares:
         - name: default-headers
-        - name: strip-ui-internal-prefix
+        - name: strip-api-prefix
   tls:
     secretName: local-hejsan-xyz-tls
 
@@ -24,7 +24,7 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: strip-ui-internal-prefix
+  name: strip-api-prefix
 spec:
   stripPrefix:
     prefixes:
