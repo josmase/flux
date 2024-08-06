@@ -16,4 +16,4 @@ spec:
     githubConfigSecret: controller-manager
     containerMode:
       type: "dind"
-
+    maxRunners: 3
