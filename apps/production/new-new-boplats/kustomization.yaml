@@ -6,7 +6,7 @@ resources:
   - frontend
   - scraper
   - database
-  - github-runner.yaml
+  # - github-runner.yaml
 
 commonLabels:
   app: new-new-boplats
