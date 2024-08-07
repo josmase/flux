@@ -8,8 +8,8 @@ spec:
   releaseName: openebs
   chart:
     spec:
-      chart: openebs/openebs
-      version: "4.1.0"
+      chart: openebs
+      version: 4.1.0
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
