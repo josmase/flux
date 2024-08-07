@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: openebs
-  namespace: flux-system
+  namespace: openebs
 spec:
   releaseName: openebs
   chart:
@@ -18,6 +18,5 @@ spec:
   install:
     createNamespace: true
   interval: 1h0m0s
-  targetNamespace: openebs
   upgrade:
     crds: CreateReplace
