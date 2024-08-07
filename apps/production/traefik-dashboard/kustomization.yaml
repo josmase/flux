@@ -5,5 +5,7 @@ resources:
   - ingress.yaml
   - default-headers.yaml
 
-commonLabels:
-  app: traefik-dashboard
+labels:
+  - includeSelectors: true
+    pairs:
+      app: traefik-dashboard

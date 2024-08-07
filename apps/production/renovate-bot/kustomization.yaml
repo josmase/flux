@@ -6,5 +6,7 @@ resources:
   - secret.yaml
   - config.yaml
 
-commonLabels:
-  app: renovate-bot
+labels:
+  - includeSelectors: true
+    pairs:
+      app: renovate-bot

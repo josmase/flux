@@ -7,5 +7,7 @@ resources:
   - ingress.yaml
   - service.yaml
 
-commonLabels:
-    app: container-registry-internal-ui
+labels:
+  - includeSelectors: true
+    pairs:
+      app: container-registry-internal-ui

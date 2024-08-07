@@ -5,5 +5,7 @@ resources:
   - deployment.yaml
   - secret.yaml
 
-commonLabels:
-  app: cloudflare-ddns
+labels:
+  - includeSelectors: true
+    pairs:
+      app: cloudflare-ddns

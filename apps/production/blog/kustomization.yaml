@@ -5,7 +5,9 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-  #- github-runner.yaml
+    #- github-runner.yaml
 
-commonLabels:
-  app: blog
+labels:
+  - includeSelectors: true
+    pairs:
+      app: blog

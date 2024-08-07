@@ -5,5 +5,7 @@ resources:
   - registry
   - ui
 
-commonLabels:
-  container-registry: proxy
+labels:
+  - includeSelectors: true
+    pairs:
+      container-registry: proxy

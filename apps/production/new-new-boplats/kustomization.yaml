@@ -6,7 +6,9 @@ resources:
   - frontend
   - scraper
   - database
-  # - github-runner.yaml
+    # - github-runner.yaml
 
-commonLabels:
-  app: new-new-boplats
+labels:
+  - includeSelectors: true
+    pairs:
+      app: new-new-boplats

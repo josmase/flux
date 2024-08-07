@@ -6,5 +6,7 @@ resources:
   - service.yaml
   - ingress.yaml
 
-commonLabels:
-  app: it-tools
+labels:
+  - includeSelectors: true
+    pairs:
+      app: it-tools

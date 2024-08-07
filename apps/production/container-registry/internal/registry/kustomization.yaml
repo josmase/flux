@@ -10,6 +10,7 @@ resources:
   - persistence.yaml
   - secret.yaml
 
-
-commonLabels:
-    app: container-registry-internal-registry
+labels:
+  - includeSelectors: true
+    pairs:
+      app: container-registry-internal-registry
