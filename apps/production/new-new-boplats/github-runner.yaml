@@ -15,3 +15,33 @@ spec:
     githubConfigUrl: "https://github.com/josmase/boplats-map"
     githubConfigSecret: controller-manager
     maxRunners: 3
+    containerMode:
+      type: "kubernetes"
+    kubernetesModeWorkVolumeClaim:
+      accessModes: ["ReadWriteOnce"]
+      # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+      storageClassName: "openebs-hostpath"
+      resources:
+        requests:
+          storage: 2Gi
+    template:
+      spec:
+        securityContext:
+          fsGroup: 123 ## needed to resolve permission issues with mounted volume. https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors#error-access-to-the-path-homerunner_work_tool-is-denied
+        containers:
+          - name: runner
+            image: registry-proxy.local.hejsan.xyz/actions/actions-runner:latest
+            command: ["/home/runner/run.sh"]
+            env:
+              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                value: "false" ## To allow jobs without a job container to run, set ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER to false on your runner container. This instructs the runner to disable this check.
+        volumes:
+          - name: work
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  storageClassName: "openebs-hostpath"
+                  resources:
+                    requests:
+                      storage: 2Gi
