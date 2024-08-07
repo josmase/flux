@@ -8,7 +8,7 @@ spec:
   releaseName: openebs
   chart:
     spec:
-      chart: openebs
+      chart: openebs/openebs
       version: 4.1.0
       reconcileStrategy: ChartVersion
       sourceRef:
