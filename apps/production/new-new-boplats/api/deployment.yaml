@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: new-new-boplats-api
-          image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-api:0.0.1
+          image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-api:0.0.3
           env:
             - name: "DB_URI"
               valueFrom:
