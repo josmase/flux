@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: renovate
-              image: registry-proxy.local.hejsan.xyz/renovate/renovate:38.57.3
+              image: registry-proxy.local.hejsan.xyz/renovate/renovate:38.58.0
               volumeMounts:
                 - mountPath: /usr/src/app/
                   name: config
