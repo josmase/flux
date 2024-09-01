@@ -13,9 +13,5 @@ spec:
         kind: HelmRepository
         name: openebs
         namespace: flux-system
-  install:
-    createNamespace: true
   interval: 1h0m0s
   targetNamespace: openebs
-  upgrade:
-    crds: CreateReplace
