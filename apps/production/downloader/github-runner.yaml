@@ -11,6 +11,6 @@ spec:
     namespace: flux-system
   interval: 5m
   values:
-    runnerScaleSetName: "downloader"
+    runnerScaleSetName: "my-runner"
     githubConfigUrl: "https://github.com/josmase/downloader"
     githubConfigSecret: controller-manager

@@ -11,7 +11,7 @@ spec:
     namespace: flux-system
   interval: 5m
   values:
-    runnerScaleSetName: "new-new-boplats"
+    runnerScaleSetName: "my-runner"
     githubConfigUrl: "https://github.com/josmase/boplats-map"
     githubConfigSecret: controller-manager
     maxRunners: 3
