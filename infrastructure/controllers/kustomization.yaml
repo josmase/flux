@@ -4,4 +4,4 @@ resources:
   - cert-manager
   - ingress-traefik
   - mongodb-operator
-  #- openebs
+  - openebs
