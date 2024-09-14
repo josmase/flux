@@ -11,6 +11,7 @@ resources:
   - actions-runner
   - renovate-bot
   - new-new-boplats
+  - monitoring
 
 transformers:
   - |-
