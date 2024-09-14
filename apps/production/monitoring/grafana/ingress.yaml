@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: grafana
-  namespace: monitoring
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -13,6 +13,7 @@ spec:
       kind: Rule
       services:
         - name: grafana
+          namespace: monitoring
           port: 3000
       middlewares:
         - name: default-headers
