@@ -13,7 +13,6 @@ spec:
       kind: Rule
       services:
         - name: grafana
-          namespace: monitoring
           port: 3000
       middlewares:
         - name: default-headers
