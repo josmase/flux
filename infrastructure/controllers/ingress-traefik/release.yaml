@@ -7,17 +7,17 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: traefik 
-      version: '26.x'
+      chart: traefik
+      version: "26.x"
       sourceRef:
         kind: HelmRepository
-        name: traefik 
+        name: traefik
         namespace: flux-system
       interval: 1m
-  values: 
-    commonLabels: {app: traefik}
-   # image:
-   #   tag: v3.0.0-beta3
+  values:
+    commonLabels: { app: traefik }
+    # image:
+    #   tag: v3.0.0-beta3
 
     globalArguments:
       - "--global.sendanonymoususage=false"
@@ -43,7 +43,7 @@ spec:
       websecure:
         tls:
           enabled: true
-          
+
     ingressRoute:
       dashboard:
         enabled: false
@@ -53,6 +53,7 @@ spec:
         enabled: true
         ingressClass: traefik-external
         allowExternalNameServices: true
+        allowCrossNamespace: true
       kubernetesIngress:
         enabled: true
         allowExternalNameServices: true
