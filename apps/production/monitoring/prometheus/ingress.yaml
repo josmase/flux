@@ -13,7 +13,7 @@ spec:
       kind: Rule
       services:
         - name: prometheus-server
-          port: 9090
+          port: http
       middlewares:
         - name: default-headers
   tls:
