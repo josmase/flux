@@ -14,8 +14,6 @@ data:
         hostRules: [
             {
                 matchHost: "https://registry-proxy.local.hejsan.xyz",
-                username: process.env.REGISTRY_USERNAME,
-                password: process.env.REGISTRY_PASSWORD
             },
             {
                 matchHost: "https://registry-internal.local.hejsan.xyz",
