@@ -5,4 +5,4 @@ resources:
   - ingress-traefik
   - mongodb-operator
   - openebs
-  - nfs-storage.yaml
+  - nfs-subdir
