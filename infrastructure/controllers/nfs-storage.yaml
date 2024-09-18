@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv-shared
+  labels:
+    type: nfs
+spec:
+  storageClassName: nfs-storage
+  capacity:
+    storage: 1000Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: storage.local.hejsan.xyz
+    path: "/kubernetes/shared"
+  persistentVolumeReclaimPolicy: Retain
