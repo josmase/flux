@@ -13,6 +13,7 @@ resources:
   - new-new-boplats
   - monitoring
   - ombi
+  - bazarr
   - persistance.yaml
   - default-app-config.yaml
 

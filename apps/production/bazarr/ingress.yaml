@@ -1,0 +1,19 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bazarr.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: bazarr
+          port: http
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: local-hejsan-xyz-tls
