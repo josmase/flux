@@ -15,6 +15,9 @@ spec:
       containers:
       - name: ombi
         image:  registry-proxy.local.hejsan.xyz/linuxserver/ombi:4.44.1
+        envFrom:
+        - configMapRef:
+            name: default-app-config
         volumeMounts:
         - name: config
           mountPath: /config
