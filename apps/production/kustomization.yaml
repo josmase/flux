@@ -14,7 +14,6 @@ resources:
   - monitoring
   - ombi
   - bazarr
-  - persistance.yaml
   - default-app-config.yaml
 
 transformers:

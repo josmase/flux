@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: container-registry-proxy-pvc
 spec:
-  storageClassName: nfs-storage
+  storageClassName: app-nfs-storage
   accessModes:
     - ReadWriteMany
   resources:
