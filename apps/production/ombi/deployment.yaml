@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ombi
+spec:
+  selector:
+    matchLabels:
+      app: ombi
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ombi
+    spec:
+      containers:
+      - name: ombi
+        image:  registry-proxy.local.hejsan.xyz/linuxserver/ombi:4.44.1
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: ombi-pvc

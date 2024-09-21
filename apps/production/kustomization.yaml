@@ -12,6 +12,8 @@ resources:
   - renovate-bot
   - new-new-boplats
   - monitoring
+  - ombi
+  - persistance.yaml
 
 transformers:
   - |-
