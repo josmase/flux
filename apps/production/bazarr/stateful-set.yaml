@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bazarr
+spec:
+  serviceName: "bazarr"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+      containers:
+      - name: bazarr
+        image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr
+        ports:
+        - containerPort: 6767
+          name: http
+        envFrom:
+        - configMapRef:
+            name: default-app-config
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: shared-storage
+          mountPath: /files
+          subPath: files
+  volumeClaimTemplates:
+  - metadata:
+      name: config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "nfs-storage"
+      resources:
+        requests:
+          storage: 10Gi
