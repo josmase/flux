@@ -21,7 +21,7 @@ spec:
       name: app-nfs-storage
       defaultClass: true
       onDelete: retain
-      provisionerName: k8s-sigs.io/second-nfs-subdir-external-app-provisioner
+      provisionerName: k8s-sigs.io/nfs-subdir-external-app-provisioner
     rbac:
       create: true
 
@@ -49,6 +49,6 @@ spec:
       name: shared-nfs-storage
       defaultClass: true
       onDelete: retain
-      provisionerName: k8s-sigs.io/second-nfs-subdir-external-shared-provisioner
+      provisionerName: k8s-sigs.io/nfs-subdir-external-shared-provisioner
     rbac:
       create: true
