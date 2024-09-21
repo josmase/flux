@@ -27,10 +27,11 @@ spec:
           mountPath: /config
   volumeClaimTemplates:
   - metadata:
-      name: config
+      name: ombi-config-pvc
     spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "nfs-storage"
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: nfs-storage
       resources:
         requests:
           storage: 100Gi

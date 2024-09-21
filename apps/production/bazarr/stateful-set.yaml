@@ -30,10 +30,11 @@ spec:
           subPath: files
   volumeClaimTemplates:
   - metadata:
-      name: config
+      name: bazar-config-pvc
     spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "nfs-storage"
+      accessModes: 
+        - ReadWriteOnce
+      storageClassName: nfs-storage
       resources:
         requests:
           storage: 10Gi

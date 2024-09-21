@@ -5,8 +5,8 @@ metadata:
 provisioner: kubernetes.io/nfs
 parameters:
   server: storage.local.hejsan.xyz
-  path: "/"
-  readOnly: "false"
+  path: /
+  readOnly: false
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 mountOptions:
