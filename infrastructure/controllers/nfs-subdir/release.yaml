@@ -22,6 +22,7 @@ spec:
       defaultClass: true
       onDelete: retain
       provisionerName: k8s-sigs.io/nfs-subdir-external-app-provisioner
+      pathPattern: "${.PVC.namespace}-${.PVC.name}"
     rbac:
       create: true
 
@@ -50,5 +51,7 @@ spec:
       defaultClass: true
       onDelete: retain
       provisionerName: k8s-sigs.io/nfs-subdir-external-shared-provisioner
+      pathPattern: ""
+      archiveOnDelete: false  
     rbac:
       create: true
