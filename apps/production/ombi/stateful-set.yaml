@@ -23,7 +23,7 @@ spec:
         - configMapRef:
             name: default-app-config
         volumeMounts:
-        - name: config
+        - name: ombi-config-pvc
           mountPath: /config
   volumeClaimTemplates:
   - metadata:

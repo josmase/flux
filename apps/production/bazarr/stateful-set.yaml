@@ -23,9 +23,9 @@ spec:
         - configMapRef:
             name: default-app-config
         volumeMounts:
-        - name: config
+        - name: bazar-config-pvc
           mountPath: /config
-        - name: shared-storage
+        - name: bazarr-shared-storage-pvc
           mountPath: /files
           subPath: files
   volumeClaimTemplates:
