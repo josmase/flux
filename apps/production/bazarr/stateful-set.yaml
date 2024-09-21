@@ -25,9 +25,13 @@ spec:
         volumeMounts:
         - name: bazar-config-pvc
           mountPath: /config
-        - name: bazarr-shared-storage-pvc
+        - name: shared-storage
           mountPath: /files
           subPath: files
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
   volumeClaimTemplates:
   - metadata:
       name: bazar-config-pvc

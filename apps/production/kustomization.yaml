@@ -15,6 +15,7 @@ resources:
   - ombi
   - bazarr
   - default-app-config.yaml
+  - persistence.yaml
 
 transformers:
   - |-
