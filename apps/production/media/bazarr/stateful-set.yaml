@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: bazarr
 spec:
-  serviceName: "bazarr"
+  serviceName: bazarr
   replicas: 1
   selector:
     matchLabels:
@@ -23,7 +23,7 @@ spec:
         - configMapRef:
             name: default-app-config
         volumeMounts:
-        - name: bazar-config-pvc
+        - name: bazarr-config-pvc
           mountPath: /config
         - name: shared-storage
           mountPath: /mnt/storage
@@ -33,7 +33,7 @@ spec:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
   - metadata:
-      name: bazar-config-pvc
+      name: bazarr-config-pvc
     spec:
       accessModes: 
         - ReadWriteOnce
