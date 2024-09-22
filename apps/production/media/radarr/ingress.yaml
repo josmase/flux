@@ -1,17 +1,17 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: sonarr
+  name: radarr
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`sonarr.local.hejsan.xyz`)
+    - match: Host(`radarr.local.hejsan.xyz`)
       kind: Rule
       services:
-        - name: sonarr
+        - name: radarr
           port: http
       middlewares:
         - name: default-headers

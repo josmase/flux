@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sonarr
+  name: radarr
 spec:
-  serviceName: sonarr
+  serviceName: radarr
   replicas: 1
   selector:
     matchLabels:
-      app: sonarr
+      app: radarr
   template:
     metadata:
       labels:
-        app: sonarr
+        app: radarr
     spec:
       containers:
-      - name: sonarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/sonarr:5.10.4.9218-ls239
+      - name: radarr
+        image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.10.4
         ports:
-        - containerPort: 7878
+        - containerPort: 8989
           name: http
         envFrom:
         - configMapRef:
             name: default-app-config
         volumeMounts:
-        - name: sonarr-config-pvc
+        - name: radarr-config-pvc
           mountPath: /config
         - name: shared-storage
           mountPath: /mnt/storage
@@ -33,7 +33,7 @@ spec:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
   - metadata:
-      name: sonarr-config-pvc
+      name: radarr-config-pvc
     spec:
       accessModes: 
         - ReadWriteOnce

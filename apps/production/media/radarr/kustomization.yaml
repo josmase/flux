@@ -9,4 +9,4 @@ resources:
 labels:
   - includeSelectors: true
     pairs:
-      app: sonarr
+      app: radarr
