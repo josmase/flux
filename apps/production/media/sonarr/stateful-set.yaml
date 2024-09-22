@@ -5,6 +5,8 @@ metadata:
 spec:
   serviceName: sonarr
   replicas: 1
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: sonarr

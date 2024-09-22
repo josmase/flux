@@ -6,6 +6,8 @@ metadata:
 spec:
   serviceName: container-registry-internal
   replicas: 1
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: container-registry-internal-registry

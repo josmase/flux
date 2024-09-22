@@ -6,6 +6,8 @@ metadata:
 spec:
   serviceName: container-registry-proxy
   replicas: 1
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: container-registry-proxy-registry
