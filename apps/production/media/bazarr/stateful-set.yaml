@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: bazarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr
+        image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr:v1.4.4-ls268
         ports:
         - containerPort: 6767
           name: http
