@@ -12,8 +12,7 @@ resources:
   - renovate-bot
   - new-new-boplats
   - monitoring
-  - ombi
-  - bazarr
+  - media
   - default-app-config.yaml
   - persistence.yaml
 

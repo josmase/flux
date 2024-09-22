@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: radarr
+spec:
+  serviceName: radarr
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      containers:
+      - name: radarr
+        image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:4.0.9
+        ports:
+        - containerPort: 8989
+          name: http
+        envFrom:
+        - configMapRef:
+            name: default-app-config
+        volumeMounts:
+        - name: radarr-config-pvc
+          mountPath: /config
+        - name: shared-storage
+          mountPath: /mnt/storage
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: radarr-config-pvc
+    spec:
+      accessModes: 
+        - ReadWriteOnce
+      storageClassName: app-nfs-storage
+      resources:
+        requests:
+          storage: 10Gi

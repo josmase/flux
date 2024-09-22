@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: transmission
+spec:
+  serviceName: transmission
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+      - name: transmission
+        image: registry-proxy.local.hejsan.xyz/linuxserver/transmission:4.0.9
+        ports:
+        - containerPort: 9091
+          name: http
+        envFrom:
+        - configMapRef:
+            name: default-app-config
+        volumeMounts:
+        - name: transmission-config-pvc
+          mountPath: /config
+        - name: shared-storage
+          mountPath: /mnt/storage
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: transmission-config-pvc
+    spec:
+      accessModes: 
+        - ReadWriteOnce
+      storageClassName: app-nfs-storage
+      resources:
+        requests:
+          storage: 10Gi

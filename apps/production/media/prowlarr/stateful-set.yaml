@@ -1,40 +1,39 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: bazarr
+  name: prowlarr
 spec:
-  serviceName: "bazarr"
+  serviceName: prowlarr
   replicas: 1
   selector:
     matchLabels:
-      app: bazarr
+      app: prowlarr
   template:
     metadata:
       labels:
-        app: bazarr
+        app: prowlarr
     spec:
       containers:
-      - name: bazarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr
+      - name: prowlarr
+        image: registry-proxy.local.hejsan.xyz/linuxserver/prowlarr:1.23.1.4708-ls86
         ports:
-        - containerPort: 6767
+        - containerPort: 8989
           name: http
         envFrom:
         - configMapRef:
             name: default-app-config
         volumeMounts:
-        - name: bazar-config-pvc
+        - name: prowlarr-config-pvc
           mountPath: /config
         - name: shared-storage
-          mountPath: /files
-          subPath: files
+          mountPath: /mnt/storage
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
   - metadata:
-      name: bazar-config-pvc
+      name: prowlarr-config-pvc
     spec:
       accessModes: 
         - ReadWriteOnce
