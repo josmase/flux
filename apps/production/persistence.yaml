@@ -13,6 +13,10 @@ spec:
   nfs:
     server: storage.local.hejsan.xyz
     path: "/"
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - sync
 
 ---
 apiVersion: v1
