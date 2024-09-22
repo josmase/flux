@@ -4,10 +4,9 @@ kind: Kustomization
 resources:
   - configmap.yaml
   - password.yaml
-  - deployment.yaml
+  - stateful-set.yaml
   - ingress.yaml
   - service.yaml
-  - persistence.yaml
   - secret.yaml
 
 labels:

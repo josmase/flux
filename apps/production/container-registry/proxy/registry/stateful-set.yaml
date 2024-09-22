@@ -1,43 +1,34 @@
 ---
-kind: Deployment
+kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: container-registry-proxy
 spec:
+  serviceName: container-registry-proxy
   replicas: 1
-  progressDeadlineSeconds: 600
-  revisionHistoryLimit: 2
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: container-registry-proxy-registry
   template:
+    metadata:
+      labels:
+        app: container-registry-proxy-registry
     spec:
       containers:
         - name: container-registry-proxy
-          image: "docker.io/registry:2.8"
+          image: docker.io/registry:2.8
           imagePullPolicy: Always
-          #command: [ "/bin/sh", "-c", "cat /etc/docker/registry/config.yml && cat /auth/registry/htpasswd" ]
           ports:
             - name: registry
               containerPort: 5000
               protocol: TCP
           volumeMounts:
-            - mountPath: "/etc/docker/registry"
-              name: "config"
-            - mountPath: "/auth/registry"
-              name: "htpasswd"
-            - mountPath: "/var/lib/registry"
-              name: "registry-volume"
-          #livenessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
-          #readinessProbe:
-          #  httpGet:
-          #    path: /v2/
-          #    port: registry
+            - mountPath: /etc/docker/registry
+              name: config
+            - mountPath: /auth/registry
+              name: htpasswd
+            - mountPath: /var/lib/registry
+              name: data
           resources:
             limits:
               memory: 512Mi
@@ -54,6 +45,13 @@ spec:
           secret:
             defaultMode: 420
             secretName: container-registry-proxy-htpasswd
-        - name: registry-volume
-          persistentVolumeClaim:
-            claimName: container-registry-proxy-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 10Gi
