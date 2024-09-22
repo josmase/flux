@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: transmission
-        image: registry-proxy.local.hejsan.xyz/linuxserver/transmission:4.0.9
+        image: registry-proxy.local.hejsan.xyz/linuxserver/transmission:4.0.6
         ports:
         - containerPort: 9091
           name: http
