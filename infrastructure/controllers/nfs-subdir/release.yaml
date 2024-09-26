@@ -17,6 +17,14 @@ spec:
     nfs:
       server: storage.local.hejsan.xyz
       path: /kubernetes/shared
+      mountOptions:
+        - hard
+        - nfsvers=4.1
+        - sync
+        - timeo=600
+        - retrans=3
+        - noac
+        - actimeo=0
     storageClass:
       name: app-nfs-storage
       defaultClass: true

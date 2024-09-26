@@ -14,9 +14,13 @@ spec:
     server: storage.local.hejsan.xyz
     path: "/"
   mountOptions:
-    - hard
-    - nfsvers=4.1
-    - sync
+    - hard                     # Prevents silent failures (better for data integrity)
+    - nfsvers=4.1               # Version 4.1 for better performance and locking
+    - sync                      # Synchronous writes to avoid data corruption
+    - timeo=600                 # Timeout in tenths of seconds (adjustable)
+    - retrans=3                 # Limits retry attempts before failing
+    - noac                      # Disables attribute caching (reduces stale handles)
+    - actimeo=0                 # Forces immediate revalidation of attributes
 
 ---
 apiVersion: v1
