@@ -14,3 +14,14 @@ spec:
         name: prometheus-community
         namespace: flux-system
   interval: 5m
+  values:
+    server:
+      persistentVolume:
+        storageClass: "app-nfs-storage"
+    alertmanager:
+      persistence:
+        storageClass: "app-nfs-storage"
+    prometheus-pushgateway:
+      persistentVolume:
+        storageClass: "app-nfs-storage"
+
