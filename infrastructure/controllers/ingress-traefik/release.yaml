@@ -30,10 +30,6 @@ spec:
     deployment:
       enabled: true
       replicas: 3
-      annotations: {}
-      podAnnotations: {}
-      additionalContainers: []
-      initContainers: []
 
     ports:
       web:
@@ -57,7 +53,6 @@ spec:
       kubernetesIngress:
         enabled: true
         allowExternalNameServices: true
-        allowCrossNamespace: true
         publishedService:
           enabled: false
 
