@@ -5,5 +5,5 @@ resources:
   - ingress-traefik
   - mongodb-operator
   - openebs
-  - nfs-subdir
+  #- nfs-subdir
   - longhorn
