@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: traefik
 
 resources:
   - ingress.yaml
@@ -9,12 +10,3 @@ labels:
   - includeSelectors: true
     pairs:
       app: traefik-dashboard
-
-transformers:
-  - |-
-    apiVersion: builtin
-    kind: NamespaceTransformer
-    metadata:
-      name: notImportantHere
-      namespace: traefik
-    unsetOnly: true
