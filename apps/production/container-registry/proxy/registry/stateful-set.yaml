@@ -39,17 +39,27 @@ spec:
               memory: 256Mi
               cpu: "0.2"
           livenessProbe:
-            httpGet:
-              path: /
-              port: 5000
+            exec:
+              command: ["/bin/sh", "/probe.sh", "/"]
             initialDelaySeconds: 10
             periodSeconds: 30
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
           readinessProbe:
-            httpGet:
-              path: /v2/
-              port: 5000
+            exec:
+              command: ["/bin/sh", "/probe.sh", "/v2/"]
             initialDelaySeconds: 5
             periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          startupProbe:
+            exec:
+              command: ["/bin/sh", "/probe.sh", "/v2/"]
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
       volumes:
         - name: config
           configMap:

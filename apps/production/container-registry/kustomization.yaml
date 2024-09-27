@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - internal
   - proxy
+  - registry-probe-script.yaml
