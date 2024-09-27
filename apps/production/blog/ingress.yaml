@@ -12,8 +12,6 @@ spec:
       services:
         - name: blog
           port: http
-      middlewares:
-        - name: default-headers
 
   tls:
     secretName: local-hejsan-xyz-tls

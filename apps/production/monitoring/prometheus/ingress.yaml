@@ -13,7 +13,6 @@ spec:
       services:
         - name: prometheus-server
           port: http
-      middlewares:
-        - name: default-headers
+
   tls:
     secretName: local-hejsan-xyz-tls

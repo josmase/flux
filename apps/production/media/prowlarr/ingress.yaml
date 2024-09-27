@@ -12,7 +12,6 @@ spec:
       services:
         - name: prowlarr
           port: http
-      middlewares:
-        - name: default-headers
+
   tls:
     secretName: local-hejsan-xyz-tls
