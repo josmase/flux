@@ -17,11 +17,10 @@ spec:
   values:
     server:
       persistentVolume:
-        storageClass: "app-nfs-storage"
+        storageClass: "longhorn"
     alertmanager:
       persistence:
-        storageClass: "app-nfs-storage"
+        storageClass: "longhorn"
     prometheus-pushgateway:
       persistentVolume:
-        storageClass: "app-nfs-storage"
-
+        storageClass: "longhorn"
