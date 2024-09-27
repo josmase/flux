@@ -31,11 +31,11 @@ spec:
       datasources.yaml:
         apiVersion: 1
         datasources:
-        - name: Prometheus
-          type: prometheus
-          url: https://prometheus.local.hejsan.xyz
-          access: proxy
-          isDefault: true
+          - name: Prometheus
+            type: prometheus
+            url: https://prometheus.local.hejsan.xyz
+            access: proxy
+            isDefault: true
     dashboards:
       default:
         k8s-addons-prometheus:

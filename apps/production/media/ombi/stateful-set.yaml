@@ -16,24 +16,24 @@ spec:
         app: ombi
     spec:
       containers:
-      - name: ombi
-        image: registry-proxy.local.hejsan.xyz/linuxserver/ombi:4.44.1
-        ports:
-        - containerPort: 3579
-          name: http
-        envFrom:
-        - configMapRef:
-            name: default-app-config
-        volumeMounts:
-        - name: ombi-config-pvc
-          mountPath: /config
+        - name: ombi
+          image: registry-proxy.local.hejsan.xyz/linuxserver/ombi:4.44.1
+          ports:
+            - containerPort: 3579
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: ombi-config-pvc
+              mountPath: /config
   volumeClaimTemplates:
-  - metadata:
-      name: ombi-config-pvc
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      storageClassName: app-nfs-storage
-      resources:
-        requests:
-          storage: 100Gi
+    - metadata:
+        name: ombi-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 100Gi

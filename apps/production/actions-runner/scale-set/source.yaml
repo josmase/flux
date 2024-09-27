@@ -8,4 +8,3 @@ spec:
   interval: 1h
   ref:
     tag: 0.9.3
-

@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- overlays/default
-- overlays/longhorn-system
-- overlays/traefik
+  - overlays/default
+  - overlays/longhorn-system
+  - overlays/traefik

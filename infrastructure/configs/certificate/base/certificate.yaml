@@ -9,6 +9,6 @@ spec:
     kind: ClusterIssuer
   commonName: "*.local.hejsan.xyz"
   dnsNames:
-  - "local.hejsan.xyz"
-  - "*.local.hejsan.xyz"
-  - "*.staging.local.hejsan.xyz"
+    - "local.hejsan.xyz"
+    - "*.local.hejsan.xyz"
+    - "*.staging.local.hejsan.xyz"

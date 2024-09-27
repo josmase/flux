@@ -16,30 +16,30 @@ spec:
         app: prowlarr
     spec:
       containers:
-      - name: prowlarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/prowlarr:1.23.1.4708-ls86
-        ports:
-        - containerPort: 8989
-          name: http
-        envFrom:
-        - configMapRef:
-            name: default-app-config
-        volumeMounts:
-        - name: prowlarr-config-pvc
-          mountPath: /config
-        - name: shared-storage
-          mountPath: /mnt/storage
+        - name: prowlarr
+          image: registry-proxy.local.hejsan.xyz/linuxserver/prowlarr:1.23.1.4708-ls86
+          ports:
+            - containerPort: 8989
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: prowlarr-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
-  - metadata:
-      name: prowlarr-config-pvc
-    spec:
-      accessModes: 
-        - ReadWriteOnce
-      storageClassName: app-nfs-storage
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: prowlarr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 10Gi

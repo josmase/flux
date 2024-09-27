@@ -24,4 +24,3 @@ transformers:
       name: notImportantHere
       namespace: default
     unsetOnly: true
-

@@ -16,30 +16,30 @@ spec:
         app: radarr
     spec:
       containers:
-      - name: radarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.10.4
-        ports:
-        - containerPort: 8989
-          name: http
-        envFrom:
-        - configMapRef:
-            name: default-app-config
-        volumeMounts:
-        - name: radarr-config-pvc
-          mountPath: /config
-        - name: shared-storage
-          mountPath: /mnt/storage
+        - name: radarr
+          image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.10.4
+          ports:
+            - containerPort: 8989
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: radarr-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
-  - metadata:
-      name: radarr-config-pvc
-    spec:
-      accessModes: 
-        - ReadWriteOnce
-      storageClassName: app-nfs-storage
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: radarr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 10Gi

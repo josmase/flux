@@ -16,30 +16,30 @@ spec:
         app: sonarr
     spec:
       containers:
-      - name: sonarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/sonarr:4.0.9
-        ports:
-        - containerPort: 7878
-          name: http
-        envFrom:
-        - configMapRef:
-            name: default-app-config
-        volumeMounts:
-        - name: sonarr-config-pvc
-          mountPath: /config
-        - name: shared-storage
-          mountPath: /mnt/storage
+        - name: sonarr
+          image: registry-proxy.local.hejsan.xyz/linuxserver/sonarr:4.0.9
+          ports:
+            - containerPort: 7878
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: sonarr-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
-  - metadata:
-      name: sonarr-config-pvc
-    spec:
-      accessModes: 
-        - ReadWriteOnce
-      storageClassName: app-nfs-storage
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: sonarr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 10Gi

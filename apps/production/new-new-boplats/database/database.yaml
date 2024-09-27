@@ -32,4 +32,3 @@ spec:
       scramCredentialsSecretName: my-scram
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib
-

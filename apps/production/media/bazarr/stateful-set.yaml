@@ -16,30 +16,30 @@ spec:
         app: bazarr
     spec:
       containers:
-      - name: bazarr
-        image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr:v1.4.4-ls268
-        ports:
-        - containerPort: 6767
-          name: http
-        envFrom:
-        - configMapRef:
-            name: default-app-config
-        volumeMounts:
-        - name: bazarr-config-pvc
-          mountPath: /config
-        - name: shared-storage
-          mountPath: /mnt/storage
+        - name: bazarr
+          image: registry-proxy.local.hejsan.xyz/linuxserver/bazarr:v1.4.4-ls268
+          ports:
+            - containerPort: 6767
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: bazarr-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
   volumeClaimTemplates:
-  - metadata:
-      name: bazarr-config-pvc
-    spec:
-      accessModes: 
-        - ReadWriteOnce
-      storageClassName: app-nfs-storage
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: bazarr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: app-nfs-storage
+        resources:
+          requests:
+            storage: 10Gi
