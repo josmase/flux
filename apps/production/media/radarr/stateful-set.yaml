@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: radarr
-          image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.10.4
+          image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.11.0
           ports:
             - containerPort: 8989
               name: http
