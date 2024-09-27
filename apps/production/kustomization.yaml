@@ -13,6 +13,7 @@ resources:
   - new-new-boplats
   - monitoring
   - media
+  - longhorn
   - default-app-config.yaml
   - persistence.yaml
 
