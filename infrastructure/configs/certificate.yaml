@@ -1,10 +1,5 @@
 ---
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: local-hejsan-xyz
-  namespace: default
-spec:
+.certificate-spec: &certificate-spec
   secretName: local-hejsan-xyz-tls
   issuerRef:
     name: letsencrypt
@@ -14,3 +9,21 @@ spec:
   - "local.hejsan.xyz"
   - "*.local.hejsan.xyz"
   - "*.staging.local.hejsan.xyz"
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: local-hejsan-xyz
+  namespace: default
+spec:
+  <<: *certificate-spec
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: local-hejsan-xyz
+  namespace: longhorn-system
+spec:
+  <<: *certificate-spec

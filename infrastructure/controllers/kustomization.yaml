@@ -6,3 +6,4 @@ resources:
   - mongodb-operator
   - openebs
   - nfs-subdir
+  - longhorn
