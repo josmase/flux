@@ -16,8 +16,6 @@ spec:
       interval: 1m
   values:
     commonLabels: { app: traefik }
-    # image:
-    #   tag: v3.0.0-beta3
 
     globalArguments:
       - "--global.sendanonymoususage=false"
@@ -26,6 +24,8 @@ spec:
     additionalArguments:
       - "--serversTransport.insecureSkipVerify=true"
       - "--log.level=INFO"
+      - "--providers.kubernetescrd.allowCrossNamespace=true"
+      - "--providers.kubernetesingress.allowCrossNamespace=true"
 
     deployment:
       enabled: true
@@ -57,11 +57,13 @@ spec:
       kubernetesIngress:
         enabled: true
         allowExternalNameServices: true
+        allowCrossNamespace: true
         publishedService:
           enabled: false
 
     rbac:
       enabled: true
+      namespaced: false
 
     service:
       enabled: true
