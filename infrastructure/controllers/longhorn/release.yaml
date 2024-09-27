@@ -14,3 +14,9 @@ spec:
         name: longhorn-repo
       version: v1.7.1
   interval: 1m0s
+  values:
+    preUpgradeChecker:
+      jobEnabled: false
+    defaultSettings:
+      backupTarget: nfs://storage.local.hejsan.xyz:/kubernetes
+      concurrentAutomaticEngineUpgradePerNodeLimit: 1
