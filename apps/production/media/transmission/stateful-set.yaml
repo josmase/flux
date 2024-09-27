@@ -39,7 +39,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: app-nfs-storage
+        storageClassName: longhorn
         resources:
           requests:
             storage: 10Gi
