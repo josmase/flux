@@ -31,9 +31,6 @@ spec:
               name: htpasswd
             - mountPath: /var/lib/registry
               name: data
-            - name: registry-probe-script
-              mountPath: /probe.sh
-              subPath: probe.sh
           resources:
             limits:
               memory: 512Mi
