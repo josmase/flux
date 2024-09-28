@@ -16,7 +16,6 @@ spec:
         - name: strip-ui-prefix
   tls:
     secretName: local-hejsan-xyz-tls
-    namespace: traefik
 
 ---
 apiVersion: traefik.io/v1alpha1
