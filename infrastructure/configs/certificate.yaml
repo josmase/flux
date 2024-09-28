@@ -8,7 +8,7 @@ spec:
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
-  commonName: "*.local.hejsan.xyz"
+  commonName: "local.hejsan.xyz"
   dnsNames:
     - "local.hejsan.xyz"
     - "*.local.hejsan.xyz"
