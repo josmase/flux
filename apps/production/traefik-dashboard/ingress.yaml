@@ -13,3 +13,4 @@ spec:
           kind: TraefikService
   tls:
     secretName: local-hejsan-xyz-tls
+    namespace: traefik

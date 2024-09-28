@@ -37,7 +37,9 @@ spec:
       websecure:
         tls:
           enabled: true
-
+    providers:
+      kubernetesCRD:
+        allowCrossNamespace: true # Needed to share certificates between namespaces
     service:
       enabled: true
       spec:

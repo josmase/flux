@@ -16,3 +16,4 @@ spec:
 
   tls:
     secretName: local-hejsan-xyz-tls
+    namespace: traefik

@@ -16,3 +16,4 @@ spec:
           port: 80
   tls:
     secretName: local-hejsan-xyz-tls
+    namespace: traefik
