@@ -12,7 +12,6 @@ spec:
   dnsNames:
     - "local.hejsan.xyz"
     - "*.local.hejsan.xyz"
-    - "*.staging.local.hejsan.xyz"
   secretTemplate:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
