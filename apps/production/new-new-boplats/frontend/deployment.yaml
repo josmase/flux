@@ -17,8 +17,9 @@ spec:
       containers:
         - name: new-new-boplats-frontend
           image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-frontend:0.0.1
-          environment:
-            API_URL: /api
+          env:
+            - name: API_URL
+              value: /api
           resources:
             limits:
               memory: 512Mi
