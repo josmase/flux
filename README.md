@@ -8,6 +8,7 @@ This repository contains configurations for deploying applications to a Kubernet
 - `kubectl` configured for your cluster
 - `flux` CLI installed
 - GitHub account with repository access
+- k9s is highly recommended bu optional
 
 > **Note:** This repository includes a devcontainer with pre-configured tools (`kubectl`, `flux`, etc.), eliminating the need for local installations.
 
