@@ -8,5 +8,5 @@ spec:
     app: sonarr
   ports:
     - name: http
-      targetPort: 7878
-      port: 7878
+      targetPort: 8989
+      port: 8989

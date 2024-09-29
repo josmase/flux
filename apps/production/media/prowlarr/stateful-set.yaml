@@ -19,7 +19,7 @@ spec:
         - name: prowlarr
           image: registry-proxy.local.hejsan.xyz/linuxserver/prowlarr:1.23.1.4708-ls86
           ports:
-            - containerPort: 8989
+            - containerPort: 9696
               name: http
           envFrom:
             - configMapRef:

@@ -19,7 +19,7 @@ spec:
         - name: radarr
           image: registry-proxy.local.hejsan.xyz/linuxserver/radarr:5.11.0
           ports:
-            - containerPort: 8989
+            - containerPort: 7878
               name: http
           envFrom:
             - configMapRef:
