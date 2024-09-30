@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: ombi
+  name: overseerr
 spec:
-  serviceName: "ombi"
+  serviceName: "overseerr"
   replicas: 1
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: ombi
+      app: overseerr
   template:
     metadata:
       labels:
-        app: ombi
+        app: overseerr
     spec:
       containers:
-        - name: ombi
-          image: registry-proxy.local.hejsan.xyz/linuxserver/ombi:4.44.1
+        - name: overseerr
+          image: registry-proxy.local.hejsan.xyz/linuxserver/overseerr:v1.33.2-ls119
           ports:
-            - containerPort: 3579
+            - containerPort: 5055
               name: http
           envFrom:
             - configMapRef:
                 name: default-app-config
           volumeMounts:
-            - name: ombi-config-pvc
+            - name: overseerr-config-pvc
               mountPath: /config
   volumeClaimTemplates:
     - metadata:
-        name: ombi-config-pvc
+        name: overseerr-config-pvc
       spec:
         accessModes:
           - ReadWriteOnce

@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - bazarr
-  - ombi
+  - overseerr
   - prowlarr
   - radarr
   - sonarr

@@ -1,16 +1,16 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: ombi
+  name: overseerr
 
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ombi.local.hejsan.xyz`)
+    - match: Host(`overseerr.local.hejsan.xyz`)
       kind: Rule
       services:
-        - name: ombi
+        - name: overseerr
           port: http
 
   tls:
