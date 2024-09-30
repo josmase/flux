@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jellyfin
+spec:
+  serviceName: jellyfin
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      containers:
+        - name: jellyfin
+          image: registry-proxy.local.hejsan.xyz/linuxserver/jellyfin:10.9.11ubu2404-ls33
+          ports:
+            - containerPort: 8096
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: jellyfin-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: jellyfin-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 50Gi

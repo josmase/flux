@@ -8,5 +8,5 @@ resources:
   - radarr
   - sonarr
   - transmission
-
-
+  - jellyfin
+  - plex
