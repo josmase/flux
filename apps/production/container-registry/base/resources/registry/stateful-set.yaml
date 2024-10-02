@@ -24,8 +24,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/docker/registry
               name: config
-            - mountPath: /auth/registry
-              name: htpasswd
             - mountPath: /var/lib/registry
               name: data
           resources:
