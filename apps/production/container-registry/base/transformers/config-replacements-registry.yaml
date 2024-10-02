@@ -12,7 +12,7 @@ replacements:
           kind: IngressRoute
           name: ${REGISTRY_NAME}
         fieldPaths:
-          - spec.routes.[name=root].match
+          - spec.routes.[kind=Rule].match
   - source:
       kind: ConfigMap
       name: registry-configuration
@@ -34,7 +34,7 @@ replacements:
           name: ${REGISTRY_NAME}
         fieldPaths:
           - metadata.name
-          - spec.routes.[name=root].services.[port=registry].name
+          - spec.routes.[kind=Rule].services.[port=registry].name
       - select:
           kind: ConfigMap
           name: ${REGISTRY_NAME}-config

@@ -7,8 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - name: root
-      match: ${REGISTRY_UI_INGRESS_MATCH}
+    - match: ${REGISTRY_UI_INGRESS_MATCH}
       kind: Rule
       services:
         - name: ${REGISTRY_NAME}-ui
