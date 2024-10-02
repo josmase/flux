@@ -61,3 +61,10 @@ replacements:
           - spec.selector.app
         options:
           delimiter: "-"
+      - select:
+          kind: Middleware
+          name: ${REGISTRY_NAME}-strip-ui-prefix
+        fieldPaths:
+          - metadata.name
+        options:
+          delimiter: "-"
