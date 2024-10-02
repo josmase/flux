@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: kube-prometheus-stack-repo
+      version: 64.0.0
+  interval: 1m0s
+  values:
+    global:
+      imageRegistry: "registry-proxy.local.hejsan.xyz"
