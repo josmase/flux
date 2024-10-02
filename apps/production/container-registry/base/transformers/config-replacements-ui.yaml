@@ -1,0 +1,63 @@
+apiVersion: builtin
+kind: ReplacementTransformer
+metadata:
+  name: not-important-please-ignore-ui
+replacements:
+  - source:
+      kind: ConfigMap
+      name: registry-configuration
+      fieldPath: data.REGISTRY_UI_INGRESS_MATCH
+    targets:
+      - select:
+          kind: IngressRoute
+          name: ${REGISTRY_NAME}-ui
+        fieldPaths:
+          - spec.routes.[name=root].match
+  - source:
+      kind: ConfigMap
+      name: registry-configuration
+      fieldPath: data.REGISTRY_URL
+    targets:
+      - select:
+          kind: ConfigMap
+          name: ${REGISTRY_NAME}-ui-config
+        fieldPaths:
+          - data.REGISTRY_URL
+  - source:
+      kind: ConfigMap
+      name: registry-configuration
+      fieldPath: data.REGISTRY_NAME
+    targets:
+      - select:
+          kind: Deployment
+          name: ${REGISTRY_NAME}-ui
+        fieldPaths:
+          - metadata.name
+          - spec.serviceName
+          - spec.selector.matchLabels.app
+          - spec.template.metadata.labels.app
+        options:
+          delimiter: "-"
+      - select:
+          kind: IngressRoute
+          name: ${REGISTRY_NAME}-ui
+        fieldPaths:
+          - metadata.name
+          - spec.routes.[name=root].services.[port=http].name
+        options:
+          delimiter: "-"
+      - select:
+          kind: ConfigMap
+          name: ${REGISTRY_NAME}-ui-config
+        fieldPaths:
+          - metadata.name
+        options:
+          delimiter: "-"
+      - select:
+          kind: Service
+          name: ${REGISTRY_NAME}-ui
+        fieldPaths:
+          - metadata.name
+          - spec.selector.app
+        options:
+          delimiter: "-"

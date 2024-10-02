@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: registry-configuration
+data:
+  REGISTRY_NAME: docker
+  REGISTRY_INGRESS_MATCH: Host('docker.registry.local.hejsan.xyz')
+  REMOTE_REGISTRY_URL: https://registry-1.docker.io

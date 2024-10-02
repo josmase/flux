@@ -1,0 +1,45 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ${REGISTRY_NAME}-ui
+spec:
+  serviceName: ${REGISTRY_NAME}-ui
+  replicas: 3
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ${REGISTRY_NAME}-ui
+  template:
+    metadata:
+      labels:
+        app: ${REGISTRY_NAME}-ui
+    spec:
+      containers:
+        - name: registry-ui
+          image: docker.registry.local.hejsan.xyz/joxit/docker-registry-ui:2.5.7-debian
+          envFrom:
+            - configMapRef:
+                name: ${REGISTRY_NAME}-ui-config
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"

@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ${REGISTRY_NAME}
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - name: root
+      match: ${REGISTRY_MATCH}
+      kind: Rule
+      services:
+        - name: ${REGISTRY_NAME}
+          port: registry
+  tls:
+    secretName: local-hejsan-xyz-tls
