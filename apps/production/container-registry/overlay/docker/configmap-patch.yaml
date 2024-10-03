@@ -6,3 +6,4 @@ data:
   config.yml: |-
     proxy:
       remoteurl: https://registry-1.docker.io
+    version: 0.1

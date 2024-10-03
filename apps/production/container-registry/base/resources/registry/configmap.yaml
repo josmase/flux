@@ -6,3 +6,4 @@ data:
   config.yml: |-
     proxy:
       remoteurl: ${REMOTE_REGISTRY_URL}
+    version: 0.1
