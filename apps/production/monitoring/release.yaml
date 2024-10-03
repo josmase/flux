@@ -14,6 +14,3 @@ spec:
         name: kube-prometheus-stack-repo
       version: 64.0.0
   interval: 1m0s
-  values:
-    global:
-      imageRegistry: "registry-proxy.local.hejsan.xyz"

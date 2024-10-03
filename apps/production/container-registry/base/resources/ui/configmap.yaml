@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ${REGISTRY_NAME}-ui-config
-data:
-  REGISTRY_URL: ${REGISTRY_URL}
-  THEME: dark
