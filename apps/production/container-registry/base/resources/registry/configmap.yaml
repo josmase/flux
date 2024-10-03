@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ${REGISTRY_NAME}-config
-data:
-  config.yml: |-
-    proxy:
-      remoteurl: ${REMOTE_REGISTRY_URL}
-    version: 0.1

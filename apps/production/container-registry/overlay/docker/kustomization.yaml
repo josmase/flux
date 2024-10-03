@@ -7,14 +7,16 @@ labels:
       registry: docker
 resources:
   - ../../base/resources
-patches:
-  - path: configmap-patch.yaml
 
 configMapGenerator:
   - behavior: replace
+    name: registry-configuration
     envs:
       - env.properties
-    name: registry-configuration
+  - behavior: replace
+    name: registry-config
+    files:
+      - config.yaml
 
 transformers:
   - ../../base/transformers
