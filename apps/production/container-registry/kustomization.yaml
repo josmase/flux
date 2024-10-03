@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - internal
   - proxy
-  - overlay/docker
+  - helm
