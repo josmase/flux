@@ -21,3 +21,5 @@ spec:
       joinKeySecretName: my-joinkey-secret
     postgresql:
       postgresqlPassword: somepassword
+    nginx:
+      enabled: false

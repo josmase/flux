@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr
+  namespace: artifactory
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`artifactory.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: artifactory
+          port: http-artifactory
+
+  tls:
+    secretName: local-hejsan-xyz-tls
