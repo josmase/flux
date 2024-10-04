@@ -23,6 +23,6 @@ spec:
       postgresqlPassword: somepassword
       persistence:
         enabled: true
-        size: 100Gi
+        size: 50Gi
     nginx:
       enabled: false
