@@ -15,6 +15,7 @@ spec:
         namespace: flux-system
   interval: 1m0s
   values:
+    databaseUpgradeReady: true
     artifactory:
       replicaCount: 3
       masterKeySecretName: my-masterkey-secret
