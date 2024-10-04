@@ -6,4 +6,3 @@ resources:
   - my-masterkey-secret.yaml
   - release.yaml
   - source.yaml
-  - ingress.yaml

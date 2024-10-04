@@ -26,3 +26,15 @@ spec:
         size: 50Gi
     nginx:
       enabled: false
+    ingress:
+      enabled: true
+      defaultBackend:
+        enabled: false
+      hosts:
+        - artifactory.local.hejsan.xyz  
+      routerPath: /
+      artifactoryPath: /artifactory/
+      rtfsPath: /artifactory/service/rtfs/
+      className: "traefik"
+      tls:
+        - secretName: local-hejsan-xyz-tls
