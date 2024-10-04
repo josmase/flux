@@ -21,5 +21,8 @@ spec:
       joinKeySecretName: my-joinkey-secret
     postgresql:
       postgresqlPassword: somepassword
+      persistence:
+        enabled: true
+        size: 100Gi
     nginx:
       enabled: false
