@@ -7,7 +7,7 @@ spec:
   releaseName: artifactory
   chart:
     spec:
-      chart: artifactory
+      chart: artifactory-jcr
       version: 107.90.13
       sourceRef:
         kind: HelmRepository
