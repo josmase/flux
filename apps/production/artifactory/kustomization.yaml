@@ -11,4 +11,4 @@ resources:
 configMapGenerator:
   - name: artifactory-release-values
     files:
-      - values.yaml=my-values.yaml
+      - values.yaml=release-values.yaml
