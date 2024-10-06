@@ -25,3 +25,6 @@ transformers:
       name: notImportantHere
       namespace: default
     unsetOnly: true
+
+configurations:
+  - kustomizeconfig.yaml

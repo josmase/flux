@@ -14,16 +14,6 @@ spec:
         name: jfrog
         namespace: flux-system
   interval: 1m0s
-  values:
-    databaseUpgradeReady: true
-    nginx:
-      enabled: false
-    artifactory:
-      replicaCount: 3
-      masterKeySecretName: my-masterkey-secret
-      joinKeySecretName: my-joinkey-secret
-    postgresql:
-      postgresqlPassword: somepassword
-      persistence:
-        enabled: true
-        size: 50Gi
+  valuesFrom:
+    - kind: ConfigMap
+      name: artifactory-release-values

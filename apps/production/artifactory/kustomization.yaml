@@ -7,3 +7,8 @@ resources:
   - release.yaml
   - source.yaml
   - ingress.yaml
+
+configMapGenerator:
+  - name: artifactory-release-values
+    files:
+      - values.yaml=my-values.yaml
