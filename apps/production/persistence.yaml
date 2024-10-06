@@ -9,7 +9,6 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual
   nfs:
     server: storage.local.hejsan.xyz
     path: "/"
@@ -28,7 +27,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: shared-nfs-pvc
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteMany
   resources:

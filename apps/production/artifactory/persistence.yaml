@@ -9,7 +9,6 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual
   nfs:
     server: storage.local.hejsan.xyz
     path: "/kubernetes/artifactory"
@@ -29,7 +28,6 @@ metadata:
   name: artifactory-nfs-pvc
   namespace: artifactory
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteMany
   resources:
