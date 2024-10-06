@@ -8,7 +8,7 @@ artifactory:
     joinKeySecretName: my-joinkey-secret
     persistence:
       enabled: true
-      existingClaim: shared-nfs-pvc
+      existingClaim: artifactory-nfs-pvc
 
   nginx:
     enabled: false
