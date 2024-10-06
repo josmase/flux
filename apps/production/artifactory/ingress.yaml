@@ -16,7 +16,7 @@ spec:
       middlewares:
         - name: artifactory-replace-root
         - name: artifactory-headers
-      
+
     - match: Host(`artifactory.local.hejsan.xyz`) && PathPrefix(`/artifactory`)
       kind: Rule
       services:
@@ -36,8 +36,8 @@ metadata:
   namespace: artifactory
 spec:
   redirectRegex:
-    regex: "^/$|^/ui$"
-    replacement: "/ui/"
+    regex: ^(http|https)://([^/]+)(/|/ui)$
+    replacement: ${1}://${2}/ui/
     permanent: false
 
 ---
