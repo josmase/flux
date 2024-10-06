@@ -6,7 +6,7 @@ spec:
   capacity:
     storage: 110Ti
   volumeMode: Filesystem
-  storageClassName: ""
+  storageClassName: "manual"
   claimRef:
     namespace: artifactory
     name: artifactory-nfs-pvc
@@ -32,7 +32,7 @@ metadata:
   name: artifactory-nfs-pvc
   namespace: artifactory
 spec:
-  storageClassName: ""
+  storageClassName: "manual"
   volumeName: artifactory-nfs-pv
   accessModes:
     - ReadWriteMany
