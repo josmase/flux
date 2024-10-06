@@ -13,8 +13,14 @@ if [ "$1" = "--rotate" ]; then
     shift
 fi
 
+DECRYPT=false
+if [ "$1" = "--decrypt" ]; then
+    DECRYPT=true
+    shift
+fi
+
 if [ "$#" -eq 0 ]; then
-    echo "Usage: $0 [--rotate] <path_to_file1> [<path_to_file2> ...]"
+    echo "Usage: $0 [--rotate] [--decrypt] <path_to_file1> [<path_to_file2> ...]"
     exit 1
 fi
 
@@ -43,6 +49,9 @@ for file_path in "$@"; do
         if [ "$ROTATE" = true ]; then
             SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --rotate "$file_path"
             echo "Rotation complete for file: $file_path"
+        elif [ "$DECRYPT" = true ]; then
+            SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --decrypt "$file_path"
+            echo "Decruption complete for file: $file_path"
         else
             SOPS_AGE_KEY_FILE="$SOPS_AGE_KEY_FILE" "${SOPS_CMD[@]}" --encrypt "$file_path"
             echo "Encryption complete for file: $file_path"
