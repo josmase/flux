@@ -6,18 +6,14 @@ artifactory:
     replicaCount: 3
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
-    #persistence:
-    #  enabled: true
-    #  existingClaim: artifactory-nfs-pvc
-    #podSecurityContext:
-    #  enabled: true
-    #  runAsNonRoot: true
-    #  runAsUser: 1000
-    #  runAsGroup: 1000
-    #  fsGroup: 1000
   nginx:
-    enabled: false
-
+    enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - artifactory.local.hejsan.xyz
+    tls:
+      - secretName: local-hejsan-xyz-tls
   postgresql:
     postgresqlPassword: somepassword
     persistence:
