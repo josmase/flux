@@ -16,6 +16,8 @@ spec:
   interval: 1m0s
   values:
     databaseUpgradeReady: true
+    nginx:
+      enabled: false
     artifactory:
       replicaCount: 3
       masterKeySecretName: my-masterkey-secret
