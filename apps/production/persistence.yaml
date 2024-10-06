@@ -32,6 +32,7 @@ metadata:
   name: shared-nfs-pvc
 spec:
   storageClassName: ""
+  volumeName: shared-nfs-pv
   accessModes:
     - ReadWriteMany
   resources:
