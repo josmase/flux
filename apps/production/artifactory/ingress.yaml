@@ -8,6 +8,14 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`artifactory.local.hejsan.xyz`) && PathPrefix(`/artifactory`)
+      kind: Rule
+      services:
+        - name: artifactory
+          port: http-artifactory
+      middlewares:
+        - name: artifactory-headers
+    
     - match: Host(`artifactory.local.hejsan.xyz`) && PathPrefix(`/`)
       kind: Rule
       services:
@@ -16,15 +24,6 @@ spec:
       middlewares:
         - name: artifactory-replace-root
         - name: artifactory-headers
-
-    - match: Host(`artifactory.local.hejsan.xyz`) && PathPrefix(`/artifactory`)
-      kind: Rule
-      services:
-        - name: artifactory
-          port: http-artifactory
-      middlewares:
-        - name: artifactory-headers
-          namespace: artifactory
   tls:
     secretName: local-hejsan-xyz-tls
 
