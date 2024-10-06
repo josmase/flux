@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: overseerr
-          image: registry-proxy.local.hejsan.xyz/linuxserver/overseerr:v1.33.2-ls119
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/overseerr:v1.33.2-ls119
           ports:
             - containerPort: 5055
               name: http

@@ -13,12 +13,7 @@ data:
         onboarding: true,
         hostRules: [
             {
-                matchHost: "https://registry-proxy.local.hejsan.xyz",
-            },
-            {
-                matchHost: "https://registry-internal.local.hejsan.xyz",
-                username: process.env.REGISTRY_INTERNAL_USERNAME,
-                password: process.env.REGISTRY_INTERNAL_PASSWORD
+                matchHost: "https://artifactory.local.hejsan.xyz/docker",
             }
         ],
         packageRules: [

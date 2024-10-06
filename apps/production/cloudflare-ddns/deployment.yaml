@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cloudflare-ddns
-          image: registry-proxy.local.hejsan.xyz/oznu/cloudflare-ddns
+          image: artifactory.local.hejsan.xyz/docker/oznu/cloudflare-ddns
           env:
             - name: API_KEY
               valueFrom:

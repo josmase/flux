@@ -17,7 +17,7 @@ spec:
   values:
     global:
       # -- Overrides the Docker registry globally for all images
-      imageRegistry: registry-proxy.local.hejsan.xyz
+      imageRegistry: artifactory.local.hejsan.xyz/docker
 
     persistence:
       inMemory:

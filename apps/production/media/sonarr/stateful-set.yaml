@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: sonarr
-          image: registry-proxy.local.hejsan.xyz/linuxserver/sonarr:4.0.9
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/sonarr:4.0.9
           ports:
             - containerPort: 8989
               name: http
