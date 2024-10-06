@@ -6,6 +6,10 @@ spec:
   capacity:
     storage: 110Ti
   volumeMode: Filesystem
+  storageClassName: ""
+  claimRef:
+    namespace: default
+    name: shared-nfs-pvc
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -27,6 +31,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: shared-nfs-pvc
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   resources:
