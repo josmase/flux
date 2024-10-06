@@ -1,18 +1,20 @@
-databaseUpgradeReady: true
-
+## All values are under the 'artifactory' sub chart. According to https://github.com/jfrog/charts/blob/master/stable/artifactory-jcr/values.yaml
 artifactory:
-  replicaCount: 3
-  masterKeySecretName: my-masterkey-secret
-  joinKeySecretName: my-joinkey-secret
-  persistence:
-    enabled: true
-    existingClaim: shared-nfs-pvc
+  databaseUpgradeReady: true
 
-nginx:
-  enabled: false
+  artifactory:
+    replicaCount: 3
+    masterKeySecretName: my-masterkey-secret
+    joinKeySecretName: my-joinkey-secret
+    persistence:
+      enabled: true
+      existingClaim: shared-nfs-pvc
 
-postgresql:
-  postgresqlPassword: somepassword
-  persistence:
-    enabled: true
-    size: 50Gi
+  nginx:
+    enabled: false
+
+  postgresql:
+    postgresqlPassword: somepassword
+    persistence:
+      enabled: true
+      size: 50Gi
