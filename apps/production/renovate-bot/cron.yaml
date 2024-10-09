@@ -19,8 +19,6 @@ spec:
                 - secretRef:
                     name: renovate-env-secrets
           restartPolicy: Never
-          imagePullSecrets:
-            - name: container-registry-proxy-secret
           volumes:
             - name: config
               configMap:
