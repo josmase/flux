@@ -2,7 +2,7 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: grafana
-  namespace: default
+  namespace: monitoring
 
 spec:
   entryPoints:
@@ -11,8 +11,8 @@ spec:
     - match: Host(`grafana.local.hejsan.xyz`)
       kind: Rule
       services:
-        - name: grafana
-          port: service
+        - name: kube-prometheus-stack-grafana
+          port: http-web
 
   tls:
     secretName: local-hejsan-xyz-tls
