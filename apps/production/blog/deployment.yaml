@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: registry-internal.local.hejsan.xyz/josmase/blog:2024.01.29.202359-51464e4
+          image: artifactory.local.hejsan.xyz/docker/josmase/blog:2024.01.29.202359-51464e4
           resources:
             limits:
               memory: 512Mi
@@ -24,5 +24,3 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-      imagePullSecrets:
-        - name: container-registry-internal-secret

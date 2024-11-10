@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: new-new-boplats-scraoer
-              image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-scraper:0.0.1
+              image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-scraper:0.0.1
               env:
                 - name: "DB_URI"
                   valueFrom:
@@ -26,6 +26,3 @@ spec:
                   memory: 256Mi
                   cpu: "0.2"
           restartPolicy: Never
-
-          imagePullSecrets:
-            - name: container-registry-internal-secret

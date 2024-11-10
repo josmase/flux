@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: new-new-boplats-api
-          image: registry-internal.local.hejsan.xyz/josmase/new-new-boplats-api:0.0.3
+          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-api:0.0.3
           env:
             - name: "DB_URI"
               valueFrom:
@@ -30,5 +30,4 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-      imagePullSecrets:
-        - name: container-registry-internal-secret
+

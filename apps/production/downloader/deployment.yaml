@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: downloader
-          image: registry-internal.local.hejsan.xyz/josmase/downloader:v0.0.4
+          image: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.4
           resources:
             limits:
               memory: 512Mi
@@ -24,5 +24,4 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-      imagePullSecrets:
-        - name: container-registry-internal-secret
+
