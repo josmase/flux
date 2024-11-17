@@ -15,10 +15,7 @@ spec:
   capacity:
     storage: 110Ti
   volumeMode: Filesystem
-  storageClassName: "artifactory"
-  claimRef:
-    namespace: artifactory
-    name: artifactory-pvc
+  storageClassName: artifactory
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -41,8 +38,7 @@ metadata:
   name: artifactory-pvc
   namespace: artifactory
 spec:
-  storageClassName: "artifactory"
-  volumeName: artifactory-pvc
+  storageClassName: artifactory
   accessModes:
     - ReadWriteMany
   resources:
