@@ -6,7 +6,7 @@ resources:
   - my-masterkey-secret.yaml
   - release.yaml
   - source.yaml
-  - persistence.yaml
+ # - persistence.yaml
 
 configMapGenerator:
   - name: artifactory-release-values

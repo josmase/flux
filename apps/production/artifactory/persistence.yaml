@@ -21,7 +21,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: storage.local.hejsan.xyz
-    path: "/kubernetes/artifactory"
+    path: /kubernetes/artifactory
   mountOptions:
     - hard # Prevents silent failures (better for data integrity)
     - nfsvers=4.1 # Version 4.1 for better performance and locking
