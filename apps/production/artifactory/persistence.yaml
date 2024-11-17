@@ -13,7 +13,7 @@ metadata:
   namespace: artfactory
 spec:
   capacity:
-    storage: 2Ti
+    storage: 110Ti
   volumeMode: Filesystem
   storageClassName: artifactory
   accessModes:
@@ -43,4 +43,4 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Ti
+      storage: 110Ti
