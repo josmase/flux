@@ -11,6 +11,10 @@ module.exports = {
     ],
     packageRules: [
       {
+        "packagePatterns": ["\\/linuxserver\\/"],
+        "versioning": "regex:^(?<compatibility>.*?)-(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\.-]*r?(?<build>\\d+)*-*r?(?<release>\\w+)*"
+      },
+      {
         matchUpdateTypes: ["minor", "patch", "pin", "digest"],
         automerge: true
       }
