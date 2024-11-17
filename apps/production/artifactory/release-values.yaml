@@ -7,7 +7,7 @@ artifactory:
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
     persistance:
-      existingClaim: artifactory
+      existingClaim: artifactory-pvc
   nginx:
     enabled: true
   ingress:
