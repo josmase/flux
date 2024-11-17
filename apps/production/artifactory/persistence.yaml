@@ -41,7 +41,7 @@ metadata:
   name: artifactory-pvc
   namespace: artifactory
 spec:
-  storageClassName: "manual"
+  storageClassName: "artifactory"
   volumeName: artifactory-pvc
   accessModes:
     - ReadWriteMany
