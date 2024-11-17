@@ -6,7 +6,7 @@ artifactory:
     replicaCount: 1
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
-    persistance:
+    persistence:
       existingClaim: artifactory-pvc
   nginx:
     enabled: true
