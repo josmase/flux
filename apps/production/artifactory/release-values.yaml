@@ -6,6 +6,8 @@ artifactory:
     replicaCount: 1
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
+    persistance:
+      existingClaim: artifactory
   nginx:
     enabled: true
   ingress:
