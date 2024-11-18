@@ -4,3 +4,9 @@ resources:
   - release.yaml
   - source.yaml
   - namespace.yaml
+
+configMapGenerator:
+  - name: traefik-release-values
+    namespace: traefik
+    files:
+      - values.yaml=release-values.yaml

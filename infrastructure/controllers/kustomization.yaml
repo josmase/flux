@@ -8,3 +8,6 @@ resources:
   #- nfs-subdir
   - longhorn
   - reflector
+
+configurations:
+  - kustomizeconfig.yaml
