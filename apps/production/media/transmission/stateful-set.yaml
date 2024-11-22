@@ -29,6 +29,13 @@ spec:
               mountPath: /config
             - name: shared-storage
               mountPath: /mnt/storage
+          resources:
+            limits:
+              memory: 400Mi
+              cpu: "0.3"
+            requests:
+              memory: 100Mi
+              cpu: "0.1"
       volumes:
         - name: shared-storage
           persistentVolumeClaim:

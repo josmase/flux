@@ -14,9 +14,8 @@ spec:
           image: artifactory.local.hejsan.xyz/docker/corentinth/it-tools:2023.12.21-5ed3693
           resources:
             limits:
-              memory: 512Mi
+              memory: 100Mi
               cpu: "1"
             requests:
-              memory: 256Mi
+              memory: 50Mi
               cpu: "0.2"
-
