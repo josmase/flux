@@ -1,5 +1,13 @@
 module.exports = {
-  autodiscover: true,
+  repositories: [
+    "josmase/flux",
+    "josmase/downloader",
+    "josmase/ansible",
+    "josmase/bloh",
+    "josmase/boplats-map",
+    "josmase/workflows",
+    "josmase/devcontainer-templates",
+  ],
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
   platform: "github",
   requireConfig: "required",
