@@ -32,4 +32,5 @@ $`,
     },
   ],
   forkProcessing: "enabled",
+  extends: ["config:best-practices"],
 };
