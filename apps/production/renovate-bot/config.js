@@ -1,12 +1,12 @@
 module.exports = {
   repositories: [
     "josmase/flux",
-    "josmase/downloader",
-    "josmase/ansible",
-    "josmase/bloh",
-    "josmase/boplats-map",
-    "josmase/workflows",
-    "josmase/devcontainer-templates",
+    //"josmase/downloader",
+    //"josmase/ansible",
+    //"josmase/bloh",
+    //"josmase/boplats-map",
+    //"josmase/workflows",
+    //"josmase/devcontainer-templates",
   ],
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
   platform: "github",
