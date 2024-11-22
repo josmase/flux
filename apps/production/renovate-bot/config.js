@@ -12,11 +12,6 @@ module.exports = {
   platform: "github",
   requireConfig: "required",
   onboarding: true,
-  hostRules: [
-    {
-      matchHost: "https://artifactory.local.hejsan.xyz/docker",
-    },
-  ],
   packageRules: [
     {
       packagePatterns: [
