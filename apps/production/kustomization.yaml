@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - traefik-dashboard
   - downloader
-  - artifactory
+  #- artifactory
   - cloudflare-ddns
   - it-tools
   #- blog
@@ -12,7 +12,7 @@ resources:
   - renovate-bot
   - new-new-boplats
   - monitoring
-  - media
+  #- media
   - longhorn
   - default-app-config.yaml
   - persistence.yaml
