@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - traefik-dashboard
   - downloader
-  #- artifactory
+  - artifactory
   - cloudflare-ddns
   - it-tools
   #- blog
