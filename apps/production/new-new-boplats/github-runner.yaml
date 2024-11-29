@@ -14,7 +14,8 @@ spec:
     runnerScaleSetName: "new-new-boplats"
     githubConfigUrl: "https://github.com/josmase/boplats-map"
     githubConfigSecret: controller-manager
-    maxRunners: 1
+    minRunners: 2
+    maxRunners: 6
     containerMode:
       type: "kubernetes"
     kubernetesModeWorkVolumeClaim:
