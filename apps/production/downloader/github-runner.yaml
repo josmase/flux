@@ -14,8 +14,8 @@ spec:
     runnerScaleSetName: "downloader"
     githubConfigUrl: "https://github.com/josmase/downloader"
     githubConfigSecret: controller-manager
-    minRunners: 1
-    maxRunners: 3
+    minRunners: 3
+    maxRunners: 6
     containerMode:
       type: "kubernetes"
     kubernetesModeWorkVolumeClaim:
