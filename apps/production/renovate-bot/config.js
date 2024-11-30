@@ -12,6 +12,7 @@ module.exports = {
   platform: "github",
   requireConfig: "required",
   onboarding: true,
+  rebaseWhen: "behind-base-branch",
   packageRules: [
     {
       packagePatterns: [
