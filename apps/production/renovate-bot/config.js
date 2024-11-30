@@ -13,7 +13,7 @@ module.exports = {
   requireConfig: "required",
   onboarding: true,
   rebaseWhen: "behind-base-branch",
-  labels: ["dependencies"],
+  labels: ["dependencies", "bot"],
   packageRules: [
     {
       packagePatterns: [
