@@ -1,10 +1,10 @@
 module.exports = {
   repositories: [
     "josmase/flux",
-    //"josmase/downloader",
+    "josmase/downloader",
     "josmase/ansible",
     "josmase/blog",
-    //"josmase/boplats-map",
+    "josmase/boplats-map",
     "josmase/workflows",
     "josmase/devcontainer-templates",
   ],
