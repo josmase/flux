@@ -21,6 +21,7 @@ module.exports = {
       ],
       versioning:
         "regex:^(?<compatibility>version-|v)?(?<major>\\d+)\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?(?:[\\.-]?(?<build>(\\d+-)?(?:ls)?\\d+))?$",
+      automerge: false,
     },
     { matchUpdateTypes: ["minor", "patch", "pin", "digest"], automerge: true },
   ],
