@@ -44,10 +44,6 @@ kind: Middleware
 metadata:
   name: deny-metrics
 spec:
-  http:
-    middlewares:
-      - name: deny-metrics
-        redirectRegex:
-          regex: /metrics
-          replacement: /404
-          permanent: false
+  replacePathRegex:
+    regex: ^/metrics/(.*)
+    replacement: /404
