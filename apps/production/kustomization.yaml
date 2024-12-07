@@ -16,6 +16,7 @@ resources:
   - longhorn
   - default-app-config.yaml
   - persistence.yaml
+  - smart-home
 
 transformers:
   - |-

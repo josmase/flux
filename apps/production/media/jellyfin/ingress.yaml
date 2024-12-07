@@ -15,3 +15,39 @@ spec:
 
   tls:
     secretName: local-hejsan-xyz-tls
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jellyfin.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: http
+      middlewares:
+        - name: deny-metrics
+          namespace: traefik
+
+  tls:
+    secretName: hejsan-xyz-tls
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: deny-metrics
+spec:
+  http:
+    middlewares:
+      - name: deny-metrics
+        redirectRegex:
+          regex: /metrics
+          replacement: /404
+          permanent: false

@@ -16,3 +16,22 @@ spec:
 
   tls:
     secretName: local-hejsan-xyz-tls
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: it-tools
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`it-tools.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: it-tools
+          port: http
+
+  tls:
+    secretName: hejsan-xyz-tls
