@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: sonarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/sonarr:5.14@sha256:df3c854a38dcc001f2b87cf44a101d9da52cb22c22dcbaf135f825d9c9d0a844
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/sonarr:4.0.11
           ports:
             - containerPort: 8989
               name: http
