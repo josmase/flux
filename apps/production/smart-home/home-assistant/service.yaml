@@ -9,4 +9,4 @@ spec:
   ports:
     - name: http
       port: 8123
-  externalName: media.local.hejsan.xyz
+  externalName: 192.168.1.105
