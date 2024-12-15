@@ -2,7 +2,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: new-new-boplats-frontend
+  name: new-new-boplats-web
 spec:
   replicas: 3
   progressDeadlineSeconds: 600
@@ -11,12 +11,12 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: new-new-boplats-frontend
+      app: new-new-boplats-web
   template:
     spec:
       containers:
-        - name: new-new-boplats-frontend
-          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-frontend:0.0.1
+        - name: new-new-boplats-web
+          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-web:0.0.1
           env:
             - name: API_URL
               value: /api
