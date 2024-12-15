@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: renovate
-              image: artifactory.local.hejsan.xyz/docker/renovate/renovate:39.42.1@sha256:a8afe4f0b2041c45668975ea8d357d1ddea01112eb5273d272991104e288d3aa
+              image: artifactory.local.hejsan.xyz/docker/renovate/renovate:39.69.1@sha256:ce003045e6b5f7d5c265e93070439844c1f2d64a33efe32c90e490c9332d0051
               volumeMounts:
                 - mountPath: /usr/src/app/
                   name: config
