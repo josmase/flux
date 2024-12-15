@@ -19,7 +19,7 @@ spec:
           db: new-new-boplats
         - name: userAdminAnyDatabase
           db: new-new-boplats
-      scramCredentialsSecretName: my-scram
+      scramCredentialsSecretName: new-new-boplats-api-scram
     - name: new-new-boplats-scraper-user
       db: new-new-boplats
       passwordSecretRef:
@@ -29,6 +29,6 @@ spec:
           db: new-new-boplats
         - name: userAdminAnyDatabase
           db: new-new-boplats
-      scramCredentialsSecretName: my-scram
+      scramCredentialsSecretName: new-new-boplats-scraper-scram
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib
