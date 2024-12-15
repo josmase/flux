@@ -11,4 +11,4 @@ resources:
 labels:
   - includeSelectors: true
     pairs:
-      app: new-new-boplats
+      app_group: new-new-boplats
