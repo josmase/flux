@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: new-new-boplats-api
-          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-api:0.0.3
+          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-api:v0.0.8
           env:
             - name: "DB_URI"
               valueFrom:
@@ -30,4 +30,3 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-
