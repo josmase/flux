@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - api
-  - frontend
+  - web
   - scraper
   - database
   - github-runner.yaml
