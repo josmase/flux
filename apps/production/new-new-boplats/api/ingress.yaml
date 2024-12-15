@@ -13,8 +13,8 @@ spec:
       services:
         - name: new-new-boplats-api
           port: http
-
-        - name: strip-api-prefix
+          middleware:
+            - name: strip-api-prefix
   tls:
     secretName: local-hejsan-xyz-tls
 

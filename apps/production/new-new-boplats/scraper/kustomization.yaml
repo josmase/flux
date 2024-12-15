@@ -3,3 +3,7 @@ kind: Kustomization
 
 resources:
   - cron.yaml
+labels:
+  - includeSelectors: true
+    pairs:
+      app: new-new-boplats-scraper
