@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: mongodb
         namespace: flux-system
-    interval: 1m
+      interval: 1m
   upgrade:
     crds: CreateReplace
   install:
