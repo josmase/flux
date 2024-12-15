@@ -20,3 +20,6 @@ spec:
   targetNamespace: mongodb
   upgrade:
     crds: CreateReplace
+  valuesFrom:
+    - kind: ConfigMap
+      name: mongodb-operator-release-values

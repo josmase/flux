@@ -4,3 +4,8 @@ resources:
   - namespace.yaml
   - release.yaml
   - source.yaml
+configMapGenerator:
+  - name: mongodb-operator-release-values
+    namespace: mongodb
+    files:
+      - values.yaml=release-values.yaml
