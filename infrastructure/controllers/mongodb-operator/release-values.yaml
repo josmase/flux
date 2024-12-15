@@ -1,2 +1,2 @@
 operator:
-  watchNamespace: "*"
+  watchNamespace: "default"

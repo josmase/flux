@@ -3,10 +3,10 @@ kind: Kustomization
 resources:
   - release.yaml
   - source.yaml
-  - namespace.yaml
+  # - namespace.yaml
 
 configMapGenerator:
   - name: mongodb-operator-release-values
-    namespace: mongodb
+    namespace: default
     files:
       - values.yaml=release-values.yaml
