@@ -29,7 +29,7 @@ spec:
               mountPath: /etc/headscale
             - name: headscale-data-pvc
               mountPath: /var/lib/headscale
-          command: ["headscale", "serve"]
+          command: ["serve"]
           resources:
             limits:
               memory: 800Mi
