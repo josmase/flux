@@ -6,7 +6,7 @@ resources:
   - ingress.yaml
   - service.yaml
 configMapGenerator:
-  - name: headscale-bot-config
+  - name: headscale-config
     files:
       - config.yaml=config.yaml
 labels:
