@@ -30,18 +30,18 @@ spec:
             - name: headscale-data-pvc
               mountPath: /var/lib/headscale
           command: ["serve"]
-          resources:
-            limits:
-              memory: 800Mi
-              cpu: "1"
-            requests:
-              memory: 500Mi
-              cpu: "0.1"
-          volumes:
-           - name: config
-             configMap:
-               defaultMode: 420
-               name: headscale-config
+      resources:
+        limits:
+          memory: 800Mi
+          cpu: "1"
+        requests:
+          memory: 500Mi
+          cpu: "0.1"
+      volumes:
+         - name: config
+           configMap:
+             defaultMode: 420
+             name: headscale-config
   volumeClaimTemplates:
     - metadata:
         name: headscale-data-pvc
