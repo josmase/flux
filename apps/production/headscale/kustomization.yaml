@@ -5,7 +5,10 @@ resources:
   - stateful-set.yaml
   - ingress.yaml
   - service.yaml
-
+configMapGenerator:
+  - name: headscale-bot-config
+    files:
+      - config.yaml=config.yaml
 labels:
   - includeSelectors: true
     pairs:
