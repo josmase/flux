@@ -25,7 +25,7 @@ spec:
             - configMapRef:
                 name: default-app-config
           volumeMounts:
-            - name: headscale-config
+            - name: config
               mountPath: /etc/headscale
             - name: headscale-data-pvc
               mountPath: /var/lib/headscale
