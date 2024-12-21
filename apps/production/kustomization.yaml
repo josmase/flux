@@ -17,6 +17,7 @@ resources:
   - default-app-config.yaml
   - persistence.yaml
   - smart-home
+  - headscale
 
 transformers:
   - |-
