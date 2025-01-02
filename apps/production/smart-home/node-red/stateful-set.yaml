@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: node-red
+spec:
+  serviceName: node-red
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: node-red
+  template:
+    metadata:
+      labels:
+        app: node-red
+    spec:
+      containers:
+        - name: node-red
+          image: artifactory.local.hejsan.xyz/docker/nodered/node-red:4.0.8-20
+          ports:
+            - containerPort: 1880
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: node-red-data-pvc
+              mountPath: /data
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: "1"
+            requests:
+              memory: 320Mi
+              cpu: "0.1"
+  volumeClaimTemplates:
+    - metadata:
+        name: node-red-data-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 1Gi
