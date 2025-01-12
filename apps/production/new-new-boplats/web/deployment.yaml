@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: new-new-boplats-web
-          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-web:v0.0.11@sha256:821262056fc1e848b49c43551cfa32531be2ca32aa3eb243c63082c606901180
+          image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-web:v0.0.11@sha256:6613353b1d14ed1798605ab3978af681b223414faf22987452560f774a0c6b23
           env:
             - name: API_URL
               value: /api
