@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bazarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/bazarr:1.5.1
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/bazarr:1.5.1@sha256:88272d031e268a5d10035e2707fc095417dba9794a7a4a59b51f01e6f9b74f65
           ports:
             - containerPort: 6767
               name: http
