@@ -5,4 +5,4 @@ namespace: smart-home
 resources:
   - namespace.yaml
   - home-assistant
-  - node-red
+#  - node-red
