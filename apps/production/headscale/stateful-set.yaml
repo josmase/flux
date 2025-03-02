@@ -30,13 +30,13 @@ spec:
             - name: headscale-data-pvc
               mountPath: /var/lib/headscale
           command: ["headscale", "serve"]
-      resources:
-        limits:
-          memory: 800Mi
-          cpu: "1"
-        requests:
-          memory: 500Mi
-          cpu: "0.1"
+          resources:
+            limits:
+              memory: 800Mi
+              cpu: "1"
+            requests:
+              memory: 500Mi
+              cpu: "0.1"
       volumes:
         - name: config
           configMap:
