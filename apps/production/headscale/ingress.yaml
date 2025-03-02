@@ -12,6 +12,11 @@ spec:
       services:
         - name: headscale
           port: http
+    - match: Host(`headscale.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: headscale
+          port: http
 
   tls:
     secretName: local-hejsan-xyz-tls
