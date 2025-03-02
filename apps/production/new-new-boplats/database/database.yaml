@@ -17,6 +17,10 @@ spec:
       roles:
         - name: readAnyDatabase
           db: new-new-boplats
+        - name: clusterAdmin
+          db: new-new-boplats
+        - name: userAdminAnyDatabase
+          db: new-new-boplats
       scramCredentialsSecretName: new-new-boplats-api-scram
     - name: new-new-boplats-scraper-user
       db: new-new-boplats
@@ -24,6 +28,10 @@ spec:
         name: new-new-boplats-scraper-user-password
       roles:
         - name: readWriteAnyDatabase
+          db: new-new-boplats
+        - name: clusterAdmin
+          db: new-new-boplats
+        - name: userAdminAnyDatabase
           db: new-new-boplats
       scramCredentialsSecretName: new-new-boplats-scraper-scram
   additionalMongodConfig:
