@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: headscale
-          image: artifactory.local.hejsan.xyz/docker/headscale/headscale:v0.25.1@sha256:a7a8ae9616bb964a3eed8101ebb020213f73668142a84806ec37a5eeb2c1fceb
+          image: artifactory.local.hejsan.xyz/docker/headscale/headscale:v0.25.1-debug
           ports:
             - containerPort: 8080
               name: http
@@ -38,10 +38,10 @@ spec:
           memory: 500Mi
           cpu: "0.1"
       volumes:
-         - name: config
-           configMap:
-             defaultMode: 420
-             name: headscale-config
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: headscale-config
   volumeClaimTemplates:
     - metadata:
         name: headscale-data-pvc
