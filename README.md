@@ -12,6 +12,22 @@ This repository contains configurations for deploying applications to a Kubernet
 
 > **Note:** This repository includes a devcontainer with pre-configured tools (`kubectl`, `flux`, etc.), eliminating the need for local installations.
 
+## Prerequisites for Using the Devcontainer
+
+### SSH Key Setup
+
+1. **Configure SSH agent in your host shell**  
+   Add to your shell profile (`.bash_profile`, `.zshenv`, etc.):
+   ```bash
+   # Start SSH agent
+   if [ -z "$SSH_AUTH_SOCK" ]; then
+     eval "$(ssh-agent -s)"
+     ssh-add
+   fi
+   ```
+
+2. **Rebuild container** using VS Code command palette: "Remote-Containers: Rebuild Container"
+
 ## Setup and Execution
 
 > **Note:** You need to create a Personal Access Token (PAT) with full repository access. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and generate a new token with the `repo` scope selected.

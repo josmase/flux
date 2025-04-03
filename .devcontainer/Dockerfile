@@ -1,4 +1,4 @@
-FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 # Define default values for tools, empty values means that they lead to the latest available version being used.
 ARG K8S_VERSION=""
@@ -6,7 +6,7 @@ ARG K9S_VERSION=""
 ARG FLUX_VERSION=""
 ARG SOPS_VERSION=""
 ARG AGE_VERSION=""
-ARG YG_VERSION=""
+ARG YQ_VERSION=""
 ARG KUSTOMIZE_VERSION=""
 ARG KUBECONFORM_VERSION=""
 
@@ -14,24 +14,20 @@ ENV DEFAULT_USER=developer
 ENV DEFAULT_USER_HOME=/home/${DEFAULT_USER}
 
 # Install necessary packages
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     curl \
     git \
-    zsh \
+    bash \
     unzip \
-    build-base
+    build-essential \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create default user
-RUN adduser -D ${DEFAULT_USER}
+RUN useradd -m ${DEFAULT_USER}
 USER ${DEFAULT_USER}
 WORKDIR ${DEFAULT_USER_HOME}
-
-# Set Zsh as default shell
-SHELL ["/bin/zsh", "-c"]
-
-# Install Oh My Zsh
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 USER root
 
@@ -51,14 +47,12 @@ RUN install_from_github.sh fluxcd/flux2 flux_VERSION_linux_amd64.tar.gz flux $FL
 
 # Install secret generators and managers
 ## Install sops
-RUN install_from_github.sh getsops/sops  sops-vVERSION.linux.amd64 sops $SOPS_VERSION
-RUN apk add --no-cache \
-    age${AGE_VERSION:=$AGE_VERSION}
+RUN install_from_github.sh getsops/sops sops-vVERSION.linux.amd64 sops $SOPS_VERSION
+RUN install_from_github.sh FiloSottile/age  age-vVERSION-linux-amd64.tar.gz age $AGE_VERSION
 
 # Install validation requirements
-RUN apk add --no-cache \
-    yq${YG_VERSION:=$YG_VERSION} \
-    kustomize${KUSTOMIZE_VERSION:=$KUSTOMIZE_VERSION} 
+RUN install_from_github.sh mikefarah/yq  yq_linux_amd64.tar.gz  yq $YQ_VERSION
+RUN install_from_github.sh kubernetes-sigs/kustomize kustomize_vVERSION_linux_amd64.tar.gz kustomize $KUSTOMIZE_VERSION
 
 ## Install kubeconform
 RUN install_from_github.sh yannh/kubeconform kubeconform-linux-amd64.tar.gz kubeconform $KUBECONFORM_VERSION

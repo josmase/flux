@@ -1,25 +1,17 @@
 {
   "name": "Flux",
   "dockerFile": "Dockerfile",
-  "remoteUser": "developer",
   "mounts": [
-    {
-      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.ssh",
-      "target": "/home/developer/.ssh",
-      "type": "bind"
-    },
     {
       "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config",
       "target": "/home/developer/.kube/config",
       "type": "bind"
-    },
-    {
-      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history",
-      "target": "/home/developer/.zsh_history",
-      "type": "bind"
     }
   ],
-  "postAttachCommand": "zsh",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers-extra/features/zsh-plugins:0": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
