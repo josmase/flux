@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 usage() {
     echo "[INFO] Usage: $0 <owner/repo> <archive_name> <package> [version]"
@@ -86,7 +86,7 @@ install_package() {
     local archive_name=$2
     local temp_folder="/tmp/${package}_temp"
 
-    echo "[INFO] Installing package: $package"
+    echo "[INFO] Installing package: $package from $archive_name"
 
     if [ -f "$archive_name" ] && [[ "$archive_name" == *.tar.gz ]]; then
         echo "[INFO] Extracting $archive_name to $temp_folder"
