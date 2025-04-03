@@ -1,7 +1,10 @@
 #!/bin/bash
 
+echoerr() { echo "[ERROR] $@" 1>&2; }
+echoinfo() { echo "[INFO] $@"; }
+
 usage() {
-    echo "[INFO] Usage: $0 <owner/repo> <archive_name> <package> [version]"
+    echoinfo "[INFO] Usage: $0 <owner/repo> <archive_name> <package> [version]"
 }
 
 validate_args() {
@@ -15,13 +18,13 @@ validate_args() {
     package=$3
     version=$4
 
-    echo "[INFO] Owner/Repo: $owner_repo"
-    echo "[INFO] Archive Name: $archive_name"
-    echo "[INFO] Package: $package"
-    echo "[INFO] Version: ${version:-Latest}"
+    echoinfo "Owner/Repo: $owner_repo"
+    echoinfo "Archive Name: $archive_name"
+    echoinfo "Package: $package"
+    echoinfo "Version: ${version:-Latest}"
 
     if [ -z "$owner_repo" ] || [ -z "$archive_name" ] || [ -z "$package" ]; then
-        echo "[ERROR] Owner/repo, archive_name, and package must not be empty."
+        echoerr "Owner/repo, archive_name, and package must not be empty."
         exit 1
     fi
 }
@@ -30,7 +33,7 @@ fetch_archive() {
     local url="$1"
     local filename="$2"
 
-    echo "[INFO] Downloading: $url"
+    echoinfo "Downloading: $url"
 
     http_status=$(curl -s -w "%{http_code}" -o "$filename" -L "$url")
     
@@ -40,14 +43,14 @@ fetch_archive() {
     fi
 
     if [ "$http_status" -ne 200 ]; then
-        echo "[ERROR] Download failed: $url (HTTP $http_status)"
+        echoerr "Download failed: $url (HTTP $http_status)"
         rm -f "$filename"
-        echo "[INFO] Removed partial file: $filename"
+        echoinfo "Removed partial file: $filename"
         return 1
     fi
 
     if [ -f "$filename" ]; then
-        echo "[INFO] Download successful: $url"
+        echoinfo "Download successful: $url"
         return 0
     else
         return 1
@@ -57,15 +60,8 @@ fetch_archive() {
 download_archive() {
     local owner_repo=$1
     local archive_name=$2
-    local version=$3
-
-    echo "[INFO] Resolving download URL for version: $version"
-
-    local version_prefix=$(curl -sL "https://api.github.com/repos/${owner_repo}/releases/latest" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4 | sed -E 's/([^0-9]*)[0-9]+\.[0-9]+\.[0-9]+/\1/')
-    local version_without_prefix=$(echo "$version" | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-
-    echo "[INFO] Version Prefix: '${version_prefix}'"
-    echo "[INFO] Version Without Prefix: '${version_without_prefix}'"
+    local version_prefix=$3
+    local version_without_prefix$4
 
     local archive_url="https://github.com/$owner_repo/releases/download/${version_prefix}$version/$archive_name"
     if fetch_archive "$archive_url" "$archive_name"; then
@@ -77,7 +73,7 @@ download_archive() {
         return 0
     fi
 
-    echo "[ERROR] Download failed for $archive_name"
+    echoerr "Download failed for $archive_name"
     exit 1
 }
 
@@ -86,48 +82,59 @@ install_package() {
     local archive_name=$2
     local temp_folder="/tmp/${package}_temp"
 
-    echo "[INFO] Installing package: $package from $archive_name"
+    echoinfo "Installing package: $package from $archive_name"
 
     if [ -f "$archive_name" ] && [[ "$archive_name" == *.tar.gz ]]; then
-        echo "[INFO] Extracting $archive_name to $temp_folder"
+        echoinfo "Extracting $archive_name to $temp_folder"
         mkdir -p "$temp_folder"
         tar -zxvf "$archive_name" -C "$temp_folder"
 
-        echo "[INFO] Removing unnecessary files"
+        echoinfo "Removing unnecessary files"
         find "$temp_folder" \( -name "LICENSE*" -o -name "README*" \) -exec rm -f {} +
 
-        echo "[INFO] Setting executable permissions"
+        echoinfo "Setting executable permissions"
         chmod +x "$temp_folder"/*
 
-        echo "[INFO] Moving files to /usr/local/bin/"
+        echoinfo "Moving files to /usr/local/bin/"
         find "$temp_folder" -maxdepth 1 -mindepth 1 -exec mv -t /usr/local/bin/ {} +
 
-        echo "[INFO] Removing temporary folder: $temp_folder"
+        echoinfo "Removing temporary folder: $temp_folder"
         rm -r "$temp_folder"
 
-        echo "[INFO] Removing archive: $archive_name"
+        echoinfo "Removing archive: $archive_name"
         rm "$archive_name"
     else
-        echo "[INFO] Moving binary to /usr/local/bin/"
+        echoinfo "Moving binary to /usr/local/bin/"
         chmod +x "$archive_name"
         mv "$archive_name" "/usr/local/bin/$package"
     fi
 
-    echo "[INFO] Installation complete: $package"
+    echoinfo "Installation complete: $package"
 }
 
 main() {
     validate_args "$@"
 
     if [ -z "$version" ]; then
-        echo "[INFO] Fetching latest version"
-        version=$(curl -sL "https://api.github.com/repos/${owner_repo}/releases/latest" | sed -nE 's/.*"tag_name": *"[^0-9]*([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p')
-        echo "[INFO] Latest version resolved: $version"
+            release_data=$(curl -sL "https://api.github.com/repos/${owner_repo}/releases/latest")
+            
+            if echo "$release_data" | grep -q 'API rate limit exceeded'; then
+                echoerr "API rate limit exceeded. Please authenticate to increase the rate limit."
+                exit 1
+            fi
+
+            echo $release_data
+
+            local version_prefix=$(echo "$release_data" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4 | sed -E 's/([^0-9]*)[0-9]+\.[0-9]+\.[0-9]+/\1/')
+            local version_without_prefix=$(echo "$version" | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
+            echoinfo "Version Prefix: '${version_prefix}'"
+            echoinfo "Version Without Prefix: '${version_without_prefix}'"
     fi
 
-    archive_name=$(echo "$archive_name" | sed "s/VERSION/$version/g")
+    archive_name=$(echo "$archive_name" | sed "s/VERSION/$version_without_prefix/g")
 
-    download_archive "$owner_repo" "$archive_name" "$version"
+    download_archive "$owner_repo" "$archive_name" "$version_prefix" "$version_without_prefix"
     install_package "$package" "$archive_name"
 }
 
