@@ -1,10 +1,11 @@
 #!/bin/bash
 
-echoerr() { echo "[ERROR] $@" 1>&2; }
-echoinfo() { echo "[INFO] $@"; }
+echoerr() { echo "$(/bin/date +%S.%3N) [ERROR] $@" 1>&2; }
+echoinfo() { echo "$(/bin/date +%S.%3N) [INFO] $@"; }
+echowarn() { echo "$(/bin/date +%S.%3N) [WARN] $@"; }
 
 usage() {
-    echoinfo "[INFO] Usage: $0 <owner/repo> <archive_name> <package> [version]"
+    echoinfo "Usage: $0 <owner/repo> <archive_name> <package> [version]"
 }
 
 validate_args() {
@@ -38,7 +39,7 @@ fetch_archive() {
     http_status=$(curl -s -w "%{http_code}" -o "$filename" -L "$url")
     
     if [ "$http_status" -eq 404 ]; then
-        echo "[WARN] File not found: $url"
+        echowarn "File not found: $url"
         return 1
     fi
 
@@ -60,15 +61,10 @@ fetch_archive() {
 download_archive() {
     local owner_repo=$1
     local archive_name=$2
-    local version_prefix=$3
-    local version_without_prefix$4
+    local version_tag=$3
 
-    local archive_url="https://github.com/$owner_repo/releases/download/${version_prefix}$version/$archive_name"
-    if fetch_archive "$archive_url" "$archive_name"; then
-        return 0
-    fi
-
-    archive_url="https://github.com/$owner_repo/releases/download/$version_without_prefix/$archive_name"
+    # First attempt - download with the complete tag
+    local archive_url="https://github.com/$owner_repo/releases/download/$version_tag/$archive_name"
     if fetch_archive "$archive_url" "$archive_name"; then
         return 0
     fi
@@ -114,27 +110,59 @@ install_package() {
 
 main() {
     validate_args "$@"
-
+    
+    owner_repo=$1
+    archive_name=$2
+    package=$3
+    version=$4
+    
     if [ -z "$version" ]; then
-            release_data=$(curl -sL "https://api.github.com/repos/${owner_repo}/releases/latest")
-            
-            if echo "$release_data" | grep -q 'API rate limit exceeded'; then
-                echoerr "API rate limit exceeded. Please authenticate to increase the rate limit."
-                exit 1
-            fi
+        echoinfo "No version specified, fetching latest release information"
+        release_data=$(curl -sL "https://api.github.com/repos/${owner_repo}/releases/latest")
+        
+        if echo "$release_data" | grep -q 'API rate limit exceeded'; then
+            echoerr "API rate limit exceeded. Please authenticate to increase the rate limit."
+            exit 1
+        fi
 
-            echo $release_data
+        # Extract the full tag name directly
+        tag_name=$(echo "$release_data" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+        
+        if [ -z "$tag_name" ]; then
+            echoerr "Could not extract tag_name from GitHub API response"
+            exit 1
+        fi
+        
+        echoinfo "Latest release tag: $tag_name"
 
-            local version_prefix=$(echo "$release_data" | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4 | sed -E 's/([^0-9]*)[0-9]+\.[0-9]+\.[0-9]+/\1/')
-            local version_without_prefix=$(echo "$version" | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-
-            echoinfo "Version Prefix: '${version_prefix}'"
-            echoinfo "Version Without Prefix: '${version_without_prefix}'"
+        # Extract version number for replacement in archive name
+        version_number=$(echo "$tag_name" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        echoinfo "Version number: $version_number"
+        
+        # Replace VERSION in archive name with the extracted version number
+        if [ -n "$version_number" ]; then
+            archive_name=$(echo "$archive_name" | sed "s/VERSION/$version_number/g")
+        fi
+        
+        # Use the full tag for the download URL
+        version_tag=$tag_name
+    else
+        # If version is manually specified
+        version_tag=$version
+        
+        # Try to extract numeric part if version starts with non-numeric chars (like 'v')
+        version_number=$(echo "$version" | sed -E 's/^[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        
+        # Replace VERSION in archive name if needed
+        if [ -n "$version_number" ]; then
+            archive_name=$(echo "$archive_name" | sed "s/VERSION/$version_number/g")
+        fi
     fi
+    
+    echoinfo "Using version tag: $version_tag"
+    echoinfo "Using archive name: $archive_name"
 
-    archive_name=$(echo "$archive_name" | sed "s/VERSION/$version_without_prefix/g")
-
-    download_archive "$owner_repo" "$archive_name" "$version_prefix" "$version_without_prefix"
+    download_archive "$owner_repo" "$archive_name" "$version_tag"
     install_package "$package" "$archive_name"
 }
 
