@@ -3,8 +3,8 @@
   "dockerFile": "Dockerfile",
   "mounts": [
     {
-      "source": "${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config",
-      "target": "/home/developer/.kube/config",
+      "source": "${localEnv:HOME}/.kube",
+      "target": "${localWorkspaceFolder}/.kube",
       "type": "bind"
     }
   ],
@@ -22,5 +22,8 @@
         "ms-azuretools.vscode-docker"
       ]
     }
+  },
+  "containerEnv": {
+    "KUBECONFIG": "${localWorkspaceFolder}/.kube/config"
   }
 }
