@@ -26,5 +26,19 @@ spec:
         - name: readWrite
           db: new-new-boplats
       scramCredentialsSecretName: new-new-boplats-scraper-scram
+    - name: new-new-boplats-admin-user
+      db: admin
+      passwordSecretRef:
+        name: new-new-boplats-admin-password
+      roles:
+        - name: userAdminAnyDatabase
+          db: admin
+        - name: readWriteAnyDatabase
+          db: admin
+        - name: clusterAdmin
+          db: admin
+        - name: dbAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: new-new-boplats-admin-scram
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-new-boplats-mongo-express
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: new-new-boplats-mongo-express
+  template:
+    metadata:
+      labels:
+        app: new-new-boplats-mongo-express
+    spec:
+      containers:
+        - name: mongo-express
+          image: mongo-express:1.0.2-20-alpine3.19
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ME_CONFIG_MONGODB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: new-new-boplats-database-new-new-boplats-new-new-boplats-admin-user
+                  key: connectionString.standard
+            - name: ME_CONFIG_BASICAUTH_USERNAME
+              value: "admin"
+            - name: ME_CONFIG_BASICAUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-express-basic-auth
+                  key: password
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"

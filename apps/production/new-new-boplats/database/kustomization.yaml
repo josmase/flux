@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - database.yaml
   - secret.yaml
+  - admin
