@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: new-new-boplats-scraoer
-              image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-scraper:v0.0.16@sha256:1aaff286c2891ea2f9a2802855c4a97d6eac738496e4fc0f05150cb372da7b3a
+              image: artifactory.local.hejsan.xyz/docker/josmase/new-new-boplats-scraper:v0.0.16@sha256:6343d7d16f87068bc811e54109be4365102d694da9334c672a1e64be02e6f683
               env:
                 - name: "DB_URI"
                   valueFrom:
