@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
+    - match: Host(`new-new-boplats.hejsan.xyz`) && PathPrefix(`/api`)
       kind: Rule
       services:
         - name: new-new-boplats-api
