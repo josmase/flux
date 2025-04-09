@@ -3,7 +3,24 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: new-new-boplats-api
-
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: new-new-boplats-api
+          port: http
+      middlewares:
+        - name: strip-api-prefix
+  tls:
+    secretName: local-hejsan-xyz-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: new-new-boplats-api-external
 spec:
   entryPoints:
     - websecure
@@ -16,7 +33,7 @@ spec:
       middlewares:
         - name: strip-api-prefix
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: hejsan-xyz-tls
 
 ---
 apiVersion: traefik.io/v1alpha1
