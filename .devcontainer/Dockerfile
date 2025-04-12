@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04@sha256:06bd8d1c54fe699aa9b25eb90e2948637a1af2fd35d6284f661d3aeb6eb29b7b
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04@sha256:94995b41dcfcfd9f12de62793546ace86417b846913ad0a23daa1abc51630890
 
 # Define default values for tools, empty values means that they lead to the latest available version being used.
 ARG K8S_VERSION=""
