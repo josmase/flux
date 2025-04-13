@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
+    - match: Host(`new-new-boplats.local.hejsan.xyz`) && PathPrefix(`/api`) || Host(`nya-nya-boplats.local.hejsan.xyz`) && PathPrefix(`/api`)
       kind: Rule
       services:
         - name: new-new-boplats-api
@@ -25,7 +25,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`new-new-boplats.hejsan.xyz`) && PathPrefix(`/api`)
+    - match: Host(`new-new-boplats.hejsan.xyz`) && PathPrefix(`/api`) || Host(`nya-nya-boplats.hejsan.xyz`) && PathPrefix(`/api`)
       kind: Rule
       services:
         - name: new-new-boplats-api
