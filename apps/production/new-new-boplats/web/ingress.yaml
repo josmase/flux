@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`new-new-boplats.local.hejsan.xyz`)
+    - match: Host(`new-new-boplats.local.hejsan.xyz`) || Host(`nya-nya-boplats.local.hejsan.xyz`)
       kind: Rule
       services:
         - name: new-new-boplats-web
@@ -27,7 +27,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`new-new-boplats.hejsan.xyz`)
+    - match: Host(`new-new-boplats.hejsan.xyz`) || Host(`nya-nya-boplats.hejsan.xyz`)
       kind: Rule
       services:
         - name: new-new-boplats-web
