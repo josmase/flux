@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: new-new-boplats-scraper
 spec:
-  schedule: "1 * * * *"
+  schedule: "0 8 * * *"
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
