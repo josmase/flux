@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cleanuperr
+spec:
+  serviceName: cleanuperr
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: cleanuperr
+  template:
+    metadata:
+      labels:
+        app: cleanuperr
+    spec:
+      containers:
+        - name: cleanuperr
+          image: ghcr.io/flmorg/cleanuperr:latest
+          envFrom:
+            - configMapRef:
+                name: cleanuperr-config
+            - secretRef:
+                name: cleanuperr-secrets
+            - name: shared-storage
+              subpath: downloads
+              mountPath: /downloads
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "0.5"
+            requests:
+              memory: 256Mi
+              cpu: "0.1"
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc

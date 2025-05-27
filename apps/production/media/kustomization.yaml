@@ -9,4 +9,4 @@ resources:
   - sonarr
   - transmission
   - jellyfin
- # - plex
+  - cleanuperr
