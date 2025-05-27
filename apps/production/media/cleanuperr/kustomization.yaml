@@ -13,4 +13,4 @@ labels:
 configMapGenerator:
   - name: cleanuperr-config
     envs:
-      - config.yaml
+      - .env
