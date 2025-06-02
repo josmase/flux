@@ -51,7 +51,8 @@ RUN install_from_github.sh getsops/sops sops-vVERSION.linux.amd64 sops $SOPS_VER
 RUN install_from_github.sh FiloSottile/age  age-vVERSION-linux-amd64.tar.gz age $AGE_VERSION
 
 # Install validation requirements
-RUN install_from_github.sh mikefarah/yq  yq_linux_amd64.tar.gz  yq $YQ_VERSION
+RUN install_from_github.sh mikefarah/yq  yq_linux_amd64.tar.gz  yq $YQ_VERSION \
+    && mv /usr/local/bin/yq_linux_amd64 /usr/local/bin/yq 
 RUN install_from_github.sh kubernetes-sigs/kustomize kustomize_vVERSION_linux_amd64.tar.gz kustomize $KUSTOMIZE_VERSION
 
 ## Install kubeconform
