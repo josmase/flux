@@ -25,7 +25,7 @@ spec:
                 name: cleanuperr-secrets
           volumeMounts:
             - name: shared-storage
-              subpath: downloads
+              subPath: downloads
               mountPath: /downloads
           resources:
             limits:
