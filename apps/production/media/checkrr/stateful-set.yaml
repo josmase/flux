@@ -36,8 +36,7 @@ spec:
             - sh
             - -c
             - |
-              mkdir -p /checkrr-config && touch /checkrr-config/badFiles.csv
-              echo "Listing /checkrr-config:"
+              mkdir -p /checkrr-config && touch /checkrr-config/badfiles.csv
           volumeMounts:
             - name: checkrr-config-pvc
               mountPath: /checkrr-config
