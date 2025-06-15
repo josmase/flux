@@ -15,6 +15,13 @@ spec:
       labels:
         app: checkrr
     spec:
+      initContainers:
+        - name: init-checkrr-db
+          image: busybox
+          command: ["sh", "-c", "mkdir -p /checkrr-config/database && touch /checkrr-config/database/checkrr.db"]
+          volumeMounts:
+            - name: checkrr-config-pvc
+              mountPath: /checkrr-config
       containers:
         - name: checkrr
           image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4
