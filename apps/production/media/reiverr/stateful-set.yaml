@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: reiverr
-          image: artifactory.local.hejsan.xyz/docker/aleksilassila/reiverr:2.2.0
+          image: artifactory.local.hejsan.xyz/docker/aleksilassila/reiverr:v2.2.0
           ports:
             - containerPort: 9494
               name: http
