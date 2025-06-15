@@ -14,4 +14,4 @@ labels:
 secretGenerator:
   - name: checkrr-config
     files:
-      - config.yaml
+      - config.yaml=config.yaml

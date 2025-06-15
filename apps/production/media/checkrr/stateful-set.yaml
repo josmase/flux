@@ -31,7 +31,7 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage
             - name: checkrr-config-pvc
-              mountPath: /checkrr/
+              mountPath: /checkrr-config/
           resources:
             limits:
               memory: 500Mi
