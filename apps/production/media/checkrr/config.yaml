@@ -1,0 +1,45 @@
+lang: "en-us"
+checkrr:
+  checkpath:
+    - "/mnt/storage/files/movies/"
+    - "/mnt/storage/files/series/"
+  database: /checkrr/database/checkrr.db
+  debug: true
+  csvfile: " /checkrr/badfiles.csv"
+  cron: "@daily"
+  ignorehidden: true
+  requireaudio: true
+  removelang:
+    - unknown
+  ignoreexts:
+    - .txt
+    - .nfo
+    - .nzb
+    - .url
+logs:
+  stdout:
+    out: stdout
+    formatter: default
+arr:
+  radarr:
+    process: false
+    service: radarr
+    address: "radarr.local.hejsan.xyz"
+    apikey: ""
+    baseurl: /
+    port: 443
+    ssl: true
+  sonarr:
+    process: false
+    service: sonarr
+    address: "sonarr.local.hejsan.xyz"
+    apikey: ""
+    baseurl: /
+    port: 443
+    ssl: true
+webserver:
+  port: 8585
+  tls: false
+  baseurl: "/"
+  trustedproxies:
+    - 127.0.0.1

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkrr
+spec:
+  selector:
+    app: checkrr
+  ports:
+    - name: http
+      targetPort: 8585
+      port: 8585

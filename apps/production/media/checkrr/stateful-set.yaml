@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: checkrr
+spec:
+  serviceName: checkrr
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: checkrr
+  template:
+    metadata:
+      labels:
+        app: checkrr
+    spec:
+      containers:
+        - name: checkrr
+          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4
+          ports:
+            - containerPort: 8585
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: checkrr-config-volume
+              mountPath: /etc/checkrr.yaml
+              subPath: config.yaml
+            - name: shared-storage
+              mountPath: /mnt/storage
+            - name: checkrr-config-pvc
+              mountPath: /checkrr/
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: "1"
+            requests:
+              memory: 320Mi
+              cpu: "0.1"
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+        - name: checkrr-config-volume
+          secret:
+            secretName: checkrr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: checkrr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 5Gi

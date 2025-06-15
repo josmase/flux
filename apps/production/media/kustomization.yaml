@@ -3,10 +3,11 @@ kind: Kustomization
 
 resources:
   - bazarr
- # - overseerr
+  # - overseerr
   - prowlarr
   - radarr
   - sonarr
   - transmission
   - jellyfin
   - cleanuperr
+  - checkrr
