@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ingress.yaml
+  - secret.yaml
   - service.yaml
   - stateful-set.yaml
 
@@ -10,8 +11,3 @@ labels:
   - includeSelectors: true
     pairs:
       app: checkrr
-
-secretGenerator:
-  - name: checkrr-config
-    files:
-      - config.yaml=config.yaml
