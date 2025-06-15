@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: reiverr
+spec:
+  serviceName: reiverr
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reiverr
+  template:
+    metadata:
+      labels:
+        app: reiverr
+    spec:
+      containers:
+        - name: reiverr
+          image: artifactory.local.hejsan.xyz/docker/aleksilassila/reiverr:2.2.0
+          ports:
+            - containerPort: 9494
+              name: http
+          env:
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: reiverr-secret
+                  key: SECRET
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: reiverr-secret
+                  key: ADMIN_USERNAME
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reiverr-secret
+                  key: ADMIN_PASSWORD
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: plugins
+              mountPath: /plugins
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: reiverr-config-pvc
+        - name: plugins
+          persistentVolumeClaim:
+            claimName: reiverr-plugins-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: reiverr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 10Gi
+    - metadata:
+        name: reiverr-plugins-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 10Gi

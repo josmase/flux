@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: reiverr
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`reiverr.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: reiverr
+          port: http
+
+  tls:
+    secretName: local-hejsan-xyz-tls
