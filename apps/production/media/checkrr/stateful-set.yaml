@@ -30,6 +30,17 @@ spec:
           volumeMounts:
             - name: checkrr-config-pvc
               mountPath: /checkrr-config
+        - name: init-badfiles-csv
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /checkrr-config && touch /checkrr-config/badFiles.csv
+              echo "Listing /checkrr-config:"
+          volumeMounts:
+            - name: checkrr-config-pvc
+              mountPath: /checkrr-config
       containers:
         - name: checkrr
           image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4
