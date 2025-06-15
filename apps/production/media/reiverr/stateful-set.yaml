@@ -36,17 +36,11 @@ spec:
                   name: reiverr-secret
                   key: ADMIN_PASSWORD
           volumeMounts:
-            - name: config
+            - name: reiverr-config-pvc
               mountPath: /config
-            - name: plugins
+            - name: reiverr-plugins-pvc
               mountPath: /plugins
-      volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: reiverr-config-pvc
-        - name: plugins
-          persistentVolumeClaim:
-            claimName: reiverr-plugins-pvc
+
   volumeClaimTemplates:
     - metadata:
         name: reiverr-config-pvc
