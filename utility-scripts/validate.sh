@@ -35,9 +35,14 @@ kustomize_config="kustomization.yaml"
 kubeconform_flags=("-skip=Secret")
 kubeconform_config=("-strict" "-ignore-missing-schemas" "-schema-location" "default" "-schema-location" "/tmp/flux-crd-schemas" "-verbose")
 
-echo "INFO - Downloading Flux OpenAPI schemas"
-mkdir -p /tmp/flux-crd-schemas/master-standalone-strict
-curl -sL https://github.com/fluxcd/flux2/releases/latest/download/crd-schemas.tar.gz | tar zxf - -C /tmp/flux-crd-schemas/master-standalone-strict
+SCHEMA_DIR="/tmp/flux-crd-schemas/master-standalone-strict"
+SCHEMA_URL="https://github.com/fluxcd/flux2/releases/latest/download/crd-schemas.tar.gz"
+
+if [ ! -d "$SCHEMA_DIR" ] || [ -z "$(ls -A "$SCHEMA_DIR" 2>/dev/null)" ]; then
+  echo "INFO - Downloading Flux OpenAPI schemas"
+  mkdir -p "$SCHEMA_DIR"
+  curl -sL "$SCHEMA_URL" | tar zxf - -C "$SCHEMA_DIR"
+fi
 
 find . -type f -name '*.yaml' -print0 | while IFS= read -r -d $'\0' file;
   do
