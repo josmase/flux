@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: transmission
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.0.6@sha256:0075191862b4b6144904f447153adba8eacfa1fca4309e407778c7b23a8af4ed
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.0.6@sha256:3f87d731303a4cfa6ec312f653a440943bd1d9670438415f39bd17669f84d950
           ports:
             - containerPort: 9091
               name: http
