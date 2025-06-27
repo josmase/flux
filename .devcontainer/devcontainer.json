@@ -6,6 +6,11 @@
       "source": "${localEnv:HOME}/.kube",
       "target": "${localWorkspaceFolder}/.kube",
       "type": "bind"
+    },
+    {
+      "source": "${localEnv:HOME}/.zsh_history",
+      "target": "/home/vscode/.zsh_history",
+      "type": "bind"
     }
   ],
   "features": {
@@ -20,7 +25,10 @@
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
     }
   },
   "containerEnv": {
