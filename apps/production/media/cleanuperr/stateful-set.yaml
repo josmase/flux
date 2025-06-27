@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: cleanuperr
-          image: artifactory.local.hejsan.xyz/docker/flmorg/cleanuperr:1.6.8
+          image: artifactory.local.hejsan.xyz/docker/cleanuparr/cleanuperr:1.6.8
           envFrom:
             - configMapRef:
                 name: cleanuperr-config
