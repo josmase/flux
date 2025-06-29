@@ -21,7 +21,7 @@ spec:
               echo "===== /app/config/config.yaml =====";
               cat /app/config/config.yaml;
               echo "===================================";
-              echo $JELLYFIN_API_KEY; $JELLYFIN_USER_ID; $JELLYFIN_SERVER_URL;
+              echo "$JELLYFIN_API_KEY; $JELLYFIN_USER_ID; $JELLYFIN_SERVER_URL";
           envFrom:
             - secretRef:
                 name: jellyfin-auto-collections-secret
