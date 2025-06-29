@@ -1,0 +1,21 @@
+# Sample Config file
+#
+# Note: the !ENV ${VAR:default} syntax is some syntactic sugar used by https://pypi.org/project/pyaml-env/
+# This allows variables to be passed through either in this config file or as environment variables
+#
+crontab: "0 0 * * *" # If set, this runs the script on a schedule. Should be in crontab format e.g. `0 0 5 * *`
+timezone: "Europe/Stockholm" # Timezone the crontab operates on.
+jellyfin:
+  server_url: !ENV ${JELLYFIN_SERVER_URL}
+  api_key: !ENV ${JELLYFIN_API_KEY} # Create an API key by going to: Admin>Dashboard>Advanced>API Keys
+  user_id: !ENV ${JELLYFIN_USER_ID} #ID of your jellyfin user. Found in the URL when you navigate to your user in the Dashboard.
+
+plugins:
+  imdb_chart:
+    enabled: true
+    list_ids:
+      - top
+      - boxoffice
+      - moviemeter
+      - tvmeter
+    clear_collection: true # If set, this empties out the collection before re-adding. Useful for lists which change often.

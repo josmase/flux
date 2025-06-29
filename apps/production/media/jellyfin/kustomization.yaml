@@ -5,6 +5,7 @@ resources:
   - stateful-set.yaml
   - ingress.yaml
   - service.yaml
+  - auto-collections
 
 labels:
   - includeSelectors: true
