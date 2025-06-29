@@ -15,13 +15,6 @@ spec:
       containers:
         - name: jellyfin-auto-collections
           image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              echo "===== /app/config/config.yaml =====";
-              cat /app/config/config.yaml;
-              echo "===================================";
-              echo "$JELLYFIN_API_KEY; $JELLYFIN_USER_ID; $JELLYFIN_SERVER_URL";
           envFrom:
             - secretRef:
                 name: jellyfin-auto-collections-secret
