@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: jellyfin-auto-collections
-          image: ghartifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
+          image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
           envFrom:
             - secretRef:
                 name: jellyfin-auto-collections-secret
