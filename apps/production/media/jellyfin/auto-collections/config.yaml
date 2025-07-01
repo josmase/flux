@@ -19,3 +19,8 @@ plugins:
       - moviemeter
       - tvmeter
     clear_collection: true # If set, this empties out the collection before re-adding. Useful for lists which change often.
+  letterboxd:
+    enabled: true
+    imdb_id_filter: true # Uses the imdb id for better matching. This does slow the script down though!
+    list_ids:
+      - films/popular/this/week/
