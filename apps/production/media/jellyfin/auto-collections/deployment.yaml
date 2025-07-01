@@ -15,7 +15,7 @@ spec:
       containers:
         - name: jellyfin-auto-collections
           image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
-          command: ["/bin/sh"]
+          command: ["/bin/sh", "-c", "sleep infinity"]
           args: ["-c", "exec /bin/sh"]
           envFrom:
             - secretRef:
