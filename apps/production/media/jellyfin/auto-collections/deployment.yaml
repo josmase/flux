@@ -15,14 +15,17 @@ spec:
       containers:
         - name: jellyfin-auto-collections
           image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
-          command: ["/bin/sh", "-c", "sleep infinity"]
-          args: ["-c", "exec /bin/sh"]
+          #command: ["/bin/sh", "-c", "sleep infinity"]
+          #args: ["-c", "exec /bin/sh"]
           envFrom:
             - secretRef:
                 name: jellyfin-auto-collections-secret
           volumeMounts:
             - name: config-yaml
               mountPath: /app/config/config.yaml
+              subPath: config.yaml
+            - name: config-yaml
+              mountPath: /app/config.yaml
               subPath: config.yaml
           resources:
             limits:
