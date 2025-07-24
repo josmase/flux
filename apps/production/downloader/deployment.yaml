@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: downloader
-          image: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.54
+          image: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.55
           resources:
             limits:
               memory: 512Mi
