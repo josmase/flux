@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`immich.local.hejsan.xyz`)
+      kind: Rule
+      services:
+        - name: immich
+          port: http
+
+  tls:
+    secretName: local-hejsan-xyz-tls

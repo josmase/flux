@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-redis
+  template:
+    metadata:
+      labels:
+        app: immich-redis
+    spec:
+      containers:
+        - name: redis
+          image: artifactory.local.hejsan.xyz/docker/valkey/valkey:8-bookworm@sha256:a137a2b60aca1a75130022d6bb96af423fefae4eb55faf395732db3544803280
+          args: ["valkey-server"]
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: "1"
+            requests:
+              memory: 320Mi
+              cpu: "0.1"
