@@ -9,8 +9,3 @@ resources:
   - immich-redis
   - immich-database
   - immich-machine-learning
-
-labels:
-  - includeSelectors: true
-    pairs:
-      app: immich

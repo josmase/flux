@@ -4,3 +4,8 @@ kind: Kustomization
 resources:
   - service.yaml
   - stateful-set.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: immich-database

@@ -4,3 +4,8 @@ kind: Kustomization
 resources:
   - service.yaml
   - deployment.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: immich-redis

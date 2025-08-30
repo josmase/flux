@@ -5,3 +5,8 @@ resources:
   - ingress.yaml
   - service.yaml
   - stateful-set.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: immich-server
