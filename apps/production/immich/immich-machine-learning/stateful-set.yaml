@@ -22,6 +22,8 @@ spec:
           volumeMounts:
             - name: immich-model-cache-pvc
               mountPath: /cache
+          ports:
+            - containerPort: 3003
           resources:
             limits:
               memory: 500Mi

@@ -37,6 +37,8 @@ spec:
           volumeMounts:
             - name: immich-db-pvc
               mountPath: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
           resources:
             limits:
               memory: 500Mi
