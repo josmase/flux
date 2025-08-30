@@ -7,7 +7,6 @@ resources:
   - artifactory
   - cloudflare-ddns
   - it-tools
-  #- blog
   - actions-runner
   - renovate-bot
   - new-new-boplats
@@ -15,7 +14,7 @@ resources:
   - media
   - longhorn
   - default-app-config.yaml
-  - persistence.yaml
+  - persistence
   - smart-home
   - headscale
   - immich

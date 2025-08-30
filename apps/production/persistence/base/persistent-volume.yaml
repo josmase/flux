@@ -1,10 +1,3 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: manual
-provisioner: kubernetes.io/no-provisioner
-
----
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -14,9 +7,6 @@ spec:
     storage: 110Ti
   volumeMode: Filesystem
   storageClassName: "manual"
-  claimRef:
-    namespace: default
-    name: shared-nfs-pvc
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -31,17 +21,3 @@ spec:
     - retrans=3 # Limits retry attempts before failing
     - noac # Disables attribute caching (reduces stale handles)
     - actimeo=0 # Forces immediate revalidation of attributes
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: shared-nfs-pvc
-spec:
-  storageClassName: "manual"
-  volumeName: shared-nfs-pv
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 110Ti

@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: shared-nfs-pvc
+            claimName: immich-shared-nfs-pvc
