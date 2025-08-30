@@ -35,7 +35,7 @@ spec:
             - name: POSTGRES_INITDB_ARGS
               value: "--data-checksums"
           volumeMounts:
-            - name: dbdata
+            - name: immich-db-pvc
               mountPath: /var/lib/postgresql/data
           resources:
             limits:
@@ -44,10 +44,6 @@ spec:
             requests:
               memory: 320Mi
               cpu: "0.1"
-      volumes:
-        - name: dbdata
-          persistentVolumeClaim:
-            claimName: immich-db-pvc
   volumeClaimTemplates:
     - metadata:
         name: immich-db-pvc
