@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - stateful-set.yaml
+  - service.yaml
 
 labels:
   - includeSelectors: true
