@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: immich-machine-learning
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: immich-machine-learning
@@ -25,7 +25,7 @@ spec:
             - containerPort: 3003
           resources:
             limits:
-              memory: 1Gi
+              memory: 3Gi
               cpu: "1"
             requests:
               memory: 320Mi
