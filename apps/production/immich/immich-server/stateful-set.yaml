@@ -19,6 +19,9 @@ spec:
           envFrom:
             - secretRef:
                 name: immich-secrets
+          env:
+            - name: REDIS_PORT
+              value: "6379"
           volumeMounts:
             - name: shared-storage
               subPath: files/immich/data
