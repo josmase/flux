@@ -36,6 +36,7 @@ spec:
               value: "--data-checksums"
           volumeMounts:
             - name: immich-db-pvc
+              subPath: /var/lib/postgresql/data
               mountPath: /var/lib/postgresql/data
           ports:
             - containerPort: 5432
