@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ingress.yaml
   - service.yaml
-  - stateful-set.yaml
+  - deployment.yaml
 
 labels:
   - includeSelectors: true
