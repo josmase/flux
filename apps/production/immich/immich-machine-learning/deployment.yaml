@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: immich-machine-learning
 spec:
-  serviceName: immich-machine-learning
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: immich-machine-learning
@@ -20,7 +19,7 @@ spec:
             - secretRef:
                 name: immich-secrets
           volumeMounts:
-            - name: immich-model-cache-pvc
+            - name: immich-model-cache
               mountPath: /cache
           ports:
             - containerPort: 3003
@@ -31,13 +30,6 @@ spec:
             requests:
               memory: 320Mi
               cpu: "0.1"
-  volumeClaimTemplates:
-    - metadata:
-        name: immich-model-cache-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: longhorn
-        resources:
-          requests:
-            storage: 10Gi
+      volumes:
+        - name: immich-model-cache
+          emptyDir: {}
