@@ -32,4 +32,18 @@ spec:
               cpu: "0.1"
       volumes:
         - name: immich-model-cache
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: immich-model-cache-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 2Gi
