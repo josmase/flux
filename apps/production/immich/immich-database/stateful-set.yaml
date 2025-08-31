@@ -42,10 +42,10 @@ spec:
             - containerPort: 5432
           resources:
             limits:
-              memory: 500Mi
+              memory: 2Gi
               cpu: "1"
             requests:
-              memory: 320Mi
+              memory: 1Gi
               cpu: "0.1"
   volumeClaimTemplates:
     - metadata:
