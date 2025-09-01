@@ -26,6 +26,9 @@ spec:
             - name: shared-storage
               subPath: files/immich/data
               mountPath: /data
+            - name: shared-storage
+              subPath: files/immich/external-library
+              mountPath: /external-library
           ports:
             - containerPort: 2283
           resources:
