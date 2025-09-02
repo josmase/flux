@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: immich-machine-learning
 spec:
-  replicas: 1
+  serviceName: immich-machine-learning
+  replicas: 3
   selector:
     matchLabels:
       app: immich-machine-learning
@@ -26,24 +27,17 @@ spec:
           resources:
             limits:
               memory: 3Gi
-              cpu: "1"
+              cpu: "5"
             requests:
               memory: 320Mi
               cpu: "0.1"
-      volumes:
-        - name: immich-model-cache
-          persistentVolumeClaim:
-            claimName: immich-model-cache-pvc
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: immich-model-cache-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 10Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: immich-model-cache
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 10Gi
