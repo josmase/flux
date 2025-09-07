@@ -23,7 +23,6 @@ spec:
       kind: Rule
       services:
         - name: home-assistant
-          port: 8123
-          kind: Service
+          port: http
   tls:
     secretName: hejsan-xyz-tls
