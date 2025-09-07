@@ -20,10 +20,6 @@ kind: TraefikService
 metadata:
   name: home-assistant-external
 spec:
-  weighted:
-    services:
-      - name: ""
-        kind: Service
-        weight: 1
-        servers:
-          - url: http://homeassistant.localdomain:8123
+  loadBalancer:
+    servers:
+      - url: "http://media.local.hejsan.xyz:8123"
