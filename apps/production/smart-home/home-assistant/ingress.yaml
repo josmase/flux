@@ -22,4 +22,4 @@ metadata:
 spec:
   loadBalancer:
     servers:
-      - url: "http://media.local.hejsan.xyz:8123"
+      - url: "http://homeassistant.localdomain:8123"
