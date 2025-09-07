@@ -1,4 +1,16 @@
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant
+spec:
+  type: ExternalName
+  externalName: homeassistant.localdomain
+  ports:
+    - name: http
+      port: 8123
+      targetPort: 8123
+---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -10,16 +22,8 @@ spec:
     - match: Host(`assistant.hejsan.xyz`)
       kind: Rule
       services:
-        - kind: TraefikService
-          name: home-assistant-external
+        - name: home-assistant
+          port: 8123
+          kind: Service
   tls:
     secretName: hejsan-xyz-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: TraefikService
-metadata:
-  name: home-assistant-external
-spec:
-  loadBalancer:
-    servers:
-      - url: "http://homeassistant.localdomain:8123"
