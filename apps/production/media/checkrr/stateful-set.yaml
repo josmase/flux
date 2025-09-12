@@ -17,7 +17,7 @@ spec:
     spec:
       initContainers:
         - name: init-checkrr-db
-          image: busybox
+          image: busybox@sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74
           command:
             - sh
             - -c
@@ -31,7 +31,7 @@ spec:
             - name: checkrr-config-pvc
               mountPath: /checkrr-config
         - name: init-badfiles-csv
-          image: busybox
+          image: busybox@sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74
           command:
             - sh
             - -c
@@ -42,7 +42,7 @@ spec:
               mountPath: /checkrr-config
       containers:
         - name: checkrr
-          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4
+          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4@sha256:fe8b787d556e1a23f01daf6ace53a43f8433630b918ce14e29a35780d18af375
           ports:
             - containerPort: 8585
               name: http
