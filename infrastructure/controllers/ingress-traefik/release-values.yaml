@@ -7,6 +7,7 @@ globalArguments:
 additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
   - "--log.level=INFO"
+  - "--providers.kubernetescrd.allowexternalnameservices=true"
 
 deployment:
   enabled: true
