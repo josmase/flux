@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: immich-machine-learning
-          image: artifactory.local.hejsan.xyz/docker/immich-app/immich-machine-learning:v1.140.0
+          image: artifactory.local.hejsan.xyz/docker/immich-app/immich-machine-learning:v1.140.0@sha256:20b1a58406882400c25909054628ee98565dde88e3e028235f5da493ca33b11a
           envFrom:
             - secretRef:
                 name: immich-secrets
