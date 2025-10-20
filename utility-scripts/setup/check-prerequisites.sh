@@ -256,23 +256,16 @@ fi
 # AGE KEYS
 # ============================================================================
 echo ""
-echo_info "Checking Age encryption setup..."
-
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-
-if [ -f "$SCRIPT_DIR/age_public.txt" ]; then
-    echo_success "Age public key exists"
-    PUBLIC_KEY=$(cat "$SCRIPT_DIR/age_public.txt")
-    echo_info "  Public key: $PUBLIC_KEY"
+echo_info "Checking Age encryption keys..."
+if [ -f "$SCRIPT_DIR/../security/age_public.txt" ]; then
+    echo_success "Age public key found"
+    PUBLIC_KEY=$(cat "$SCRIPT_DIR/../security/age_public.txt")
+    echo_info "  Public key: age${PUBLIC_KEY:0:20}..."
 else
-    echo_info "Age public key not found (will be created during setup)"
+    echo_warning "Age public key not found (run setup/create-private-key.sh to generate)"
 fi
 
-if [ -f "$SCRIPT_DIR/secrets/age.agekey" ]; then
-    echo_success "Age private key exists"
-else
-    echo_info "Age private key not found (will be created during setup)"
-fi
+if [ -f "$SCRIPT_DIR/../security/secrets/age.agekey" ]; then
 
 # Check .sops.yaml
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"

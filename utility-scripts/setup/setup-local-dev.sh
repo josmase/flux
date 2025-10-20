@@ -2,13 +2,15 @@
 
 # Local Development Cluster Setup Script
 # 
-# This script sets up a local Kind cluster for testing Flux configurations.
-# It reuses existing utility scripts where possible:
-# - create-private-key.sh: For Age key generation and secret creation
-# - validate.sh: For manifest validation (optional, run manually)
-# - check-prerequisites.sh: For comprehensive prerequisite checks (run manually before first use)
+# This script sets up a local Kind cluster for Flux development and testing.
+# It provides a complete development environment without requiring GitHub bootstrap.
 #
-# For production cluster setup, use setup-cluster.sh instead.
+# Dependencies (utility scripts in this directory):
+# - setup/create-private-key.sh: For Age key generation and secret creation
+# - validation/validate.sh: For manifest validation (optional, run manually)
+# - setup/check-prerequisites.sh: For comprehensive prerequisite checks (run manually before first use)
+#
+# For production cluster setup, use setup/setup-cluster.sh instead.
 
 set -euo pipefail
 
@@ -152,7 +154,7 @@ if ! command -v kind &> /dev/null; then
 fi
 
 # Check basic prerequisites (kubectl, flux, etc.)
-# Note: We skip the full check-prerequisites.sh because it checks cluster connectivity
+# Note: We skip the full setup/check-prerequisites.sh because it checks cluster connectivity
 # and we haven't created the cluster yet
 REQUIRED_COMMANDS=("kubectl" "flux")
 MISSING_COMMANDS=()
@@ -168,7 +170,7 @@ done
 
 if [ ${#MISSING_COMMANDS[@]} -ne 0 ]; then
     echo_error "Please install missing commands: ${MISSING_COMMANDS[*]}"
-    echo_info "Run './utility-scripts/check-prerequisites.sh' for detailed prerequisites"
+    echo_info "Run './utility-scripts/setup/check-prerequisites.sh' for detailed prerequisites"
     exit 1
 fi
 
@@ -267,25 +269,26 @@ if [ "$SKIP_FLUX" = false ]; then
     echo_info "Setting up SOPS Age encryption..."
     
     # Check if Age keys exist, if not offer to create them
-    if [ ! -f "$SCRIPT_DIR/secrets/age.agekey" ]; then
-        echo_warning "Age key not found"
-        read -p "Create Age key now? (yes/no): " -r
+    if [ ! -f "$SCRIPT_DIR/../security/secrets/age.agekey" ]; then
+        echo_info "No existing Age keys found"
+        
+        read -p "Generate new Age encryption keys? (yes/no): " -r
         if [[ $REPLY =~ ^[Yy](es)?$ ]]; then
-            # Use the existing create-private-key script
             if [ -f "$SCRIPT_DIR/create-private-key.sh" ]; then
-                cd "$SCRIPT_DIR"
+                echo_info "Calling create-private-key.sh to generate keys..."
                 ./create-private-key.sh
-                cd "$REPO_ROOT"
-                echo_success "Age keys created and secret installed in cluster"
+                echo_success "Age keys generated"
+                echo ""
             else
                 echo_error "create-private-key.sh not found"
-                echo_info "Secrets won't decrypt without Age key"
+                echo_info "Please run utility-scripts/setup/create-private-key.sh manually"
+                exit 1
             fi
         else
-            echo_warning "Skipping Age key setup - secrets won't decrypt"
+            echo_warning "Skipping Age key generation"
         fi
     else
-        echo_info "Using existing Age key"
+        # Reuse the secret creation logic from setup/create-private-key.sh
         
         # Reuse the secret creation logic from create-private-key.sh
         # Create the sops-age secret

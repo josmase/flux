@@ -1,19 +1,61 @@
 # Utility Scripts
 
-This directory contains helper scripts for managing Flux deployments.
+This directory contains helper scripts for managing Flux deployments, organized into logical categories.
+
+## Directory Structure
+
+```
+utility-scripts/
+├── setup/                      # Cluster setup & initialization
+│   ├── setup-cluster.sh        # Bootstrap production/staging clusters
+│   ├── setup-local-dev.sh      # Setup local Kind development cluster
+│   ├── check-prerequisites.sh  # Comprehensive environment validation
+│   └── create-private-key.sh   # Age encryption key generation
+├── cluster/                    # Cluster operations & maintenance
+│   ├── check-k3s-upgrade.sh    # Check available K3s versions
+│   └── upgrade-k3s-cluster.sh  # Interactive K3s cluster upgrade
+├── security/                   # Secrets & encryption management
+│   ├── encrypt.sh              # Encrypt/decrypt/rotate secrets with SOPS
+│   ├── age_public.txt          # Age public key
+│   └── secrets/                # Private keys (gitignored)
+│       └── age.agekey          # Age private key
+├── validation/                 # Validation & testing
+│   └── validate.sh             # Validate Flux manifests
+└── legacy/                     # Deprecated/reference scripts
+    └── artifactory/            # Old artifactory setup scripts
+```
+
+## Quick Start
+
+### New Cluster Setup (Production)
+```bash
+cd utility-scripts/setup
+./setup-cluster.sh --token=ghp_xxxxxxxxxxxx
+```
+
+### Local Development
+```bash
+cd utility-scripts/setup
+./setup-local-dev.sh
+```
+
+### Cluster Upgrade
+```bash
+cd utility-scripts/cluster
+./check-k3s-upgrade.sh              # Check versions
+./upgrade-k3s-cluster.sh --version v1.32.9+k3s1  # Upgrade
+```
 
 ## Scripts Overview
 
-### Setup & Initialization
+### Setup & Initialization (`setup/`)
 
-#### `setup-cluster.sh`
-Automated setup script for bootstrapping a new Flux-managed Kubernetes cluster (production/staging).
-
-#### `setup-cluster.sh`
+#### `setup/setup-cluster.sh`
 Automated setup script for bootstrapping a new Flux-managed Kubernetes cluster (production/staging).
 
 **Usage:**
 ```bash
+cd utility-scripts/setup
 ./setup-cluster.sh --token=ghp_xxxxxxxxxxxx [OPTIONS]
 ```
 
@@ -37,6 +79,7 @@ Automated setup script for bootstrapping a new Flux-managed Kubernetes cluster (
 **Example:**
 ```bash
 # Full setup for production
+cd utility-scripts/setup
 ./setup-cluster.sh --token=ghp_xxxxxxxxxxxx
 
 # Setup for development environment
@@ -46,17 +89,19 @@ Automated setup script for bootstrapping a new Flux-managed Kubernetes cluster (
 ./setup-cluster.sh --skip-bootstrap
 ```
 
-#### `setup-local-dev.sh`
+#### `setup/setup-local-dev.sh`
 Sets up a local Kind cluster for development and testing. Reuses `create-private-key.sh` for Age key management.
 
 **Prerequisites:**
 ```bash
 # Check your environment first (recommended)
+cd utility-scripts/setup
 ./check-prerequisites.sh
 ```
 
 **Usage:**
 ```bash
+cd utility-scripts/setup
 ./setup-local-dev.sh [OPTIONS]
 ```
 
@@ -80,6 +125,7 @@ Sets up a local Kind cluster for development and testing. Reuses `create-private
 **Example:**
 ```bash
 # Create local cluster
+cd utility-scripts/setup
 ./setup-local-dev.sh
 
 # Use specific environment and branch
@@ -95,14 +141,16 @@ kind delete cluster --name flux-dev
 **Typical workflow:**
 ```bash
 # 1. Check prerequisites (first time)
+cd utility-scripts/setup
 ./check-prerequisites.sh
 
 # 2. Setup local cluster
 ./setup-local-dev.sh
 
 # 3. Make and validate changes
+cd ../..
 vim apps/production/myapp/deployment.yaml
-./validate.sh
+./utility-scripts/validation/validate.sh
 
 # 4. Test in cluster
 git commit -am "test: update deployment"
@@ -115,11 +163,12 @@ kind delete cluster --name flux-dev
 
 See [Local Development Guide](../docs/LOCAL_DEVELOPMENT.md) for detailed workflows.
 
-#### `check-prerequisites.sh`
+#### `setup/check-prerequisites.sh`
 Comprehensive prerequisite checker that validates your environment before setup.
 
 **Usage:**
 ```bash
+cd utility-scripts/setup
 ./check-prerequisites.sh
 ```
 
@@ -140,9 +189,9 @@ Comprehensive prerequisite checker that validates your environment before setup.
 - `0`: All checks passed
 - `>0`: Number of errors found
 
-### Encryption Management
+### Encryption Management (`security/`)
 
-#### `create-private-key.sh`
+#### `security/create-private-key.sh`
 Creates Age encryption key pair for SOPS and installs it in the cluster.
 
 **Prerequisites:**
@@ -152,6 +201,7 @@ Creates Age encryption key pair for SOPS and installs it in the cluster.
 
 **Usage:**
 ```bash
+cd utility-scripts/setup
 ./create-private-key.sh [-f]
 ```
 
@@ -162,27 +212,29 @@ Creates Age encryption key pair for SOPS and installs it in the cluster.
 1. Checks for required tools (age-keygen, kubectl)
 2. Verifies Kubernetes cluster connectivity
 3. Generates a new Age key pair
-4. Saves private key to `secrets/age.agekey`
-5. Saves public key to `age_public.txt`
+4. Saves private key to `security/secrets/age.agekey`
+5. Saves public key to `security/age_public.txt`
 6. Creates flux-system namespace if it doesn't exist
 7. Creates/updates the sops-age Kubernetes secret in flux-system namespace
 
 **Example:**
 ```bash
 # Create new keys if they don't exist
+cd utility-scripts/setup
 ./create-private-key.sh
 
 # Force regenerate keys
 ./create-private-key.sh -f
 ```
 
-**Note:** This script requires an active Kubernetes cluster. If running before cluster setup, the secret creation will fail. In that case, use `setup-cluster.sh` which handles the full workflow.
+**Note:** This script requires an active Kubernetes cluster. If running before cluster setup, the secret creation will fail. In that case, use `setup/setup-cluster.sh` which handles the full workflow.
 
-#### `encrypt.sh`
+#### `security/encrypt.sh`
 Encrypts, decrypts, or rotates secrets using SOPS.
 
 **Usage:**
 ```bash
+cd utility-scripts/security
 ./encrypt.sh [--rotate|--decrypt] <file1> [file2 ...]
 ```
 
@@ -193,32 +245,34 @@ Encrypts, decrypts, or rotates secrets using SOPS.
 
 **What it does:**
 - Encrypts/decrypts files with `data` or `stringData` fields
-- Uses Age key from `secrets/age.agekey`
-- Uses public key from `age_public.txt`
+- Uses Age key from `security/secrets/age.agekey`
+- Uses public key from `security/age_public.txt`
 - Modifies files in-place
 
 **Example:**
 ```bash
 # Encrypt a secret
-./encrypt.sh apps/production/myapp/secret.yaml
+cd utility-scripts/security
+./encrypt.sh ../../apps/production/myapp/secret.yaml
 
 # Decrypt a secret
-./encrypt.sh --decrypt apps/production/myapp/secret.yaml
+./encrypt.sh --decrypt ../../apps/production/myapp/secret.yaml
 
 # Rotate keys
-./encrypt.sh --rotate apps/production/myapp/secret.yaml
+./encrypt.sh --rotate ../../apps/production/myapp/secret.yaml
 
 # Encrypt multiple files
-./encrypt.sh apps/**/secret.yaml
+./encrypt.sh ../../apps/**/secret.yaml
 ```
 
-### Validation
+### Validation (`validation/`)
 
-#### `validate.sh`
+#### `validation/validate.sh`
 Validates Flux manifests and Kustomize overlays.
 
 **Usage:**
 ```bash
+cd utility-scripts/validation
 ./validate.sh
 ```
 
@@ -237,19 +291,21 @@ Validates Flux manifests and Kustomize overlays.
 **Example:**
 ```bash
 # Run validation before committing
+cd utility-scripts/validation
 ./validate.sh
 
 # Use in CI/CD
 ./validate.sh || exit 1
 ```
 
-### Cluster Management
+### Cluster Management (`cluster/`)
 
-#### `check-k3s-upgrade.sh`
+#### `cluster/check-k3s-upgrade.sh`
 Shows available K3s versions and provides upgrade commands for your cluster.
 
 **Usage:**
 ```bash
+cd utility-scripts/cluster
 ./check-k3s-upgrade.sh
 ```
 
@@ -262,6 +318,7 @@ Shows available K3s versions and provides upgrade commands for your cluster.
 
 **Example:**
 ```bash
+cd utility-scripts/cluster
 ./check-k3s-upgrade.sh
 ```
 
@@ -272,7 +329,7 @@ Shows available K3s versions and provides upgrade commands for your cluster.
 - Step-by-step upgrade commands
 - Reference to detailed upgrade guide
 
-#### `upgrade-k3s-cluster.sh`
+#### `cluster/upgrade-k3s-cluster.sh`
 Interactive script that upgrades K3s nodes one at a time with verification prompts.
 
 **Prerequisites:**
@@ -283,6 +340,7 @@ Interactive script that upgrades K3s nodes one at a time with verification promp
 
 **Usage:**
 ```bash
+cd utility-scripts/cluster
 ./upgrade-k3s-cluster.sh --version <k3s-version> [OPTIONS]
 ```
 
@@ -329,6 +387,7 @@ Interactive script that upgrades K3s nodes one at a time with verification promp
 **Example:**
 ```bash
 # Check available versions first
+cd utility-scripts/cluster
 ./check-k3s-upgrade.sh
 
 # Upgrade to specific version
@@ -361,10 +420,11 @@ Interactive script that upgrades K3s nodes one at a time with verification promp
 **Typical workflow:**
 ```bash
 # 1. Check current status and available versions
+cd utility-scripts/cluster
 ./check-k3s-upgrade.sh
 
 # 2. Review upgrade guide
-cat ../docs/UPGRADE_K3S.md
+cat ../../docs/UPGRADE_K3S.md
 
 # 3. Start upgrade
 ./upgrade-k3s-cluster.sh --version v1.32.9+k3s1
@@ -400,14 +460,15 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=<old-version> sh -
 
 ## Workflows
 
-### Setting up a new cluster
+### New Cluster Setup (Production)
 
 ```bash
 # 1. Check prerequisites
-./utility-scripts/check-prerequisites.sh
+cd utility-scripts/setup
+./check-prerequisites.sh
 
 # 2. Run setup
-./utility-scripts/setup-cluster.sh --token=ghp_xxxxxxxxxxxx --environment=production
+./setup-cluster.sh --token=ghp_xxxxxxxxxxxx --environment=production
 
 # 3. Verify
 flux get all
@@ -431,13 +492,14 @@ stringData:
 EOF
 
 # 2. Encrypt it
-./utility-scripts/encrypt.sh apps/production/myapp/secret.yaml
+cd utility-scripts/security
+./encrypt.sh ../../apps/production/myapp/secret.yaml
 
 # 3. Verify encryption
-grep "sops:" apps/production/myapp/secret.yaml
+grep "sops:" ../../apps/production/myapp/secret.yaml
 
 # 4. Commit
-git add apps/production/myapp/secret.yaml
+git add ../../apps/production/myapp/secret.yaml
 git commit -m "Add myapp secret"
 git push
 ```
@@ -446,13 +508,15 @@ git push
 
 ```bash
 # 1. Generate new key (saves old key automatically)
-./utility-scripts/create-private-key.sh -f
+cd utility-scripts/setup
+./create-private-key.sh -f
 
 # 2. Rotate all secrets
-find apps -name "secret.yaml" -type f -exec ./utility-scripts/encrypt.sh --rotate {} \;
+cd ../security
+find ../../apps -name "secret.yaml" -type f -exec ./encrypt.sh --rotate {} \;
 
 # 3. Commit updated secrets
-git add .
+git add ../..
 git commit -m "Rotate encryption keys"
 git push
 ```
@@ -470,7 +534,8 @@ cp -r clusters/production/* clusters/development/
 # Edit clusters/development/infrastructure.yaml and apps.yaml
 
 # 4. Bootstrap development
-./utility-scripts/setup-cluster.sh \
+cd utility-scripts/setup
+./setup-cluster.sh \
   --token=ghp_xxxxxxxxxxxx \
   --environment=development \
   --branch=develop
@@ -484,7 +549,8 @@ To automatically validate changes before committing:
 # Create pre-commit hook
 cat > .git/hooks/pre-commit <<'EOF'
 #!/bin/bash
-./utility-scripts/validate.sh
+cd utility-scripts/validation
+./validate.sh
 EOF
 
 chmod +x .git/hooks/pre-commit
@@ -520,7 +586,7 @@ sudo mv age/age* /usr/local/bin/
 ### "Cannot decrypt secret"
 Make sure you have the private key:
 ```bash
-ls -la utility-scripts/secrets/age.agekey
+ls -la utility-scripts/security/secrets/age.agekey
 ```
 
 If missing, restore from backup or regenerate (will require re-encrypting all secrets).
@@ -533,10 +599,10 @@ Ensure your GitHub token has the `repo` scope:
 
 ## Security Notes
 
-- **Never commit unencrypted secrets** - Always use `encrypt.sh` first
-- **Backup your Age private key** - Stored in `secrets/age.agekey`
+- **Never commit unencrypted secrets** - Always use `security/encrypt.sh` first
+- **Backup your Age private key** - Stored in `security/secrets/age.agekey`
 - **Keep GitHub tokens secure** - Don't commit them or expose them
-- **Rotate keys periodically** - Use `encrypt.sh --rotate`
+- **Rotate keys periodically** - Use `security/encrypt.sh --rotate`
 - **Review encrypted files** - Ensure sensitive data is in `data` or `stringData` fields
 
 ## Contributing

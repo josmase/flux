@@ -190,18 +190,18 @@ if [ "$SKIP_KEYS" = false ]; then
     fi
     
     # Verify the keys are in place
-    if [ ! -f "$SCRIPT_DIR/age_public.txt" ]; then
+    if [ ! -f "$SCRIPT_DIR/../security/age_public.txt" ]; then
         echo_error "Public key not found after setup"
         exit 1
     fi
     
-    if [ ! -f "$SCRIPT_DIR/secrets/age.agekey" ]; then
+    if [ ! -f "$SCRIPT_DIR/../security/secrets/age.agekey" ]; then
         echo_error "Private key not found after setup"
         exit 1
     fi
     
     # Update .sops.yaml with the public key
-    PUBLIC_KEY=$(cat "$SCRIPT_DIR/age_public.txt")
+    PUBLIC_KEY=$(cat "$SCRIPT_DIR/../security/age_public.txt")
     echo_info "Updating .sops.yaml with public key..."
     
     cat > "$REPO_ROOT/.sops.yaml" << EOF
@@ -286,15 +286,15 @@ echo "  2. Check Flux status: flux get all"
 echo "  3. View logs: flux logs --all-namespaces --follow"
 echo ""
 echo_info "To encrypt secrets, use:"
-echo "  $SCRIPT_DIR/encrypt.sh <path-to-secret.yaml>"
+echo "  $SCRIPT_DIR/../security/encrypt.sh <path-to-secret.yaml>"
 echo ""
 echo_info "To validate manifests, use:"
-echo "  $SCRIPT_DIR/validate.sh"
+echo "  $SCRIPT_DIR/../validation/validate.sh"
 echo ""
 
 if [ "$SKIP_KEYS" = false ]; then
     echo_warning "IMPORTANT: Backup your Age private key!"
-    echo_warning "Location: $SCRIPT_DIR/secrets/age.agekey"
+    echo_warning "Location: $SCRIPT_DIR/../security/secrets/age.agekey"
     echo_warning "Without this key, you cannot decrypt secrets!"
     echo ""
 fi
