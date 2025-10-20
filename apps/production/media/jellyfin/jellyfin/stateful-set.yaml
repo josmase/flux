@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: jellyfin
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.10.7@sha256:68e012f4bf5aeb114632e9045f5b2f2f6713536693093f70fcb338179f84f86c
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.0@sha256:dc7e75b48d038185216e00029c60a7860c557a0563811934d4870c875467ea8a
           ports:
             - containerPort: 8096
               name: http
