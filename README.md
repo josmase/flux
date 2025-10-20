@@ -4,11 +4,13 @@ This repository contains configurations for deploying applications to a Kubernet
 
 ## Prerequisites
 
-- Kubernetes cluster
+- Kubernetes cluster (>=v1.32.0 required for Flux v2.7.2)
 - `kubectl` configured for your cluster
 - `flux` CLI installed
 - GitHub account with repository access
-- k9s is highly recommended bu optional
+- k9s is highly recommended but optional
+
+> **⚠️ Important**: If you're running K3s v1.30.x or older, you need to upgrade to v1.32.x+. See [K3s Upgrade Guide](./docs/UPGRADE_K3S.md) for instructions.
 
 > **Note:** This repository includes a devcontainer with pre-configured tools (`kubectl`, `flux`, etc.), eliminating the need for local installations.
 
@@ -30,7 +32,37 @@ This repository contains configurations for deploying applications to a Kubernet
 
 ## Setup and Execution
 
+### Quick Setup (Automated)
+
 > **Note:** You need to create a Personal Access Token (PAT) with full repository access. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and generate a new token with the `repo` scope selected.
+
+**1. Check Prerequisites:**
+```bash
+./utility-scripts/check-prerequisites.sh
+```
+
+**2. Run Automated Setup:**
+```bash
+./utility-scripts/setup-cluster.sh --token=ghp_xxxxxxxxxxxx
+```
+
+This script will:
+- Validate prerequisites
+- Generate Age encryption keys
+- Create the sops-age secret
+- Bootstrap Flux on your cluster
+- Verify the installation
+
+For different environments:
+```bash
+./utility-scripts/setup-cluster.sh --token=ghp_xxxxxxxxxxxx --environment=development
+```
+
+See [utility-scripts/README.md](./utility-scripts/README.md) for detailed documentation.
+
+### Manual Setup
+
+If you prefer manual setup or need more control:
 
 1. Bootstrap Flux:
 
@@ -49,10 +81,14 @@ This repository contains configurations for deploying applications to a Kubernet
 
 2. Generate and configure SOPS encryption key:
 
+   ```bash
+   ./utility-scripts/create-private-key.sh
+   ```
+
+   This will:
    - Generate an Age key pair
    - Create a Kubernetes secret with the private key
    - Update `.sops.yaml` in the repository with the public key
-   - Re-encrypt repository secrets with the new key
 
 3. Commit and push changes to GitHub. Flux will automatically apply the changes to your cluster.
 
@@ -63,6 +99,23 @@ This repository contains configurations for deploying applications to a Kubernet
 - Review Flux logs: `flux logs`
 
 For troubleshooting, refer to the Flux documentation.
+
+## Local Development
+
+Test changes locally before deploying to production:
+
+```bash
+# Create a local Kind cluster
+./utility-scripts/setup-local-dev.sh
+
+# Test on specific branch
+./utility-scripts/setup-local-dev.sh --branch=feature-branch
+
+# Delete cluster when done
+kind delete cluster --name flux-dev
+```
+
+See [Local Development Guide](./docs/LOCAL_DEVELOPMENT.md) for comprehensive workflows and best practices.
 
 ## Repository Structure
 

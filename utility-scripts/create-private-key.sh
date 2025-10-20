@@ -3,10 +3,26 @@
 #Get the dir of the script so that keys can be found no matter where the use is running the script from.
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
-# Function to check if a command is available
+# Check if required commands are available
 if ! command -v age-keygen &> /dev/null
 then
     echo "age-keygen is not installed. Install it and try again (ex. apt install age)"
+    exit 1
+fi
+
+if ! command -v kubectl &> /dev/null
+then
+    echo "kubectl is not installed. Install it and try again"
+    echo "Installation: https://kubernetes.io/docs/tasks/tools/"
+    exit 1
+fi
+
+# Check Kubernetes cluster connectivity
+if ! kubectl cluster-info &> /dev/null
+then
+    echo "Cannot connect to Kubernetes cluster"
+    echo "Please ensure kubectl is configured correctly"
+    echo "Current context: $(kubectl config current-context 2>&1 || echo 'none')"
     exit 1
 fi
 
@@ -35,6 +51,12 @@ if [ ! -e "$public_key_file" ] || [ "$force_flag" = true ]; then
     age-keygen -y $secret_key_file > "$public_key_file"
 else
     echo "Public key already exists for the secret. Skipping key generation. Use -f to force new key creation."
+fi
+
+echo "Checking for flux-system namespace..."
+if ! kubectl get namespace flux-system &> /dev/null; then
+    echo "flux-system namespace does not exist. Creating it..."
+    kubectl create namespace flux-system
 fi
 
 echo "Generating YAML for key"
