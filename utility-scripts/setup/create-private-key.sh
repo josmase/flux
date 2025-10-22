@@ -2,6 +2,11 @@
 
 #Get the dir of the script so that keys can be found no matter where the use is running the script from.
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+SECURITY_DIR="$(dirname "$SCRIPT_DIR")/security"
+
+# Default environment
+ENVIRONMENT="production"
+force_flag=false
 
 # Check if required commands are available
 if ! command -v age-keygen &> /dev/null
@@ -26,31 +31,47 @@ then
     exit 1
 fi
 
-public_key_file="$SCRIPT_DIR/age_public.txt"
-secret_key_file="$SCRIPT_DIR/secrets/age.agekey"
-force_flag=false
-
 # Parse command-line options
-while getopts ":f" opt; do
+while getopts ":fe:" opt; do
   case $opt in
     f)
       force_flag=true
       ;;
+    e)
+      ENVIRONMENT="$OPTARG"
+      ;;
     \?)
       echo "Invalid option: -$OPTARG"
+      echo "Usage: $0 [-f] [-e environment]"
+      echo "  -f: Force regeneration of keys"
+      echo "  -e: Environment name (default: production)"
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument"
       exit 1
       ;;
   esac
 done
 
+# Environment-specific file paths
+public_key_file="$SECURITY_DIR/age_public_${ENVIRONMENT}.txt"
+secret_key_file="$SECURITY_DIR/secrets/age_${ENVIRONMENT}.agekey"
+
+echo "Environment: $ENVIRONMENT"
+echo "Public key: $public_key_file"
+echo "Secret key: $secret_key_file"
+
 # Check if the age key exists and if the force flag is not set
 if [ ! -e "$public_key_file" ] || [ "$force_flag" = true ]; then
     echo "Age key does not exist or -f flag is provided. Creating it now"
-    rm -f $secret_key_file $public_key_file
-    age-keygen -o $secret_key_file
-    age-keygen -y $secret_key_file > "$public_key_file"
+    mkdir -p "$SECURITY_DIR/secrets"
+    rm -f "$secret_key_file" "$public_key_file"
+    age-keygen -o "$secret_key_file"
+    age-keygen -y "$secret_key_file" > "$public_key_file"
+    echo "Generated new Age key for environment: $ENVIRONMENT"
 else
-    echo "Public key already exists for the secret. Skipping key generation. Use -f to force new key creation."
+    echo "Public key already exists for the $ENVIRONMENT environment. Skipping key generation. Use -f to force new key creation."
 fi
 
 echo "Checking for flux-system namespace..."
@@ -59,9 +80,15 @@ if ! kubectl get namespace flux-system &> /dev/null; then
     kubectl create namespace flux-system
 fi
 
-echo "Generating YAML for key"
-new_secret_yaml=$( cat $secret_key_file |
-    kubectl create secret generic sops-age \
+# Create secret with environment-specific name
+SECRET_NAME="sops-age"
+if [ "$ENVIRONMENT" != "production" ]; then
+    SECRET_NAME="sops-age-${ENVIRONMENT}"
+fi
+
+echo "Generating YAML for key (secret name: $SECRET_NAME)"
+new_secret_yaml=$( cat "$secret_key_file" |
+    kubectl create secret generic "$SECRET_NAME" \
                 --namespace=flux-system \
                 --from-file=age.agekey=/dev/stdin \
                 --dry-run=client \
@@ -70,3 +97,8 @@ new_secret_yaml=$( cat $secret_key_file |
 echo "Creating secret in cluster"
 echo "$new_secret_yaml" | kubectl apply -f -
 echo "Done!"
+echo ""
+echo "Summary:"
+echo "  Environment: $ENVIRONMENT"
+echo "  Public key: $public_key_file"
+echo "  Secret name: $SECRET_NAME (in flux-system namespace)"
