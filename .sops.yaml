@@ -2,8 +2,8 @@ creation_rules:
   # Development secrets (apps/development/ and any -dev files)
   - path_regex: (apps/development/.*\.yaml|.*-dev\.yaml)$
     encrypted_regex: "^(data|stringData)$"
-    age: age1development_key_placeholder  # Replace with actual development public key after generation
-  
+    age: age1wzzhdpfdzu5kshctspn7unharyhyg3xja4wenaz4ugaygleme4fs9tdkrt  # Development key
+      
   # Production secrets (default for apps/base/ and infrastructure/)
   - path_regex: (apps/base/.*\.yaml|infrastructure/.*\.yaml)$
     encrypted_regex: "^(data|stringData)$"
