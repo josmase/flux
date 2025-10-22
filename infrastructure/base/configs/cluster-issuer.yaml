@@ -7,9 +7,10 @@ spec:
   acme:
     # Replace the email address with your own contact email
     email: josmase@users.noreply.github.com
-    # The server is replaced in /clusters/production/infrastructure.yaml
-    #server: https://acme-staging-v02.api.letsencrypt.org/directory
-    server: https://acme-v02.api.letsencrypt.org/directory
+    # Server URL is set via Flux postBuild substitution
+    # Production: https://acme-v02.api.letsencrypt.org/directory
+    # Staging: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: ${LETSENCRYPT_SERVER}
     privateKeySecretRef:
       name: letsencrypt
     solvers:

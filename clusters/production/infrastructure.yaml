@@ -21,7 +21,7 @@ spec:
   postBuild:
     substitute:
       ENVIRONMENT: "production"
-      CLUSTER_ISSUER: "letsencrypt-prod"
+      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
       DOMAIN_INTERNAL: "local.hejsan.xyz"
       DOMAIN_EXTERNAL: "hejsan.xyz"
       CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
@@ -50,7 +50,7 @@ spec:
   postBuild:
     substitute:
       ENVIRONMENT: "production"
-      CLUSTER_ISSUER: "letsencrypt-prod"
+      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
       DOMAIN_INTERNAL: "local.hejsan.xyz"
       DOMAIN_EXTERNAL: "hejsan.xyz"
       CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"

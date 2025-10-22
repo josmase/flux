@@ -21,7 +21,7 @@ spec:
   postBuild:
     substitute:
       ENVIRONMENT: "development"
-      CLUSTER_ISSUER: "letsencrypt-staging"
+      LETSENCRYPT_SERVER: "https://acme-staging-v02.api.letsencrypt.org/directory"
       DOMAIN_INTERNAL: "local"
       DOMAIN_EXTERNAL: "local"
       CERT_SECRET_INTERNAL: "local-tls"
@@ -50,20 +50,11 @@ spec:
   postBuild:
     substitute:
       ENVIRONMENT: "development"
-      CLUSTER_ISSUER: "letsencrypt-staging"
+      LETSENCRYPT_SERVER: "https://acme-staging-v02.api.letsencrypt.org/directory"
       DOMAIN_INTERNAL: "local"
       DOMAIN_EXTERNAL: "local"
       CERT_SECRET_INTERNAL: "local-tls"
       CERT_SECRET_EXTERNAL: "local-tls"
-  patches:
-    # Use Let's Encrypt staging for development
-    - patch: |
-        - op: replace
-          path: /spec/acme/server
-          value: https://acme-staging-v02.api.letsencrypt.org/directory
-      target:
-        kind: ClusterIssuer
-        name: letsencrypt
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
