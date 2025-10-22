@@ -101,4 +101,14 @@ Each subdirectory matches the structure in `apps/base/` and contains:
 ## Current Overrides
 
 - `immich/`: Development database credentials and paths
+- `renovate-bot/`: Development GitHub tokens
+- `cloudflare-ddns/`: Development Cloudflare token
+- `artifactory/`: Development join and master keys
+- `actions-runner/`: Development GitHub Actions runner token
+- `media/reiverr/`: Development admin credentials
+- `media/cleanuperr/`: Development Sonarr/Radarr API keys
+- `media/checkrr/`: Development configuration for file checking
+- `media/jellyfin/auto-collections/`: Development Jellyfin API credentials
+- `new-new-boplats/database/`: Development database passwords
+- `new-new-boplats/database/admin/`: Development mongo-express password
 

@@ -6,6 +6,9 @@ kind: Kustomization
 
 resources:
   - immich/
-  # Add more development overrides here as needed
-  # - cloudflare-ddns/
-  # - media/jellyfin/
+  - renovate-bot/
+  - cloudflare-ddns/
+  - artifactory/
+  - actions-runner/
+  - media/
+  - new-new-boplats/

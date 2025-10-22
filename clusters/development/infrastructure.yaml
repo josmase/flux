@@ -11,13 +11,13 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/controllers-dev
+  path: ./infrastructure/development/controllers
   prune: true
   wait: true
   decryption:
     provider: sops
     secretRef:
-      name: sops-age
+      name: sops-age-development
   postBuild:
     substitute:
       ENVIRONMENT: "development"
@@ -41,12 +41,12 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/configs
+  path: ./infrastructure/base/configs
   prune: true
   decryption:
     provider: sops
     secretRef:
-      name: sops-age
+      name: sops-age-development
   postBuild:
     substitute:
       ENVIRONMENT: "development"
@@ -64,3 +64,24 @@ spec:
       target:
         kind: ClusterIssuer
         name: letsencrypt
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-configs-dev-overlays
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-configs
+  interval: 10m
+  retryInterval: 1m
+  timeout: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/development/configs
+  prune: false  # Don't prune - these are overlays on top of base
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age-development
