@@ -1,9 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+# NOTE: Environment overlays must provide:
+# - my-join-secret.yaml (containing my-joinkey-secret with join.key)
+# - my-masterkey-secret.yaml (containing my-masterkey-secret with master.key)
+
 resources:
   - namespace.yaml
-  - my-join-secret.yaml
-  - my-masterkey-secret.yaml
   - release.yaml
   - source.yaml
  # - persistence.yaml

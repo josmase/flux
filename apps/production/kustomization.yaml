@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Production overlay - includes ALL base apps + production secrets
+
+resources:
+  # ALL base applications
+  - ../base/traefik-dashboard/
+  - ../base/downloader/
+  - ../base/artifactory/
+  - ../base/cloudflare-ddns/
+  - ../base/it-tools/
+  - ../base/actions-runner/
+  - ../base/renovate-bot/
+  - ../base/new-new-boplats/
+  - ../base/monitoring/
+  - ../base/media/
+  - ../base/longhorn/
+  - ../base/persistence/
+  - ../base/smart-home/
+  - ../base/headscale/
+  - ../base/immich/
+  - ../base/blog/
+
+  # Production secrets
+  - immich/secret.yaml
+  - cloudflare-ddns/secret.yaml
+  - artifactory/my-join-secret.yaml
+  - artifactory/my-masterkey-secret.yaml
+  - actions-runner/scale-set/secret-runner-token.yaml
+  - renovate-bot/secret.yaml
+  - media/reiverr/secret.yaml
+  - media/cleanuperr/secrets.yaml
+  - media/checkrr/secret.yaml
+  - media/jellyfin/auto-collections/secret.yaml
+  - new-new-boplats/database/secret.yaml
+  - new-new-boplats/database/admin/secret.yaml

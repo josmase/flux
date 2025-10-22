@@ -1,14 +1,77 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Development environment overlays
-# These override base resources with development-specific configurations
+# Development environment overlay
+# Selects lightweight apps from base and applies development-specific patches
 
 resources:
-  - immich/
-  - renovate-bot/
-  - cloudflare-ddns/
-  - artifactory/
-  - actions-runner/
-  - media/
-  - new-new-boplats/
+  # Selected lightweight apps from base
+  - ../base/blog/
+  - ../base/immich/
+  - ../base/it-tools/
+  - ../base/headscale/
+  - ../base/cloudflare-ddns/
+  - ../base/downloader/
+  
+  # Development secret overrides (override base secrets)
+  - immich/secret.yaml
+  - cloudflare-ddns/secret.yaml
+  - artifactory/my-join-secret.yaml
+  - artifactory/my-masterkey-secret.yaml
+  - actions-runner/secret-runner-token.yaml
+  - renovate-bot/secret.yaml
+  - media/reiverr/secret.yaml
+  - media/cleanuperr/secrets.yaml
+  - media/checkrr/secret.yaml
+  - media/jellyfin/auto-collections/secret.yaml
+  - new-new-boplats/database/secret.yaml
+  - new-new-boplats/database/admin/secret.yaml
+
+patches:
+  # Reduce all deployments to 1 replica for local development
+  - patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+  
+  # Reduce all statefulsets to 1 replica
+  - patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: StatefulSet
+  
+  # Reduce container memory requests for resource-constrained dev environment
+  - patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "64Mi"
+    target:
+      kind: (Deployment|StatefulSet)
+  
+  # Reduce container CPU requests
+  - patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "50m"
+    target:
+      kind: (Deployment|StatefulSet)
+  
+  # Reduce container memory limits
+  - patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "256Mi"
+    target:
+      kind: (Deployment|StatefulSet)
+  
+  # Reduce container CPU limits
+  - patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "500m"
+    target:
+      kind: (Deployment|StatefulSet)

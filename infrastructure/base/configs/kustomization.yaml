@@ -1,6 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+# NOTE: Environment overlays must provide:
+# - secret-cf-token.yaml (containing cloudflare-api-token-secret with api-token)
+
 resources:
-  - certificate.yaml
   - cluster-issuer.yaml
-  - secret-cf-token.yaml
+  - certificate.yaml

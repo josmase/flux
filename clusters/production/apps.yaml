@@ -12,7 +12,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/base
+  path: ./apps/production
   prune: true
   wait: true
   timeout: 5m0s
@@ -24,8 +24,8 @@ spec:
     substitute:
       DOMAIN_INTERNAL: "local.hejsan.xyz"
       DOMAIN_EXTERNAL: "hejsan.xyz"
-      CLUSTER_ISSUER: "letsencrypt-prod"
       STORAGE_CLASS: "longhorn"
       CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
       CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
       ENVIRONMENT: "production"
+      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"

@@ -22,32 +22,32 @@
 
 ## Documentation Improvements
 
-1. **Multi-Environment Support** (P0)
-   - [ ] Create documentation for setting up development/staging clusters
-     ```yaml
-     # Example environment structure
-     clusters/
-       production/
-       staging/
-         apps.yaml         # Staging-specific app versions
-         infrastructure.yaml
-         kustomization.yaml
-         flux-system/
-       development/
-         # Similar structure
+1. **Multi-Environment Support** (P0) ✅ COMPLETED
+   - [x] Created three-layer architecture for multi-environment deployments:
      ```
-   - [ ] Add environment-specific configuration examples using Kustomize overlays
-     ```yaml
-     # Example staging overlay
-     apiVersion: kustomize.config.k8s.io/v1beta1
-     kind: Kustomization
-     resources:
-       - ../../base
-     patchesStrategicMerge:
-       - resource-limits.yaml
-       - replica-count.yaml
+     apps/base/                     # Environment-agnostic (NO secrets)
+     apps/production/               # Production overlay with all apps + secrets
+     apps/development/              # Development overlay with selected apps + secrets + patches
+     infrastructure/base/           # Environment-agnostic (NO secrets)
+     infrastructure/production/     # Production overlay with all controllers + secrets
+     infrastructure/development/    # Development overlay with lightweight controllers + secrets
      ```
-   - [ ] Document environment variable substitution patterns for different environments
+   - [x] Implemented Kustomize overlay pattern:
+     - Base: Production-ready replicas and resources (no secrets)
+     - Production: References base + production secrets (no patches)
+     - Development: References base + development secrets + resource reduction patches
+   - [x] Updated Flux Kustomizations to point to environment overlays
+   - [x] Configured SOPS encryption rules for environment-specific keys
+   - [x] Added comments to base kustomizations documenting required secrets
+   
+   **Available documentation:**
+   - `docs/OVERLAY_REFACTORING_PLAN.md`: Complete refactoring plan and architecture
+   - Base kustomization files: Comments document required secrets for each app
+   
+   **Available tools:**
+   - `utility-scripts/validation/validate-structure.sh`: Validates repository structure
+   - `utility-scripts/validation/validate-builds.sh`: Validates Kustomize and Flux builds
+   - `utility-scripts/validation/validate-secrets.sh`: Validates secret encryption and placement
 
 2. **Setup Automation** (P0) ✅ COMPLETED
    - [x] Create setup script (`setup-cluster.sh`) that automates:
@@ -122,21 +122,20 @@
      replicaCount: ${REPLICA_COUNT:1}
      ```
 
-2. **Local Development Infrastructure** (P1)
-   - [ ] Create `clusters/development/` environment configuration:
-     ```yaml
-     # infrastructure.yaml - patches for development
-     # - Remove Longhorn from controllers kustomization
-     # - Patch ClusterIssuer to use Let's Encrypt staging URL
-     # - Use Kind's local-path-provisioner (built-in storage class)
-     ```
-   - [ ] Update applications to support multiple storage classes:
-     ```yaml
-     # Allow override via Kustomize patches
-     storageClassName: ${STORAGE_CLASS:longhorn}
-     ```
-   - [ ] Create `apps/development/` with lower resource requirements
-   - [ ] Update `setup-local-dev.sh` to default to development environment
+2. **Local Development Infrastructure** (P1) ✅ COMPLETED
+   - [x] Created `clusters/development/` environment configuration:
+     - `apps.yaml`: Points to `apps/development` overlay
+     - `infrastructure.yaml`: Points to lightweight infrastructure controllers (cert-manager, traefik, reflector only)
+   - [x] Created `infrastructure/development/controllers/` excluding heavy components:
+     - Excludes: Longhorn, MongoDB Operator, OpenEBS, NFS Subdir
+     - Includes: cert-manager, traefik, reflector (essential for development)
+   - [x] Created `apps/development/` with lower resource requirements:
+     - Selected 6 lightweight apps: blog, immich, it-tools, headscale, cloudflare-ddns, downloader
+     - Patches: replicas=1, memory 64Mi-256Mi, CPU 50m-500m
+   - [x] Development overlays use environment-specific secrets
+   - [x] Updated `setup-local-dev.sh` to support development environment
+   
+   **Remaining tasks:**
    - [ ] Document cert-manager staging certificates (will show browser warnings but work)
    - [ ] Add storage class migration guide for moving apps between environments
 
@@ -266,7 +265,11 @@
                        value: s3://backup-bucket
      ```
 
-3. **Testing & Validation** (P1)
+3. **Testing & Validation** (P1) ✅ PARTIALLY COMPLETED
+   - [x] Created validation scripts:
+     - `utility-scripts/validation/validate-structure.sh`: Repository structure validation
+     - `utility-scripts/validation/validate-builds.sh`: Kustomize and Flux build validation
+     - `utility-scripts/validation/validate-secrets.sh`: Secret encryption and placement validation
    - [ ] Add pre-commit validation suite:
      ```yaml
      # .pre-commit-config.yaml
@@ -279,7 +282,11 @@
          hooks:
            - id: validate-secrets
              name: Validate Secrets Encryption
-             entry: ./scripts/validate-secrets.sh
+             entry: ./utility-scripts/validation/validate-secrets.sh
+             language: script
+           - id: validate-structure
+             name: Validate Repository Structure
+             entry: ./utility-scripts/validation/validate-structure.sh
              language: script
      ```
    - [ ] Add end-to-end testing:
@@ -296,7 +303,8 @@
        --branch=main
      
      # 3. Run tests
-     ./tests/e2e/validate-infrastructure.sh
+     ./utility-scripts/validation/validate-structure.sh
+     ./utility-scripts/validation/validate-builds.sh
      ```
 
 ## Safety & Security

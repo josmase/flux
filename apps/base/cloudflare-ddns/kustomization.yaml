@@ -1,9 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: cloudflare-ddns
+
+# NOTE: Environment overlays must provide:
+# - secret.yaml (containing cloudflare-ddns-secret with API_KEY)
+
 resources:
   - deployment.yaml
-  - secret.yaml
 
 labels:
   - includeSelectors: true
