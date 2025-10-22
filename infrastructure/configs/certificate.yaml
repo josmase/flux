@@ -1,17 +1,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: local-hejsan-xyz
+  name: cert-internal
   namespace: traefik
 spec:
-  secretName: local-hejsan-xyz-tls
+  secretName: ${CERT_SECRET_INTERNAL}
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
-  commonName: "local.hejsan.xyz"
+  commonName: "${DOMAIN_INTERNAL}"
   dnsNames:
-    - "local.hejsan.xyz"
-    - "*.local.hejsan.xyz"
+    - "${DOMAIN_INTERNAL}"
+    - "*.${DOMAIN_INTERNAL}"
   secretTemplate:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
@@ -23,17 +23,17 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: hejsan-xyz
+  name: cert-external
   namespace: traefik
 spec:
-  secretName: hejsan-xyz-tls
+  secretName: ${CERT_SECRET_EXTERNAL}
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
-  commonName: "hejsan.xyz"
+  commonName: "${DOMAIN_EXTERNAL}"
   dnsNames:
-    - "hejsan.xyz"
-    - "*.hejsan.xyz"
+    - "${DOMAIN_EXTERNAL}"
+    - "*.${DOMAIN_EXTERNAL}"
   secretTemplate:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"

@@ -18,6 +18,14 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
+  postBuild:
+    substitute:
+      ENVIRONMENT: "production"
+      CLUSTER_ISSUER: "letsencrypt-prod"
+      DOMAIN_INTERNAL: "local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "hejsan.xyz"
+      CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
+      CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -39,3 +47,11 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
+  postBuild:
+    substitute:
+      ENVIRONMENT: "production"
+      CLUSTER_ISSUER: "letsencrypt-prod"
+      DOMAIN_INTERNAL: "local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "hejsan.xyz"
+      CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
+      CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
