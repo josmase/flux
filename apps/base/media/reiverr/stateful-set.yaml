@@ -47,7 +47,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: longhorn
+        storageClassName: ${STORAGE_CLASS}
         resources:
           requests:
             storage: 10Gi
@@ -56,7 +56,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: longhorn
+        storageClassName: ${STORAGE_CLASS}
         resources:
           requests:
             storage: 10Gi

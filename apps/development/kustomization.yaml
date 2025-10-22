@@ -5,6 +5,9 @@ kind: Kustomization
 # Selects lightweight apps from base and applies development-specific patches
 
 resources:
+  # Infrastructure
+  - persistence/
+  
   # Selected lightweight apps from base
   - ../base/blog/
   - ../base/immich/
