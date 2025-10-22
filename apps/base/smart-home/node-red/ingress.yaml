@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`node-red.local.hejsan.xyz`)
+    - match: Host(`node-red.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: node-red
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

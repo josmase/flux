@@ -2,16 +2,15 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: sonarr
-
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`sonarr.local.hejsan.xyz`)
+    - match: Host(`sonarr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: sonarr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

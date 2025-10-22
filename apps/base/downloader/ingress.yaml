@@ -8,11 +8,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`downloader.local.hejsan.xyz`)
+    - match: Host(`downloader.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: downloader
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

@@ -9,10 +9,10 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`longhorn.local.hejsan.xyz`)
+    - match: Host(`longhorn.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: longhorn-frontend
           port: 80
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

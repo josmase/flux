@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`checkrr.local.hejsan.xyz`)
+    - match: Host(`checkrr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: checkrr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

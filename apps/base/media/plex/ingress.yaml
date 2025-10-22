@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`plex.local.hejsan.xyz`)
+    - match: Host(`plex.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: plex
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`blog.local.hejsan.xyz`)
+    - match: Host(`blog.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: blog
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

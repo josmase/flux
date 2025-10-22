@@ -7,16 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`headscale.local.hejsan.xyz`)
+    - match: Host(`headscale.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: headscale
           port: http
-    - match: Host(`headscale.hejsan.xyz`)
+    - match: Host(`headscale.${DOMAIN_EXTERNAL}`)
       kind: Rule
       services:
         - name: headscale
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

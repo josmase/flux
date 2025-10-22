@@ -2,16 +2,15 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: radarr
-
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`radarr.local.hejsan.xyz`)
+    - match: Host(`radarr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: radarr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

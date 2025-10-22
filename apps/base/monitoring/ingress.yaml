@@ -8,11 +8,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`grafana.local.hejsan.xyz`)
+    - match: Host(`grafana.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: kube-prometheus-stack-grafana
           port: http-web
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

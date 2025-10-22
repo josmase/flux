@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`prowlarr.local.hejsan.xyz`)
+    - match: Host(`prowlarr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: prowlarr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`bazarr.local.hejsan.xyz`)
+    - match: Host(`bazarr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: bazarr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}

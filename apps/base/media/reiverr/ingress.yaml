@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`reiverr.local.hejsan.xyz`)
+    - match: Host(`reiverr.${DOMAIN_INTERNAL}`)
       kind: Rule
       services:
         - name: reiverr
           port: http
 
   tls:
-    secretName: local-hejsan-xyz-tls
+    secretName: ${CERT_SECRET_INTERNAL}
