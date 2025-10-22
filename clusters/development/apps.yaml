@@ -1,0 +1,88 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  interval: 1m
+  retryInterval: 10m
+  dependsOn:
+    - name: infra-configs
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/base
+  prune: true
+  wait: true
+  timeout: 5m0s
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substitute:
+      DOMAIN_INTERNAL: "local"
+      DOMAIN_EXTERNAL: "local"
+      CLUSTER_ISSUER: "letsencrypt-staging"
+      STORAGE_CLASS: "standard"
+      CERT_SECRET_INTERNAL: "local-tls"
+      CERT_SECRET_EXTERNAL: "local-tls"
+      ENVIRONMENT: "development"
+  patches:
+    # Reduce replicas for all deployments to 1 (suitable for local dev)
+    - patch: |
+        - op: replace
+          path: /spec/replicas
+          value: 1
+      target:
+        kind: Deployment
+        labelSelector: "app"
+    
+    # Reduce resources for all deployments
+    - patch: |
+        - op: replace
+          path: /spec/template/spec/containers/0/resources/requests/memory
+          value: "64Mi"
+        - op: replace
+          path: /spec/template/spec/containers/0/resources/requests/cpu
+          value: "50m"
+        - op: replace
+          path: /spec/template/spec/containers/0/resources/limits/memory
+          value: "256Mi"
+        - op: replace
+          path: /spec/template/spec/containers/0/resources/limits/cpu
+          value: "500m"
+      target:
+        kind: Deployment
+        labelSelector: "app"
+    
+    # Disable heavy media apps by setting replicas to 0
+    - patch: |
+        - op: replace
+          path: /spec/replicas
+          value: 0
+      target:
+        kind: StatefulSet
+        name: "(plex|jellyfin|transmission|radarr|sonarr|bazarr|prowlarr|overseerr|reiverr|checkrr|cleanuperr)"
+    
+    # Disable new-new-boplats components (not needed for dev)
+    - patch: |
+        - op: replace
+          path: /spec/replicas
+          value: 0
+      target:
+        kind: Deployment
+        name: "new-new-boplats.*"
+    
+    # Disable renovate-bot
+    - patch: |
+        apiVersion: batch/v1
+        kind: CronJob
+        metadata:
+          name: renovate-bot
+        spec:
+          suspend: true
+      target:
+        kind: CronJob
+        name: renovate-bot

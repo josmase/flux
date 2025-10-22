@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Development infrastructure - minimal components for local Kind/k3d clusters
+# Excludes: Longhorn, MongoDB operator, OpenEBS (too heavy for local dev)
+
+resources:
+  - ../controllers/cert-manager
+  - ../controllers/ingress-traefik
+  - ../controllers/reflector
+
+configurations:
+  - ../controllers/kustomizeconfig.yaml
