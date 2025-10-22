@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-dev-overlays
+  namespace: flux-system
+spec:
+  interval: 1m
+  retryInterval: 10m
+  dependsOn:
+    - name: apps
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/development
+  prune: false  # Don't prune - these are overlays on top of base
+  wait: true
+  timeout: 2m0s
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age-development
