@@ -30,6 +30,9 @@ DEFAULT_CLUSTER_NAME="flux-dev"
 DEFAULT_BRANCH="main"
 DEFAULT_ENVIRONMENT="development"
 
+# Utility scripts base directory
+UTILITY_SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")"
+
 echo_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -266,38 +269,49 @@ if [ "$SKIP_FLUX" = false ]; then
     # AGE KEY SETUP
     # ============================================================================
     echo ""
-    echo_info "Setting up SOPS Age encryption..."
+    echo_info "Setting up SOPS Age encryption for environment: $ENVIRONMENT..."
     
-    # Check if Age keys exist, if not offer to create them
-    if [ ! -f "$SCRIPT_DIR/../security/secrets/age.agekey" ]; then
-        echo_info "No existing Age keys found"
+    # Determine secret name based on environment
+    if [ "$ENVIRONMENT" = "production" ]; then
+        SECRET_NAME="sops-age"
+    else
+        SECRET_NAME="sops-age-${ENVIRONMENT}"
+    fi
+    
+    AGE_KEY_FILE="$UTILITY_SCRIPTS_DIR/security/secrets/age_${ENVIRONMENT}.agekey"
+    
+    # Check if Age keys exist for this environment
+    if [ ! -f "$AGE_KEY_FILE" ]; then
+        echo_warning "No Age keys found for environment '$ENVIRONMENT'"
+        echo_info "Expected location: $AGE_KEY_FILE"
         
-        read -p "Generate new Age encryption keys? (yes/no): " -r
+        read -p "Generate new Age encryption keys for $ENVIRONMENT? (yes/no): " -r
         if [[ $REPLY =~ ^[Yy](es)?$ ]]; then
             if [ -f "$SCRIPT_DIR/create-private-key.sh" ]; then
-                echo_info "Calling create-private-key.sh to generate keys..."
-                ./create-private-key.sh
-                echo_success "Age keys generated"
+                echo_info "Generating Age keys for environment: $ENVIRONMENT"
+                "$SCRIPT_DIR/create-private-key.sh" --environment "$ENVIRONMENT"
+                echo_success "Age keys generated for $ENVIRONMENT"
                 echo ""
             else
-                echo_error "create-private-key.sh not found"
-                echo_info "Please run utility-scripts/setup/create-private-key.sh manually"
+                echo_error "create-private-key.sh not found at $SCRIPT_DIR/create-private-key.sh"
+                echo_info "Please run utility-scripts/setup/create-private-key.sh -e $ENVIRONMENT manually"
                 exit 1
             fi
         else
             echo_warning "Skipping Age key generation"
+            echo_info "SOPS encryption will not work without Age keys"
+            echo_info "Run later: ./utility-scripts/setup/create-private-key.sh -e $ENVIRONMENT"
         fi
     else
-        # Reuse the secret creation logic from setup/create-private-key.sh
+        echo_info "Found Age keys for environment: $ENVIRONMENT"
         
-        # Reuse the secret creation logic from create-private-key.sh
-        # Create the sops-age secret
-        kubectl create secret generic sops-age \
+        # Create the sops-age secret with environment-specific name
+        kubectl create secret generic "$SECRET_NAME" \
             --namespace=flux-system \
-            --from-file=age.agekey="$SCRIPT_DIR/secrets/age.agekey" \
+            --from-file=age.agekey="$AGE_KEY_FILE" \
             --dry-run=client -o yaml | kubectl apply -f -
         
-        echo_success "SOPS Age secret created in cluster"
+        echo_success "SOPS Age secret '$SECRET_NAME' created in cluster"
     fi
     
     # ============================================================================
@@ -431,7 +445,7 @@ fi
 
 echo_info "Useful commands:"
 echo "  - Validate manifests: ./utility-scripts/validate.sh"
-echo "  - Encrypt secrets: ./utility-scripts/encrypt.sh <file>"
+echo "  - Encrypt secrets: ./utility-scripts/security/encrypt.sh -e $ENVIRONMENT <file>"
 echo "  - View cluster: kubectl get all -A"
 echo "  - Use k9s: k9s"
 echo "  - Delete cluster: kind delete cluster --name $CLUSTER_NAME"
