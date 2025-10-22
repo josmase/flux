@@ -23,7 +23,8 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+# Script is in utility-scripts/setup/, so REPO_ROOT is two levels up
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Configuration
 DEFAULT_CLUSTER_NAME="flux-dev"
@@ -31,7 +32,7 @@ DEFAULT_BRANCH="main"
 DEFAULT_ENVIRONMENT="development"
 
 # Utility scripts base directory
-UTILITY_SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")"
+UTILITY_SCRIPTS_DIR="$REPO_ROOT/utility-scripts"
 
 echo_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -325,7 +326,7 @@ if [ "$SKIP_FLUX" = false ]; then
     if [ ! -d "$ENV_PATH" ]; then
         echo_warning "Environment directory not found: $ENV_PATH"
         echo_info "Available environments:"
-        ls -d "$REPO_ROOT/clusters"/*/ 2>/dev/null | xargs -n1 basename || echo "  None found"
+        find "$REPO_ROOT/clusters" -maxdepth 1 -type d ! -name "clusters" -exec basename {} \; 2>/dev/null || echo "  None found"
         
         read -p "Continue anyway? (yes/no): " -r
         if [[ ! $REPLY =~ ^[Yy](es)?$ ]]; then
@@ -341,6 +342,16 @@ if [ "$SKIP_FLUX" = false ]; then
         echo_error "Could not determine git remote URL"
         echo_info "Please ensure you're in a git repository with a remote"
         exit 1
+    fi
+    
+    # Convert SSH URLs to HTTPS for Flux compatibility
+    # git@github.com:user/repo.git -> https://github.com/user/repo
+    if [[ "$REMOTE_URL" =~ ^git@github\.com:(.+)\.git$ ]]; then
+        REMOTE_URL="https://github.com/${BASH_REMATCH[1]}"
+        echo_info "Converted SSH URL to HTTPS: $REMOTE_URL"
+    elif [[ "$REMOTE_URL" =~ ^git@github\.com:(.+)$ ]]; then
+        REMOTE_URL="https://github.com/${BASH_REMATCH[1]}"
+        echo_info "Converted SSH URL to HTTPS: $REMOTE_URL"
     fi
     
     echo_info "Using git repository: $REMOTE_URL"
@@ -361,33 +372,20 @@ if [ "$SKIP_FLUX" = false ]; then
     echo ""
     echo_info "Creating Kustomizations..."
     
-    # Check which kustomizations exist
+    # Apply Kustomization manifests directly instead of using flux create
+    # This allows us to use the exact configuration from the repository
     if [ -f "$ENV_PATH/infrastructure.yaml" ]; then
-        echo_info "Creating infrastructure kustomization..."
-        flux create kustomization infrastructure \
-            --source=GitRepository/flux-system \
-            --path="./clusters/$ENVIRONMENT" \
-            --prune=true \
-            --interval=10m \
-            --namespace=flux-system \
-            --wait=true
-        
-        echo_success "Infrastructure kustomization created"
+        echo_info "Applying infrastructure kustomizations..."
+        kubectl apply -f "$ENV_PATH/infrastructure.yaml"
+        echo_success "Infrastructure kustomizations applied"
     else
         echo_warning "infrastructure.yaml not found in $ENV_PATH"
     fi
     
     if [ -f "$ENV_PATH/apps.yaml" ]; then
-        echo_info "Creating apps kustomization..."
-        flux create kustomization apps \
-            --source=GitRepository/flux-system \
-            --path="./clusters/$ENVIRONMENT" \
-            --prune=true \
-            --interval=10m \
-            --namespace=flux-system \
-            --depends-on=infrastructure
-        
-        echo_success "Apps kustomization created"
+        echo_info "Applying apps kustomization..."
+        kubectl apply -f "$ENV_PATH/apps.yaml"
+        echo_success "Apps kustomization applied"
     else
         echo_warning "apps.yaml not found in $ENV_PATH"
     fi
