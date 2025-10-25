@@ -22,8 +22,8 @@ spec:
       name: sops-age-development
   postBuild:
     substitute:
-      DOMAIN_INTERNAL: "local"
-      DOMAIN_EXTERNAL: "local"
+      DOMAIN_INTERNAL: "development.local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "development.local.hejsan.xyz"
       STORAGE_CLASS: "standard"
       CERT_SECRET_INTERNAL: "local-tls"
       CERT_SECRET_EXTERNAL: "local-tls"
