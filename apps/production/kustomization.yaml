@@ -23,15 +23,10 @@ resources:
   - ../base/blog/
 
   # Production secrets
-  - immich/secret.yaml
-  - cloudflare-ddns/secret.yaml
-  - artifactory/my-join-secret.yaml
-  - artifactory/my-masterkey-secret.yaml
-  - actions-runner/scale-set/secret-runner-token.yaml
-  - renovate-bot/secret.yaml
-  - media/reiverr/secret.yaml
-  - media/cleanuperr/secrets.yaml
-  - media/checkrr/secret.yaml
-  - media/jellyfin/auto-collections/secret.yaml
-  - new-new-boplats/database/secret.yaml
-  - new-new-boplats/database/admin/secret.yaml
+  - immich/
+  - cloudflare-ddns/
+  - artifactory/
+  - actions-runner/
+  - renovate-bot/
+  - media/
+  - new-new-boplats/
