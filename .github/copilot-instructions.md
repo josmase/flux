@@ -23,6 +23,14 @@ This repository manages Kubernetes deployments using Flux CD, following GitOps p
   └── github-runner.yaml      # GitHub Actions runner (if used)
   ```
 
+### ConfigMap Pattern for Helm Values
+- **IMPORTANT**: When using configMapGenerator for Helm chart values, use unique names for base and overlays
+- Base ConfigMap: `<app>-values-base` (contains complete configuration)
+- Overlay ConfigMap: `<app>-values-<environment>` (contains only overrides)
+- Overlay patches HelmRelease to append its ConfigMap to the `valuesFrom` array
+- See `docs/CONFIGMAP_PATTERN.md` for detailed implementation guide
+- Example: `infrastructure/base/controllers/ingress-traefik/` and `infrastructure/development/controllers/ingress-traefik/`
+
 ### Certificate Management
 - Single wildcard certificate managed by cert-manager in traefik namespace
 - Reflector automatically copies certificates across namespaces

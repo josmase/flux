@@ -8,21 +8,21 @@ generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-  - name: traefik-release-values
+  - name: traefik-values-development
     namespace: traefik
     files:
       - values.yaml
 
 patches:
-  # Patch HelmRelease to use the development values
+  # Add development-specific values ConfigMap to HelmRelease
   - target:
       kind: HelmRelease
       name: traefik
       namespace: traefik
     patch: |-
-      - op: replace
-        path: /spec/valuesFrom
+      - op: add
+        path: /spec/valuesFrom/-
         value:
-          - kind: ConfigMap
-            name: traefik-release-values
+          kind: ConfigMap
+          name: traefik-values-development
 

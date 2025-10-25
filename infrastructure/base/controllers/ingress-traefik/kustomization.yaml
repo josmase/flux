@@ -9,7 +9,7 @@ generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-  - name: traefik-release-values
+  - name: traefik-values-base
     namespace: traefik
     files:
       - values.yaml=release-values.yaml
