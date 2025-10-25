@@ -7,6 +7,7 @@ namespace: cloudflare-ddns
 # - secret.yaml (containing cloudflare-ddns-secret with API_KEY)
 
 resources:
+  - namespace.yaml
   - deployment.yaml
 
 labels:
