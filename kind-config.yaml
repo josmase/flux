@@ -10,14 +10,11 @@ nodes:
           kubeletExtraArgs:
             node-labels: "ingress-ready=true"
     extraPortMappings:
-      # HTTP
-      - containerPort: 80
+      # Map localhost:80 to Traefik's NodePort (32080)
+      - containerPort: 32080
         hostPort: 80
         protocol: TCP
-      # HTTPS
-      - containerPort: 443
+      # Map localhost:443 to Traefik's NodePort (32443)
+      - containerPort: 32443
         hostPort: 443
         protocol: TCP
-  # Add worker nodes if needed
-  # - role: worker
-  # - role: worker

@@ -216,10 +216,12 @@ if [ "$CLUSTER_EXISTS" = false ]; then
     echo_info "Creating Kind cluster: $CLUSTER_NAME"
     
     # Check if kind-config.yaml exists
-    if [ -f "$REPO_ROOT/kind-config.yaml" ]; then
-        kind create cluster --name "$CLUSTER_NAME" --config "$REPO_ROOT/kind-config.yaml"
+    KIND_CONFIG="$REPO_ROOT/kind-config.yaml"
+    if [ -f "$KIND_CONFIG" ]; then
+        echo_info "Using Kind config: $KIND_CONFIG"
+        kind create cluster --name "$CLUSTER_NAME" --config "$KIND_CONFIG"
     else
-        echo_warning "kind-config.yaml not found, using default configuration"
+        echo_warning "kind-config.yaml not found at $KIND_CONFIG, using default configuration"
         kind create cluster --name "$CLUSTER_NAME"
     fi
     

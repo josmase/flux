@@ -1,0 +1,31 @@
+commonLabels: { app: traefik }
+
+globalArguments:
+  - "--global.sendanonymoususage=false"
+  - "--global.checknewversion=false"
+
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+  - "--log.level=INFO"
+  - "--providers.kubernetescrd.allowexternalnameservices=true"
+
+deployment:
+  enabled: true
+  replicas: 1  # Reduced for development
+
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+    nodePort: 32080  # Map to host port 80 via Kind extraPortMappings
+  websecure:
+    tls:
+      enabled: true
+    nodePort: 32443  # Map to host port 443 via Kind extraPortMappings
+
+service:
+  enabled: true
+  type: NodePort  # Use NodePort for Kind
