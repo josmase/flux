@@ -19,11 +19,6 @@ resources:
   # Development secret overrides (override base secrets)
   - immich/
   - cloudflare-ddns/
-  - artifactory/
-  - actions-runner/
-  - renovate-bot/
-  - media/
-  - new-new-boplats/
 
 patches:
   # Reduce all deployments to 1 replica for local development
