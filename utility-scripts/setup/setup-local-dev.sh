@@ -50,6 +50,47 @@ echo_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+setup_pre_commit_hook() {
+    local hooks_dir="$REPO_ROOT/.git/hooks"
+    local hook_path="$hooks_dir/pre-commit"
+    local marker="# flux-pre-commit-validate"
+
+    if [ ! -d "$hooks_dir" ]; then
+        echo_warning "Git hooks directory not found; skipping pre-commit hook setup"
+        return
+    fi
+
+    if [ -f "$hook_path" ] && ! grep -q "$marker" "$hook_path"; then
+        echo_warning "Existing pre-commit hook detected; skipping automatic validation hook setup"
+        return
+    fi
+
+    cat <<'EOF' > "$hook_path"
+#!/usr/bin/env bash
+# flux-pre-commit-validate
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+
+if [ -z "$REPO_ROOT" ] || [ ! -d "$REPO_ROOT" ]; then
+  echo "flux pre-commit hook: unable to determine repository root" >&2
+  exit 1
+fi
+
+VALIDATE_SCRIPT="$REPO_ROOT/utility-scripts/validation/validate.sh"
+
+if [ ! -x "$VALIDATE_SCRIPT" ]; then
+  echo "flux pre-commit hook: validation script not found at $VALIDATE_SCRIPT" >&2
+  exit 1
+fi
+
+"$VALIDATE_SCRIPT"
+EOF
+
+    chmod +x "$hook_path"
+    echo_success "Configured Git pre-commit hook for repository validation"
+}
+
 usage() {
     cat << EOF
 Usage: $0 [OPTIONS]
@@ -144,6 +185,9 @@ echo_info "Setting up local development cluster: $CLUSTER_NAME"
 echo_info "Environment: $ENVIRONMENT"
 echo_info "Branch: $BRANCH"
 echo ""
+
+setup_pre_commit_hook
+
 
 # ============================================================================
 # PREREQUISITE CHECKS

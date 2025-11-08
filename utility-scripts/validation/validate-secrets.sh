@@ -30,6 +30,32 @@ if ! command -v sops &> /dev/null; then
     exit 1
 fi
 
+echo "0. Checking staged secrets for plaintext..."
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null || true)
+    if [ -z "$STAGED_FILES" ]; then
+        echo "  No staged secrets detected"
+    else
+        while IFS= read -r staged_file; do
+            [ -z "$staged_file" ] && continue
+            if [ ! -f "$staged_file" ]; then
+                continue
+            fi
+            if grep -q "kind:[[:space:]]*Secret" "$staged_file" 2>/dev/null; then
+                if grep -q "sops:" "$staged_file" 2>/dev/null; then
+                    echo -e "  ${GREEN}✓${NC} Staged secret encrypted: $staged_file"
+                else
+                    echo -e "  ${RED}✗${NC} Staged secret missing SOPS metadata: $staged_file"
+                    ERRORS=$((ERRORS + 1))
+                fi
+            fi
+        done <<< "$STAGED_FILES"
+    fi
+else
+    echo "  Skipping staged secret checks (not a git repository)"
+fi
+echo ""
+
 echo "1. Checking for unencrypted secrets..."
 echo ""
 
@@ -43,7 +69,7 @@ check_secret_encrypted() {
     fi
     
     # Check if file contains SOPS metadata
-    if grep -q "^sops:" "$file" && grep -q "^    age:" "$file"; then
+    if grep -Eq "^sops:" "$file" && grep -Eq "^[[:space:]]+age:" "$file"; then
         echo -e "  ${GREEN}✓${NC} Encrypted: $file"
         return 0
     else
