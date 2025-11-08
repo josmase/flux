@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: immich
+
+# NOTE: Environment overlays must provide:
+# - secret.yaml (containing immich-secrets with DB credentials and locations)
+
+resources:
+  - namespace.yaml
+  - immich-server
+  - immich-redis
+  - immich-database
+  - immich-machine-learning

@@ -11,13 +11,21 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/controllers
+  path: ./infrastructure/production/controllers
   prune: true
   wait: true
   decryption:
     provider: sops
     secretRef:
       name: sops-age
+  postBuild:
+    substitute:
+      ENVIRONMENT: "production"
+      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
+      DOMAIN_INTERNAL: "local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "hejsan.xyz"
+      CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
+      CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -33,9 +41,17 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/configs
+  path: ./infrastructure/production/configs
   prune: true
   decryption:
     provider: sops
     secretRef:
       name: sops-age
+  postBuild:
+    substitute:
+      ENVIRONMENT: "production"
+      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
+      DOMAIN_INTERNAL: "local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "hejsan.xyz"
+      CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
+      CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"

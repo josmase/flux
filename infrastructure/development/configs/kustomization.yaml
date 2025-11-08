@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Development infrastructure configs overlay
+# Includes base configs + development secrets
+
+resources:
+  # Base infrastructure configs
+  - ../../base/configs/
+  
+  # Development secrets (override production)
+  - secret-cf-token.yaml

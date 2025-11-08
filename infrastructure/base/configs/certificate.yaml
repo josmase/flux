@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-internal
+  namespace: traefik
+spec:
+  secretName: ${CERT_SECRET_INTERNAL}
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: "${DOMAIN_INTERNAL}"
+  dnsNames:
+    - "${DOMAIN_INTERNAL}"
+    - "*.${DOMAIN_INTERNAL}"
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "traefik,longhorn-system,default,artifactory,monitoring,smart-home,immich"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true" # Auto create reflection for matching namespaces
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "traefik,longhorn-system,default,artifactory,monitoring,smart-home,immich"
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-external
+  namespace: traefik
+spec:
+  secretName: ${CERT_SECRET_EXTERNAL}
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: "${DOMAIN_EXTERNAL}"
+  dnsNames:
+    - "${DOMAIN_EXTERNAL}"
+    - "*.${DOMAIN_EXTERNAL}"
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "traefik,longhorn-system,default,artifactory,monitoring,smart-home,immich"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true" # Auto create reflection for matching namespaces
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "traefik,longhorn-system,default,artifactory,monitoring,smart-home,immich"

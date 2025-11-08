@@ -1,0 +1,20 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: flux-dev
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      # Map localhost:80 to Traefik's NodePort (32080)
+      - containerPort: 32080
+        hostPort: 80
+        protocol: TCP
+      # Map localhost:443 to Traefik's NodePort (32443)
+      - containerPort: 32443
+        hostPort: 443
+        protocol: TCP

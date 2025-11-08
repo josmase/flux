@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../base/controllers/ingress-traefik
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: traefik-values-development
+    namespace: traefik
+    files:
+      - values.yaml
+
+patches:
+  # Add development-specific values ConfigMap to HelmRelease
+  - target:
+      kind: HelmRelease
+      name: traefik
+      namespace: traefik
+    patch: |-
+      - op: add
+        path: /spec/valuesFrom/-
+        value:
+          kind: ConfigMap
+          name: traefik-values-development
+

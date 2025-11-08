@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# NOTE: Environment overlays must provide:
+# - secret.yaml (containing checkrr-config with config.yaml file)
+
+resources:
+  - ingress.yaml
+  - service.yaml
+  - stateful-set.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: checkrr

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: radarr
+spec:
+  serviceName: radarr
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      containers:
+        - name: radarr
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.0.4-nightly@sha256:181c0b07a0fedc548cdcd21e01ed84ca7340b99e7bfc22782d2bf51a1de0b977
+          ports:
+            - containerPort: 7878
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: radarr-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            limits:
+              memory: 900Mi
+              cpu: "1"
+            requests:
+              memory: 500Mi
+              cpu: "0.5"
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: radarr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ${STORAGE_CLASS}
+        resources:
+          requests:
+            storage: 30Gi

@@ -1,0 +1,31 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  interval: 1m
+  retryInterval: 10m
+  dependsOn:
+    - name: infra-configs
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/development
+  prune: true
+  wait: true
+  timeout: 5m0s
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age-development
+  postBuild:
+    substitute:
+      DOMAIN_INTERNAL: "development.local.hejsan.xyz"
+      DOMAIN_EXTERNAL: "development.local.hejsan.xyz"
+      STORAGE_CLASS: "standard"
+      CERT_SECRET_INTERNAL: "local-tls"
+      CERT_SECRET_EXTERNAL: "local-tls"
+      ENVIRONMENT: "development"
+      LETSENCRYPT_SERVER: "https://acme-staging-v02.api.letsencrypt.org/directory"

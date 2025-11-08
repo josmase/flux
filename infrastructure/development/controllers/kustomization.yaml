@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Development infrastructure controllers overlay
+# Includes only lightweight controllers suitable for local Kind/k3d clusters
+# Excludes: Longhorn, MongoDB operator, OpenEBS, NFS (too heavy for local dev)
+
+resources:
+  - ../../base/controllers/cert-manager/
+  - ingress-traefik/
+  - ../../base/controllers/reflector/

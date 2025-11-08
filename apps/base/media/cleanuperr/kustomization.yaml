@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# NOTE: Environment overlays must provide:
+# - secrets.yaml (containing cleanuperr-secrets with SONARR_API_KEY, RADARR_API_KEY)
+
+resources:
+  - stateful-set.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: cleanuperr
+
+configMapGenerator:
+  - name: cleanuperr-config
+    envs:
+      - .env

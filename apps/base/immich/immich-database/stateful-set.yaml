@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: immich-postgres
+spec:
+  serviceName: immich-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-postgres
+  template:
+    metadata:
+      labels:
+        app: immich-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: artifactory.local.hejsan.xyz/docker/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: immich-secrets
+                  key: DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: immich-secrets
+                  key: DB_USERNAME
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: immich-secrets
+                  key: DB_DATABASE_NAME
+            - name: POSTGRES_INITDB_ARGS
+              value: "--data-checksums"
+          volumeMounts:
+            - name: immich-db-pvc
+              subPath: var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: "1"
+            requests:
+              memory: 1Gi
+              cpu: "0.1"
+  volumeClaimTemplates:
+    - metadata:
+        name: immich-db-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ${STORAGE_CLASS}
+        resources:
+          requests:
+            storage: 10Gi

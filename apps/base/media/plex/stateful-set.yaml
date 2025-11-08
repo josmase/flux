@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: plex
+spec:
+  serviceName: plex
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+        - name: plex
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/plex:1.41.0.8994-f2c27da23-ls238@sha256:519cb67f04c8b114d19a3ebe4e31711eed5debae95b996c9c87d69202c44e6d9
+          ports:
+            - containerPort: 32400
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: plex-config-pvc
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: plex-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ${STORAGE_CLASS}
+        resources:
+          requests:
+            storage: 50Gi

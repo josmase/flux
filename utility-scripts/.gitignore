@@ -1,1 +1,2 @@
-secrets/
+# Age encryption private keys (security/secrets/)
+security/secrets/

@@ -1,0 +1,46 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: new-new-boplats-api
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`new-new-boplats.${DOMAIN_INTERNAL}`) && PathPrefix(`/api`) || Host(`nya-nya-boplats.${DOMAIN_INTERNAL}`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: new-new-boplats-api
+          port: http
+      middlewares:
+        - name: strip-api-prefix
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: new-new-boplats-api-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`new-new-boplats.${DOMAIN_EXTERNAL}`) && PathPrefix(`/api`) || Host(`nya-nya-boplats.${DOMAIN_EXTERNAL}`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: new-new-boplats-api
+          port: http
+      middlewares:
+        - name: strip-api-prefix
+  tls:
+    secretName: ${CERT_SECRET_EXTERNAL}
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - "/api"

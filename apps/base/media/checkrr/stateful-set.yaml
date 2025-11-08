@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: checkrr
+spec:
+  serviceName: checkrr
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: checkrr
+  template:
+    metadata:
+      labels:
+        app: checkrr
+    spec:
+      initContainers:
+        - name: init-checkrr-db
+          image: busybox@sha256:e3652a00a2fabd16ce889f0aa32c38eec347b997e73bd09e69c962ec7f8732ee
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /checkrr-config/database && touch /checkrr-config/database/checkrr.db
+              echo "Listing /checkrr-config:"
+              ls -l /checkrr-config
+              echo "Listing /checkrr-config/database:"
+              ls -l /checkrr-config/database
+          volumeMounts:
+            - name: checkrr-config-pvc
+              mountPath: /checkrr-config
+        - name: init-badfiles-csv
+          image: busybox@sha256:e3652a00a2fabd16ce889f0aa32c38eec347b997e73bd09e69c962ec7f8732ee
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /checkrr-config && touch /checkrr-config/badfiles.csv
+          volumeMounts:
+            - name: checkrr-config-pvc
+              mountPath: /checkrr-config
+      containers:
+        - name: checkrr
+          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4@sha256:fe8b787d556e1a23f01daf6ace53a43f8433630b918ce14e29a35780d18af375
+          ports:
+            - containerPort: 8585
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: checkrr-config-volume
+              mountPath: /etc/checkrr.yaml
+              subPath: checkrr.yaml
+            - name: shared-storage
+              mountPath: /mnt/storage
+            - name: checkrr-config-pvc
+              mountPath: /checkrr-config/
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: "1"
+            requests:
+              memory: 320Mi
+              cpu: "0.1"
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: shared-nfs-pvc
+        - name: checkrr-config-volume
+          secret:
+            secretName: checkrr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: checkrr-config-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ${STORAGE_CLASS}
+        resources:
+          requests:
+            storage: 5Gi

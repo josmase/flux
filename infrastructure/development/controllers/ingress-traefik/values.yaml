@@ -1,0 +1,14 @@
+# Development-specific overrides for Traefik
+# These values are merged with the base values
+
+deployment:
+  replicas: 1  # Reduced for development
+
+ports:
+  web:
+    nodePort: 32080  # Map to host port 80 via Kind extraPortMappings
+  websecure:
+    nodePort: 32443  # Map to host port 443 via Kind extraPortMappings
+
+service:
+  type: NodePort  # Use NodePort for Kind (instead of LoadBalancer)

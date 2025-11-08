@@ -1,32 +1,32 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# Production overlay - includes ALL base apps + production secrets
+
 resources:
-  - traefik-dashboard
-  - downloader
-  - artifactory
-  - cloudflare-ddns
-  - it-tools
-  - actions-runner
-  - renovate-bot
-  - new-new-boplats
-  - monitoring
-  - media
-  - longhorn
-  - default-app-config.yaml
-  - persistence
-  - smart-home
-  - headscale
-  - immich
+  # ALL base applications
+  - ../base/traefik-dashboard/
+  - ../base/downloader/
+  - ../base/artifactory/
+  - ../base/cloudflare-ddns/
+  - ../base/it-tools/
+  - ../base/actions-runner/
+  - ../base/renovate-bot/
+  - ../base/new-new-boplats/
+  - ../base/monitoring/
+  - ../base/media/
+  - ../base/longhorn/
+  - ../base/persistence/
+  - ../base/smart-home/
+  - ../base/headscale/
+  - ../base/immich/
+  - ../base/blog/
 
-transformers:
-  - |-
-    apiVersion: builtin
-    kind: NamespaceTransformer
-    metadata:
-      name: notImportantHere
-      namespace: default
-    unsetOnly: true
-
-configurations:
-  - kustomizeconfig.yaml
+  # Production secrets
+  - immich/
+  - cloudflare-ddns/
+  - artifactory/
+  - actions-runner/
+  - renovate-bot/
+  - media/
+  - new-new-boplats/

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: headscale
+spec:
+  serviceName: headscale
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: headscale
+  template:
+    metadata:
+      labels:
+        app: headscale
+    spec:
+      containers:
+        - name: headscale
+          image: artifactory.local.hejsan.xyz/docker/headscale/headscale:v0.27.0-debug@sha256:1849d0fcd9d0eaec44f4ccbf2f7316fd2944a4786b8054636598cb646b5aee98
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: config
+              mountPath: /etc/headscale
+            - name: headscale-data-pvc
+              mountPath: /var/lib/headscale
+          command: ["headscale", "serve"]
+          resources:
+            limits:
+              memory: 800Mi
+              cpu: "1"
+            requests:
+              memory: 500Mi
+              cpu: "0.1"
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: headscale-config
+  volumeClaimTemplates:
+    - metadata:
+        name: headscale-data-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ${STORAGE_CLASS}
+        resources:
+          requests:
+            storage: 20Gi

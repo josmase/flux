@@ -1,0 +1,48 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jellyfin.${DOMAIN_INTERNAL}`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: http
+
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin-external
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jellyfin.${DOMAIN_EXTERNAL}`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: http
+      middlewares:
+        - name: deny-metrics
+
+  tls:
+    secretName: ${CERT_SECRET_EXTERNAL}
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: deny-metrics
+spec:
+  replacePathRegex:
+    regex: ^/metrics/(.*)
+    replacement: /404
