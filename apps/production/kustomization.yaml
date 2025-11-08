@@ -5,6 +5,7 @@ kind: Kustomization
 
 resources:
   # ALL base applications
+  - ../base/default-app-config.yaml
   - ../base/traefik-dashboard/
   - ../base/downloader/
   - ../base/artifactory/
@@ -39,3 +40,6 @@ transformers:
       name: notImportantHere
       namespace: default
     unsetOnly: true
+
+configurations:
+  - kustomizeconfig.yaml
