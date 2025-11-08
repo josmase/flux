@@ -40,31 +40,6 @@
 
 3. **Secrets Management** (P0)
   - Why: Prevent plaintext secrets from landing in Git and make secret creation/rotation repeatable.
-   - [ ] Add pre-commit hook for secret validation:
-     ```bash
-     #!/bin/bash
-     for file in $(git diff --cached --name-only); do
-       if grep -l "kind: Secret" "$file" > /dev/null; then
-         if ! grep -l "sops:" "$file" > /dev/null; then
-           echo "Error: Unencrypted Secret in $file"
-           exit 1
-         fi
-       fi
-     done
-     ```
-   - [ ] Create secret templates for common patterns:
-     ```yaml
-     # templates/secrets/database.yaml
-     apiVersion: v1
-     kind: Secret
-     metadata:
-       name: ${APP_NAME}-db-credentials
-       namespace: ${NAMESPACE}
-     type: Opaque
-     stringData:
-       POSTGRES_USER: ${DB_USER}
-       POSTGRES_PASSWORD: ${DB_PASS}
-     ```
    - [ ] Add secret rotation automation script
 
 4. **Certificate Management** (P1)
