@@ -211,6 +211,12 @@
      ./utility-scripts/validation/validate-builds.sh
      ```
 
+4. **Longhorn High Availability & Maintenance** (P0)
+   - Why: Keep workloads schedulable during node failures and ensure Longhorn data is routinely protected and pruned.
+    - [ ] Verify Longhorn replica counts, disk tags, and storage classes so volumes stay available with any single node offline
+    - [ ] Configure recurring backup jobs for critical volumes (snapshot + off-cluster backup)
+    - [ ] Configure recurring cleanup jobs to purge expired snapshots and backups
+
 ## Safety & Security
 
 1. **Access Control**
