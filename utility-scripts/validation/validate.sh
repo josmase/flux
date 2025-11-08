@@ -27,6 +27,11 @@
 set -o errexit
 set -o pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+cd "$REPO_ROOT"
+
 # mirror kustomize-controller build options
 kustomize_flags=("--load-restrictor=LoadRestrictionsNone")
 kustomize_config="kustomization.yaml"
@@ -43,6 +48,15 @@ if [ ! -d "$SCHEMA_DIR" ] || [ -z "$(ls -A "$SCHEMA_DIR" 2>/dev/null)" ]; then
   mkdir -p "$SCHEMA_DIR"
   curl -sL "$SCHEMA_URL" | tar zxf - -C "$SCHEMA_DIR"
 fi
+
+echo "INFO - Running validate-secrets.sh"
+"$SCRIPT_DIR/validate-secrets.sh"
+
+echo "INFO - Running validate-structure.sh"
+"$SCRIPT_DIR/validate-structure.sh"
+
+echo "INFO - Running validate-builds.sh"
+"$SCRIPT_DIR/validate-builds.sh"
 
 find . -type f -name '*.yaml' -print0 | while IFS= read -r -d $'\0' file;
   do
