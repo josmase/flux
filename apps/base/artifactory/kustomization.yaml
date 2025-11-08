@@ -9,7 +9,10 @@ resources:
   - namespace.yaml
   - release.yaml
   - source.yaml
- # - persistence.yaml
+  # - persistence.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
 
 configMapGenerator:
   - name: artifactory-release-values
