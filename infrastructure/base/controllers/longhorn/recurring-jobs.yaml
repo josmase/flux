@@ -38,18 +38,6 @@ spec:
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: backup-cleanup-weekly
-  namespace: longhorn-system
-spec:
-  cron: "0 3 * * 0"
-  task: backup-cleanup
-  groups:
-    - default
-  concurrency: 1
----
-apiVersion: longhorn.io/v1beta2
-kind: RecurringJob
-metadata:
   name: critical-backup
   namespace: longhorn-system
 spec:
