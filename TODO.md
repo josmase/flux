@@ -104,45 +104,6 @@
      - Storage usage
      - Application health
 
-2. **Backup & Disaster Recovery** (P0)
-  - Why: Guarantee critical data can be restored after failures and prove backups actually work.
-   - [ ] Document backup procedures:
-     ```bash
-     # Longhorn backup example
-     kubectl create -f - <<EOF
-     apiVersion: longhorn.io/v1beta1
-     kind: Backup
-     metadata:
-       name: scheduled-backup
-     spec:
-       recurringJobs:
-         - name: backup
-           task: backup
-           cron: "0 0 * * *"
-           retain: 7
-     EOF
-     ```
-   - [ ] Add automated backup verification:
-     ```yaml
-     # Backup verification job
-     apiVersion: batch/v1
-     kind: CronJob
-     metadata:
-       name: backup-verify
-     spec:
-       schedule: "0 1 * * *"
-       jobTemplate:
-         spec:
-           template:
-             spec:
-               containers:
-                 - name: verify
-                   image: backup-verify
-                   env:
-                     - name: BACKUP_LOCATION
-                       value: s3://backup-bucket
-     ```
-
 3. **Testing & Validation** (P1)
   - Why: Automate guardrails so regressions are caught before changes merge or deploy.
    - [x] Created validation scripts:
@@ -185,12 +146,6 @@
      ./utility-scripts/validation/validate-structure.sh
      ./utility-scripts/validation/validate-builds.sh
      ```
-
-4. **Longhorn High Availability & Maintenance** (P0)
-   - Why: Keep workloads schedulable during node failures and ensure Longhorn data is routinely protected and pruned.
-    - [ ] Verify Longhorn replica counts, disk tags, and storage classes so volumes stay available with any single node offline
-    - [ ] Configure recurring backup jobs for critical volumes (snapshot + off-cluster backup)
-    - [ ] Configure recurring cleanup jobs to purge expired snapshots and backups
 
 ## Safety & Security
 

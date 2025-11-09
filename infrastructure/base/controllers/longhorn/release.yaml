@@ -20,3 +20,13 @@ spec:
     defaultSettings:
       backupTarget: nfs://storage.local.hejsan.xyz:/kubernetes
       concurrentAutomaticEngineUpgradePerNodeLimit: 1
+      defaultReplicaCount: 3
+      defaultDataLocality: best-effort
+      replicaSoftAntiAffinity: false
+      allowVolumeCreationWithDegradedAvailability: false
+      autoDeletePodWhenVolumeDetachedUnexpectedly: true
+      nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+      replicaAutoBalance: best-effort
+      defaultRecurringJobSelector:
+        - name: default
+          isGroup: true
