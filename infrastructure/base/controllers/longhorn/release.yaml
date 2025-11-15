@@ -30,3 +30,4 @@ spec:
       defaultRecurringJobSelector:
         - name: default
           isGroup: true
+      guaranteedInstanceManagerCPU: "250"
