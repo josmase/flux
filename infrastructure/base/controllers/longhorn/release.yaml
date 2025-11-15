@@ -35,4 +35,4 @@ spec:
           isGroup: true
       storageMinimalAvailablePercentage: 25
       storageOverProvisioningPercentage: 100
-      guaranteedInstanceManagerCPU: "8"
+      guaranteedInstanceManagerCPU: "4"
