@@ -10,6 +10,5 @@ resources:
   - ../../base/controllers/ingress-traefik/
   - ../../base/controllers/longhorn/
   - ../../base/controllers/mongodb-operator/
-  - ../../base/controllers/nfs-subdir/
   - ../../base/controllers/openebs/
   - ../../base/controllers/reflector/
