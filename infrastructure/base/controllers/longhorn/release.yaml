@@ -30,4 +30,8 @@ spec:
       defaultRecurringJobSelector:
         - name: default
           isGroup: true
-      guaranteedInstanceManagerCPU: "250"
+        - name: critical
+          isGroup: true
+      storageMinimalAvailablePercentage: 25
+      storageOverProvisioningPercentage: 100
+      guaranteedInstanceManagerCPU: "8"
