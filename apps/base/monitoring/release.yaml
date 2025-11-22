@@ -14,3 +14,14 @@ spec:
         name: kube-prometheus-stack-repo
       version: 64.0.0
   interval: 1m0s
+  values:
+    prometheus:
+      prometheusSpec:
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 50Gi
