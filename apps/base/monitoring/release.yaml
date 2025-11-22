@@ -25,3 +25,19 @@ spec:
               resources:
                 requests:
                   storage: 50Gi
+    grafana:
+      persistence:
+        enabled: true
+        storageClassName: longhorn
+        accessModes: ["ReadWriteOnce"]
+        size: 10Gi
+    alertmanager:
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 10Gi
