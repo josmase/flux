@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: immich-postgres
 spec:
-  serviceName: immich-postgres
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: immich-postgres
@@ -47,13 +48,7 @@ spec:
             requests:
               memory: 1Gi
               cpu: "0.1"
-  volumeClaimTemplates:
-    - metadata:
-        name: immich-db-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 10Gi
+      volumes:
+        - name: immich-db-pvc
+          persistentVolumeClaim:
+            claimName: immich-db-pvc-immich-postgres-0

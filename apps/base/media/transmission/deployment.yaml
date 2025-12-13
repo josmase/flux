@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: transmission
 spec:
-  serviceName: transmission
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: transmission
@@ -37,16 +36,9 @@ spec:
               memory: 100Mi
               cpu: "0.1"
       volumes:
+        - name: transmission-config-pvc
+          persistentVolumeClaim:
+            claimName: transmission-config-pvc-transmission-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: transmission-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 1Gi

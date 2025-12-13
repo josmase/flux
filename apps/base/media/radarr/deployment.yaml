@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: radarr
 spec:
-  serviceName: radarr
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: radarr
@@ -37,16 +36,9 @@ spec:
               memory: 500Mi
               cpu: "0.5"
       volumes:
+        - name: radarr-config-pvc
+          persistentVolumeClaim:
+            claimName: radarr-config-pvc-radarr-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: radarr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 30Gi

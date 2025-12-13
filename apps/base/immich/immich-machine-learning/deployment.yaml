@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: immich-machine-learning
 spec:
-  serviceName: immich-machine-learning
-  replicas: 3
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: immich-machine-learning
@@ -31,13 +32,7 @@ spec:
             requests:
               memory: 320Mi
               cpu: "0.1"
-  volumeClaimTemplates:
-    - metadata:
-        name: immich-model-cache
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 10Gi
+      volumes:
+        - name: immich-model-cache
+          persistentVolumeClaim:
+            claimName: immich-model-cache-immich-machine-learning-0

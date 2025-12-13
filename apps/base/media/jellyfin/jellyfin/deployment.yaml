@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: jellyfin
 spec:
-  serviceName: jellyfin
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: jellyfin
@@ -30,16 +29,9 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage
       volumes:
+        - name: jellyfin-config-pvc
+          persistentVolumeClaim:
+            claimName: jellyfin-config-pvc-jellyfin-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: jellyfin-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 70Gi

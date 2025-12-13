@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: sonarr
 spec:
-  serviceName: sonarr
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: sonarr
@@ -37,16 +36,9 @@ spec:
               memory: 250Mi
               cpu: "0.1"
       volumes:
+        - name: sonarr-config-pvc
+          persistentVolumeClaim:
+            claimName: sonarr-config-pvc-sonarr-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: sonarr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 10Gi

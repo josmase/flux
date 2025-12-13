@@ -4,7 +4,8 @@ kind: Kustomization
 namespace: default
 
 resources:
-  - stateful-set.yaml
+  - deployment.yaml
+  - persistence.yaml
   - ingress.yaml
   - service.yaml
 configMapGenerator:

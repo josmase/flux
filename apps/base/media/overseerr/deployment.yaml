@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: overseerr
 spec:
-  serviceName: "overseerr"
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: overseerr
@@ -27,13 +26,7 @@ spec:
           volumeMounts:
             - name: overseerr-config-pvc
               mountPath: /config
-  volumeClaimTemplates:
-    - metadata:
-        name: overseerr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 2Gi
+      volumes:
+        - name: overseerr-config-pvc
+          persistentVolumeClaim:
+            claimName: overseerr-config-pvc-overseerr-0

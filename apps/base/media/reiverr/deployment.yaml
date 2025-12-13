@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: reiverr
 spec:
-  serviceName: reiverr
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: reiverr
@@ -41,22 +42,10 @@ spec:
             - name: reiverr-plugins-pvc
               mountPath: /plugins
 
-  volumeClaimTemplates:
-    - metadata:
-        name: reiverr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 10Gi
-    - metadata:
-        name: reiverr-plugins-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 10Gi
+      volumes:
+        - name: reiverr-config-pvc
+          persistentVolumeClaim:
+            claimName: reiverr-config-pvc-reiverr-0
+        - name: reiverr-plugins-pvc
+          persistentVolumeClaim:
+            claimName: reiverr-plugins-pvc-reiverr-0

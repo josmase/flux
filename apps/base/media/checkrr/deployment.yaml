@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: checkrr
 spec:
-  serviceName: checkrr
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: checkrr
@@ -71,13 +70,6 @@ spec:
         - name: checkrr-config-volume
           secret:
             secretName: checkrr-config
-  volumeClaimTemplates:
-    - metadata:
-        name: checkrr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 5Gi
+        - name: checkrr-config-pvc
+          persistentVolumeClaim:
+            claimName: checkrr-config-pvc-checkrr-0

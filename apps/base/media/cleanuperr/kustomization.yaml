@@ -5,7 +5,7 @@ kind: Kustomization
 # - secrets.yaml (containing cleanuperr-secrets with SONARR_API_KEY, RADARR_API_KEY)
 
 resources:
-  - stateful-set.yaml
+  - deployment.yaml
 
 labels:
   - includeSelectors: true

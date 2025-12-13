@@ -5,7 +5,8 @@ kind: Kustomization
 # - secret.yaml (containing reiverr-admin-credentials with ADMIN_USERNAME, ADMIN_PASSWORD)
 
 resources:
-  - stateful-set.yaml
+  - deployment.yaml
+  - persistence.yaml
   - service.yaml
   - ingress.yaml
 

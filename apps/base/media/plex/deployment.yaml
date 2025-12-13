@@ -1,44 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prowlarr
+  name: plex
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: prowlarr
+      app: plex
   template:
     metadata:
       labels:
-        app: prowlarr
+        app: plex
     spec:
       containers:
-        - name: prowlarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/prowlarr:2.3.1-nightly@sha256:9f2088ecece03ceb0005d2346347e74b3adb493f164deb333b7cf4f8dd41d2ae
+        - name: plex
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/plex:1.41.0.8994-f2c27da23-ls238@sha256:519cb67f04c8b114d19a3ebe4e31711eed5debae95b996c9c87d69202c44e6d9
           ports:
-            - containerPort: 9696
+            - containerPort: 32400
               name: http
           envFrom:
             - configMapRef:
                 name: default-app-config
           volumeMounts:
-            - name: prowlarr-config-pvc
+            - name: plex-config-pvc
               mountPath: /config
             - name: shared-storage
               mountPath: /mnt/storage
-          resources:
-            limits:
-              memory: 400Mi
-              cpu: "1"
-            requests:
-              memory: 200Mi
-              cpu: "0.2"
       volumes:
-        - name: prowlarr-config-pvc
+        - name: plex-config-pvc
           persistentVolumeClaim:
-            claimName: prowlarr-config-pvc-prowlarr-0
+            claimName: plex-config-pvc-plex-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc

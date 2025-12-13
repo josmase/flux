@@ -3,7 +3,8 @@ kind: Kustomization
 
 resources:
   - service.yaml
-  - stateful-set.yaml
+  - deployment.yaml
+  - persistence.yaml
 
 labels:
   - includeSelectors: true

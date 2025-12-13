@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: node-red
 spec:
-  serviceName: node-red
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: node-red
@@ -34,13 +33,7 @@ spec:
             requests:
               memory: 320Mi
               cpu: "0.1"
-  volumeClaimTemplates:
-    - metadata:
-        name: node-red-data-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 1Gi
+      volumes:
+        - name: node-red-data-pvc
+          persistentVolumeClaim:
+            claimName: node-red-data-pvc-node-red-0
