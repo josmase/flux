@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - stateful-set.yaml
+  - persistence.yaml
   - ingress.yaml
   - service.yaml
 
