@@ -6,7 +6,7 @@ spec:
   serviceName: plex
   replicas: 1
   updateStrategy:
-    type: RollingUpdate
+    type: OnDelete
   selector:
     matchLabels:
       app: plex
