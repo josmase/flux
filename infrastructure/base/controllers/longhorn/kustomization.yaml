@@ -5,4 +5,3 @@ resources:
   - release.yaml
   - source.yaml
   - recurring-jobs.yaml
-  - storageclass.yaml

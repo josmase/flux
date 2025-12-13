@@ -36,3 +36,10 @@ spec:
       storageMinimalAvailablePercentage: 25
       storageOverProvisioningPercentage: 100
       guaranteedInstanceManagerCPU: "4"
+    persistence:
+      defaultClass: true
+      defaultClassReplicaCount: 3
+      defaultFsType: ext4
+      defaultDataLocality: best-effort
+      reclaimPolicy: Delete
+      volumeBindingMode: WaitForFirstConsumer
