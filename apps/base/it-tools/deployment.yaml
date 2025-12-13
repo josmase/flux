@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: it-tools
-          image: artifactory.local.hejsan.xyz/docker/corentinth/it-tools:2023.12.21-5ed3693@sha256:4aaf67eab769afc9dac5614a15614537446e11150d53eab3be34ac9775a27e3a
+          image: artifactory.local.hejsan.xyz/docker/corentinth/it-tools:2023.12.21-5ed3693
           resources:
             limits:
               memory: 100Mi

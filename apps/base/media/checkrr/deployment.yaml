@@ -41,7 +41,7 @@ spec:
               mountPath: /checkrr-config
       containers:
         - name: checkrr
-          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4@sha256:fe8b787d556e1a23f01daf6ace53a43f8433630b918ce14e29a35780d18af375
+          image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.5.4
           ports:
             - containerPort: 8585
               name: http
