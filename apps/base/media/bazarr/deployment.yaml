@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: bazarr
 spec:
-  serviceName: bazarr
   replicas: 1
-  updateStrategy:
-    type: OnDelete
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: bazarr
@@ -37,16 +36,9 @@ spec:
               memory: 320Mi
               cpu: "0.1"
       volumes:
+        - name: bazarr-config-pvc
+          persistentVolumeClaim:
+            claimName: bazarr-config-pvc-bazarr-0
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: bazarr-config-pvc
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: 5Gi
