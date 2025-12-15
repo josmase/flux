@@ -30,4 +30,5 @@ replacements:
       - select:
           kind: HelmRelease
         fieldPaths:
+          - metadata.name
           - spec.values.runnerScaleSetName

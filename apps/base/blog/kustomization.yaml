@@ -6,12 +6,10 @@ namespace: default
 components:
   - ../../components/web-app
 
-namePrefix: blog-
-
 patches:
   - target:
       kind: Deployment
-      name: blog-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -27,7 +25,7 @@ patches:
         value: artifactory.local.hejsan.xyz/docker/josmase/blog:2024.01.29.202359-51464e4
   - target:
       kind: Service
-      name: blog-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -37,7 +35,7 @@ patches:
         value: blog
   - target:
       kind: IngressRoute
-      name: blog-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -50,7 +48,7 @@ patches:
         value: blog
   - target:
       kind: HelmRelease
-      name: gha-runner-scale-set-blog-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name

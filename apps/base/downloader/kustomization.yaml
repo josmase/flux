@@ -6,12 +6,10 @@ namespace: default
 components:
   - ../../components/web-app
 
-namePrefix: downloader-
-
 patches:
   - target:
       kind: Deployment
-      name: downloader-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -27,7 +25,7 @@ patches:
         value: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.86
   - target:
       kind: Service
-      name: downloader-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -40,7 +38,7 @@ patches:
         value: 3000
   - target:
       kind: IngressRoute
-      name: downloader-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
@@ -53,7 +51,7 @@ patches:
         value: downloader
   - target:
       kind: HelmRelease
-      name: gha-runner-scale-set-downloader-app
+      name: app
     patch: |-
       - op: replace
         path: /metadata/name
