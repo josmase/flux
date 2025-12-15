@@ -21,12 +21,6 @@ spec:
     maxRunners: {{ .Values.githubRunner.maxRunners }}
     containerMode:
       type: "kubernetes"
-    kubernetesModeWorkVolumeClaim:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: {{ .Values.githubRunner.storageClassName }}
-      resources:
-        requests:
-          storage: {{ .Values.githubRunner.storageSize }}
     template:
       spec:
         securityContext:
@@ -35,17 +29,4 @@ spec:
           - name: runner
             image: {{ .Values.githubRunner.image }}
             command: ["/home/runner/run.sh"]
-            env:
-              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
-                value: "false"
-        volumes:
-          - name: work
-            ephemeral:
-              volumeClaimTemplate:
-                spec:
-                  accessModes: ["ReadWriteOnce"]
-                  storageClassName: {{ .Values.githubRunner.storageClassName }}
-                  resources:
-                    requests:
-                      storage: {{ .Values.githubRunner.storageSize }}
 {{- end }}
