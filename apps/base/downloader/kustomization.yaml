@@ -3,11 +3,73 @@ kind: Kustomization
 
 namespace: default
 
-resources:
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
-  - github-runner.yaml
+components:
+  - ../../components/web-app
+
+namePrefix: downloader-
+
+patches:
+  - target:
+      kind: Deployment
+      name: downloader-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: downloader
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: downloader
+      - op: replace
+        path: /spec/template/spec/containers/0/name
+        value: downloader
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.86
+  - target:
+      kind: Service
+      name: downloader-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: downloader
+      - op: replace
+        path: /spec/selector/app
+        value: downloader
+      - op: replace
+        path: /spec/ports/0/targetPort
+        value: 3000
+  - target:
+      kind: IngressRoute
+      name: downloader-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: downloader
+      - op: replace
+        path: /spec/routes/0/match
+        value: Host(`downloader.${DOMAIN_INTERNAL}`)
+      - op: replace
+        path: /spec/routes/0/services/0/name
+        value: downloader
+  - target:
+      kind: HelmRelease
+      name: gha-runner-scale-set-downloader-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: gha-runner-scale-set-downloader
+      - op: replace
+        path: /spec/values/runnerScaleSetName
+        value: downloader
+      - op: replace
+        path: /spec/values/githubConfigUrl
+        value: https://github.com/josmase/downloader
+      - op: replace
+        path: /spec/values/minRunners
+        value: 3
+      - op: replace
+        path: /spec/values/maxRunners
+        value: 6
 
 labels:
   - includeSelectors: true

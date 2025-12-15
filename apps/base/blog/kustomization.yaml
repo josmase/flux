@@ -3,11 +3,64 @@ kind: Kustomization
 
 namespace: default
 
-resources:
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
-  - github-runner.yaml
+components:
+  - ../../components/web-app
+
+namePrefix: blog-
+
+patches:
+  - target:
+      kind: Deployment
+      name: blog-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: blog
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: blog
+      - op: replace
+        path: /spec/template/spec/containers/0/name
+        value: blog
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: artifactory.local.hejsan.xyz/docker/josmase/blog:2024.01.29.202359-51464e4
+  - target:
+      kind: Service
+      name: blog-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: blog
+      - op: replace
+        path: /spec/selector/app
+        value: blog
+  - target:
+      kind: IngressRoute
+      name: blog-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: blog
+      - op: replace
+        path: /spec/routes/0/match
+        value: Host(`blog.${DOMAIN_INTERNAL}`)
+      - op: replace
+        path: /spec/routes/0/services/0/name
+        value: blog
+  - target:
+      kind: HelmRelease
+      name: gha-runner-scale-set-blog-app
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: gha-runner-scale-set-blog
+      - op: replace
+        path: /spec/values/runnerScaleSetName
+        value: blog
+      - op: replace
+        path: /spec/values/githubConfigUrl
+        value: https://github.com/josmase/blog
 
 labels:
   - includeSelectors: true

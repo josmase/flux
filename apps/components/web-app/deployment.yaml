@@ -2,7 +2,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: downloader
+  name: app
 spec:
   replicas: 3
   progressDeadlineSeconds: 600
@@ -11,12 +11,12 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: downloader
+      app: app
   template:
     spec:
       containers:
-        - name: downloader
-          image: artifactory.local.hejsan.xyz/docker/josmase/downloader:v0.0.86
+        - name: app
+          image: placeholder:latest
           resources:
             limits:
               memory: 512Mi
@@ -24,4 +24,3 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-

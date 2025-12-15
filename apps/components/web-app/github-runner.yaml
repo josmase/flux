@@ -1,8 +1,8 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
-
 kind: HelmRelease
 metadata:
-  name: gha-runner-scale-set-downloader
+  name: gha-runner-scale-set-app
   namespace: arc-runners
 spec:
   chartRef:
@@ -11,16 +11,15 @@ spec:
     namespace: flux-system
   interval: 5m
   values:
-    runnerScaleSetName: "downloader"
-    githubConfigUrl: "https://github.com/josmase/downloader"
+    runnerScaleSetName: "app"
+    githubConfigUrl: "https://github.com/josmase/app"
     githubConfigSecret: controller-manager
-    minRunners: 3
-    maxRunners: 6
+    minRunners: 1
+    maxRunners: 3
     containerMode:
       type: "kubernetes"
     kubernetesModeWorkVolumeClaim:
       accessModes: ["ReadWriteOnce"]
-      # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
       storageClassName: "openebs-hostpath"
       resources:
         requests:
@@ -28,14 +27,14 @@ spec:
     template:
       spec:
         securityContext:
-          fsGroup: 123 ## needed to resolve permission issues with mounted volume. https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors#error-access-to-the-path-homerunner_work_tool-is-denied
+          fsGroup: 123
         containers:
           - name: runner
             image: ghcr.io/actions/actions-runner:2.330.0
             command: ["/home/runner/run.sh"]
             env:
               - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
-                value: "false" ## To allow jobs without a job container to run, set ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER to false on your runner container. This instructs the runner to disable this check.
+                value: "false"
         volumes:
           - name: work
             ephemeral:
