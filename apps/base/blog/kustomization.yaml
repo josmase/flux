@@ -7,7 +7,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-    #- github-runner.yaml
+  - github-runner.yaml
 
 labels:
   - includeSelectors: true

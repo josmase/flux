@@ -1,9 +1,47 @@
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
+apiVersion: helm.toolkit.fluxcd.io/v2
+
+kind: HelmRelease
 metadata:
-  name: runnerdeploy-blog
+  name: gha-runner-scale-set-blog
+  namespace: arc-runners
 spec:
-  replicas: 3
-  template:
-    spec:
-      repository: josmase/blog
+  chartRef:
+    kind: OCIRepository
+    name: gha-runner-scale-set
+    namespace: flux-system
+  interval: 5m
+  values:
+    runnerScaleSetName: "blog"
+    githubConfigUrl: "https://github.com/josmase/blog"
+    githubConfigSecret: controller-manager
+    minRunners: 1
+    maxRunners: 3
+    containerMode:
+      type: "kubernetes"
+    kubernetesModeWorkVolumeClaim:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "openebs-hostpath"
+      resources:
+        requests:
+          storage: 2Gi
+    template:
+      spec:
+        securityContext:
+          fsGroup: 123
+        containers:
+          - name: runner
+            image: ghcr.io/actions/actions-runner:2.330.0
+            command: ["/home/runner/run.sh"]
+            env:
+              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                value: "false"
+        volumes:
+          - name: work
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  storageClassName: "openebs-hostpath"
+                  resources:
+                    requests:
+                      storage: 2Gi
