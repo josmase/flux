@@ -58,7 +58,7 @@ echo "INFO - Running validate-structure.sh"
 echo "INFO - Running validate-builds.sh"
 "$SCRIPT_DIR/validate-builds.sh"
 
-find . -type f -name '*.yaml' -print0 | while IFS= read -r -d $'\0' file;
+find . -type f -name '*.yaml' -not -path './charts/*' -print0 | while IFS= read -r -d $'\0' file;
   do
     echo "INFO - Validating $file"
     yq < "$file" > /dev/null

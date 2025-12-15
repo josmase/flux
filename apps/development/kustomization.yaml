@@ -9,12 +9,10 @@ resources:
   - persistence/
   
   # Selected lightweight apps from base
-  - ../base/blog/
   - ../base/immich/
   - ../base/it-tools/
   - ../base/headscale/
   - ../base/cloudflare-ddns/
-  - ../base/downloader/
   
   # Development secret overrides (override base secrets)
   - immich/

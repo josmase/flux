@@ -1,0 +1,45 @@
+# Application configuration
+appName: app
+namespace: default
+
+# Container image
+image:
+  repository: placeholder
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Deployment configuration
+replicas: 3
+revisionHistoryLimit: 2
+progressDeadlineSeconds: 600
+
+resources:
+  limits:
+    memory: 512Mi
+    cpu: "1"
+  requests:
+    memory: 256Mi
+    cpu: "0.2"
+
+# Service configuration
+service:
+  port: 80
+  targetPort: 80
+
+# Ingress configuration
+ingress:
+  enabled: true
+  domain: ${DOMAIN_INTERNAL}
+  certSecret: ${CERT_SECRET_INTERNAL}
+
+# GitHub Actions Runner configuration
+githubRunner:
+  enabled: true
+  namespace: arc-runners
+  githubConfigUrl: "https://github.com/josmase/app"
+  githubConfigSecret: controller-manager
+  minRunners: 1
+  maxRunners: 3
+  image: ghcr.io/actions/actions-runner:2.330.0
+  storageClassName: openebs-hostpath
+  storageSize: 2Gi
