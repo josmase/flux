@@ -29,4 +29,14 @@ spec:
           - name: runner
             image: {{ .Values.githubRunner.image }}
             command: ["/home/runner/run.sh"]
+        volumes:
+          - name: work
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  storageClassName: {{ .Values.githubRunner.storageClassName }}
+                  resources:
+                    requests:
+                      storage: {{ .Values.githubRunner.storageSize }}
 {{- end }}
