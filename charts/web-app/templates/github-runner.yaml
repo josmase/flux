@@ -29,6 +29,9 @@ spec:
           - name: runner
             image: {{ .Values.githubRunner.image }}
             command: ["/home/runner/run.sh"]
+            env:
+              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                value: "false"
         volumes:
           - name: work
             ephemeral:
