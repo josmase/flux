@@ -21,6 +21,12 @@ spec:
     maxRunners: {{ .Values.githubRunner.maxRunners }}
     containerMode:
       type: "kubernetes"
+    kubernetesModeWorkVolumeClaim:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.githubRunner.storageClassName }}
+      resources:
+        requests:
+          storage: {{ .Values.githubRunner.storageSize }}
     template:
       spec:
         securityContext:
