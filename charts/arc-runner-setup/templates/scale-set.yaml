@@ -1,0 +1,74 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gha-runner-scale-set-{{ .Values.runnerScaleSet.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: github-runner
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: gha-runner-scale-set
+    namespace: flux-system
+  interval: 5m
+  dependsOn:
+    - name: gha-runner-scale-set-controller
+      namespace: arc-systems
+  values:
+    runnerScaleSetName: "{{ .Values.runnerScaleSet.name }}"
+    githubConfigUrl: "{{ .Values.runnerScaleSet.github.configUrl }}"
+    githubConfigSecret: "{{ .Values.runnerScaleSet.github.configSecret }}"
+    minRunners: {{ .Values.runnerScaleSet.minRunners }}
+    maxRunners: {{ .Values.runnerScaleSet.maxRunners }}
+    containerMode:
+      type: "kubernetes"
+    kubernetesModeWorkVolumeClaim:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "{{ .Values.runnerScaleSet.storage.className }}"
+      resources:
+        requests:
+          storage: {{ .Values.runnerScaleSet.storage.size }}
+    template:
+      spec:
+        serviceAccountName: github-runner
+        securityContext:
+          fsGroup: {{ .Values.runnerScaleSet.securityContext.fsGroup }}
+        containers:
+          - name: runner
+            image: {{ .Values.runnerScaleSet.image.repository }}:{{ .Values.runnerScaleSet.image.tag }}
+            command: ["/home/runner/run.sh"]
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              runAsUser: {{ .Values.runnerScaleSet.securityContext.runAsUser }}
+              capabilities:
+                drop:
+                  - ALL
+            env:
+              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+                value: "false"
+              - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+                value: "true"
+              - name: ACTIONS_RUNNER_CONTAINER_HOOKS_TEMPLATE
+                value: "/etc/runner-hooks/k8s-build-job-template.yaml"
+            volumeMounts:
+              - name: runner-hooks-kaniko
+                mountPath: /etc/runner-hooks
+        volumes:
+          - name: runner-hooks-kaniko
+            configMap:
+              name: runner-hooks-kaniko
+              defaultMode: 0555
+              items:
+                - key: k8s-build-job-template.yaml
+                  path: k8s-build-job-template.yaml
+          - name: work
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  storageClassName: "{{ .Values.runnerScaleSet.storage.className }}"
+                  resources:
+                    requests:
+                      storage: {{ .Values.runnerScaleSet.storage.size }}
