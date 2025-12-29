@@ -27,7 +27,7 @@ rules:
 # Access to secrets (registry credentials)
 - apiGroups: [""]
   resources: ["secrets"]
-  verbs: ["get", "list"]
+  verbs: ["create", "get", "list", "delete"]
 
 # Access to pods and logs
 - apiGroups: [""]
@@ -37,7 +37,7 @@ rules:
 # Access to configmaps
 - apiGroups: [""]
   resources: ["configmaps"]
-  verbs: ["get", "list"]
+  verbs: ["create", "get", "list", "delete"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
