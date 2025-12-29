@@ -40,6 +40,8 @@ githubRunner:
   githubConfigSecret: controller-manager
   minRunners: 1
   maxRunners: 3
-  image: ghcr.io/actions/actions-runner:2.330.0
+  # Custom runner image (built from flux/runner-image)
+  # Update to your pushed registry path and tag when available
+  image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-2
   storageClassName: openebs-hostpath
   storageSize: 2Gi
