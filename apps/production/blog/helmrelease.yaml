@@ -17,4 +17,4 @@ spec:
     namespace: default
     image:
       repository: artifactory.local.hejsan.xyz/docker/josmase/blog
-      tag: "2024.01.29.202359-51464e4"
+      tag: "v0.0.2"
