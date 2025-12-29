@@ -4,6 +4,10 @@
 # Runner namespace
 namespace: arc-runners
 
+# Create shared resources (RBAC, ConfigMaps)
+# Only one HelmRelease should have this set to true
+createSharedResources: true
+
 # Runner scale set configuration
 runnerScaleSet:
   # Name of the runner scale set (will be used for scaling)

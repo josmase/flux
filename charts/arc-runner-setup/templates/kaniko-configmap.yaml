@@ -1,3 +1,4 @@
+{{- if .Values.createSharedResources }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -82,8 +83,4 @@ data:
         fsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-      
-      securityContext:
-        fsGroup: 65534
-        runAsNonRoot: true
-        runAsUser: 65534
+{{- end }}

@@ -1,3 +1,4 @@
+{{- if .Values.createSharedResources }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -55,3 +56,4 @@ subjects:
 - kind: ServiceAccount
   name: github-runner
   namespace: {{ .Values.namespace }}
+{{- end }}
