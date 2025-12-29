@@ -37,6 +37,7 @@ spec:
         containers:
           - name: runner
             image: {{ .Values.runnerScaleSet.image.repository }}:{{ .Values.runnerScaleSet.image.tag }}
+            imagePullPolicy: {{ .Values.runnerScaleSet.image.pullPolicy }}
             command: ["/home/runner/run.sh"]
             securityContext:
               allowPrivilegeEscalation: false
