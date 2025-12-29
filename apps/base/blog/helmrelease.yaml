@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -19,9 +18,3 @@ spec:
     image:
       repository: artifactory.local.hejsan.xyz/docker/josmase/blog
       tag: "2024.01.29.202359-51464e4"
-    arcRunnerSetup:
-      enabled: true
-      runnerScaleSet:
-        name: "blog"
-        github:
-          configUrl: "https://github.com/josmase/blog"

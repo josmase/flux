@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -21,11 +20,3 @@ spec:
       tag: "v0.0.86"
     service:
       targetPort: 3000
-    arcRunnerSetup:
-      enabled: true
-      runnerScaleSet:
-        name: "downloader"
-        github:
-          configUrl: "https://github.com/josmase/downloader"
-        minRunners: 3
-        maxRunners: 6

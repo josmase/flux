@@ -9,7 +9,8 @@ resources:
 
   # ALL base applications
   - ../base/traefik-dashboard/
-  - downloader/
+  - ../base/blog/
+  - ../base/downloader/
   - ../base/artifactory/
   - ../base/cloudflare-ddns/
   - ../base/it-tools/
@@ -23,7 +24,6 @@ resources:
   - ../base/smart-home/
   - ../base/headscale/
   - ../base/immich/
-  - blog/
 
   # Production secrets
   - immich/

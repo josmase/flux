@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: arc-runner-setup-downloader
+  namespace: arc-runners
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./charts/arc-runner-setup
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  values:
+    runnerScaleSet:
+      name: "downloader"
+      github:
+        configUrl: "https://github.com/josmase/downloader"
+      minRunners: 3
+      maxRunners: 6
