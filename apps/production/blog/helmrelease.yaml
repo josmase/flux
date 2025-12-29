@@ -19,5 +19,9 @@ spec:
     image:
       repository: artifactory.local.hejsan.xyz/docker/josmase/blog
       tag: "2024.01.29.202359-51464e4"
-    githubRunner:
-      githubConfigUrl: "https://github.com/josmase/blog"
+    arcRunnerSetup:
+      enabled: true
+      runnerScaleSet:
+        name: "blog"
+        github:
+          configUrl: "https://github.com/josmase/blog"

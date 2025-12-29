@@ -21,7 +21,11 @@ spec:
       tag: "v0.0.86"
     service:
       targetPort: 3000
-    githubRunner:
-      githubConfigUrl: "https://github.com/josmase/downloader"
-      minRunners: 3
-      maxRunners: 6
+    arcRunnerSetup:
+      enabled: true
+      runnerScaleSet:
+        name: "downloader"
+        github:
+          configUrl: "https://github.com/josmase/downloader"
+        minRunners: 3
+        maxRunners: 6

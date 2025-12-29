@@ -31,3 +31,7 @@ ingress:
   enabled: true
   domain: ${DOMAIN_INTERNAL}
   certSecret: ${CERT_SECRET_INTERNAL}
+
+# ARC Runner setup dependency
+arcRunnerSetup:
+  enabled: false
