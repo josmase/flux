@@ -33,9 +33,20 @@ spec:
           - name: runner
             image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-3
             command: ["/home/runner/run.sh"]
+            securityContext:
+              capabilities:
+                add:
+                  - SETUID
+                  - SETGID
             env:
               - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                 value: "false" ## To allow jobs without a job container to run, set ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER to false on your runner container. This instructs the runner to disable this check.
+              - name: _BUILDAH_STARTED_IN_USERNS
+                value: ""
+              - name: BUILDAH_ISOLATION
+                value: "chroot"
+              - name: STORAGE_DRIVER
+                value: "vfs"
         volumes:
           - name: work
             ephemeral:
