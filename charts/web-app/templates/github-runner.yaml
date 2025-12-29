@@ -29,27 +29,60 @@ spec:
           storage: {{ .Values.githubRunner.storageSize }}
     template:
       spec:
+        serviceAccountName: github-runner
         securityContext:
           fsGroup: 123
+          runAsNonRoot: true
+          runAsUser: 1001
+        
         containers:
           - name: runner
             image: {{ .Values.githubRunner.image }}
             command: ["/home/runner/run.sh"]
+            
             securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              runAsUser: 1001
               capabilities:
-                add:
-                  - SETUID
-                  - SETGID
+                drop:
+                  - ALL
+            
+            resources:
+              requests:
+                cpu: 500m
+                memory: 1Gi
+              limits:
+                cpu: 2
+                memory: 2Gi
+            
             env:
+              # Disable job container - builds handled by Kaniko Jobs
               - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                 value: "false"
-              - name: _BUILDAH_STARTED_IN_USERNS
-                value: ""
-              - name: BUILDAH_ISOLATION
-                value: "chroot"
-              - name: STORAGE_DRIVER
-                value: "vfs"
+              
+              # Enable Kubernetes job support for builds
+              - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+                value: "true"
+              
+              # Path to Kaniko job template
+              - name: ACTIONS_RUNNER_CONTAINER_HOOKS_TEMPLATE
+                value: "/etc/runner-hooks/k8s-build-job-template.yaml"
+            
+            volumeMounts:
+              - name: kaniko-hooks
+                mountPath: /etc/runner-hooks
+                readOnly: true
+        
         volumes:
+          - name: kaniko-hooks
+            configMap:
+              name: runner-hooks-kaniko
+              defaultMode: 0555
+              items:
+              - key: k8s-build-job-template.yaml
+                path: k8s-build-job-template.yaml
           - name: work
             ephemeral:
               volumeClaimTemplate:

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: arc-runner-setup
+description: A Helm chart for setting up GitHub Actions Runner Controller (ARC) with Kaniko integration
+type: application
+version: 0.1.0
+appVersion: "1.0"
+keywords:
+  - github-actions
+  - arc
+  - kaniko
+  - kubernetes-jobs

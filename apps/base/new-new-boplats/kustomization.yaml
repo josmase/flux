@@ -6,7 +6,7 @@ resources:
   - web
   - scraper
   - database
-  - github-runner.yaml
+  - arc-runner-setup.yaml
 
 labels:
   - includeSelectors: true

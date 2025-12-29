@@ -1,0 +1,77 @@
+# GitHub Actions Runner Controller (ARC) Setup with Kaniko
+# This chart sets up RBAC, ConfigMaps, and runner pod templates for ARC with Kaniko-based builds
+
+# Runner namespace
+namespace: arc-runners
+
+# Runner scale set configuration
+runnerScaleSet:
+  # Name of the runner scale set (will be used for scaling)
+  name: "app-runner"
+
+  # GitHub configuration
+  github:
+    # Repository or organization URL
+    configUrl: "https://github.com/josmase/app"
+    # Secret name containing GitHub token (must exist in namespace)
+    configSecret: "controller-manager"
+
+  # Scaling configuration
+  minRunners: 1
+  maxRunners: 3
+
+  # Runner image configuration
+  image:
+    # Runner image (GitHub Actions official runner)
+    repository: "artifactory.local.hejsan.xyz/docker/actions/runner-kaniko"
+    tag: "2.330.0-7"
+    pullPolicy: IfNotPresent
+
+  # Storage configuration for work directory
+  storage:
+    className: "openebs-hostpath"
+    size: "2Gi"
+
+  # Security context for runner pods
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    fsGroup: 123
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+
+  # Resource limits for runner pods
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+# Kaniko build job configuration
+kaniko:
+  # Kaniko executor image
+  image: "gcr.io/kaniko-project/executor:v1.23.2"
+
+  # Resource limits for Kaniko build jobs
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+  # Cache configuration
+  cache:
+    enabled: true
+    ttl: "24h"
+
+  # Job cleanup (ttlSecondsAfterFinished)
+  jobCleanup: 300
+
+# Registry credentials secret
+registry:
+  # Secret name containing .dockerconfigjson
+  credentialsSecret: "registry-credentials"

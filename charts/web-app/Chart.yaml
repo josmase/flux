@@ -1,6 +1,6 @@
 apiVersion: v2
 name: web-app
-description: A Helm chart for web applications with deployment, service, ingress, and GitHub runner
+description: A Helm chart for web applications with deployment, service, and ingress
 type: application
-version: 0.1.5
+version: 0.1.6
 appVersion: "1.0"

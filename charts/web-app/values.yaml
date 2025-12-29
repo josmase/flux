@@ -31,17 +31,3 @@ ingress:
   enabled: true
   domain: ${DOMAIN_INTERNAL}
   certSecret: ${CERT_SECRET_INTERNAL}
-
-# GitHub Actions Runner configuration
-githubRunner:
-  enabled: true
-  namespace: arc-runners
-  githubConfigUrl: "https://github.com/josmase/app"
-  githubConfigSecret: controller-manager
-  minRunners: 1
-  maxRunners: 3
-  # Custom runner image (built from flux/runner-image)
-  # Update to your pushed registry path and tag when available
-  image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-5
-  storageClassName: openebs-hostpath
-  storageSize: 2Gi
