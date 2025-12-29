@@ -31,7 +31,7 @@ spec:
           fsGroup: 123 ## needed to resolve permission issues with mounted volume. https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors#error-access-to-the-path-homerunner_work_tool-is-denied
         containers:
           - name: runner
-            image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-3
+            image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-4
             command: ["/home/runner/run.sh"]
             securityContext:
               capabilities:
