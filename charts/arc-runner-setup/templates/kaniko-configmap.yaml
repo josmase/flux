@@ -30,15 +30,7 @@ data:
         
         # Kaniko will get its arguments from DOCKERFILE, DESTINATION, etc env vars
         # The GitHub Actions runner passes these from the container spec
-        args:
-        - "{{ '{{' }} .Dockerfile {{ '}}' }}"
-        - "{{ '{{' }} .Context {{ '}}' }}"
-        - "{{ '{{' }} .Destination {{ '}}' }}"
-        - --cache={{ .Values.kaniko.cache.enabled | ternary "true" "false" }}
-        - --cache-repo={{ .CacheRepo }}
-        - --cache-ttl={{ .Values.kaniko.cache.ttl }}
-        - --log-format=text
-        - --verbosity=info
+        args: {{ `["{{ .Dockerfile }}", "{{ .Context }}", "{{ .Destination }}"]` }}
         
         # Mount registry credentials
         volumeMounts:
