@@ -17,6 +17,6 @@ spec:
     namespace: default
     image:
       repository: artifactory.local.hejsan.xyz/docker/josmase/downloader
-      tag: "main"
+      tag: "v0.0.86"
     service:
       targetPort: 3000
