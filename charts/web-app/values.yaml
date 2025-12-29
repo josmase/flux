@@ -42,6 +42,6 @@ githubRunner:
   maxRunners: 3
   # Custom runner image (built from flux/runner-image)
   # Update to your pushed registry path and tag when available
-  image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-2
+  image: artifactory.local.hejsan.xyz/docker/actions/runner-podman-buildkit:2.330.0-3
   storageClassName: openebs-hostpath
   storageSize: 2Gi
