@@ -21,3 +21,5 @@ spec:
     ingress:
       domain: blog.local.hejsan.xyz
       certSecret: local-hejsan-xyz-tls
+    service:
+      targetPort: 3000
