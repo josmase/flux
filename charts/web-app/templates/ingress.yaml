@@ -11,7 +11,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.appName }}.{{ .Values.ingress.domain }}`)
+    - match: Host(`{{ .Values.ingress.domain }}`)
       kind: Rule
       services:
         - name: {{ .Values.appName }}
