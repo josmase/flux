@@ -29,5 +29,5 @@ service:
 # Ingress configuration
 ingress:
   enabled: true
-  domain: ${DOMAIN_INTERNAL}
-  certSecret: ${CERT_SECRET_INTERNAL}
+  domain: example.com
+  certSecret: tls-certificate

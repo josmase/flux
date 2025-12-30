@@ -20,3 +20,6 @@ spec:
       tag: "main"
     service:
       targetPort: 3000
+    ingress:
+      domain: downloader.local.hejsan.xyz
+      certSecret: local-hejsan-xyz-tls
