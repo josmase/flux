@@ -4,3 +4,37 @@ metadata:
   name: jellyfin-rffmpeg-config
 data:
   RFFMPEG_HOST: "gpu.local.hejsan.xyz"  # Transcode server hostname
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rffmpeg-config
+data:
+  rffmpeg.yml: |
+    ---
+    rffmpeg:
+        # Logging configuration
+        logging:
+            log_to_file: true
+            logfile: "/config/rffmpeg/rffmpeg.log"
+
+        # Directory configuration
+        directories:
+            state: "/config/rffmpeg"
+            persist: "/dev/shm"
+            owner: abc
+            group: abc
+
+        # Remote (SSH) configuration
+        remote:
+            user: jellyfin
+            args:
+                - "-i"
+                - "/config/rffmpeg/.ssh/id_rsa"
+
+        # Remote command configuration
+        commands:
+            # The (remote) ffmpeg and ffprobe command binary paths.
+            # GPU server has standard Ubuntu ffmpeg at /usr/bin/ffmpeg
+            ffmpeg: "/usr/bin/ffmpeg"
+            ffprobe: "/usr/bin/ffprobe"

@@ -46,6 +46,9 @@ spec:
             - name: rffmpeg-ssh-key
               mountPath: /config/rffmpeg/.ssh
               readOnly: false
+            - name: rffmpeg-config
+              mountPath: /config/rffmpeg/rffmpeg.yml
+              subPath: rffmpeg.yml
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
@@ -57,3 +60,6 @@ spec:
           secret:
             secretName: jellyfin-rffmpeg-key
             defaultMode: 0600
+        - name: rffmpeg-config
+          configMap:
+            name: rffmpeg-config
