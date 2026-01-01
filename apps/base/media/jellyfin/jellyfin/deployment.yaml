@@ -20,14 +20,34 @@ spec:
           ports:
             - containerPort: 8096
               name: http
+          env:
+            # Enable rffmpeg docker mod for remote transcoding
+            - name: DOCKER_MODS
+              value: "linuxserver/mods:jellyfin-rffmpeg"
+            # rffmpeg configuration - will be overridden in production
+            - name: RFFMPEG_USER
+              value: "jellyfin"
+            - name: RFFMPEG_HOST
+              value: "localhost"  # Default, will be set via ConfigMap in production
+            - name: FFMPEG_PATH
+              value: "/usr/local/bin/ffmpeg"  # Use rffmpeg wrapper
           envFrom:
             - configMapRef:
                 name: default-app-config
+            - configMapRef:
+                name: jellyfin-rffmpeg-config
           volumeMounts:
             - name: jellyfin-config-pvc
               mountPath: /config
             - name: shared-storage
-              mountPath: /mnt/storage
+              mountPath: /cache
+              subPath: kubernetes/jellyfin-cache
+            - name: shared-storage
+              mountPath: /mnt/storage/files
+              subPath: files
+            - name: rffmpeg-ssh-key
+              mountPath: /config/rffmpeg/.ssh
+              readOnly: true
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
@@ -35,3 +55,7 @@ spec:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
+        - name: rffmpeg-ssh-key
+          secret:
+            secretName: jellyfin-rffmpeg-key
+            defaultMode: 0600

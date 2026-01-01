@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jellyfin-rffmpeg-config
+  namespace: media
+data:
+  RFFMPEG_HOST: "gpu.local.hejsan.xyz" # Transcode server hostname
