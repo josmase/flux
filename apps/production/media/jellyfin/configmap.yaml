@@ -4,4 +4,3 @@ metadata:
   name: jellyfin-rffmpeg-config
 data:
   RFFMPEG_HOST: "gpu.local.hejsan.xyz"  # Transcode server hostname
-  RFFMPEG_USER: "jellyfin"  # Remote transcode server user
