@@ -24,11 +24,9 @@ spec:
             # Enable rffmpeg docker mod for remote transcoding
             - name: DOCKER_MODS
               value: "linuxserver/mods:jellyfin-rffmpeg"
-            # rffmpeg configuration - will be overridden in production
+            # rffmpeg configuration
             - name: RFFMPEG_USER
-              value: "jellyfin"
-            - name: RFFMPEG_HOST
-              value: "localhost"  # Default, will be set via ConfigMap in production
+              value: "root"  # Container runs as root
             - name: FFMPEG_PATH
               value: "/usr/local/bin/ffmpeg"  # Use rffmpeg wrapper
           envFrom:
