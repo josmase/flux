@@ -45,7 +45,7 @@ spec:
               subPath: files
             - name: rffmpeg-ssh-key
               mountPath: /config/rffmpeg/.ssh
-              readOnly: true
+              readOnly: false
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
