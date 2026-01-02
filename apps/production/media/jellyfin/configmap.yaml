@@ -35,6 +35,6 @@ data:
         # Remote command configuration
         commands:
             # The (remote) ffmpeg and ffprobe command binary paths.
-            # GPU server has standard Ubuntu ffmpeg at /usr/bin/ffmpeg
-            ffmpeg: "/usr/bin/ffmpeg"
-            ffprobe: "/usr/bin/ffprobe"
+            # GPU server uses Jellyfin FFmpeg for full CUDA filter support (tonemap_cuda, etc)
+            ffmpeg: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
+            ffprobe: "/usr/lib/jellyfin-ffmpeg/ffprobe"
