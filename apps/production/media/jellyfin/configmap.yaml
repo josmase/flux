@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: jellyfin-rffmpeg-config
 data:
-  RFFMPEG_HOST: "gpu.local.hejsan.xyz"  # Transcode server hostname
+  RFFMPEG_HOST: "gpu.local.hejsan.xyz" # Transcode server hostname
   # Init script to fix SSH key permissions
   fix-ssh-permissions.sh: |
     #!/bin/bash
@@ -55,12 +55,14 @@ data:
         directories:
             state: "/config/rffmpeg"
             persist: "/dev/shm"
+            workdir: "/cache"
             owner: abc
             group: abc
 
         # Remote (SSH) configuration
         remote:
             user: jellyfin
+            workdir: "/mnt/jellyfin-cache"
             args:
                 - "-o"
                 - "StrictHostKeyChecking=accept-new"
