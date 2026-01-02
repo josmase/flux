@@ -58,7 +58,7 @@ spec:
             - name: jellyfin-config-pvc
               mountPath: /config
             - name: shared-storage
-              mountPath: /cache
+              mountPath: /config/cache
               subPath: kubernetes/jellyfin-cache
             - name: shared-storage
               mountPath: /mnt/storage/files

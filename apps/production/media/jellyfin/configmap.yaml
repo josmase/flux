@@ -55,7 +55,6 @@ data:
         directories:
             state: "/config/rffmpeg"
             persist: "/dev/shm"
-            workdir: "/cache"
             owner: abc
             group: abc
 
