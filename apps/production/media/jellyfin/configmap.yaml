@@ -11,6 +11,8 @@ data:
     echo "Fixing SSH key permissions..."
     mkdir -p /config/rffmpeg/.ssh
     cp /ssh-keys/* /config/rffmpeg/.ssh/ 2>/dev/null || true
+    # Set ownership to abc user (UID 1000)
+    chown -R 1000:1000 /config/rffmpeg/.ssh
     chmod 600 /config/rffmpeg/.ssh/* 2>/dev/null || true
     chmod 700 /config/rffmpeg/.ssh
     echo "SSH keys fixed"
