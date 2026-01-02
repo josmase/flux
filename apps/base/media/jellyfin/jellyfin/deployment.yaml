@@ -14,12 +14,32 @@ spec:
       labels:
         app: jellyfin
     spec:
+      initContainers:
+        - name: fix-ssh-permissions
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
+          command:
+            - /bin/bash
+            - /scripts/fix-ssh-permissions.sh
+          volumeMounts:
+            - name: rffmpeg-ssh-key-source
+              mountPath: /ssh-keys
+              readOnly: true
+            - name: jellyfin-config-pvc
+              mountPath: /config
+            - name: rffmpeg-scripts
+              mountPath: /scripts
       containers:
         - name: jellyfin
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
           ports:
             - containerPort: 8096
               name: http
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/bash
+                  - /scripts/patch-rffmpeg.sh
           env:
             # Enable rffmpeg docker mod for remote transcoding
             - name: DOCKER_MODS
@@ -43,12 +63,11 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage/files
               subPath: files
-            - name: rffmpeg-ssh-key
-              mountPath: /config/rffmpeg/.ssh
-              readOnly: false
             - name: rffmpeg-config
               mountPath: /config/rffmpeg/rffmpeg.yml
               subPath: rffmpeg.yml
+            - name: rffmpeg-scripts
+              mountPath: /scripts
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
@@ -56,10 +75,14 @@ spec:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: shared-nfs-pvc
-        - name: rffmpeg-ssh-key
+        - name: rffmpeg-ssh-key-source
           secret:
             secretName: jellyfin-rffmpeg-key
             defaultMode: 0600
         - name: rffmpeg-config
           configMap:
             name: rffmpeg-config
+        - name: rffmpeg-scripts
+          configMap:
+            name: jellyfin-rffmpeg-config
+            defaultMode: 0755
