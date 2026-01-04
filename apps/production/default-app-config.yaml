@@ -6,3 +6,14 @@ data:
   PUID: "1000"
   PGID: "1000"
   TZ: "Europe/Stockholm"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-app-config
+  namespace: media
+data:
+  PUID: "1000"
+  PGID: "1000"
+  TZ: "Europe/Stockholm"
