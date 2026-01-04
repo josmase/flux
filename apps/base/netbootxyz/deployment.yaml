@@ -14,6 +14,24 @@ spec:
       labels:
         app: netbootxyz
     spec:
+      initContainers:
+        - name: configure-live-endpoint
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+              cat > /config/local-vars.ipxe <<'EOF'
+              # auto-generated to point assets to local mirror
+              set live_endpoint ${LIVE_ENDPOINT}
+              EOF
+          env:
+            - name: LIVE_ENDPOINT
+              value: "http://netboot-assets.${DOMAIN_INTERNAL}"
+          volumeMounts:
+            - name: config
+              mountPath: /config
       containers:
         - name: netbootxyz
           image: artifactory.local.hejsan.xyz/docker/netbootxyz/netbootxyz:latest
@@ -34,6 +52,8 @@ spec:
               value: "80"
             - name: WEB_APP_PORT
               value: "3000"
+            - name: LIVE_ENDPOINT
+              value: "http://netboot-assets.${DOMAIN_INTERNAL}"
           volumeMounts:
             - name: config
               mountPath: /config
