@@ -29,3 +29,4 @@ spec:
       CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
       ENVIRONMENT: "production"
       LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
+      NETBOOT_IP: "192.168.1.183"

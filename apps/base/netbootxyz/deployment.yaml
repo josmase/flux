@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netbootxyz
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: netbootxyz
+  template:
+    metadata:
+      labels:
+        app: netbootxyz
+    spec:
+      containers:
+        - name: netbootxyz
+          image: artifactory.local.hejsan.xyz/docker/netbootxyz/netbootxyz:latest
+          ports:
+            - containerPort: 3000
+              name: web
+              protocol: TCP
+            - containerPort: 69
+              name: tftp
+              protocol: UDP
+            - containerPort: 80
+              name: assets
+              protocol: TCP
+          env:
+            - name: MENU_VERSION
+              value: "2.0.84"
+            - name: NGINX_PORT
+              value: "80"
+            - name: WEB_APP_PORT
+              value: "3000"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: assets
+              mountPath: /assets
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: netbootxyz-config-pvc
+        - name: assets
+          persistentVolumeClaim:
+            claimName: netbootxyz-assets-pvc

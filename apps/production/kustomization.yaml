@@ -22,6 +22,7 @@ resources:
   - ../base/smart-home/
   - ../base/headscale/
   - ../base/immich/
+  - ../base/netbootxyz/
 
   - ./blog/
   - ./downloader/
