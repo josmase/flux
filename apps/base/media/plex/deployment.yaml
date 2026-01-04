@@ -34,4 +34,4 @@ spec:
             claimName: plex-config-pvc-plex-0
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: shared-nfs-pvc
+            claimName: media-shared-nfs-pvc

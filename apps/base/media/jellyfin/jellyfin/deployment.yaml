@@ -74,7 +74,7 @@ spec:
             claimName: jellyfin-config-pvc-jellyfin-0
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: shared-nfs-pvc
+            claimName: media-shared-nfs-pvc
         - name: rffmpeg-ssh-key-source
           secret:
             secretName: jellyfin-rffmpeg-key

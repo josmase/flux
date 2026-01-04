@@ -41,4 +41,4 @@ spec:
             claimName: prowlarr-config-pvc-prowlarr-0
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: shared-nfs-pvc
+            claimName: media-shared-nfs-pvc
