@@ -1,11 +1,33 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-e1795bb7-5b79-49f1-aedd-574ac383a98e
+  labels:
+    media-app: sonarr
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeHandle: pvc-e1795bb7-5b79-49f1-aedd-574ac383a98e
+    volumeAttributes:
+      numberOfReplicas: "3"
+      staleReplicaTimeout: "20"
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: sonarr-config-pvc-sonarr-0
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: ""
   selector:
     matchLabels:
       media-app: sonarr

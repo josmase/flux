@@ -1,11 +1,33 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-1b458a67-6c2c-4263-902d-57024015d169
+  labels:
+    media-app: reiverr-config
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeHandle: pvc-1b458a67-6c2c-4263-902d-57024015d169
+    volumeAttributes:
+      numberOfReplicas: "3"
+      staleReplicaTimeout: "20"
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: reiverr-config-pvc-reiverr-0
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: ""
   selector:
     matchLabels:
       media-app: reiverr-config
@@ -14,13 +36,35 @@ spec:
       storage: 10Gi
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-a5be17bc-0af5-4bb2-ab30-178cd85288da
+  labels:
+    media-app: reiverr-plugins
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeHandle: pvc-a5be17bc-0af5-4bb2-ab30-178cd85288da
+    volumeAttributes:
+      numberOfReplicas: "3"
+      staleReplicaTimeout: "20"
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: reiverr-plugins-pvc-reiverr-0
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: ""
   selector:
     matchLabels:
       media-app: reiverr-plugins

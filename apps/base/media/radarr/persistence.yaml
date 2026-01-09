@@ -1,11 +1,33 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-bfebccbc-9935-40f4-8a35-c730b9b79ca8
+  labels:
+    media-app: radarr
+spec:
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeHandle: pvc-bfebccbc-9935-40f4-8a35-c730b9b79ca8
+    volumeAttributes:
+      numberOfReplicas: "3"
+      staleReplicaTimeout: "20"
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: radarr-config-pvc-radarr-0
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: ""
   selector:
     matchLabels:
       media-app: radarr
