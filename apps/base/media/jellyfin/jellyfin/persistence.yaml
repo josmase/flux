@@ -2,13 +2,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config-pvc-jellyfin-0
-  annotations:
-    kustomize.toolkit.fluxcd.io/ssa: merge
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
-  volumeName: pvc-9175b25b-a542-4cac-bc9c-661e25ff4484
   resources:
     requests:
       storage: 70Gi

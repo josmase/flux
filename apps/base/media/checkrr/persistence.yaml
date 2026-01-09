@@ -2,13 +2,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: checkrr-config-pvc-checkrr-0
-  annotations:
-    kustomize.toolkit.fluxcd.io/ssa: merge
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
-  volumeName: pvc-e2c6434a-3512-4641-af69-7d9ddb1f72dc
   resources:
     requests:
       storage: 5Gi

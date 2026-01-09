@@ -2,13 +2,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prowlarr-config-pvc-prowlarr-0
-  annotations:
-    kustomize.toolkit.fluxcd.io/ssa: merge
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
-  volumeName: pvc-fa5403f8-4d16-47bf-a9d3-8d8a4633a410
   resources:
     requests:
       storage: 2Gi
