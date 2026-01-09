@@ -15,6 +15,25 @@ spec:
         app: jellyfin
     spec:
       initContainers:
+        - name: clean-nfs-cache
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Cleaning stale NFS transcode cache..."
+              # Remove any stale lock files or temporary files
+              find /config/cache/transcodes -type f -name "*.lock" -delete 2>/dev/null || true
+              find /config/cache/transcodes -type f -name ".nfs*" -delete 2>/dev/null || true
+              # Ensure directory exists and has correct permissions
+              mkdir -p /config/cache/transcodes
+              chmod 755 /config/cache/transcodes
+              echo "NFS cache cleaned successfully"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /config/cache/transcodes
+              subPath: kubernetes/jellyfin-cache/transcodes
         - name: fix-ssh-permissions
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
           command:
@@ -35,6 +54,21 @@ spec:
             - containerPort: 8096
               name: http
           lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    set -e
+                    echo "Cleaning up transcode cache before shutdown..."
+                    # Clean up any temporary transcode files
+                    find /config/cache/transcodes -type f -name "*.ts" -mtime +1 -delete 2>/dev/null || true
+                    find /config/cache/transcodes -type f -name "*.m3u8" -mtime +1 -delete 2>/dev/null || true
+                    # Sync filesystem to ensure NFS writes complete
+                    sync
+                    echo "Cleanup complete"
+                    sleep 2
             postStart:
               exec:
                 command:

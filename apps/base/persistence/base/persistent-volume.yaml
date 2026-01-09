@@ -16,8 +16,17 @@ spec:
   mountOptions:
     - hard # Prevents silent failures (better for data integrity)
     - nfsvers=4.1 # Version 4.1 for better performance and locking
-    - sync # Synchronous writes to avoid data corruption
-    - timeo=600 # Timeout in tenths of seconds (adjustable)
+    - async # Asynchronous writes for better performance (metadata still journaled)
+    - timeo=600 # Timeout in tenths of seconds (60 seconds)
     - retrans=3 # Limits retry attempts before failing
-    - noac # Disables attribute caching (reduces stale handles)
-    - actimeo=0 # Forces immediate revalidation of attributes
+    # Attribute caching for performance - reasonable timeouts to balance freshness
+    - acregmin=30 # Min time (seconds) to cache file attributes
+    - acregmax=120 # Max time (seconds) to cache file attributes  
+    - acdirmin=30 # Min time (seconds) to cache directory attributes
+    - acdirmax=120 # Max time (seconds) to cache directory attributes
+    - lookupcache=positive # Cache successful lookups (positive results)
+    # Additional performance optimizations
+    - rsize=1048576 # 1MB read buffer size (default is often 64K)
+    - wsize=1048576 # 1MB write buffer size (default is often 64K)
+    - noatime # Don't update access time on reads (improves performance)
+    - nodiratime # Don't update directory access times
