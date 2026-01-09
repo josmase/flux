@@ -74,6 +74,13 @@ spec:
                 command:
                   - /bin/bash
                   - /scripts/patch-rffmpeg.sh
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+            limits:
+              cpu: 4000m
+              memory: 4Gi
           env:
             # Enable rffmpeg docker mod for remote transcoding
             - name: DOCKER_MODS
