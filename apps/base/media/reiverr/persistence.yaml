@@ -8,6 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  volumeName: pvc-1b458a67-6c2c-4263-902d-57024015d169
   resources:
     requests:
       storage: 10Gi
@@ -20,6 +21,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  volumeName: pvc-a5be17bc-0af5-4bb2-ab30-178cd85288da
   resources:
     requests:
       storage: 10Gi

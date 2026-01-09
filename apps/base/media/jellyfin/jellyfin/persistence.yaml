@@ -8,6 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  volumeName: pvc-9175b25b-a542-4cac-bc9c-661e25ff4484
   resources:
     requests:
       storage: 70Gi
