@@ -4,12 +4,14 @@
 # Purpose: Find and optionally delete orphaned Longhorn replica directories on a specific node.
 # Usage: ./find-orphaned-replicas.sh <node-name> <node-ip> <ssh-user> [--delete]
 
-NODE_NAME=$1
-NODE_IP=$2
-SSH_USER=$3
+set -euo pipefail
+
+NODE_NAME=${1:-}
+NODE_IP=${2:-}
+SSH_USER=${3:-}
 DELETE_MODE=false
 
-if [[ "$4" == "--delete" ]]; then
+if [[ ${4:-} == "--delete" ]]; then
   DELETE_MODE=true
 fi
 
@@ -19,7 +21,7 @@ if [[ -z "$NODE_NAME" || -z "$NODE_IP" || -z "$SSH_USER" ]]; then
 fi
 
 echo "Checking for orphaned replicas on $NODE_NAME ($NODE_IP)..."
-if [ "$DELETE_MODE" = true ]; then
+if [[ "$DELETE_MODE" == true ]]; then
   echo "WARNING: DELETION MODE ENABLED. Orphaned replicas will be deleted."
 fi
 
@@ -42,7 +44,7 @@ for dir in $ACTUAL_DIRS; do
   fi
 done
 
-if [ ${#ORPHANS[@]} -eq 0 ]; then
+if [[ ${#ORPHANS[@]} -eq 0 ]]; then
   echo "No orphaned directories found."
   exit 0
 fi
@@ -53,7 +55,7 @@ for dir in "${ORPHANS[@]}"; do
   echo "  $dir (Size: $SIZE)"
 done
 
-if [ "$DELETE_MODE" = true ]; then
+if [[ "$DELETE_MODE" == true ]]; then
   echo ""
   echo "Starting deletion..."
   for dir in "${ORPHANS[@]}"; do
@@ -61,7 +63,6 @@ if [ "$DELETE_MODE" = true ]; then
     ssh "$SSH_USER@$NODE_IP" "sudo rm -rf /var/lib/longhorn/replicas/$dir"
   done
   echo "Deletion complete."
-  
   echo "Verifying disk usage..."
   ssh "$SSH_USER@$NODE_IP" "df -h /"
 else
