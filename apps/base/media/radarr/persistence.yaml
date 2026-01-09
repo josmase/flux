@@ -27,7 +27,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: longhorn
   selector:
     matchLabels:
       media-app: radarr

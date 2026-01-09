@@ -27,7 +27,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: longhorn
   selector:
     matchLabels:
       media-app: reiverr-config
@@ -64,7 +64,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: longhorn
   selector:
     matchLabels:
       media-app: reiverr-plugins
