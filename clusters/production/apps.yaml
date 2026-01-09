@@ -16,6 +16,7 @@ spec:
   prune: true
   wait: true
   timeout: 5m0s
+  force: true  # Force server-side apply to handle immutable fields
   decryption:
     provider: sops
     secretRef:
