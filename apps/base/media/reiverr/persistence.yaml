@@ -6,6 +6,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  selector:
+    matchLabels:
+      media-app: reiverr-config
   resources:
     requests:
       storage: 10Gi
@@ -18,6 +21,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  selector:
+    matchLabels:
+      media-app: reiverr-plugins
   resources:
     requests:
       storage: 10Gi

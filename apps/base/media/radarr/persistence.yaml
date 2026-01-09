@@ -6,6 +6,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
+  selector:
+    matchLabels:
+      media-app: radarr
   resources:
     requests:
       storage: 30Gi
