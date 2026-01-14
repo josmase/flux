@@ -41,7 +41,7 @@ spec:
         storageClassName: longhorn
         accessModes: ["ReadWriteOnce"]
         size: 10Gi
-      # Load all Gotify token keys into env with a prefix
+      # Load Gotify tokens as env vars with a prefix (uses Grafana chart envFromSecrets)
       envFromSecrets:
         - name: grafana-gotify-tokens
           prefix: GOTIFY_TOKEN_
@@ -93,13 +93,6 @@ spec:
                   repeat_interval: 4h
                   matchers:
                     - severity = warning
-      # Default datasource configuration
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://kube-prometheus-stack-prometheus:9090
-          access: proxy
-          isDefault: true
     alertmanager:
       enabled: true
       alertmanagerSpec:
