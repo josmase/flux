@@ -56,10 +56,6 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 65534
-            allowPrivilegeEscalation: false
       volumes:
         - name: gotify-data
           persistentVolumeClaim:
