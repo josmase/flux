@@ -65,5 +65,5 @@ spec:
         # Configure AlertmanagerConfig selection
         alertmanagerConfigSelector: {}
         alertmanagerConfigNamespaceSelector: {}
-        # Disable automatic namespace matcher injection - route across all namespaces
-        alertmanagerConfigMatcherStrategy: "None"
+        # Use OnNamespaceExceptForAlertmanagerNamespace to allow cross-namespace alerts when in same namespace as Alertmanager
+        alertmanagerConfigMatcherStrategy: OnNamespaceExceptForAlertmanagerNamespace
