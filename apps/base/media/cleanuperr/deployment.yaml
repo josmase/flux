@@ -40,7 +40,7 @@ spec:
               command:
                 - sh
                 - -c
-                - test -f /app/CleanuperrAPI.dll || exit 1
+                - test -f /app/cleanuperr || exit 1
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 30
