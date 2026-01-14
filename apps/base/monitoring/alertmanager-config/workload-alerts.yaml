@@ -44,29 +44,45 @@ spec:
         continueRoute: false
 
   receivers:
-    # Default receiver - webhook to external service
+    # Default receiver - Gotify webhook
     - name: "default"
       webhookConfigs:
-        - url: "http://localhost:5001/alerts"
+        - urlSecret:
+            name: gotify-alertmanager-urls
+            key: default
           sendResolved: true
+          httpConfig:
+            followRedirects: true
 
-    # Critical workload alerts
+    # Critical workload alerts - Gotify with priority 10
     - name: "workload-critical"
       webhookConfigs:
-        - url: "http://localhost:5001/alerts/critical"
+        - urlSecret:
+            name: gotify-alertmanager-urls
+            key: critical
           sendResolved: true
+          httpConfig:
+            followRedirects: true
 
-    # Warning alerts
+    # Warning alerts - Gotify with priority 5
     - name: "workload-warnings"
       webhookConfigs:
-        - url: "http://localhost:5001/alerts/warnings"
+        - urlSecret:
+            name: gotify-alertmanager-urls
+            key: warning
           sendResolved: true
+          httpConfig:
+            followRedirects: true
 
-    # Node alerts
+    # Node alerts - Gotify with priority 10
     - name: "node-alerts"
       webhookConfigs:
-        - url: "http://localhost:5001/alerts/nodes"
+        - urlSecret:
+            name: gotify-alertmanager-urls
+            key: node
           sendResolved: true
+          httpConfig:
+            followRedirects: true
 
   inhibitRules:
     # Inhibit warning if critical alert exists for same workload

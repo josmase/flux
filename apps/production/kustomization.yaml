@@ -35,6 +35,7 @@ resources:
   - renovate-bot/
   - media/
   - new-new-boplats/
+  - monitoring/
 
 transformers:
   - |-
