@@ -71,14 +71,18 @@ spec:
   inhibitRules:
     # Inhibit warning if critical alert exists for same workload
     - sourceMatch:
-        severity: critical
+        - name: severity
+          value: critical
       targetMatch:
-        severity: warning
+        - name: severity
+          value: warning
       equal: ["alertname", "namespace", "deployment"]
 
     # Inhibit pod not ready alerts if deployment replica mismatch exists
     - sourceMatch:
-        alertname: DeploymentReplicasMismatch
+        - name: alertname
+          value: DeploymentReplicasMismatch
       targetMatch:
-        alertname: PodNotHealthy
+        - name: alertname
+          value: PodNotHealthy
       equal: ["namespace", "deployment"]
