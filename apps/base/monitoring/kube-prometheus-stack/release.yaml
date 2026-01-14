@@ -118,20 +118,17 @@ spec:
         receivers:
           - name: 'gotify'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_default}&priority=2'
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=2'
                 send_resolved: true
           - name: 'gotify-critical'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_critical}&priority=10'
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=10'
                 send_resolved: true
           - name: 'gotify-warning'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_warning}&priority=5'
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=5'
                 send_resolved: true
       alertmanagerSpec:
-        # Load Gotify tokens into Alertmanager
-        secrets:
-          - grafana-gotify-tokens
         storage:
           volumeClaimTemplate:
             spec:
