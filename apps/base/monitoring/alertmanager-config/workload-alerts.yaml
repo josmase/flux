@@ -11,14 +11,10 @@ spec:
     groupInterval: 5m
     repeatInterval: 12h
     routes:
-      # Route critical workload failures to urgent channel
+      # Route critical alerts to urgent channel
       - receiver: "workload-critical"
         match:
           severity: critical
-          workload_type: |-
-            deployment
-            |statefulset
-            |pod
         groupWait: 10s
         repeatInterval: 1h
         continueRoute: false
@@ -27,20 +23,8 @@ spec:
       - receiver: "workload-warnings"
         match:
           severity: warning
-          workload_type: |-
-            deployment
-            |statefulset
         groupWait: 30s
         repeatInterval: 4h
-        continueRoute: false
-
-      # Node alerts
-      - receiver: "node-alerts"
-        match:
-          severity: critical
-          workload_type: node
-        groupWait: 10s
-        repeatInterval: 1h
         continueRoute: false
 
   receivers:
@@ -70,16 +54,6 @@ spec:
         - urlSecret:
             name: gotify-alertmanager-urls
             key: warning
-          sendResolved: true
-          httpConfig:
-            followRedirects: true
-
-    # Node alerts - Gotify with priority 10
-    - name: "node-alerts"
-      webhookConfigs:
-        - urlSecret:
-            name: gotify-alertmanager-urls
-            key: node
           sendResolved: true
           httpConfig:
             followRedirects: true
