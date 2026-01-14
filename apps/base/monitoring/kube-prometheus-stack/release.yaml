@@ -46,14 +46,11 @@ spec:
         enabled: true
       # Default datasource configuration
       datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              url: http://kube-prometheus-stack-prometheus:9090
-              access: proxy
-              isDefault: true
+        - name: Prometheus
+          type: prometheus
+          url: http://kube-prometheus-stack-prometheus:9090
+          access: proxy
+          isDefault: true
     alertmanager:
       enabled: true
       alertmanagerSpec:
@@ -69,4 +66,4 @@ spec:
         alertmanagerConfigSelector: {}
         alertmanagerConfigNamespaceSelector: {}
         # Disable automatic namespace matcher injection - route across all namespaces
-        alertmanagerConfigMatcherStrategy: None
+        alertmanagerConfigMatcherStrategy: "None"
