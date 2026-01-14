@@ -98,7 +98,7 @@ spec:
           volumeMounts:
             - name: jellyfin-config-pvc
               mountPath: /config
-            - name: shared-storage
+            - name: jellyfin-transcode
               mountPath: /config/cache/transcodes
               subPath: kubernetes/jellyfin-cache/transcodes
             - name: shared-storage
@@ -113,6 +113,9 @@ spec:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
             claimName: jellyfin-config-pvc-jellyfin-0
+        - name: jellyfin-transcode
+          persistentVolumeClaim:
+            claimName: jellyfin-transcode-pvc
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-shared-nfs-pvc
