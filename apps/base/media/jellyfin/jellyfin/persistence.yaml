@@ -51,20 +51,21 @@ spec:
     server: storage.local.hejsan.xyz
     path: "/kubernetes/jellyfin-cache/transcodes"
   mountOptions:
-    - hard # Prevents silent failures (better for data integrity)
+    - soft # Allow graceful failure instead of hanging indefinitely
     - nfsvers=4.1 # Version 4.1 for better performance and locking
-    - async # Asynchronous writes for better performance (metadata still journaled)
-    - timeo=600 # Timeout in tenths of seconds (60 seconds)
-    - retrans=3 # Limits retry attempts before failing
-    # Attribute caching for performance - reasonable timeouts to balance freshness
-    - acregmin=30 # Min time (seconds) to cache file attributes
-    - acregmax=120 # Max time (seconds) to cache file attributes  
-    - acdirmin=30 # Min time (seconds) to cache directory attributes
-    - acdirmax=120 # Max time (seconds) to cache directory attributes
-    - lookupcache=positive # Cache successful lookups (positive results)
+    - proto=tcp # Use TCP instead of UDP for reliability
+    - timeo=100 # Timeout in tenths of seconds (10 seconds) - lower for faster detection
+    - retrans=5 # Retry up to 5 times before failing
+    - intr # Allow signals to interrupt NFS requests
+    # Aggressive attribute caching invalidation for transcode cache
+    - acregmin=3 # Min time (seconds) to cache file attributes - low for freshness
+    - acregmax=10 # Max time (seconds) to cache file attributes - low for transcode
+    - acdirmin=3 # Min time (seconds) to cache directory attributes
+    - acdirmax=10 # Max time (seconds) to cache directory attributes
+    - noac # Disable attribute caching for the mounted volume (safest for transcode)
     # Additional performance optimizations
-    - rsize=1048576 # 1MB read buffer size (default is often 64K)
-    - wsize=1048576 # 1MB write buffer size (default is often 64K)
+    - rsize=1048576 # 1MB read buffer size
+    - wsize=1048576 # 1MB write buffer size
     - noatime # Don't update access time on reads (improves performance)
     - nodiratime # Don't update directory access times
 ---
