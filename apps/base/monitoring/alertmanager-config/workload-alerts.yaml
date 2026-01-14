@@ -10,9 +10,6 @@ spec:
     groupWait: 30s
     groupInterval: 5m
     repeatInterval: 12h
-    matchers:
-      # Match all alerts regardless of namespace
-      - {}
     routes:
       # Route critical alerts to urgent channel
       - receiver: "workload-critical"
