@@ -34,7 +34,7 @@ spec:
         alertingEndpoints:
           - name: kube-prometheus-stack-alertmanager
             namespace: monitoring
-            port: web
+            port: http-web
     grafana:
       persistence:
         enabled: true
