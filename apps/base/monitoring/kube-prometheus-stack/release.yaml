@@ -45,7 +45,7 @@ spec:
       envFromSecrets:
         - name: grafana-gotify-tokens
           prefix: GOTIFY_TOKEN_
-      # Enable Grafana alert notifications  
+      # Enable Grafana alert notifications with hardcoded Gotify tokens
       alerting:
         contactpoints.yaml:
           apiVersion: 1
@@ -56,7 +56,7 @@ spec:
                 - uid: gotify-critical
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_critical}&priority=10"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=10"
                     httpMethod: POST
             - orgId: 1
               name: Gotify Warnings
@@ -64,7 +64,7 @@ spec:
                 - uid: gotify-warnings
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_warning}&priority=5"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=5"
                     httpMethod: POST
             - orgId: 1
               name: Gotify Default
@@ -72,7 +72,7 @@ spec:
                 - uid: gotify-default
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_default}&priority=2"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=2"
                     httpMethod: POST
         policies.yaml:
           apiVersion: 1
@@ -93,9 +93,61 @@ spec:
                   repeat_interval: 4h
                   matchers:
                     - severity = warning
+      # Grafana datasource for Prometheus
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://kube-prometheus-stack-prometheus:9090
+              access: proxy
+              isDefault: true
+            - name: Alertmanager
+              type: alertmanager
+              url: http://kube-prometheus-stack-alertmanager:9093
+              access: proxy
+              jsonData:
+                implementation: prometheus
     alertmanager:
-      enabled: true
+      # Configure Alertmanager to send all alerts to Gotify
+      config:
+        global:
+          resolve_timeout: 5m
+        route:
+          group_by: ['alertname', 'cluster', 'service']
+          group_wait: 10s
+          group_interval: 10s
+          repeat_interval: 12h
+          receiver: 'gotify'
+          routes:
+            - receiver: 'gotify-critical'
+              matchers:
+                - severity =~ "critical|page"
+              group_wait: 10s
+              repeat_interval: 1h
+            - receiver: 'gotify-warning'
+              matchers:
+                - severity = "warning"
+              group_wait: 30s
+              repeat_interval: 4h
+        receivers:
+          - name: 'gotify'
+            webhook_configs:
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_default}&priority=2'
+                send_resolved: true
+          - name: 'gotify-critical'
+            webhook_configs:
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_critical}&priority=10'
+                send_resolved: true
+          - name: 'gotify-warning'
+            webhook_configs:
+              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_warning}&priority=5'
+                send_resolved: true
       alertmanagerSpec:
+        # Load Gotify tokens into Alertmanager
+        secrets:
+          - grafana-gotify-tokens
         storage:
           volumeClaimTemplate:
             spec:
