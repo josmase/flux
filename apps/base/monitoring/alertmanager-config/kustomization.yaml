@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - notification-templates.yaml
+  - workload-alerts.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/name: alertmanager-config
+    includeSelectors: true

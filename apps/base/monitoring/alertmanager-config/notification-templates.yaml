@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-notification-templates
+data:
+  notification-templates.tmpl: |
+    {{ define "custom.default.title" -}}
+    [{{ .GroupLabels.alertname }}] {{ .GroupLabels.severity | toUpper }}
+    {{- end }}
+
+    {{ define "custom.default.message" -}}
+    {{ range .Alerts.Firing -}}
+    Alert: {{ .Labels.alertname }}
+    Severity: {{ .Labels.severity }}
+    Status: {{ .Status }}
+    Duration: {{ since .StartsAt }}
+
+    Description: {{ .Annotations.description }}
+
+    Details:
+    {{ range $key, $value := .Labels -}}
+      {{ $key }}: {{ $value }}
+    {{ end }}
+    ---
+    {{ end }}
+    {{- end }}

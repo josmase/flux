@@ -1,0 +1,84 @@
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: workload-alerts
+spec:
+  route:
+    receiver: "default"
+    groupBy: ["alertname", "cluster", "service", "namespace"]
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+    routes:
+      # Route critical workload failures to urgent channel
+      - receiver: "workload-critical"
+        match:
+          severity: critical
+          workload_type: |-
+            deployment
+            |statefulset
+            |pod
+        groupWait: 10s
+        repeatInterval: 1h
+        continueRoute: false
+
+      # Route warnings to normal channel
+      - receiver: "workload-warnings"
+        match:
+          severity: warning
+          workload_type: |-
+            deployment
+            |statefulset
+        groupWait: 30s
+        repeatInterval: 4h
+        continueRoute: false
+
+      # Node alerts
+      - receiver: "node-alerts"
+        match:
+          severity: critical
+          workload_type: node
+        groupWait: 10s
+        repeatInterval: 1h
+        continueRoute: false
+
+  receivers:
+    # Default receiver - webhook to external service
+    - name: "default"
+      webhookConfigs:
+        - url: "http://localhost:5001/alerts"
+          sendResolved: true
+
+    # Critical workload alerts
+    - name: "workload-critical"
+      webhookConfigs:
+        - url: "http://localhost:5001/alerts/critical"
+          sendResolved: true
+
+    # Warning alerts
+    - name: "workload-warnings"
+      webhookConfigs:
+        - url: "http://localhost:5001/alerts/warnings"
+          sendResolved: true
+
+    # Node alerts
+    - name: "node-alerts"
+      webhookConfigs:
+        - url: "http://localhost:5001/alerts/nodes"
+          sendResolved: true
+
+  inhibitRules:
+    # Inhibit warning if critical alert exists for same workload
+    - sourceMatch:
+        severity: critical
+      targetMatch:
+        severity: warning
+      equal: ["alertname", "namespace", "deployment"]
+
+    # Inhibit pod not ready alerts if deployment replica mismatch exists
+    - sourceMatch:
+        alertname: DeploymentReplicasMismatch
+      targetMatch:
+        alertname: PodNotHealthy
+      equal: ["namespace", "deployment"]

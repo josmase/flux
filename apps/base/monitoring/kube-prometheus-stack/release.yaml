@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: kube-prometheus-stack-repo
+      version: 64.0.0
+  interval: 1m0s
+  values:
+    prometheus:
+      prometheusSpec:
+        retention: 30d
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 50Gi
+        # Enable alerting rules
+        ruleNamespaceSelector: {}
+        ruleSelector:
+          matchLabels:
+            prometheus: "true"
+        # Configure alert manager
+        alertingEndpoints:
+          - name: alertmanager
+            namespace: monitoring
+            port: web
+    grafana:
+      persistence:
+        enabled: true
+        storageClassName: longhorn
+        accessModes: ["ReadWriteOnce"]
+        size: 10Gi
+      # Enable Grafana alert notifications
+      alerting:
+        enabled: true
+      # Default datasource configuration
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://kube-prometheus-stack-prometheus:9090
+              access: proxy
+              isDefault: true
+    alertmanager:
+      enabled: true
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 10Gi
+      # Disable default alertmanager config - we'll use custom one
+      config:
+        global:
+          resolve_timeout: 5m
+        route:
+          receiver: "null"
+          group_by: ["alertname", "cluster", "service"]
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 12h
+        receivers:
+          - name: "null"

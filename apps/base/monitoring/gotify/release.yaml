@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gotify
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: gotify
+      sourceRef:
+        kind: HelmRepository
+        name: gotify
+        namespace: monitoring
+      version: \"1.0.0\" # Use specific 1.0.0 version
+  values:
+    replicaCount: 1
+
+    image:
+      repository: gotify/gotify-server
+      tag: "2.8.0"
+      pullPolicy: IfNotPresent
+
+    service:
+      type: ClusterIP
+      port: 8080
+      targetPort: 8080
+
+    # Persistence for application data
+    persistence:
+      enabled: true
+      storageClassName: longhorn
+      accessMode: ReadWriteOnce
+      size: 5Gi
+      mountPath: /app/data
+
+    # Environment variables
+    env:
+      - name: GOTIFY_SERVER_PORT
+        value: "8080"
+      - name: GOTIFY_SERVER_SSL_ENABLED
+        value: "false" # Use ingress for TLS
+      - name: GOTIFY_LOG_LEVEL
+        value: "INFO"
+
+    # Resource requests/limits
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+
+    # Health checks
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+    # Pod security context
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534

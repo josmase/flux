@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-deployment-alert-rules
+data:
+  deployment-alerts.json: |
+    {
+      "name": "Workload Failure Alerts",
+      "uid": "workload-failures",
+      "groups": [
+        {
+          "name": "Deployment Failures",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "deploy_replica_mismatch",
+              "title": "Deployment Replicas Mismatch",
+              "condition": "A",
+              "data": [
+                {
+                  "refId": "A",
+                  "queryType": "",
+                  "relativeTimeRange": {
+                    "from": 300,
+                    "to": 0
+                  },
+                  "datasourceUid": "prometheus-uid",
+                  "model": {
+                    "expr": "kube_deployment_spec_replicas != kube_deployment_status_replicas_available",
+                    "interval": "",
+                    "refId": "A"
+                  }
+                }
+              ],
+              "noDataState": "NoData",
+              "execErrState": "Alerting",
+              "for": "10m",
+              "annotations": {
+                "summary": "Deployment {{ $labels.deployment }} in {{ $labels.namespace }} has mismatched replicas",
+                "description": "Expected {{ $labels.spec_replicas }} replicas but only {{ $value }} are available"
+              },
+              "labels": {
+                "severity": "warning",
+                "workload_type": "deployment"
+              }
+            },
+            {
+              "uid": "pod_crash_looping",
+              "title": "Pod Crash Looping",
+              "condition": "A",
+              "data": [
+                {
+                  "refId": "A",
+                  "queryType": "",
+                  "relativeTimeRange": {
+                    "from": 600,
+                    "to": 0
+                  },
+                  "datasourceUid": "prometheus-uid",
+                  "model": {
+                    "expr": "rate(kube_pod_container_status_restarts_total[15m]) > 0",
+                    "interval": "",
+                    "refId": "A"
+                  }
+                }
+              ],
+              "noDataState": "NoData",
+              "execErrState": "Alerting",
+              "for": "5m",
+              "annotations": {
+                "summary": "Pod {{ $labels.pod }} is crash looping",
+                "description": "Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting frequently: {{ printf \"%.2f\" $value }} restarts/minute"
+              },
+              "labels": {
+                "severity": "critical",
+                "workload_type": "pod"
+              }
+            }
+          ]
+        },
+        {
+          "name": "StatefulSet Failures",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "statefulset_replica_mismatch",
+              "title": "StatefulSet Replicas Mismatch",
+              "condition": "A",
+              "data": [
+                {
+                  "refId": "A",
+                  "queryType": "",
+                  "relativeTimeRange": {
+                    "from": 300,
+                    "to": 0
+                  },
+                  "datasourceUid": "prometheus-uid",
+                  "model": {
+                    "expr": "kube_statefulset_status_replicas_ready != kube_statefulset_status_replicas",
+                    "interval": "",
+                    "refId": "A"
+                  }
+                }
+              ],
+              "noDataState": "NoData",
+              "execErrState": "Alerting",
+              "for": "10m",
+              "annotations": {
+                "summary": "StatefulSet {{ $labels.statefulset }} in {{ $labels.namespace }} has mismatched replicas",
+                "description": "Expected {{ $labels.replicas }} replicas but only {{ $value }} are ready"
+              },
+              "labels": {
+                "severity": "warning",
+                "workload_type": "statefulset"
+              }
+            }
+          ]
+        }
+      ]
+    }

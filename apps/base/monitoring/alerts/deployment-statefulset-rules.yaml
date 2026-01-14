@@ -1,0 +1,168 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: deployment-statefulset-alerts
+spec:
+  groups:
+    - name: workload.rules
+      interval: 30s
+      rules:
+        # Alert for Deployment replicas not ready
+        - alert: DeploymentReplicasMismatch
+          expr: |
+            kube_deployment_spec_replicas{job="kube-state-metrics"}
+            !=
+            kube_deployment_status_replicas_available{job="kube-state-metrics"}
+          for: 10m
+          labels:
+            severity: warning
+            workload_type: deployment
+          annotations:
+            summary: "Deployment {{ $labels.deployment }} has mismatched replicas"
+            description: |
+              Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has only {{ $value }} available replicas
+              out of {{ $labels.spec_replicas }} desired replicas.
+              This may indicate pod crashes or pending pods.
+
+        # Alert for Deployment with zero replicas but spec says otherwise
+        - alert: DeploymentGenerationMismatch
+          expr: |
+            kube_deployment_status_observed_generation{job="kube-state-metrics"}
+            !=
+            kube_deployment_metadata_generation{job="kube-state-metrics"}
+          for: 15m
+          labels:
+            severity: warning
+            workload_type: deployment
+          annotations:
+            summary: "Deployment {{ $labels.deployment }} has observed generation mismatch"
+            description: |
+              Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has failed to progress.
+              The observed generation ({{ $value }}) does not match the metadata generation.
+              Check the deployment status for errors.
+
+        # Alert for StatefulSet replicas not ready
+        - alert: StatefulSetReplicasMismatch
+          expr: |
+            kube_statefulset_status_replicas_ready{job="kube-state-metrics"}
+            !=
+            kube_statefulset_status_replicas{job="kube-state-metrics"}
+          for: 10m
+          labels:
+            severity: warning
+            workload_type: statefulset
+          annotations:
+            summary: "StatefulSet {{ $labels.statefulset }} has mismatched replicas"
+            description: |
+              StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has only {{ $value }} ready replicas
+              out of {{ $labels.replicas }} total replicas.
+              This may indicate pod crashes or pending pods.
+
+        # Alert for StatefulSet update failure
+        - alert: StatefulSetUpdateInProgress
+          expr: |
+            kube_statefulset_status_update_revision{job="kube-state-metrics"}
+            !=
+            kube_statefulset_status_current_revision{job="kube-state-metrics"}
+          for: 15m
+          labels:
+            severity: warning
+            workload_type: statefulset
+          annotations:
+            summary: "StatefulSet {{ $labels.statefulset }} update is stuck"
+            description: |
+              StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} is stuck in update.
+              The update revision does not match the current revision.
+              Check the statefulset status for errors.
+
+        # Alert for Pod CrashLoopBackOff
+        - alert: PodCrashLooping
+          expr: |
+            rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: pod
+          annotations:
+            summary: "Pod {{ $labels.pod }} is crash looping"
+            description: |
+              Pod {{ $labels.namespace }}/{{ $labels.pod }} in container {{ $labels.container }}
+              is restarting frequently ({{ printf "%.2f" $value }} restarts/minute).
+              Check the pod logs: kubectl logs {{ $labels.pod }} -n {{ $labels.namespace }}
+
+        # Alert for Pod not ready
+        - alert: PodNotHealthy
+          expr: |
+            min_over_time(sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown|Failed"})[15m:1m]) > 0
+          for: 15m
+          labels:
+            severity: warning
+            workload_type: pod
+          annotations:
+            summary: "Pod {{ $labels.pod }} is not healthy"
+            description: |
+              Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for more than 15 minutes.
+              Current phase: {{ $labels.phase }}.
+              Check the pod status: kubectl describe pod {{ $labels.pod }} -n {{ $labels.namespace }}
+
+        # Alert for Deployment with failed pods
+        - alert: DeploymentWithFailedPods
+          expr: |
+            count by (deployment, namespace) (kube_pod_labels{job="kube-state-metrics"}
+            * on (pod, namespace) group_left() (kube_pod_status_phase{phase="Failed"} == 1)) > 0
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: deployment
+          annotations:
+            summary: "Deployment {{ $labels.deployment }} has failed pods"
+            description: |
+              Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has {{ $value }} failed pods.
+              Failed pods will not be restarted automatically.
+              Investigate and delete failed pods to allow new ones to start.
+
+        # Alert for high pod restart rate
+        - alert: HighPodRestartRate
+          expr: |
+            rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[1h]) > 0.5
+          for: 10m
+          labels:
+            severity: critical
+            workload_type: pod
+          annotations:
+            summary: "Pod {{ $labels.pod }} has high restart rate"
+            description: |
+              Pod {{ $labels.namespace }}/{{ $labels.pod }} in container {{ $labels.container }}
+              is restarting very frequently ({{ printf "%.2f" $value }} restarts/minute over the last hour).
+              This indicates a critical issue - check the pod logs immediately.
+
+        # Alert for container waiting state
+        - alert: ContainerWaiting
+          expr: |
+            sum by (pod, namespace, container, reason) (kube_pod_container_status_waiting{job="kube-state-metrics"}) > 0
+          for: 1h
+          labels:
+            severity: warning
+            workload_type: container
+          annotations:
+            summary: "Container {{ $labels.container }} in pod {{ $labels.pod }} is waiting"
+            description: |
+              Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been
+              waiting for more than 1 hour. Reason: {{ $labels.reason }}.
+              Common reasons: ImagePullBackOff, CrashLoopBackOff, CreateContainerConfigError.
+
+        # Alert for node NotReady
+        - alert: KubernetesNodeNotReady
+          expr: |
+            kube_node_status_condition{condition="Ready",status="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: node
+          annotations:
+            summary: "Kubernetes node {{ $labels.node }} is not ready"
+            description: |
+              Node {{ $labels.node }} has been unready for more than 5 minutes.
+              This will prevent pod scheduling and cause workload failures.
+              Check node status: kubectl describe node {{ $labels.node }}
