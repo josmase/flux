@@ -32,7 +32,7 @@ spec:
             prometheus: "true"
         # Configure alert manager
         alertingEndpoints:
-          - name: alertmanager
+          - name: kube-prometheus-stack-alertmanager
             namespace: monitoring
             port: web
     grafana:
