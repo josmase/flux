@@ -115,18 +115,20 @@ spec:
                 - severity = "warning"
               group_wait: 30s
               repeat_interval: 4h
+        templates:
+          - '/etc/alertmanager/config/*.tmpl'
         receivers:
           - name: 'gotify'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=2'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
                 send_resolved: true
           - name: 'gotify-critical'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=10'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
                 send_resolved: true
           - name: 'gotify-warning'
             webhook_configs:
-              - url: 'http://gotify.monitoring.svc.cluster.local:8080/message?token=A7TvHUAUjtqng3X&priority=5'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
                 send_resolved: true
       alertmanagerSpec:
         storage:

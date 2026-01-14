@@ -6,6 +6,7 @@ resources:
   - namespace.yaml
   - kube-prometheus-stack
   - gotify
+  - alertmanager-gotify-bridge
   - alerts
 
 commonLabels:

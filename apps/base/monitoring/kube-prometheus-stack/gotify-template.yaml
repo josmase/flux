@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-gotify-template
+  namespace: monitoring
+data:
+  gotify.tmpl: |
+    {{ define "gotify.message" }}
+    {{- range .Alerts }}
+    **{{ .Labels.alertname }}** - {{ .Status }}
+    {{- if .Annotations.summary }}
+    {{ .Annotations.summary }}
+    {{- end }}
+    {{- if .Annotations.description }}
+    {{ .Annotations.description }}
+    {{- end }}
+    Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+    {{- end }}
+    {{ end }}
+
+    {{ define "gotify.title" }}
+    {{- if eq .Status "firing" -}}
+    🔥 {{ .Alerts | len }} Alert(s) Firing
+    {{- else -}}
+    ✅ {{ .Alerts | len }} Alert(s) Resolved
+    {{- end -}}
+    {{ end }}
