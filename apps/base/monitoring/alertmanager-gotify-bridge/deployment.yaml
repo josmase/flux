@@ -20,11 +20,11 @@ spec:
             - containerPort: 8080
               name: http
           env:
-            - name: GOTIFY_URL
-              value: "http://gotify.monitoring.svc.cluster.local:8080"
+            - name: GOTIFY_ENDPOINT
+              value: "http://gotify.monitoring.svc.cluster.local:8080/message"
             - name: GOTIFY_TOKEN
               value: "A7TvHUAUjtqng3X"
-            - name: GOTIFY_PRIORITY
+            - name: DEFAULT_PRIORITY
               value: "5"
 ---
 apiVersion: v1

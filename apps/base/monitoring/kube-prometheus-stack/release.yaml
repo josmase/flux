@@ -120,15 +120,15 @@ spec:
         receivers:
           - name: 'gotify'
             webhook_configs:
-              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook'
                 send_resolved: true
           - name: 'gotify-critical'
             webhook_configs:
-              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook'
                 send_resolved: true
           - name: 'gotify-warning'
             webhook_configs:
-              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/alert'
+              - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook'
                 send_resolved: true
       alertmanagerSpec:
         storage:
