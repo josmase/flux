@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: clean-nfs-cache
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
           command:
             - /bin/bash
             - -c
@@ -35,7 +35,7 @@ spec:
               mountPath: /config/cache/transcodes
               subPath: kubernetes/jellyfin-cache/transcodes
         - name: fix-ssh-permissions
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
           command:
             - /bin/bash
             - /scripts/fix-ssh-permissions.sh
@@ -49,7 +49,7 @@ spec:
               mountPath: /scripts
       containers:
         - name: jellyfin
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:747bc6725c5e4f1330e693b50d787e2106e52ac5b25c4174ca5f58915fc17ec8
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
           ports:
             - containerPort: 8096
               name: http
