@@ -93,22 +93,6 @@ spec:
                   repeat_interval: 4h
                   matchers:
                     - severity = warning
-      # Grafana datasource for Prometheus
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              url: http://kube-prometheus-stack-prometheus:9090
-              access: proxy
-              isDefault: true
-            - name: Alertmanager
-              type: alertmanager
-              url: http://kube-prometheus-stack-alertmanager:9093
-              access: proxy
-              jsonData:
-                implementation: prometheus
     alertmanager:
       # Configure Alertmanager to send all alerts to Gotify
       config:
