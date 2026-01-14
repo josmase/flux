@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager-gotify-bridge
-  namespace: monitoring
 spec:
   replicas: 1
   selector:
@@ -16,7 +15,7 @@ spec:
     spec:
       containers:
         - name: bridge
-          image: druggeri/alertmanager_gotify_bridge:0.0.14
+          image: artifactory.local.hejsan.xyz/docker/druggeri/alertmanager_gotify_bridge:2.3
           ports:
             - containerPort: 8080
               name: http
