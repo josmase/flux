@@ -41,20 +41,10 @@ spec:
         storageClassName: longhorn
         accessModes: ["ReadWriteOnce"]
         size: 10Gi
-      # Environment variables from secrets for alert notifications
-      envValueFrom:
-        GOTIFY_TOKEN_CRITICAL:
-          secretKeyRef:
-            name: grafana-gotify-tokens
-            key: critical
-        GOTIFY_TOKEN_WARNING:
-          secretKeyRef:
-            name: grafana-gotify-tokens
-            key: warning
-        GOTIFY_TOKEN_DEFAULT:
-          secretKeyRef:
-            name: grafana-gotify-tokens
-            key: default
+      # Load all Gotify token keys into env with a prefix
+      envFromSecrets:
+        - name: grafana-gotify-tokens
+          prefix: GOTIFY_TOKEN_
       # Enable Grafana alert notifications  
       alerting:
         contactpoints.yaml:
@@ -66,7 +56,7 @@ spec:
                 - uid: gotify-critical
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_CRITICAL}&priority=10"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_critical}&priority=10"
                     httpMethod: POST
             - orgId: 1
               name: Gotify Warnings
@@ -74,7 +64,7 @@ spec:
                 - uid: gotify-warnings
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_WARNING}&priority=5"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_warning}&priority=5"
                     httpMethod: POST
             - orgId: 1
               name: Gotify Default
@@ -82,7 +72,7 @@ spec:
                 - uid: gotify-default
                   type: webhook
                   settings:
-                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_DEFAULT}&priority=2"
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_default}&priority=2"
                     httpMethod: POST
         policies.yaml:
           apiVersion: 1
