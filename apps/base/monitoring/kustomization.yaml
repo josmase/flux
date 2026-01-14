@@ -6,8 +6,6 @@ resources:
   - namespace.yaml
   - kube-prometheus-stack
   - gotify
-  - alertmanager-config
-  - alerts
 
 commonLabels:
   app.kubernetes.io/part-of: monitoring

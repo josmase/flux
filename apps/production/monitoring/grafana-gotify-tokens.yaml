@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-gotify-tokens
+type: Opaque
+stringData:
+  default: ENC[AES256_GCM,data:sn/+iesjYLSRqJ5hi+BZ,iv:vEryCXbeLbQ5MCbr+KTH3rSxSmhcHm5oWAe1Mg1MBzc=,tag:LoiyIl5Yaoh0Wxwp23008A==,type:str]
+  critical: ENC[AES256_GCM,data:q47z1HMKUPRFDUVo0CGo,iv:t2jwHqCdV40GKJ/4tABt27wP8Z95pe4JUnpP2dT/n8w=,tag:8aYvHxugJoPlxokPSjHwqw==,type:str]
+  warning: ENC[AES256_GCM,data:DUcU+pnJUJncd3jCH+6F,iv:tZCbqljD37Drx8dwax9zcdpLdJdFuY8Oi576ae80Nb4=,tag:gAc7DE8JggDI/ZqdgoRBhQ==,type:str]
+sops:
+  age:
+    - recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrQ3FBRUdoa1ZZa284QVU2
+        bVNOT0Jvdy9Eam5pRUpKWkRFZVRlZUpsakZ3CnpuTk9KeGxnV0U0V3R5T0VnYlBr
+        VC8zZ0dpQ0wvRW5PT1VoNTFTNjlreFEKLS0tIGQvSjlmbzJhSGJBbnR5bWJPWXAx
+        UUVkMUQweURpdm1nWUd0U29EZUpxb2sKLdgFthigC9EkQF8p8aANUAaJVKWdIuW5
+        Jr/oObta+SNIp5tvqSvYk7YNWqolpPUT+PDaMa4Cb4TcE1RKZZIQ2g==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-01-14T21:13:41Z"
+  mac: ENC[AES256_GCM,data:l0YsrBveDUMQkih3X+wgeF2cUwGP3Pt/TSxyv1FVNQJ75wYtiDQOnCkhTbtaQIm1BW94pW8sB7AQ3CPEcrX/tXcZVzKXxxfpnSrHG8SDta6g5AJ5KFGZMKFuij5EsH2xwq4/ntym0ML+kSD6J7L5d+sUtFLg4v9ySdqoVmYtlPY=,iv:gDEsCNbCvkhZ0kk/oH4yxQTSENgkm0cwfmA0BYmq9+M=,tag:LjIZ7CvU10SKcQbS1XsQfw==,type:str]
+  encrypted_regex: ^(data|stringData)$
+  version: 3.11.0

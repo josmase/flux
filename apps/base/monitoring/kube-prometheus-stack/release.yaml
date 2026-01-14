@@ -41,9 +41,68 @@ spec:
         storageClassName: longhorn
         accessModes: ["ReadWriteOnce"]
         size: 10Gi
-      # Enable Grafana alert notifications
+      # Environment variables from secrets for alert notifications
+      envValueFrom:
+        GOTIFY_TOKEN_CRITICAL:
+          secretKeyRef:
+            name: grafana-gotify-tokens
+            key: critical
+        GOTIFY_TOKEN_WARNING:
+          secretKeyRef:
+            name: grafana-gotify-tokens
+            key: warning
+        GOTIFY_TOKEN_DEFAULT:
+          secretKeyRef:
+            name: grafana-gotify-tokens
+            key: default
+      # Enable Grafana alert notifications  
       alerting:
-        enabled: true
+        contactpoints.yaml:
+          apiVersion: 1
+          contactPoints:
+            - orgId: 1
+              name: Gotify Critical
+              receivers:
+                - uid: gotify-critical
+                  type: webhook
+                  settings:
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_CRITICAL}&priority=10"
+                    httpMethod: POST
+            - orgId: 1
+              name: Gotify Warnings
+              receivers:
+                - uid: gotify-warnings
+                  type: webhook
+                  settings:
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_WARNING}&priority=5"
+                    httpMethod: POST
+            - orgId: 1
+              name: Gotify Default
+              receivers:
+                - uid: gotify-default
+                  type: webhook
+                  settings:
+                    url: "http://gotify.monitoring.svc.cluster.local:8080/message?token=${GOTIFY_TOKEN_DEFAULT}&priority=2"
+                    httpMethod: POST
+        policies.yaml:
+          apiVersion: 1
+          policies:
+            - orgId: 1
+              receiver: Gotify Default
+              group_by: ['grafana_folder', 'alertname']
+              routes:
+                - receiver: Gotify Critical
+                  group_wait: 10s
+                  group_interval: 5m
+                  repeat_interval: 1h
+                  matchers:
+                    - severity = critical
+                - receiver: Gotify Warnings
+                  group_wait: 30s
+                  group_interval: 5m
+                  repeat_interval: 4h
+                  matchers:
+                    - severity = warning
       # Default datasource configuration
       datasources:
         - name: Prometheus
@@ -62,8 +121,3 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
-        # Configure AlertmanagerConfig selection
-        alertmanagerConfigSelector: {}
-        alertmanagerConfigNamespaceSelector: {}
-        # Use OnNamespaceExceptForAlertmanagerNamespace to allow cross-namespace alerts when in same namespace as Alertmanager
-        alertmanagerConfigMatcherStrategy: OnNamespaceExceptForAlertmanagerNamespace
