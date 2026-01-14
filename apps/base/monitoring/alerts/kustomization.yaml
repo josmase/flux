@@ -6,4 +6,5 @@ resources:
 labels:
   - pairs:
       app.kubernetes.io/name: prometheus-rules
+      prometheus: "true"
     includeSelectors: true
