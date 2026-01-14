@@ -17,6 +17,25 @@ spec:
           image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
           #command: ["/bin/sh", "-c", "sleep infinity"]
           #args: ["-c", "exec /bin/sh"]
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -f /app/.startup-complete || exit 1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - ps aux | grep -q '[p]ython' || exit 1
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 2
           envFrom:
             - secretRef:
                 name: jellyfin-auto-collections-secret

@@ -20,6 +20,22 @@ spec:
           ports:
             - containerPort: 9494
               name: http
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 9494
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 9494
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
           env:
             - name: SECRET
               valueFrom:

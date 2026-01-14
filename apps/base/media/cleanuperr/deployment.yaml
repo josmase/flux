@@ -22,6 +22,25 @@ spec:
                 name: cleanuperr-config
             - secretRef:
                 name: cleanuperr-secrets
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -f /app/cleanuperr.py || exit 1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - ps aux | grep -q '[p]ython' || exit 1
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 2
           volumeMounts:
             - name: shared-storage
               subPath: downloads
