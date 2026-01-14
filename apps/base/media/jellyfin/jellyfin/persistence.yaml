@@ -38,10 +38,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jellyfin-transcode-pvc
+  name: jellyfin-transcode-pv
 spec:
   capacity:
-    storage: 110Ti
+    storage: 1Ti
   volumeMode: Filesystem
   storageClassName: "manual"
   accessModes:
@@ -49,7 +49,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: storage.local.hejsan.xyz
-    path: "/"
+    path: "/kubernetes/jellyfin-cache/transcodes"
   mountOptions:
     - hard # Prevents silent failures (better for data integrity)
     - nfsvers=4.1 # Version 4.1 for better performance and locking

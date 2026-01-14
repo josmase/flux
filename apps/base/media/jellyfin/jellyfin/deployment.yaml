@@ -100,7 +100,6 @@ spec:
               mountPath: /config
             - name: jellyfin-transcode
               mountPath: /config/cache/transcodes
-              subPath: kubernetes/jellyfin-cache/transcodes
             - name: shared-storage
               mountPath: /mnt/storage/files
               subPath: files
