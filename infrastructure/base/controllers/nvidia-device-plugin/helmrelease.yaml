@@ -41,9 +41,6 @@ spec:
     deviceDiscoveryStrategy: "nvml"
     migStrategy: "none"
     failOnInitError: "true"
-    # nvidiaDriverRoot is the path inside the container where host root is mounted
-    # The chart mounts host "/" to "/driver-root" in the container
-    nvidiaDriverRoot: "/driver-root"
 
     # Use nvidia as the device plugin naming
     # This exposes GPUs as nvidia.com/gpu
