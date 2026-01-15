@@ -47,6 +47,10 @@ spec:
             migStrategy: "none"
             failOnInitError: true
 
+    # Use nvidia runtime to access NVML libraries in the container
+    # This is critical - the Device Plugin binary needs nvidia runtime to detect GPUs
+    runtimeClassName: nvidia
+
     # Use nvidia as the device plugin naming
     # This exposes GPUs as nvidia.com/gpu
     resources:
