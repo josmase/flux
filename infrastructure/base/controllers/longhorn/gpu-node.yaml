@@ -1,17 +1,15 @@
 ---
-apiVersion: longhorn.io/v1beta1
+apiVersion: longhorn.io/v1beta2
 kind: Node
 metadata:
   name: ubuntu-ms-7977
   namespace: longhorn-system
 spec:
+  name: ubuntu-ms-7977
   allowScheduling: true
   disks:
     default-disk:
       allowScheduling: true
-      diskType: filesystem
-      diskDriver: ""
-      evictionRequested: false
       path: /var/lib/longhorn/
       storageReserved: 125829120000  # Reserve 117GB for system (60GB actual = 120GB schedulable with 100% over-provision)
       tags: []
