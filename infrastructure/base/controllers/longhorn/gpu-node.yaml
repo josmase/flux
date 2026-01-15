@@ -10,8 +10,10 @@ spec:
     default-disk:
       allowScheduling: true
       diskType: filesystem
+      diskDriver: ""
+      evictionRequested: false
       path: /var/lib/longhorn/
-      storageReserved: 180388626432  # Reserve 168GB for system (60GB for Longhorn = 120GB schedulable with 100% over-provision)
+      storageReserved: 125829120000  # Reserve 117GB for system (60GB actual = 120GB schedulable with 100% over-provision)
       tags: []
   tags:
     - "gpu-node"
