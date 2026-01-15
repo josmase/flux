@@ -19,6 +19,17 @@ spec:
     nodeSelector:
       gpu: "true"
 
+    # Disable NFD affinity requirement - we use simple gpu label instead
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: gpu
+              operator: In
+              values:
+              - "true"
+
     # Tolerate GPU node taint so device plugin can discover GPUs
     tolerations:
       - key: "workload"
