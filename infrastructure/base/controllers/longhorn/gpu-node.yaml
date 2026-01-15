@@ -1,0 +1,12 @@
+---
+apiVersion: longhorn.io/v1beta1
+kind: Node
+metadata:
+  name: ubuntu-ms-7977
+  namespace: longhorn-system
+spec:
+  allowScheduling: true
+  diskSelector: []
+  nodeSelector: []
+  tags:
+    - "gpu-node"

@@ -15,3 +15,21 @@ parameters:
   staleReplicaTimeout: "30"
   unmapMarkSnapChainRemoved: ignored
   disableRevisionCounter: "true"
+  # Prevent GPU node from being a replication target
+  # Replicas can originate from gpu-node but won't be sent TO it
+  hardNodeAffinity: |
+    {
+      "requiredDuringSchedulingIgnoredDuringExecution": {
+        "nodeSelectorTerms": [
+          {
+            "matchExpressions": [
+              {
+                "key": "longhorn.io/tag",
+                "operator": "NotIn",
+                "values": ["gpu-node"]
+              }
+            ]
+          }
+        ]
+      }
+    }
