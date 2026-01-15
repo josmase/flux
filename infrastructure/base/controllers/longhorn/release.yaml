@@ -36,6 +36,7 @@ spec:
       storageMinimalAvailablePercentage: 25
       storageOverProvisioningPercentage: 100
       guaranteedInstanceManagerCPU: "4"
+      taintToleration: "workload=gpu-only:NoSchedule"
     persistence:
       defaultClass: true
       defaultClassReplicaCount: 3
@@ -43,3 +44,21 @@ spec:
       defaultDataLocality: best-effort
       reclaimPolicy: Delete
       volumeBindingMode: WaitForFirstConsumer
+    longhornManager:
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "gpu-only"
+          effect: "NoSchedule"
+    longhornDriver:
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "gpu-only"
+          effect: "NoSchedule"
+    longhornUI:
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "gpu-only"
+          effect: "NoSchedule"

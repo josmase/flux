@@ -1,0 +1,44 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nvidia-device-plugin
+  namespace: nvidia-device-plugin
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: nvidia-device-plugin
+      version: 0.16.2
+      sourceRef:
+        kind: HelmRepository
+        name: nvidia
+        namespace: flux-system
+  values:
+    # Allow scheduling GPU workloads on this node
+    nodeSelector:
+      gpu: "true"
+
+    # Tolerate GPU node taint so device plugin can discover GPUs
+    tolerations:
+      - key: "workload"
+        operator: "Equal"
+        value: "gpu-only"
+        effect: "NoSchedule"
+
+    # Use nvidia as the device plugin naming
+    # This exposes GPUs as nvidia.com/gpu
+    resources:
+      limits:
+        memory: 128Mi
+      requests:
+        memory: 64Mi
+
+    # Share GPUs among multiple pods (optional)
+    # Uncomment to enable sharing
+    # gfd:
+    #   enabled: true
+
+    # Rolling update strategy
+    updateStrategy:
+      type: RollingUpdate

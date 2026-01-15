@@ -8,6 +8,7 @@ resources:
   #- nfs-subdir
   - longhorn
   - reflector
+  - nvidia-device-plugin
 
 configurations:
   - kustomizeconfig.yaml

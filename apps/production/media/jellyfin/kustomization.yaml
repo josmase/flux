@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - auto-collections/
-  - configmap.yaml
-  - secret.yaml
+

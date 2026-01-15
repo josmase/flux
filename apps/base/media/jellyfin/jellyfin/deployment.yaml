@@ -14,81 +14,20 @@ spec:
       labels:
         app: jellyfin
     spec:
-      initContainers:
-        - name: verify-nfs-mount
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
-          command:
-            - /bin/bash
-            - -c
-            - |
-              set -e
-              echo "Verifying NFS mount connectivity..."
-              
-              # Check if mount is accessible
-              MOUNT_PATH="/config/cache/transcodes"
-              if ! timeout 30 stat "$MOUNT_PATH" > /dev/null 2>&1; then
-                echo "ERROR: NFS mount not accessible at $MOUNT_PATH"
-                exit 1
-              fi
-              
-              echo "NFS mount verified successfully"
-              
-              # Test write access with timeout to detect stale handles early
-              TEST_FILE="$MOUNT_PATH/.mount-test-$$"
-              if ! timeout 10 touch "$TEST_FILE" 2>/dev/null; then
-                echo "WARNING: NFS mount may have stale handles, attempting recovery..."
-                # Try to unmount and remount (requires appropriate permissions)
-                exit 1
-              fi
-              rm -f "$TEST_FILE" 2>/dev/null || true
-              
-              echo "NFS mount write access verified"
-          volumeMounts:
-            - name: jellyfin-transcode
-              mountPath: /config/cache/transcodes
-        - name: clean-nfs-cache
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
-          command:
-            - /bin/bash
-            - -c
-            - |
-              set -e
-              echo "Cleaning stale NFS transcode cache..."
-              MOUNT_PATH="/config/cache/transcodes"
-              
-              # Remove any stale lock files or temporary files with stale handle protection
-              # Use find with -mindepth to avoid issues with the mount point itself
-              find "$MOUNT_PATH" -mindepth 1 -type f -name "*.lock" -delete 2>/dev/null || {
-                echo "WARNING: Failed to clean lock files - may indicate stale handles"
-              }
-              find "$MOUNT_PATH" -mindepth 1 -type f -name ".nfs*" -delete 2>/dev/null || {
-                echo "WARNING: Failed to clean stale NFS files"
-              }
-              
-              # Remove old temporary transcode files (older than 1 hour)
-              find "$MOUNT_PATH" -mindepth 1 -type f -name "*.tmp" -mmin +60 -delete 2>/dev/null || true
-              
-              # Ensure directory exists and has correct permissions
-              mkdir -p "$MOUNT_PATH"
-              chmod 755 "$MOUNT_PATH"
-              
-              echo "NFS cache cleaned successfully"
-          volumeMounts:
-            - name: jellyfin-transcode
-              mountPath: /config/cache/transcodes
-        - name: fix-ssh-permissions
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
-          command:
-            - /bin/bash
-            - /scripts/fix-ssh-permissions.sh
-          volumeMounts:
-            - name: rffmpeg-ssh-key-source
-              mountPath: /ssh-keys
-              readOnly: true
-            - name: jellyfin-config-pvc
-              mountPath: /config
-            - name: rffmpeg-scripts
-              mountPath: /scripts
+      # Select the GPU-enabled node
+      nodeSelector:
+        gpu: "true"
+
+      # Use NVIDIA runtime for GPU support
+      runtimeClassName: nvidia
+
+      # Tolerate GPU node taint to allow scheduling on dedicated GPU node
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "gpu-only"
+          effect: "NoSchedule"
+
       containers:
         - name: jellyfin
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.5@sha256:313571f253bf1035809f6856bb063904456226ef3899b96e60ee4597b3477246
@@ -111,89 +50,37 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 2
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - /bin/bash
-                  - -c
-                  - |
-                    set -e
-                    echo "Cleaning up transcode cache before shutdown..."
-                    CACHE_PATH="/config/cache/transcodes"
-                    
-                    # Clean up any temporary transcode files with stale handle protection
-                    # Use find with proper error handling for NFS stale handles
-                    {
-                      find "$CACHE_PATH" -mindepth 1 -type f -name "*.ts" -mtime +1 -delete 2>/dev/null || true
-                      find "$CACHE_PATH" -mindepth 1 -type f -name "*.m3u8" -mtime +1 -delete 2>/dev/null || true
-                      find "$CACHE_PATH" -mindepth 1 -type f -name "*.tmp" -mtime +0 -delete 2>/dev/null || true
-                    } || {
-                      echo "WARNING: Cleanup encountered stale NFS handles - this is expected during node failures"
-                    }
-                    
-                    # Sync filesystem to ensure NFS writes complete (with timeout protection)
-                    timeout 5 sync || echo "WARNING: sync timeout - NFS may have stale handles"
-                    
-                    echo "Cleanup complete"
-                    sleep 2
-            postStart:
-              exec:
-                command:
-                  - /bin/bash
-                  - /scripts/patch-rffmpeg.sh
           resources:
             requests:
               cpu: 1000m
               memory: 2Gi
+              nvidia.com/gpu: 1
             limits:
               cpu: 4000m
               memory: 4Gi
+              nvidia.com/gpu: 1
           env:
-            # Enable rffmpeg docker mod for remote transcoding
-            - name: DOCKER_MODS
-              value: "linuxserver/mods:jellyfin-rffmpeg"
-            # rffmpeg configuration
-            - name: RFFMPEG_USER
-              value: "root"  # Container runs as root
-            - name: FFMPEG_PATH
-              value: "/usr/local/bin/ffmpeg"  # Use rffmpeg wrapper
+            # Enable hardware acceleration in Jellyfin
+            - name: JELLYFIN_ENABLE_HARDWARE_ACCELERATION
+              value: "true"
+            # NVIDIA-specific environment variables
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: "compute,video,utility"
           envFrom:
             - configMapRef:
                 name: default-app-config
-            - configMapRef:
-                name: jellyfin-rffmpeg-config
           volumeMounts:
             - name: jellyfin-config-pvc
               mountPath: /config
-            - name: jellyfin-transcode
-              mountPath: /config/cache/transcodes
             - name: shared-storage
               mountPath: /mnt/storage/files
               subPath: files
-            - name: rffmpeg-config
-              mountPath: /config/rffmpeg/rffmpeg.yml
-              subPath: rffmpeg.yml
-            - name: rffmpeg-scripts
-              mountPath: /scripts
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
             claimName: jellyfin-config-pvc-jellyfin-0
-        - name: jellyfin-transcode
-          persistentVolumeClaim:
-            claimName: jellyfin-transcode-pvc
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-shared-nfs-pvc
-        - name: rffmpeg-ssh-key-source
-          secret:
-            secretName: jellyfin-rffmpeg-key
-            defaultMode: 0600
-        - name: rffmpeg-config
-          configMap:
-            name: rffmpeg-config
-        - name: rffmpeg-scripts
-          configMap:
-            name: jellyfin-rffmpeg-config
-            defaultMode: 0755

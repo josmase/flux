@@ -12,3 +12,4 @@ resources:
   - ../../base/controllers/mongodb-operator/
   - ../../base/controllers/openebs/
   - ../../base/controllers/reflector/
+  - ../../base/controllers/nvidia-device-plugin/
