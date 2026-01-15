@@ -37,17 +37,11 @@ spec:
         value: "gpu-only"
         effect: "NoSchedule"
 
-    # Configure device discovery strategy using config file
-    config:
-      flags:
-        deviceDiscoveryStrategy: "nvml"
-        migStrategy: "none"
-        failOnInitError: true
-        nvidiaDriverRoot: "/"
-        plugin:
-          passDeviceSpecs: false
-          deviceListStrategy: ["envvar"]
-          deviceIDStrategy: "uuid"
+    # Configure device discovery strategy - use top-level values
+    deviceDiscoveryStrategy: "nvml"
+    migStrategy: "none"
+    failOnInitError: true
+    nvidiaDriverRoot: "/"
 
     # Use nvidia as the device plugin naming
     # This exposes GPUs as nvidia.com/gpu
