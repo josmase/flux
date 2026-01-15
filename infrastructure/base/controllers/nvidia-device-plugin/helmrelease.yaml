@@ -37,10 +37,10 @@ spec:
         value: "gpu-only"
         effect: "NoSchedule"
 
-    # Configure device discovery strategy - use top-level values
+    # Configure device discovery strategy - use top-level values  
     deviceDiscoveryStrategy: "nvml"
     migStrategy: "none"
-    failOnInitError: true
+    failOnInitError: "true"
     nvidiaDriverRoot: "/"
 
     # Use nvidia as the device plugin naming
