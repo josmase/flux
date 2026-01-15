@@ -37,11 +37,17 @@ spec:
         value: "gpu-only"
         effect: "NoSchedule"
 
-    # Use nvidia-container-toolkit-cdi for device discovery
+    # Configure device discovery strategy using config file
     config:
       flags:
         deviceDiscoveryStrategy: "nvml"
         migStrategy: "none"
+        failOnInitError: true
+        nvidiaDriverRoot: "/"
+        plugin:
+          passDeviceSpecs: false
+          deviceListStrategy: ["envvar"]
+          deviceIDStrategy: "uuid"
 
     # Use nvidia as the device plugin naming
     # This exposes GPUs as nvidia.com/gpu
