@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: prowlarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/prowlarr:2.3.2-nightly@sha256:7c1f5b8a1901ec9059d59d70c31cd9988bb013529d90649d0530a73b5d832de0
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/prowlarr:2.3.2-nightly@sha256:2ab03c73be91f7b5f69ac33667394d563a1bb2cb7da5f2429a148c3df805df34
           ports:
             - containerPort: 9696
               name: http
