@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: init-ignored-txt
-          image: busybox:latest
+          image: busybox:latest@sha256:2383baad1860bbe9d8a7a843775048fd07d8afe292b94bd876df64a69aae7cb1
           command:
             - sh
             - -c
@@ -29,7 +29,7 @@ spec:
               mountPath: /downloads
       containers:
         - name: cleanuperr
-          image: artifactory.local.hejsan.xyz/docker/cleanuparr/cleanuperr:1.6.8
+          image: artifactory.local.hejsan.xyz/docker/cleanuparr/cleanuperr:1.6.8@sha256:550881bda5dc23755183767e6067434d267c4b87e59aa2698549617c2e4b3f70
           envFrom:
             - configMapRef:
                 name: cleanuperr-config
