@@ -34,10 +34,11 @@ rules:
   resources: ["pods", "pods/log"]
   verbs: ["get", "list", "watch"]
 
-# Access to configmaps
+# Allow exec/cp into build pods to upload build context
 - apiGroups: [""]
-  resources: ["configmaps"]
-  verbs: ["create", "get", "list", "delete"]
+  resources: ["pods/exec", "pods/attach", "pods/portforward"]
+  verbs: ["get", "list", "watch", "create"]
+
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
