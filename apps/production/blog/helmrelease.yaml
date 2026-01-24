@@ -17,7 +17,7 @@ spec:
     namespace: default
     image:
       repository: artifactory.local.hejsan.xyz/docker/josmase/blog
-      tag: "v0.0.8"
+      tag: "v0.0.9"
     ingress:
       domain: blog.local.hejsan.xyz
       certSecret: local-hejsan-xyz-tls
