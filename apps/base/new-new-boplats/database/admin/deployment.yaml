@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: mongo-express
-          image: mongo-express:1.0.2-20-alpine3.19
+          image: mongo-express:1.0.2-20-alpine3.19@sha256:1aae0077525133249133d42980ba23998712a1077e02ac0ac295b50a7a79d550
           ports:
             - containerPort: 8081
           env:
