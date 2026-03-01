@@ -1,0 +1,18 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-gpu
+provisioner: driver.longhorn.io
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+parameters:
+  numberOfReplicas: "3"
+  fsType: ext4
+  dataLocality: best-effort
+  staleReplicaTimeout: "30"
+  unmapMarkSnapChainRemoved: ignored
+  disableRevisionCounter: "true"
+  # No hardNodeAffinity — allows replicas on the GPU node (tagged gpu-node).
+  # Combined with dataLocality: best-effort, Longhorn will place one replica
+  # on the GPU node where Jellyfin runs, and spread the rest across other nodes.
