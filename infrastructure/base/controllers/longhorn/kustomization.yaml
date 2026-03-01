@@ -6,5 +6,5 @@ resources:
   - source.yaml
   - recurring-jobs.yaml
   - gpu-node.yaml
-  - storageclass.yaml
+  - standard-nodes.yaml
   - storageclass-gpu.yaml

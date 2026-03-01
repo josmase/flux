@@ -1,0 +1,63 @@
+---
+# Longhorn Node CRDs for standard worker nodes.
+# Tagged "standard" so the default longhorn StorageClass (via defaultNodeSelector)
+# only schedules replicas on these nodes, keeping the GPU node for gpu-only workloads.
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: kubernetes-node-204
+  namespace: longhorn-system
+spec:
+  name: kubernetes-node-204
+  allowScheduling: true
+  disks:
+    default-disk-8b9bea7d9940a62d:
+      allowScheduling: true
+      diskDriver: ""
+      diskType: filesystem
+      evictionRequested: false
+      path: /var/lib/longhorn/
+      storageReserved: 107374182400
+      tags: []
+  tags:
+    - "standard"
+---
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: kubernetes-node-205
+  namespace: longhorn-system
+spec:
+  name: kubernetes-node-205
+  allowScheduling: true
+  disks:
+    default-disk-8b9bea7d9940a62d:
+      allowScheduling: true
+      diskDriver: ""
+      diskType: filesystem
+      evictionRequested: false
+      path: /var/lib/longhorn/
+      storageReserved: 107374182400
+      tags: []
+  tags:
+    - "standard"
+---
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: kubernetes-node-206
+  namespace: longhorn-system
+spec:
+  name: kubernetes-node-206
+  allowScheduling: true
+  disks:
+    default-disk-8b9bea7d9940a62d:
+      allowScheduling: true
+      diskDriver: ""
+      diskType: filesystem
+      evictionRequested: false
+      path: /var/lib/longhorn/
+      storageReserved: 107374182400
+      tags: []
+  tags:
+    - "standard"

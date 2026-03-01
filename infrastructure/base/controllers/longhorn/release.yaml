@@ -39,14 +39,16 @@ spec:
       guaranteedInstanceManagerCPU: "4"
       taintToleration: "workload=gpu-only:NoSchedule"
     persistence:
-      # StorageClass is managed externally via storageclass.yaml and storageclass-gpu.yaml
-      # to support hardNodeAffinity for GPU node replica exclusion
-      defaultClass: false
+      defaultClass: true
       defaultClassReplicaCount: 3
       defaultFsType: ext4
       defaultDataLocality: best-effort
       reclaimPolicy: Delete
-      volumeBindingMode: WaitForFirstConsumer
+      # Use Longhorn node tags to restrict the default SC to "standard" nodes,
+      # keeping GPU node replicas exclusive to the longhorn-gpu StorageClass.
+      defaultNodeSelector:
+        enable: true
+        selector: "standard"
     longhornManager:
       tolerations:
         - key: "workload"
