@@ -39,7 +39,9 @@ spec:
       guaranteedInstanceManagerCPU: "4"
       taintToleration: "workload=gpu-only:NoSchedule"
     persistence:
-      defaultClass: true
+      # StorageClass is managed externally via storageclass.yaml and storageclass-gpu.yaml
+      # to support hardNodeAffinity for GPU node replica exclusion
+      defaultClass: false
       defaultClassReplicaCount: 3
       defaultFsType: ext4
       defaultDataLocality: best-effort
