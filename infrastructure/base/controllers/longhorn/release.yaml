@@ -26,6 +26,7 @@ spec:
       disableReplicaRebuildOnCurrentNode: true
       allowVolumeCreationWithDegradedAvailability: false
       autoDeletePodWhenVolumeDetachedUnexpectedly: true
+      orphanAutoDeletion: true
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       replicaAutoBalance: least-effort
       defaultRecurringJobSelector:
