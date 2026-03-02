@@ -10,6 +10,6 @@ resources:
   - ../../base/controllers/ingress-traefik/
   - ../../base/controllers/longhorn/
   - ../../base/controllers/mongodb-operator/
-  - ../../base/controllers/openebs/
+  - ../../base/controllers/local-path-provisioner/
   - ../../base/controllers/reflector/
   - ../../base/controllers/nvidia-device-plugin/

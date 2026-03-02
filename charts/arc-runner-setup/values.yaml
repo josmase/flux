@@ -33,7 +33,7 @@ runnerScaleSet:
 
   # Storage configuration for work directory
   storage:
-    className: "openebs-hostpath"
+    className: "local-path"
     size: "2Gi"
 
   # Security context for runner pods

@@ -4,7 +4,7 @@ resources:
   - cert-manager
   - ingress-traefik
   - mongodb-operator
-  - openebs
+  - local-path-provisioner
   #- nfs-subdir
   - longhorn
   - reflector

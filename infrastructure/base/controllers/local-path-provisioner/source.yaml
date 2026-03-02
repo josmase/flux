@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: local-path-provisioner
+  namespace: flux-system
+spec:
+  url: oci://ghcr.io/rancher/local-path-provisioner/charts/local-path-provisioner
+  interval: 1h
+  ref:
+    tag: 0.0.34
