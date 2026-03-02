@@ -24,8 +24,9 @@ resources:
   - ../base/immich/
   - ../base/netbootxyz/
 
-  - ./blog/
-  - ./downloader/
+  # Custom applications (manifests sourced from app repos via GitRepository)
+  - ../base/blog/
+  - ../base/downloader/
 
   # Production secrets
   - immich/
