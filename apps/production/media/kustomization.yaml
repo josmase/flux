@@ -5,7 +5,6 @@ namespace: media
 resources:
   - checkrr/
   - reiverr/
-  - cleanuperr/
   - jellyfin/
   # Multi-instance Sonarr/Radarr (using templates from base)
   - sonarr/

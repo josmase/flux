@@ -13,6 +13,5 @@ resources:
   - arr-dashboard
   - transmission
   - jellyfin
-  - cleanuperr
   - checkrr
   - reiverr
