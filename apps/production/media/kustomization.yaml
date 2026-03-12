@@ -7,7 +7,6 @@ resources:
   - reiverr/
   - cleanuperr/
   - jellyfin/
-  - recyclarr/
   # Multi-instance Sonarr/Radarr (using templates from base)
   - sonarr/
   - radarr/
