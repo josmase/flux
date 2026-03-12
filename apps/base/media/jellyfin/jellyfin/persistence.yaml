@@ -82,3 +82,58 @@ spec:
   resources:
     requests:
       storage: 1Ti
+---
+# Dedicated NFS PV for Jellyfin media - isolated from shared media volume
+# to eliminate I/O contention with other media apps during library scans.
+# Mount options are tuned for read-only, metadata-heavy workloads.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-media-nfs-pv
+  labels:
+    media-app: jellyfin
+    purpose: media-readonly
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: "jellyfin-media"
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: storage.local.hejsan.xyz
+    path: "/files"
+  mountOptions:
+    - ro # Read-only mount - Jellyfin never writes to media files
+    - hard # Prevents silent failures (better for data integrity)
+    - nfsvers=4.1 # Version 4.1 for better performance and locking
+    - proto=tcp # Use TCP for reliability
+    - timeo=600 # Timeout in tenths of seconds (60 seconds)
+    - retrans=3 # Limits retry attempts before failing
+    # Aggressive attribute caching - safe because mount is read-only
+    # and only Jellyfin uses this export
+    - acregmin=120 # Cache file attributes for at least 2 minutes
+    - acregmax=600 # Cache file attributes for up to 10 minutes
+    - acdirmin=120 # Cache directory attributes for at least 2 minutes
+    - acdirmax=600 # Cache directory attributes for up to 10 minutes
+    - lookupcache=all # Cache both positive and negative lookups
+    # Performance optimizations
+    - rsize=1048576 # 1MB read buffer size
+    - wsize=1048576 # 1MB write buffer size (not used with ro, but harmless)
+    - noatime # Don't update access time on reads
+    - nodiratime # Don't update directory access times
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media-nfs-pvc
+  namespace: media
+spec:
+  storageClassName: "jellyfin-media"
+  volumeName: jellyfin-media-nfs-pv
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 110Ti

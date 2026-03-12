@@ -76,11 +76,11 @@ spec:
               mountPath: /config
             - name: shared-storage
               mountPath: /mnt/storage/files
-              subPath: files
+              readOnly: true
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
             claimName: jellyfin-config-pvc-jellyfin-0
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: jellyfin-media-nfs-pvc

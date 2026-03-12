@@ -9,8 +9,6 @@ resources:
   - prowlarr
   - radarr
   - sonarr
-  # Settings sync across all Sonarr/Radarr instances
-  - recyclarr
   # Unified dashboard for all instances
   - arr-dashboard
   - transmission
