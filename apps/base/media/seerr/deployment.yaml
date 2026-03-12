@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: seerr
-          image: artifactory.local.hejsan.xyz/docker/seerr/seerr:3.1.0
+          image: artifactory.local.hejsan.xyz/docker/seerr/seerr:sha-f40323c
           ports:
             - containerPort: 5055
               name: http
