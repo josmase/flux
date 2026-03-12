@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: overseerr
+  name: seerr
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: overseerr
+      app: seerr
   template:
     metadata:
       labels:
-        app: overseerr
+        app: seerr
     spec:
       containers:
-        - name: overseerr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/overseerr:v1.33.2-ls119
+        - name: seerr
+          image: artifactory.local.hejsan.xyz/docker/seerr/seerr:3.1.0
           ports:
             - containerPort: 5055
               name: http
@@ -45,9 +45,9 @@ spec:
             - configMapRef:
                 name: default-app-config
           volumeMounts:
-            - name: overseerr-config-pvc
+            - name: config
               mountPath: /config
       volumes:
-        - name: overseerr-config-pvc
+        - name: config
           persistentVolumeClaim:
-            claimName: overseerr-config-pvc-overseerr-0
+            claimName: seerr-config

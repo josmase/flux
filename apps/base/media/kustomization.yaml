@@ -5,7 +5,7 @@ namespace: media
 resources:
   - namespace.yaml
   - bazarr
-  - overseerr
+  - seerr
   - prowlarr
   - radarr
   - sonarr

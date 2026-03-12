@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: overseerr-config-pvc-overseerr-0
+  name: seerr-config
 spec:
   accessModes:
     - ReadWriteOnce
