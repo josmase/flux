@@ -14,6 +14,8 @@ spec:
       labels:
         app: seerr
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: seerr
           image: artifactory.local.hejsan.xyz/docker/seerr/seerr:sha-f40323c
