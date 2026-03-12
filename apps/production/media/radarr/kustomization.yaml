@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - radarr-1
   - radarr-2
+  - radarr-3

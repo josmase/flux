@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../base/media/radarr-template
+  - persistence.yaml
+
+namePrefix: radarr-3-
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: radarr-3
+
+patches:
+  # Patch the IngressRoute hostname and service reference
+  - target:
+      kind: IngressRoute
+      name: radarr
+    patch: |
+      - op: replace
+        path: /spec/routes/0/match
+        value: Host(`radarr-3.${DOMAIN_INTERNAL}`)
+      - op: replace
+        path: /spec/routes/0/services/0/name
+        value: radarr-3-radarr
