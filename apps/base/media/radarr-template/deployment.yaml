@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      containers:
+        - name: radarr
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.1.1-nightly@sha256:b3484067afc351d1e17c69f1945dceb2ecdc6970e8f62ab534cf3a909ece891a
+          ports:
+            - containerPort: 7878
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 7878
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 7878
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            limits:
+              memory: 900Mi
+              cpu: "1"
+            requests:
+              memory: 500Mi
+              cpu: "0.5"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: config
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: media-shared-nfs-pvc

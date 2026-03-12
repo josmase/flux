@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recyclarr-config
+data:
+  recyclarr.yml: |
+    # yaml-language-server: $schema=https://schemas.recyclarr.dev/latest/config-schema.json
+
+    sonarr:
+      sonarr-1:
+        base_url: http://sonarr-1-sonarr.media.svc.cluster.local:8989
+        api_key: !env_var SONARR_1_API_KEY
+        delete_old_custom_formats: true
+
+        quality_definition:
+          type: series
+
+        quality_profiles:
+          - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+            reset_unmatched_scores:
+              enabled: true
+
+      sonarr-2:
+        base_url: http://sonarr-2-sonarr.media.svc.cluster.local:8989
+        api_key: !env_var SONARR_2_API_KEY
+        delete_old_custom_formats: true
+
+        quality_definition:
+          type: series
+
+        quality_profiles:
+          - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+            reset_unmatched_scores:
+              enabled: true
+
+    radarr:
+      radarr-1:
+        base_url: http://radarr-1-radarr.media.svc.cluster.local:7878
+        api_key: !env_var RADARR_1_API_KEY
+        delete_old_custom_formats: true
+
+        quality_definition:
+          type: movie
+
+        quality_profiles:
+          - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+            reset_unmatched_scores:
+              enabled: true
+
+      radarr-2:
+        base_url: http://radarr-2-radarr.media.svc.cluster.local:7878
+        api_key: !env_var RADARR_2_API_KEY
+        delete_old_custom_formats: true
+
+        quality_definition:
+          type: movie
+
+        quality_profiles:
+          - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+            reset_unmatched_scores:
+              enabled: true

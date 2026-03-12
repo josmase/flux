@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../base/media/sonarr-template
+  - persistence.yaml
+
+namePrefix: sonarr-1-
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app: sonarr-1
+
+patches:
+  # Patch the IngressRoute hostname and service reference
+  - target:
+      kind: IngressRoute
+      name: sonarr
+    patch: |
+      - op: replace
+        path: /spec/routes/0/match
+        value: Host(`sonarr-1.${DOMAIN_INTERNAL}`)
+      - op: replace
+        path: /spec/routes/0/services/0/name
+        value: sonarr-1-sonarr

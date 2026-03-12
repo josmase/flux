@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+        - name: sonarr
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/sonarr:4.0.16
+          ports:
+            - containerPort: 8989
+              name: http
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8989
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8989
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            limits:
+              memory: 1000Mi
+              cpu: "1"
+            requests:
+              memory: 250Mi
+              cpu: "0.1"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: config
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: media-shared-nfs-pvc
