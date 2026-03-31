@@ -57,13 +57,7 @@ spec:
     - timeo=100 # Timeout in tenths of seconds (10 seconds) - lower for faster detection
     - retrans=5 # Retry up to 5 times before failing
     - intr # Allow signals to interrupt NFS requests
-    # Aggressive attribute caching invalidation for transcode cache
-    - acregmin=3 # Min time (seconds) to cache file attributes - low for freshness
-    - acregmax=10 # Max time (seconds) to cache file attributes - low for transcode
-    - acdirmin=3 # Min time (seconds) to cache directory attributes
-    - acdirmax=10 # Max time (seconds) to cache directory attributes
-    - noac # Disable attribute caching for the mounted volume (safest for transcode)
-    # Additional performance optimizations
+    - actimeo=30 # Attribute cache timeout (30s) - good balance of performance and freshness for transcode
     - rsize=1048576 # 1MB read buffer size
     - wsize=1048576 # 1MB write buffer size
     - noatime # Don't update access time on reads (improves performance)
