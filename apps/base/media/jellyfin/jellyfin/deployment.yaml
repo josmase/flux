@@ -74,6 +74,8 @@ spec:
           volumeMounts:
             - name: jellyfin-config-pvc
               mountPath: /config
+            - name: jellyfin-transcode-pvc
+              mountPath: /config/cache/transcodes
             - name: shared-storage
               mountPath: /mnt/storage/files
               readOnly: true
@@ -81,6 +83,9 @@ spec:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
             claimName: jellyfin-config-pvc-jellyfin-0
+        - name: jellyfin-transcode-pvc
+          persistentVolumeClaim:
+            claimName: jellyfin-transcode-pvc
         - name: shared-storage
           persistentVolumeClaim:
             claimName: jellyfin-media-nfs-pvc
