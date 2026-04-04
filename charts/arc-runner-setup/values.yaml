@@ -28,7 +28,7 @@ runnerScaleSet:
   image:
     # Runner image (GitHub Actions official runner)
     repository: "artifactory.local.hejsan.xyz/docker/actions/runner-kaniko"
-    tag: "2.330.0-8"
+    tag: "2.330.0-8@sha256:fdb31055bd5399ce0f3cd621a01a710c9317ba65d891e83e981760d249b5bde7"
     pullPolicy: Always
 
   # Storage configuration for work directory
