@@ -18,7 +18,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: seerr
-          image: artifactory.local.hejsan.xyz/docker/seerr/seerr:sha-f40323c
+          image: artifactory.local.hejsan.xyz/docker/seerr/seerr:sha-f40323c@sha256:d3c65d5bc1e45e10ada5203487f53318c5cbab177d854b0cffcf298839423a12
           ports:
             - containerPort: 5055
               name: http
