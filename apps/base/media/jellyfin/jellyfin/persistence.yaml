@@ -100,11 +100,13 @@ spec:
     path: "/files"
   mountOptions:
     - ro # Read-only mount - Jellyfin never writes to media files
-    - hard # Prevents silent failures (better for data integrity)
+    - soft # Graceful failure instead of hanging indefinitely
+    - intr # Allow signals to interrupt NFS requests
     - nfsvers=4.1 # Version 4.1 for better performance and locking
     - proto=tcp # Use TCP for reliability
     - timeo=600 # Timeout in tenths of seconds (60 seconds)
     - retrans=3 # Limits retry attempts before failing
+    - actimeo=60 # Attribute cache timeout (reduces stale handle risk)
     # Aggressive attribute caching - safe because mount is read-only
     # and only Jellyfin uses this export
     - acregmin=120 # Cache file attributes for at least 2 minutes
