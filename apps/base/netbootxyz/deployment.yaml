@@ -34,7 +34,7 @@ spec:
               mountPath: /config
       containers:
         - name: netbootxyz
-          image: artifactory.local.hejsan.xyz/docker/netbootxyz/netbootxyz:latest
+          image: artifactory.local.hejsan.xyz/docker/netbootxyz/netbootxyz:latest@sha256:e95b81cebf3af6f7223666289ff3841c607b83914a6c13a9c05fd6b7524ab190
           ports:
             - containerPort: 3000
               name: web
