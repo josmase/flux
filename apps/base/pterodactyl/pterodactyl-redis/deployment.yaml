@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pterodactyl-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pterodactyl-redis
+  template:
+    metadata:
+      labels:
+        app: pterodactyl-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+              name: redis
+          args:
+            - "--appendonly"
+            - "yes"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: "0.1"
+              memory: 256Mi
+            limits:
+              cpu: "500m"
+              memory: 512Mi
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: pterodactyl-redis-pvc
