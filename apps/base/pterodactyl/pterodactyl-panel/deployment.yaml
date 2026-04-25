@@ -40,8 +40,6 @@ spec:
               value: "pterodactyl-redis"
             - name: REDIS_PORT
               value: "6379"
-            - name: APP_KEY
-              value: "4617739db9424a37ddf33ff499e234dd"
           envFrom:
             - configMapRef:
                 name: default-app-config
