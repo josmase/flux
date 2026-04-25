@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: panel
-          image: ghcr.io/pterodactyl/panel:1.11.4
+          image: ghcr.io/pterodactyl/panel:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

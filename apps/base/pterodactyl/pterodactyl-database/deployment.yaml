@@ -34,6 +34,7 @@ spec:
                   key: DB_DATABASE_NAME
           volumeMounts:
             - name: postgres-data
+              subPath: pgdata
               mountPath: /var/lib/postgresql/data
           ports:
             - containerPort: 5432

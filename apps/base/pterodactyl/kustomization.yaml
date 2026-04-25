@@ -8,8 +8,3 @@ resources:
   - pterodactyl-panel
   - pterodactyl-database
   - pterodactyl-redis
-
-labels:
-  - includeSelectors: true
-    pairs:
-      app: pterodactyl
