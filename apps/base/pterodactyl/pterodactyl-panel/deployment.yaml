@@ -31,11 +31,11 @@ spec:
             - name: QUEUE_CONNECTION
               value: "redis"
             - name: DB_CONNECTION
-              value: "pgsql"
+              value: "mysql"
             - name: DB_HOST
-              value: "pterodactyl-postgres"
+              value: "pterodactyl-mysql"
             - name: DB_PORT
-              value: "5432"
+              value: "3306"
             - name: REDIS_HOST
               value: "pterodactyl-redis"
             - name: REDIS_PORT

@@ -13,25 +13,30 @@ spec:
         app: pterodactyl-postgres
     spec:
       containers:
-        - name: postgres
-          image: postgres:15-alpine
+        - name: mysql
+          image: mysql:8.0
           imagePullPolicy: IfNotPresent
           env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: pterodactyl-secrets
-                  key: DB_USERNAME
-            - name: POSTGRES_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: pterodactyl-secrets
                   key: DB_PASSWORD
-            - name: POSTGRES_DB
+            - name: MYSQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: pterodactyl-secrets
                   key: DB_DATABASE_NAME
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pterodactyl-secrets
+                  key: DB_USERNAME
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pterodactyl-secrets
+                  key: DB_PASSWORD
           volumeMounts:
             - name: postgres-data
               subPath: pgdata
