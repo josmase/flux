@@ -1,14 +1,15 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: minecraft-server
   namespace: minecraft
 spec:
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: minecraft-server
-  serviceName: minecraft-server
-  replicas: 1
   template:
     metadata:
       labels:
@@ -26,7 +27,7 @@ spec:
             - name: TYPE
               value: "VANILLA"
             - name: VERSION
-              value: "1.21"
+              value: "1.21.11"
             - name: INIT_MEMORY
               value: "2G"
             - name: MAX_MEMORY
