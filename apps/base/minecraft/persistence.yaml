@@ -1,3 +1,4 @@
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -14,7 +15,29 @@ spec:
   csi:
     driver: driver.longhorn.io
     fsType: ext4
-    volumeHandle: pvc-1c52c07e-ccee-4fff-a58a-72558cd1722f
+    volumeHandle: pvc-9175b25b-a542-4cac-bc9c-661e25ff4184
+    volumeAttributes:
+      numberOfReplicas: "3"
+      staleReplicaTimeout: "20"
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: minecraft-modpacks-pv
+  labels:
+    app: minecraft-modpacks
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeHandle: pvc-9175b25b-a542-4cac-bc9c-661e25ff4185
     volumeAttributes:
       numberOfReplicas: "3"
       staleReplicaTimeout: "20"
@@ -23,7 +46,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minecraft-data
+  name: minecraft-data-pvc
   namespace: minecraft
 spec:
   accessModes:
@@ -35,3 +58,19 @@ spec:
   resources:
     requests:
       storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minecraft-modpacks-pvc
+  namespace: minecraft
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  selector:
+    matchLabels:
+      app: minecraft-modpacks
+  resources:
+    requests:
+      storage: 5Gi

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: minecraft-server
-          image: itzg/minecraft-server:2026.4.0
+          image: artifactory.local.hejsan.xyz/docker/itzg/minecraft-server:2026.4.2
           imagePullPolicy: IfNotPresent
           env:
             - name: EULA
@@ -27,27 +27,36 @@ spec:
             - name: TYPE
               value: "VANILLA"
             - name: VERSION
-              value: "1.21.11"
+              value: "26.1.2"
             - name: INIT_MEMORY
-              value: "2G"
+              value: "8G"
             - name: MAX_MEMORY
-              value: "4G"
+              value: "12G"
             - name: USE_AIKAR_FLAGS
               value: "TRUE"
             - name: ONLINE_MODE
               value: "false"
+            - name: RCON_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minecraft-secrets
+                  key: RCON_PASSWORD
+            - name: ALLOW_FLIGHT
+              value: "TRUE"
           ports:
             - name: minecraft
               containerPort: 25565
             - name: minecraft-rcon
               containerPort: 25575
+            - name: metrics
+              containerPort: 19565
           resources:
             requests:
-              cpu: "2"
-              memory: "4Gi"
-            limits:
               cpu: "4"
-              memory: "6Gi"
+              memory: "12Gi"
+            limits:
+              cpu: "8"
+              memory: "16Gi"
           readinessProbe:
             tcpSocket:
               port: 25565
@@ -61,7 +70,12 @@ spec:
           volumeMounts:
             - name: minecraft-data
               mountPath: /data
+            - name: minecraft-modpacks
+              mountPath: /modpacks
       volumes:
         - name: minecraft-data
           persistentVolumeClaim:
-            claimName: minecraft-data
+            claimName: minecraft-data-pvc
+        - name: minecraft-modpacks
+          persistentVolumeClaim:
+            claimName: minecraft-modpacks-pvc

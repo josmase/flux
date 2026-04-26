@@ -38,6 +38,7 @@ resources:
   - media/
   - new-new-boplats/
   - monitoring/
+  - minecraft/
 
 transformers:
   - |-
