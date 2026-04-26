@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minecraft-server
+  namespace: minecraft
+spec:
+  selector:
+    matchLabels:
+      app: minecraft-server
+  serviceName: minecraft-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: minecraft-server
+    spec:
+      containers:
+        - name: minecraft-server
+          image: itzg/minecraft-server:2026.4.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EULA
+              value: "TRUE"
+            - name: MODE
+              value: "survival"
+            - name: TYPE
+              value: "VANILLA"
+            - name: VERSION
+              value: "1.21"
+            - name: INIT_MEMORY
+              value: "2G"
+            - name: MAX_MEMORY
+              value: "4G"
+            - name: USE_AIKAR_FLAGS
+              value: "TRUE"
+            - name: ONLINE_MODE
+              value: "false"
+          ports:
+            - name: minecraft
+              containerPort: 25565
+            - name: minecraft-rcon
+              containerPort: 25575
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "6Gi"
+          readinessProbe:
+            tcpSocket:
+              port: 25565
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 25565
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          volumeMounts:
+            - name: minecraft-data
+              mountPath: /data
+      volumes:
+        - name: minecraft-data
+          persistentVolumeClaim:
+            claimName: minecraft-data

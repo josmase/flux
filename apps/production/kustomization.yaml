@@ -22,7 +22,7 @@ resources:
   - ../base/smart-home/
   - ../base/headscale/
   - ../base/immich/
-  - ../base/pterodactyl/
+  - ../base/minecraft/
   - ../base/netbootxyz/
 
   # Custom applications (manifests sourced from app repos via GitRepository)
@@ -38,7 +38,6 @@ resources:
   - media/
   - new-new-boplats/
   - monitoring/
-  - pterodactyl/
 
 transformers:
   - |-
