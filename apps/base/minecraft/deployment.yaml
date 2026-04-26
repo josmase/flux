@@ -29,9 +29,9 @@ spec:
             - name: VERSION
               value: "26.1.2"
             - name: INIT_MEMORY
-              value: "8G"
+              value: "3G"
             - name: MAX_MEMORY
-              value: "12G"
+              value: "6G"
             - name: USE_AIKAR_FLAGS
               value: "TRUE"
             - name: ONLINE_MODE
