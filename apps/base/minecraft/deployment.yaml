@@ -36,6 +36,8 @@ spec:
               value: "TRUE"
             - name: ONLINE_MODE
               value: "false"
+            - name: ENABLE_RCON
+              value: "TRUE"
             - name: RCON_PASSWORD
               valueFrom:
                 secretKeyRef:
