@@ -36,10 +36,14 @@ spec:
               value: "pterodactyl-mysql"
             - name: DB_PORT
               value: "3306"
+            - name: DB_DATABASE
+              value: "panel"
             - name: REDIS_HOST
               value: "pterodactyl-redis"
             - name: REDIS_PORT
               value: "6379"
+            - name: DB_SSL
+              value: "false"
           envFrom:
             - configMapRef:
                 name: default-app-config
@@ -47,8 +51,16 @@ spec:
                 name: pterodactyl-secrets
           volumeMounts:
             - name: panel-storage
-              mountPath: /var/www/html
+              mountPath: /app/var
+            - name: panel-nginx
+              mountPath: /etc/nginx/http.d
+            - name: panel-logs
+              mountPath: /app/storage/logs
       volumes:
         - name: panel-storage
           persistentVolumeClaim:
             claimName: pterodactyl-panel-pvc
+        - name: panel-nginx
+          emptyDir: {}
+        - name: panel-logs
+          emptyDir: {}

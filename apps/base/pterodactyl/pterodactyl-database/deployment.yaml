@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pterodactyl-postgres
+  name: pterodactyl-mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pterodactyl-postgres
+      app: pterodactyl-mysql
   template:
     metadata:
       labels:
-        app: pterodactyl-postgres
+        app: pterodactyl-mysql
     spec:
       containers:
         - name: mysql
@@ -23,10 +23,7 @@ spec:
                   name: pterodactyl-secrets
                   key: DB_PASSWORD
             - name: MYSQL_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: pterodactyl-secrets
-                  key: DB_DATABASE_NAME
+              value: "panel"
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
@@ -38,12 +35,11 @@ spec:
                   name: pterodactyl-secrets
                   key: DB_PASSWORD
           volumeMounts:
-            - name: postgres-data
-              subPath: pgdata
-              mountPath: /var/lib/postgresql/data
+            - name: mysql-data
+              mountPath: /var/lib/mysql
           ports:
-            - containerPort: 5432
-              name: postgres
+            - containerPort: 3306
+              name: mysql
           resources:
             requests:
               cpu: "0.2"
@@ -52,6 +48,6 @@ spec:
               cpu: "1"
               memory: 1Gi
       volumes:
-        - name: postgres-data
+        - name: mysql-data
           persistentVolumeClaim:
             claimName: pterodactyl-db-pvc
