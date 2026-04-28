@@ -42,6 +42,13 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 8
+          startupProbe:
+            exec:
+              command: ["sh", "-c", "ls /mnt/storage/files/.healthcheck"]
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 30
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
