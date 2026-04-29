@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: radarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.2.0-nightly@sha256:f45681e887d56b64af70a8720b56d885bb3d73832a3fbf368b32bd6b65854103
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.2.0-nightly@sha256:2275cda2b7e9c16db77d9fa3c4d17f4c979818b193d9cde2ae7bde7c442098dc
           ports:
             - containerPort: 7878
               name: http
