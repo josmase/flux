@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: jellyfin-auto-collections
-          image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest
+          image: artifactory.local.hejsan.xyz/docker/ghomashudson/jellyfin-auto-collections:latest@sha256:b0c31c02312d8389ef04da86b8007a1362e93118e20a1aa72bc2d8ae560ce5ce
           #command: ["/bin/sh", "-c", "sleep infinity"]
           #args: ["-c", "exec /bin/sh"]
           startupProbe:

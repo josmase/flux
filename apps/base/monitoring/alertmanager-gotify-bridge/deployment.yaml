@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: bridge
-          image: artifactory.local.hejsan.xyz/docker/druggeri/alertmanager_gotify_bridge:2.3
+          image: artifactory.local.hejsan.xyz/docker/druggeri/alertmanager_gotify_bridge:2.3@sha256:242441023c6a7956fc7bcdd30350a8fed38f791e703d670aa286fc0465f88b41
           ports:
             - containerPort: 8080
               name: http
