@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: arr-dashboard
-          image: artifactory.local.hejsan.xyz/docker/khak1s/arr-dashboard:2.17.0@sha256:178d36c99d26e95db58c7f6042811047a628152a15704e9c2aa1c932425b5bf8
+          image: artifactory.local.hejsan.xyz/docker/khak1s/arr-dashboard:2.18.0@sha256:779f6ea9c016f99798a6612ee131899eca409ce4f2405ef607134aa5eee9fe32
           ports:
             - containerPort: 3000
               name: http
