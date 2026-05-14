@@ -45,7 +45,7 @@ spec:
   volumeMode: Filesystem
   storageClassName: "manual"
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: storage.local.hejsan.xyz
@@ -71,7 +71,7 @@ spec:
   storageClassName: "manual"
   volumeName: jellyfin-transcode-pv
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Ti
