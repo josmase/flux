@@ -51,17 +51,16 @@ spec:
     server: storage.local.hejsan.xyz
     path: "/kubernetes/jellyfin-cache/transcodes"
   mountOptions:
-    - soft # Allow graceful failure instead of hanging indefinitely
-    - nfsvers=4.1 # Version 4.1 for better performance and locking
-    - proto=tcp # Use TCP instead of UDP for reliability
-    - timeo=100 # Timeout in tenths of seconds (10 seconds) - lower for faster detection
-    - retrans=5 # Retry up to 5 times before failing
-    - intr # Allow signals to interrupt NFS requests
-    - actimeo=30 # Attribute cache timeout (30s) - good balance of performance and freshness for transcode
-    - rsize=1048576 # 1MB read buffer size
-    - wsize=1048576 # 1MB write buffer size
-    - noatime # Don't update access time on reads (improves performance)
-    - nodiratime # Don't update directory access times
+    - hard 
+    - nfsvers=4.1
+    - proto=tcp 
+    - timeo=600 
+    - retrans=3 
+    - noac 
+    - rsize=1048576
+    - wsize=1048576
+    - noatime 
+    - nodiratime 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
