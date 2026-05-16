@@ -36,45 +36,17 @@ spec:
       storage: 80Gi
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: jellyfin-transcode-pv
-spec:
-  capacity:
-    storage: 1Ti
-  volumeMode: Filesystem
-  storageClassName: "manual"
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: storage.local.hejsan.xyz
-    path: "/kubernetes/jellyfin-cache/transcodes"
-  mountOptions:
-    - hard 
-    - nfsvers=4.1
-    - proto=tcp 
-    - timeo=600 
-    - retrans=3 
-    - noac 
-    - rsize=1048576
-    - wsize=1048576
-    - noatime 
-    - nodiratime 
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-transcode-pvc
   namespace: media
 spec:
-  storageClassName: "manual"
-  volumeName: jellyfin-transcode-pv
+  storageClassName: longhorn-gpu
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Ti
+      storage: 10Gi
 ---
 # Dedicated NFS PV for Jellyfin media - isolated from shared media volume
 # to eliminate I/O contention with other media apps during library scans.
