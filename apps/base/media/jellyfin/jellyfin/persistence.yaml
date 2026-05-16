@@ -24,6 +24,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config-pvc-jellyfin-0
+  namespace: media
 spec:
   accessModes:
     - ReadWriteOnce
@@ -34,19 +35,6 @@ spec:
   resources:
     requests:
       storage: 80Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-transcode-pvc
-  namespace: media
-spec:
-  storageClassName: longhorn-gpu
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
 ---
 # Dedicated NFS PV for Jellyfin media - isolated from shared media volume
 # to eliminate I/O contention with other media apps during library scans.
