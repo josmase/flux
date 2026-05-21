@@ -7,8 +7,6 @@ resources:
   - bazarr
   - seerr
   - prowlarr
-  - radarr
-  - sonarr
   # Unified dashboard for all instances
   - arr-dashboard
   - transmission
