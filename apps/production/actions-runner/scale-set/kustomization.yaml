@@ -5,3 +5,4 @@ namespace: arc-runners
 
 resources:
   - secret-runner-token.yaml
+  - arc-deploy-pat.yaml

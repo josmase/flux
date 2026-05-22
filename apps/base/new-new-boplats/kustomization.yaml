@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - gitrepository.yaml
   - kustomization-flux.yaml
-  - arc-runner-setup.yaml

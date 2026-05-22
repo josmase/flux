@@ -11,12 +11,12 @@ createSharedResources: true
 # Runner scale set configuration
 runnerScaleSet:
   # Name of the runner scale set (will be used for scaling)
-  name: "app-runner"
+  name: "app"
 
   # GitHub configuration
   github:
-    # Repository or organization URL
-    configUrl: "https://github.com/josmase/app"
+    # User account URL (all repos)
+    configUrl: "https://github.com/josmase"
     # Secret name containing GitHub token (must exist in namespace)
     configSecret: "controller-manager"
 
