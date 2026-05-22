@@ -1,7 +1,22 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: arc-deploy-pat
+    name: arc-deploy-pat
 type: Opaque
 stringData:
-  pat: "github_pat_placeholder_replace_with_real_token"
+    pat: ENC[AES256_GCM,data:LDckf57IK2CdVnBeYHLzciS5XHFRM4rEV+6UXWh5Wl8ayc8F2UmD1c6EWP2N0TXk7hpGweNIl8dc8rjuElIRQ02fPSfPCxxe3YUZcDizsGbKjb6s5mLPys1kDtb2,iv:87OxEfsj+eJ5C44lwcjAnKBBVsAfV/tukrUe4CpTDpI=,tag:57izNr/PzkCABS9NjxDbBQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBUeE5jdHZGemN3WU1YS1Ur
+            czFGamdzbjE2N0ozSmNrMGw2WVo4TVcxR1FjCjRNWXFDeHRqVWM4Wm56dXhJKzhl
+            Z3A1VGcxd1FOMTcxK1RUc2Q5OStkT0UKLS0tIDcwaEFqQWh0UlNNbVlHTU96amI5
+            NGZCQ0Y0MWplaUQvZVd0ZExUYjhzSGMKfC+07utTgcoRnQP9J+rQVmkP5F4HX63l
+            r9cfy5c0VNVshdweGmbR0sOnT7W9dwzYVQoklg3aXBWJ2pGV/b/1fw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-05-22T18:45:34Z"
+    mac: ENC[AES256_GCM,data:I1fFjIQuKVJ4uTMfHmTPXBqylDBhRHWpS8JQdiIY0FeLXJzcUSBRZTrFJUv8VTRL7ExoQVaah8JQvbHHlrGjVSu38DMEaiqf+cvwHsWUkP+jr2ZSUBdAoubIGZH3V4fFkaFIEardbvmIMYtQm70552jeC+B810EVKj2SPSvi074=,iv:slICuaHZwEcRGA6zIhOGZIOSHj5NYOYW9jZX5PU7+SQ=,tag:uibwf6p6rNz08aFfGXRL9Q==,type:str]
+    version: 3.13.1
