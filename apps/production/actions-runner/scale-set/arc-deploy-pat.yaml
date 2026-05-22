@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: arc-deploy-pat
+type: Opaque
+stringData:
+  pat: "github_pat_placeholder_replace_with_real_token"
