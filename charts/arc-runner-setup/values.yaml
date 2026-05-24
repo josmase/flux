@@ -15,8 +15,8 @@ runnerScaleSet:
 
   # GitHub configuration
   github:
-    # User account URL (all repos)
-    configUrl: "https://github.com/josmase"
+    # Repository URL (runner registers at repo level)
+    configUrl: "https://github.com/josmase/blog"
     # Secret name containing GitHub token (must exist in namespace)
     configSecret: "controller-manager"
 

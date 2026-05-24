@@ -17,4 +17,4 @@ spec:
     runnerScaleSet:
       name: "app"
       github:
-        configUrl: "https://github.com/josmase"
+        configUrl: "https://github.com/josmase/blog"
