@@ -1,0 +1,177 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  interval: 5m
+  timeout: 15m
+  chart:
+    spec:
+      chart: gitlab
+      version: "8.11.2"
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+        namespace: flux-system
+      interval: 1h
+  values:
+    nginx-ingress:
+      enabled: false
+
+    certmanager:
+      install: false
+
+    global:
+      hosts:
+        domain: ${DOMAIN_INTERNAL}
+        https: true
+        externalIP:
+          enabled: false
+
+      initialRootPassword:
+        secret: gitlab-initial-root-password
+        key: password
+
+      persistence:
+        storageClass: ${STORAGE_CLASS}
+
+      redis:
+        password:
+          enabled: false
+          useSecret: true
+          secret: gitlab-redis-password
+          key: redis-password
+
+      psql:
+        password:
+          useSecret: true
+          secret: gitlab-postgres-password
+          key: postgres-password
+
+    gitlab:
+      webservice:
+        replicaCount: 1
+        service:
+          type: ClusterIP
+        workhorse:
+          service:
+            type: ClusterIP
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        ingress:
+          enabled: false
+
+      gitaly:
+        replicaCount: 1
+        persistence:
+          storageClass: ${STORAGE_CLASS}
+          size: 50Gi
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+
+      sidekiq:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+
+      gitlab-shell:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+    postgresql:
+      install: true
+      primary:
+        replicaCount: 1
+        persistence:
+          storageClass: ${STORAGE_CLASS}
+          size: 20Gi
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+      auth:
+        username: gitlab
+        database: gitlabhq_production
+        existingSecret: gitlab-postgres-password
+        secretKeys:
+          adminPasswordKey: postgres-password
+          userPasswordKey: postgres-password
+      metrics:
+        enabled: false
+
+    redis:
+      install: true
+      auth:
+        enabled: true
+        existingSecret: gitlab-redis-password
+        existingSecretPasswordKey: redis-password
+      master:
+        persistence:
+          storageClass: ${STORAGE_CLASS}
+          size: 10Gi
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      replica:
+        replicaCount: 0
+      metrics:
+        enabled: false
+
+    minio:
+      install: true
+      replicas: 1
+      persistence:
+        storageClass: ${STORAGE_CLASS}
+        size: 30Gi
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+    registry:
+      enabled: true
+      ingress:
+        enabled: false
+      persistence:
+        storageClass: ${STORAGE_CLASS}
+        size: 50Gi
+
+    gitlab-runner:
+      install: false
+
+    prometheus:
+      install: false
+    gitlab-exporter:
+      enabled: false

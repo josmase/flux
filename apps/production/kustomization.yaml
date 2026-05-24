@@ -1,13 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Production overlay - includes ALL base apps + production secrets
-
 resources:
-  # Default config for all apps
   - default-app-config.yaml
 
-  # ALL base applications
   - ../base/traefik-dashboard/
   - ../base/artifactory/
   - ../base/cloudflare-ddns/
@@ -24,12 +20,11 @@ resources:
   - ../base/immich/
   - ../base/minecraft/
   - ../base/netbootxyz/
+  - ../base/gitlab/
 
-  # Custom applications (manifests sourced from app repos via GitRepository)
   - ../base/blog/
   - ../base/downloader/
 
-  # Production secrets
   - immich/
   - cloudflare-ddns/
   - artifactory/
@@ -39,6 +34,7 @@ resources:
   - new-new-boplats/
   - monitoring/
   - minecraft/
+  - gitlab/
 
 transformers:
   - |-
