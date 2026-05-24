@@ -1,0 +1,56 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab-runner
+  namespace: gitlab-runners
+spec:
+  interval: 5m
+  timeout: 15m
+  chart:
+    spec:
+      chart: gitlab-runner
+      version: "0.64.0"
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+        namespace: flux-system
+      interval: 1h
+  values:
+    gitlabUrl: "https://gitlab.${DOMAIN_INTERNAL}"
+    concurrent: 4
+    checkInterval: 30
+    logLevel: info
+
+    rbac:
+      create: true
+
+    env:
+      - name: RUNNER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: gitlab-runner-token
+            key: runner-token
+
+    runners:
+      tags: "kubernetes,local"
+      privileged: true
+      runUntagged: false
+      locked: false
+      config: |
+        [[runners]]
+          [runners.kubernetes]
+            namespace = "gitlab-runners"
+            image = "alpine:latest"
+            poll_timeout = 600
+            cpu_request = "100m"
+            memory_request = "128Mi"
+            cpu_limit = "1000m"
+            memory_limit = "1Gi"
+            [runners.kubernetes.node_tolerations]
+              "node-role.kubernetes.io/control-plane" = ""
+
+    metrics:
+      enabled: true
+
+    serviceMonitor:
+      enabled: true

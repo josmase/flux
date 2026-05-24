@@ -21,6 +21,7 @@ resources:
   - ../base/minecraft/
   - ../base/netbootxyz/
   - ../base/gitlab/
+  - ../base/gitlab-runners/
 
   - ../base/blog/
   - ../base/downloader/
@@ -35,6 +36,7 @@ resources:
   - monitoring/
   - minecraft/
   - gitlab/
+  - gitlab-runners/
 
 transformers:
   - |-
