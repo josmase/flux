@@ -24,6 +24,7 @@ spec:
 
     certmanager-issuer:
       enabled: false
+      email: "gitlab@localhost.local"
 
     global:
       hosts:
