@@ -106,6 +106,9 @@ spec:
 
     postgresql:
       install: true
+      image:
+        registry: artifactory.local.hejsan.xyz
+        repository: docker/bitnami/postgresql
       primary:
         replicaCount: 1
         persistence:
@@ -130,6 +133,9 @@ spec:
 
     redis:
       install: true
+      image:
+        registry: artifactory.local.hejsan.xyz
+        repository: docker/bitnami/redis
       auth:
         enabled: true
         existingSecret: gitlab-redis-password
