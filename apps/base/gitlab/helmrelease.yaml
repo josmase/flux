@@ -22,6 +22,9 @@ spec:
     certmanager:
       install: false
 
+    certmanager-issuer:
+      enabled: false
+
     global:
       hosts:
         domain: ${DOMAIN_INTERNAL}
