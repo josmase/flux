@@ -108,7 +108,8 @@ spec:
       install: true
       image:
         registry: artifactory.local.hejsan.xyz
-        repository: docker/bitnami/postgresql
+        repository: docker/bitnamilegacy/postgresql
+        tag: "14.13.0-debian-12-r9"
       primary:
         replicaCount: 1
         persistence:
@@ -135,7 +136,8 @@ spec:
       install: true
       image:
         registry: artifactory.local.hejsan.xyz
-        repository: docker/bitnami/redis
+        repository: docker/bitnamilegacy/redis
+        tag: "7.2.4-debian-12-r9"
       auth:
         enabled: true
         existingSecret: gitlab-redis-password
