@@ -42,7 +42,7 @@ spec:
 
       redis:
         password:
-          enabled: false
+          enabled: true
           useSecret: true
           secret: gitlab-redis-password
           key: redis-password
