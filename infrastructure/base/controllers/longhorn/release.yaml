@@ -20,7 +20,7 @@ spec:
     defaultSettings:
       backupTarget: nfs://storage.local.hejsan.xyz:/kubernetes
       concurrentAutomaticEngineUpgradePerNodeLimit: 1
-      defaultReplicaCount: 3
+      defaultReplicaCount: 2
       defaultDataLocality: best-effort
       replicaSoftAntiAffinity: false
       disableReplicaRebuildOnCurrentNode: true
@@ -40,7 +40,7 @@ spec:
       taintToleration: "workload=gpu-only:NoSchedule"
     persistence:
       defaultClass: true
-      defaultClassReplicaCount: 3
+      defaultClassReplicaCount: 2
       defaultFsType: ext4
       defaultDataLocality: best-effort
       reclaimPolicy: Delete

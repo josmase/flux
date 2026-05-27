@@ -9,7 +9,7 @@ reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 parameters:
-  numberOfReplicas: "3"
+  numberOfReplicas: "2"
   fsType: ext4
   dataLocality: best-effort
   staleReplicaTimeout: "30"
