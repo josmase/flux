@@ -24,12 +24,7 @@ spec:
     rbac:
       create: true
 
-    env:
-      - name: RUNNER_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: gitlab-runner-token
-            key: runner-token
+    runnerToken: "glrt-dDoxCnU6Md0ZAqwYvhgGPWl8XMjVzkQQ.0w0wrhrw2"
 
     runners:
       tags: "kubernetes,local"
