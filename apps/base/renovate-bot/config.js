@@ -1,15 +1,9 @@
 module.exports = {
-  repositories: [
-    "josmase/flux",
-    "josmase/downloader",
-    "josmase/ansible",
-    "josmase/blog",
-    "josmase/boplats-map",
-    "josmase/workflows",
-    "josmase/devcontainer-templates",
-  ],
+  platform: "gitlab",
+  endpoint: "https://gitlab.local.hejsan.xyz/api/v4",
+  autodiscover: true,
+  autodiscoverFilter: "josmase/*",
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
-  platform: "github",
   requireConfig: "required",
   onboarding: true,
   rebaseWhen: "behind-base-branch",
@@ -25,6 +19,5 @@ module.exports = {
     },
     { matchUpdateTypes: ["minor", "patch", "pin", "digest"], automerge: true },
   ],
-  forkProcessing: "enabled",
   extends: ["config:best-practices"],
 };
