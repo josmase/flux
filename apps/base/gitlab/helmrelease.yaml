@@ -182,6 +182,18 @@ spec:
       persistence:
         storageClass: ${STORAGE_CLASS}
         size: 50Gi
+      database:
+        enabled: true
+        host: gitlab-postgresql
+        port: 5432
+        name: registry
+        user: registry
+        password:
+          secret: gitlab-registry-database-password
+          key: password
+        sslmode: disable
+        migrations:
+          enabled: true
 
     gitlab-runner:
       install: false
