@@ -8,7 +8,6 @@ resources:
   - ../base/artifactory/
   - ../base/cloudflare-ddns/
   - ../base/it-tools/
-  - ../base/actions-runner/
   - ../base/renovate-bot/
   - ../base/new-new-boplats/
   - ../base/monitoring/
@@ -29,7 +28,6 @@ resources:
   - immich/
   - cloudflare-ddns/
   - artifactory/
-  - actions-runner/
   - renovate-bot/
   - media/
   - new-new-boplats/
