@@ -25,7 +25,7 @@ spec:
                 name: default-app-config
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -33,7 +33,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 3000
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -44,7 +44,7 @@ spec:
               mountPath: /config
           resources:
             limits:
-              memory: 512Mi
+              memory: 1Gi
               cpu: "0.5"
             requests:
               memory: 128Mi
