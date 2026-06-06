@@ -22,6 +22,8 @@ resources:
   - ../base/gitlab/
   - ../base/gitlab-runners/
 
+  - ../base/resume/
+
   - ../base/blog/
   - ../base/downloader/
 
