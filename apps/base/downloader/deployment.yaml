@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: downloader
-          image: registry.local.hejsan.xyz/josmase/apps/downloader:PLACEHOLDER
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/downloader:PLACEHOLDER
           imagePullPolicy: IfNotPresent
           resources:
             limits:
