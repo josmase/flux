@@ -14,6 +14,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: new-new-boplats
+  targetNamespace: new-new-boplats
   postBuild:
     substitute:
       DOMAIN_INTERNAL: "${DOMAIN_INTERNAL}"
