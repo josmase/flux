@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: new-new-boplats-scraoer
-              image: registry.local.hejsan.xyz/josmase/apps/boplats-map/scraper:2026-06-06-97bca0f5
+              image: registry.local.hejsan.xyz/josmase/apps/boplats-map/scraper:2026-06-06-0569f93f
               env:
                 - name: "DB_URI"
                   valueFrom:
