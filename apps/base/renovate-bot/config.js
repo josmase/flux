@@ -2,7 +2,7 @@ module.exports = {
   platform: "gitlab",
   endpoint: "https://gitlab.local.hejsan.xyz/api/v4",
   autodiscover: true,
-  autodiscoverFilter: "josmase/*",
+  autodiscoverFilter: "josmase/**",
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
   requireConfig: "required",
   onboarding: true,
