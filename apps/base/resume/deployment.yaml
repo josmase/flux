@@ -9,6 +9,8 @@ spec:
       app: resume
   template:
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-pull
       containers:
         - name: resume
           image: registry.local.hejsan.xyz/josmase/personal/resume:PLACEHOLDER
