@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: resume
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/personal/resume:v0.0.0
+          image: registry.local.hejsan.xyz/josmase/personal/resume:PLACEHOLDER
           ports:
             - containerPort: 80
           resources:
