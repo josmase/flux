@@ -41,10 +41,10 @@ spec:
             memory_request = "128Mi"
             cpu_limit = "2000m"
             memory_limit = "4Gi"
-            cpu_request_overwrite_allowed = true
-            cpu_limit_overwrite_allowed = true
-            memory_request_overwrite_allowed = true
-            memory_limit_overwrite_allowed = true
+            cpu_request_overwrite_max_allowed = "2"
+            cpu_limit_overwrite_max_allowed = "6"
+            memory_request_overwrite_max_allowed = "4Gi"
+            memory_limit_overwrite_max_allowed = "8Gi"
             [runners.kubernetes.node_tolerations]
               "node-role.kubernetes.io/control-plane" = ""
 
