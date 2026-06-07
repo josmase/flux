@@ -13,7 +13,7 @@ spec:
         - name: gitlab-registry-pull
       containers:
         - name: resume
-          image: registry.local.hejsan.xyz/josmase/personal/resume:PLACEHOLDER
+          image: registry.local.hejsan.xyz/josmase/personal/resume:2026-06-07-6ea64ee4
           ports:
             - containerPort: 80
           resources:
