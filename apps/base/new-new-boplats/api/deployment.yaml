@@ -14,6 +14,21 @@ spec:
       app: new-new-boplats-api
   template:
     spec:
+      initContainers:
+        - name: drizzle-migrate
+          image: registry.local.hejsan.xyz/josmase/apps/boplats-map/api:2026-06-08-fe64aaa0
+          env:
+            - name: "DB_URI"
+              valueFrom:
+                secretKeyRef:
+                  name: boplats-api-connection
+                  key: uri
+          command:
+            - bun
+            - x
+            - drizzle-kit
+            - migrate
+            - --config=libs/database/drizzle.config.ts
       containers:
         - name: new-new-boplats-api
           image: registry.local.hejsan.xyz/josmase/apps/boplats-map/api:2026-06-08-fe64aaa0
@@ -21,8 +36,8 @@ spec:
             - name: "DB_URI"
               valueFrom:
                 secretKeyRef:
-                  name: new-new-boplats-database-new-new-boplats-new-new-boplats-api-user
-                  key: connectionString.standardSrv
+                  name: boplats-api-connection
+                  key: uri
           resources:
             limits:
               memory: 512Mi

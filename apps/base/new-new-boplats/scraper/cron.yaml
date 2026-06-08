@@ -16,8 +16,8 @@ spec:
                 - name: "DB_URI"
                   valueFrom:
                     secretKeyRef:
-                      name: new-new-boplats-database-new-new-boplats-new-new-boplats-scraper-user
-                      key: connectionString.standardSrv
+                      name: boplats-scraper-connection
+                      key: uri
               resources:
                 limits:
                   memory: 512Mi
