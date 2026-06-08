@@ -32,7 +32,6 @@ resources:
   - artifactory/
   - renovate-bot/
   - media/
-  - new-new-boplats/
   - monitoring/
   - minecraft/
   - gitlab/
