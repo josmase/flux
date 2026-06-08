@@ -1,0 +1,11 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: shared-postgres-daily-backup
+  namespace: cnpg-system
+spec:
+  cluster:
+    name: shared-postgres
+  schedule: "0 0 2 * * *"
+  backupOwnerReference: self
+  method: volumeSnapshot

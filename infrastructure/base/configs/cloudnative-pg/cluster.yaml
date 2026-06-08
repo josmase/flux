@@ -41,12 +41,6 @@ spec:
       snapshotOwnerReference: cluster
     retentionPolicy: "30d"
 
-  scheduledBackup:
-    - name: daily-backup
-      schedule: "0 2 * * *"
-      backupOwnerReference: self
-      method: volumeSnapshot
-
   # --- Post-init SQL ---
   postInitTemplateSQL:
     - |
@@ -78,7 +72,7 @@ spec:
 
   # --- High availability ---
   affinity:
-    podAntiAffinity:
+    additionalPodAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
         - weight: 100
           podAffinityTerm:

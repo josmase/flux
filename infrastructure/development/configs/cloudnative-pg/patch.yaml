@@ -16,9 +16,3 @@ spec:
     limits:
       memory: 512Mi
       cpu: 500m
-  scheduledBackup:
-    - name: daily-backup
-      schedule: "0 2 * * *"
-      backupOwnerReference: self
-      method: volumeSnapshot
-      suspend: true  # disabled in dev
