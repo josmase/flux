@@ -34,19 +34,6 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # --- Backup (volume snapshots via Longhorn) ---
-  backup:
-    volumeSnapshot:
-      className: longhorn-snapshot
-      snapshotOwnerReference: cluster
-    retentionPolicy: "30d"
-
-  # --- Post-init SQL ---
-  postInitTemplateSQL:
-    - |
-      CREATE EXTENSION IF NOT EXISTS pgcrypto;
-      CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-
   # --- Bootstrap ---
   bootstrap:
     initdb:
@@ -55,6 +42,19 @@ spec:
       dataChecksums: true
       locale: en_US.UTF-8
       encoding: UTF-8
+
+      # --- Post-init SQL ---
+      postInitTemplateSQL:
+        - |
+          CREATE EXTENSION IF NOT EXISTS pgcrypto;
+          CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+  # --- Backup (volume snapshots via Longhorn) ---
+  backup:
+    volumeSnapshot:
+      className: longhorn-snapshot
+      snapshotOwnerReference: cluster
+    retentionPolicy: "30d"
 
   # --- Managed roles (group roles for reuse) ---
   managed:
