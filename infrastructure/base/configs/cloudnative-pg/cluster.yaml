@@ -1,0 +1,108 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared-postgres
+  namespace: cnpg-system
+spec:
+  # --- Topology ---
+  instances: 3
+  minSyncReplicas: 1
+  maxSyncReplicas: 2
+
+  # --- PostgreSQL image ---
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+
+  # --- Storage ---
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+
+  walStorage:
+    size: 5Gi
+    storageClass: longhorn
+
+  # --- Resources ---
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 2Gi
+      cpu: 1
+
+  # --- Monitoring ---
+  monitoring:
+    enablePodMonitor: true
+
+  # --- Backup (volume snapshots via Longhorn) ---
+  backup:
+    volumeSnapshot:
+      className: longhorn-snapshot
+      snapshotOwnerReference: cluster
+    retentionPolicy: "30d"
+
+  scheduledBackup:
+    - name: daily-backup
+      schedule: "0 2 * * *"
+      backupOwnerReference: self
+      method: volumeSnapshot
+
+  # --- Post-init SQL ---
+  postInitTemplateSQL:
+    - |
+      CREATE EXTENSION IF NOT EXISTS pgcrypto;
+      CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+  # --- Bootstrap ---
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
+      dataChecksums: true
+      locale: en_US.UTF-8
+      encoding: UTF-8
+
+  # --- Managed roles (group roles for reuse) ---
+  managed:
+    roles:
+      - name: db_reader
+        comment: "Read-only access group role"
+        login: false
+      - name: db_writer
+        comment: "Read-write access group role"
+        login: false
+      - name: db_owner
+        comment: "Database owner group role"
+        login: false
+        createdb: true
+
+  # --- High availability ---
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - shared-postgres
+            topologyKey: kubernetes.io/hostname
+
+  # --- Node tolerations (if needed) ---
+  # tolerations:
+  #   - key: "storage"
+  #     operator: "Exists"
+
+  # --- Connection pooler (optional, uncomment when needed) ---
+  # pgbouncer:
+  #   poolMode: transaction
+  #   instances: 2
+  #   resources:
+  #     requests:
+  #       memory: 256Mi
+  #       cpu: 100m
+  #     limits:
+  #       memory: 512Mi
+  #       cpu: 500m
