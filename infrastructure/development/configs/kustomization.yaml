@@ -10,3 +10,7 @@ resources:
   
   # Development secrets (override production)
   - secret-cf-token.yaml
+
+  # CloudNativePG development overlay (1-instance cluster patch)
+patches:
+  - path: cloudnative-pg/patch.yaml
