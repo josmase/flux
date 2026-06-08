@@ -13,3 +13,4 @@ resources:
   - ../../base/controllers/local-path-provisioner/
   - ../../base/controllers/reflector/
   - ../../base/controllers/nvidia-device-plugin/
+  - ../../base/controllers/cloudnative-pg/

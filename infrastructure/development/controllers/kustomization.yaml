@@ -9,3 +9,4 @@ resources:
   - ../../base/controllers/cert-manager/
   - ingress-traefik/
   - ../../base/controllers/reflector/
+  - ../../base/controllers/cloudnative-pg/

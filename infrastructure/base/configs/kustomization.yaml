@@ -8,3 +8,4 @@ resources:
   - cluster-issuer.yaml
   - certificate.yaml
   - nvidia-runtime
+  - cloudnative-pg/
