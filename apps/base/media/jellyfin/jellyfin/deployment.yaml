@@ -35,13 +35,18 @@ spec:
             - containerPort: 8096
               name: http
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8096
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  ls /mnt/storage/files/.healthcheck >/dev/null 2>&1 || exit 1
+                  tail -100 /config/log/log_$(date +%Y%m%d).log 2>/dev/null | grep -q "Stale file handle" && exit 1 || true
+                  curl -sf http://localhost:8096/health >/dev/null 2>&1 || exit 1
             initialDelaySeconds: 90
-            periodSeconds: 10
+            periodSeconds: 5
             timeoutSeconds: 5
-            failureThreshold: 8
+            failureThreshold: 2
           startupProbe:
             exec:
               command: ["sh", "-c", "ls /mnt/storage/files/.healthcheck"]
