@@ -24,8 +24,9 @@ spec:
                   name: boplats-api-connection
                   key: uri
           command:
-            - node
-            - /app/libs/database/node_modules/drizzle-kit/bin.cjs
+            - bun
+            - x
+            - drizzle-kit
             - migrate
             - --config=libs/database/drizzle.config.ts
       containers:
