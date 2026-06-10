@@ -28,9 +28,10 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: db-provisioner
+
       containers:
         - name: provision
-          image: artifactory.local.hejsan.xyz/tools/db-provisioner:1.0.0
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/tools/db-provisioner:2026-06-08-fe64aaa0
           imagePullPolicy: IfNotPresent
           env:
             - name: PG_HOST

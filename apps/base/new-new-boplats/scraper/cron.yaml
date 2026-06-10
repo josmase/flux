@@ -10,7 +10,7 @@ spec:
       template:
         spec:
           containers:
-            - name: new-new-boplats-scraoer
+            - name: new-new-boplats-scraper
               image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/scraper:2026-06-10-8b523045
               env:
                 - name: "DB_URI"
