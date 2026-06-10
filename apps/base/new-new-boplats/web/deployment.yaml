@@ -19,7 +19,7 @@ spec:
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/web:2026-06-10-8b523045
           env:
             - name: API_URL
-              value: /api
+              value: http://new-new-boplats-api:3000
           resources:
             limits:
               memory: 512Mi
