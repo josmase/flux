@@ -25,8 +25,7 @@ spec:
                   key: uri
           command:
             - bun
-            - x
-            - drizzle-kit
+            - /app/libs/database/node_modules/drizzle-kit/bin.cjs
             - migrate
             - --config=libs/database/drizzle.config.ts
       containers:
