@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: drizzle-migrate
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/api:2026-06-10-4
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/api:2026-06-11-d0ba82c
           env:
             - name: "DB_URI"
               valueFrom:
@@ -50,7 +50,7 @@ spec:
               node /tmp/migrate.mjs
       containers:
         - name: new-new-boplats-api
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/api:2026-06-10-4
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/api:2026-06-11-d0ba82c
           env:
             - name: "DB_URI"
               valueFrom:
