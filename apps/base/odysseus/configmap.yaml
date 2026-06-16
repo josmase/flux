@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odysseus-config
+data:
+  # --- LLM / Model serving ---
+  # Point at the PC running llama.cpp on the same LAN
+  LLM_HOST: "http://192.168.1.7:8090/v1"
+  EMBEDDING_URL: "http://192.168.1.7:8090/v1"
+  # EMBEDDING_MODEL: "all-minilm:l6-v2"   # uncomment if needed
+
+  # --- Database ---
+  # DATABASE_URL is set via secretRef from db-provisioner output
+
+  # --- Auth & Security ---
+  AUTH_ENABLED: "true"
+  LOCALHOST_BYPASS: "false"
+  SECURE_COOKIES: "true"
+  ALLOWED_ORIGINS: "https://odysseus.local.hejsan.xyz,http://localhost:7000"
+
+  # --- Upload limits ---
+  ODYSSEUS_CHAT_UPLOAD_MAX_BYTES: "52428800"    # 50 MB
+  ODYSSEUS_PERSONAL_UPLOAD_MAX_BYTES: "52428800"
+
+  # --- Misc ---
+  CLEANUP_INTERVAL_HOURS: "24"
+  TZ: "Europe/Stockholm"

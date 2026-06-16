@@ -28,25 +28,29 @@ spec:
           value: "gpu-only"
           effect: "NoSchedule"
 
+      terminationGracePeriodSeconds: 120
       containers:
         - name: jellyfin
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
           ports:
             - containerPort: 8096
               name: http
+          # Liveness probe: pure HTTP check - Jellyfin's /health endpoint is
+          # lightweight and doesn't touch storage. If the process is stuck
+          # in D-state from NFS I/O, the HTTP server won't respond.
+          # failureThreshold=5 * periodSeconds=10 = 50s before restart.
+          # This avoids flapping from transient NFS latency blips.
           livenessProbe:
-            exec:
-              command:
-                - sh
-                - -c
-                - |
-                  ls /mnt/storage/files/.healthcheck >/dev/null 2>&1 || exit 1
-                  tail -100 /config/log/log_$(date +%Y%m%d).log 2>/dev/null | grep -q "Stale file handle" && exit 1 || true
-                  curl -sf http://localhost:8096/health >/dev/null 2>&1 || exit 1
+            httpGet:
+              path: /health
+              port: 8096
             initialDelaySeconds: 90
-            periodSeconds: 5
+            periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 2
+            failureThreshold: 5
+          # Startup probe: validates NFS media mount is available before
+          # Jellyfin starts. If NFS is unreachable, Jellyfin has nothing to serve.
+          # failureThreshold=30 * periodSeconds=10 = 300s (5min) max startup time.
           startupProbe:
             exec:
               command: ["sh", "-c", "ls /mnt/storage/files/.healthcheck"]
@@ -54,14 +58,16 @@ spec:
             periodSeconds: 10
             failureThreshold: 30
             timeoutSeconds: 5
+          # Readiness probe: HTTP check - controls service entry.
+          # failureThreshold=3 * periodSeconds=10 = 30s before removal.
           readinessProbe:
             httpGet:
               path: /health
               port: 8096
             initialDelaySeconds: 20
-            periodSeconds: 5
+            periodSeconds: 10
             timeoutSeconds: 3
-            failureThreshold: 2
+            failureThreshold: 3
           resources:
             requests:
               cpu: 2000m

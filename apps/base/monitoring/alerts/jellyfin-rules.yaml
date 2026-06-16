@@ -1,0 +1,56 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: jellyfin-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: jellyfin.rules
+      interval: 30s
+      rules:
+        - alert: JellyfinPodStuckTerminating
+          expr: |
+            (time() - kube_pod_deletion_timestamp{namespace="media", pod=~"jellyfin.*"}) > 300
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: jellyfin
+          annotations:
+            summary: "Jellyfin pod {{ $labels.pod }} stuck Terminating for > 5m"
+            description: |
+              Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in Terminating state
+              for more than 5 minutes. This usually indicates the Jellyfin process is stuck
+              in D-state (uninterruptible sleep) due to an NFS I/O operation that cannot
+              complete.
+              Action: kubectl delete pod -n {{ $labels.namespace }} {{ $labels.pod }} --force --grace-period=0
+
+        - alert: JellyfinNotReady
+          expr: |
+            kube_deployment_status_replicas_available{namespace="media", deployment="jellyfin"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            workload_type: jellyfin
+          annotations:
+            summary: "Jellyfin has 0 ready replicas"
+            description: |
+              Jellyfin deployment has 0 available replicas for more than 2 minutes.
+              Check the deployment: kubectl describe deployment -n media jellyfin
+              Check pod status: kubectl get pods -n media -l app=jellyfin
+              Check pod logs: kubectl logs -n media -l app=jellyfin
+
+        - alert: JellyfinRestarting
+          expr: |
+            rate(kube_pod_container_status_restarts_total{namespace="media", pod=~"jellyfin.*"}[15m]) > 0
+          for: 3m
+          labels:
+            severity: warning
+            workload_type: jellyfin
+          annotations:
+            summary: "Jellyfin pod {{ $labels.pod }} is restarting"
+            description: |
+              Jellyfin pod {{ $labels.pod }} is restarting ({{ printf "%.2f" $value }} restarts/hr over 15m).
+              This may indicate stale NFS handles or probe failures.
+              Check logs: kubectl logs -n {{ $labels.namespace }} {{ $labels.pod }}
+              Check NFS mount: kubectl exec -n {{ $labels.namespace }} {{ $labels.pod }} -- ls /mnt/storage/files/.healthcheck
