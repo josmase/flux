@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odysseus
+  labels:
+    app: odysseus
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: odysseus
+  template:
+    metadata:
+      labels:
+        app: odysseus
+    spec:
+      containers:
+        - name: odysseus
+          # Image tag updated by GitLab CI pipeline via k8s-deploy-image
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/odysseus:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: odysseus-config
+            - configMapRef:
+                name: default-app-config
+          env:
+            # DATABASE_URL from db-provisioner output secret
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: odysseus-db-connection
+                  key: uri
+            # Admin credentials from SOPS-encrypted production secret
+            - name: ODYSSEUS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: odysseus-secrets
+                  key: ODYSSEUS_ADMIN_PASSWORD
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: odysseus-secrets
+                  key: OPENAI_API_KEY
+                  optional: true
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: odysseus-secrets
+                  key: HF_TOKEN
+                  optional: true
+            - name: SEARXNG_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: odysseus-secrets
+                  key: SEARXNG_SECRET
+                  optional: true
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: logs
+              mountPath: /app/logs
+          resources:
+            limits:
+              memory: 4Gi
+              cpu: "2"
+            requests:
+              memory: 2Gi
+              cpu: "0.5"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: odysseus-data
+        - name: logs
+          emptyDir: {}

@@ -1,0 +1,70 @@
+---
+# Claim ConfigMap — tells db-provisioner what database and users to create
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odysseus-db-claim
+data:
+  database: odysseus
+  users: |
+    - name: odysseus-user
+      role: owner
+      secret: odysseus-db-connection
+---
+# Provisioner Job — connects to shared-postgres, creates DB + users, writes Secret
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: odysseus-db-init
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: db-provisioner
+      containers:
+        - name: provision
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/tools/db-provisioner:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PG_HOST
+              value: shared-postgres-rw.cnpg-system.svc
+            - name: DB_CLAIM_CONFIGMAP
+              value: odysseus-db-claim
+          volumeMounts:
+            - name: superuser-password
+              mountPath: /etc/superuser-password
+              readOnly: true
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 200m
+            requests:
+              memory: 64Mi
+              cpu: 100m
+      volumes:
+        - name: superuser-password
+          secret:
+            secretName: shared-postgres-superuser
+            defaultMode: 0400
+---
+# ServiceAccount for the provisioner Job
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: db-provisioner
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: db-provisioner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: db-provisioner-ns
+subjects:
+  - kind: ServiceAccount
+    name: db-provisioner

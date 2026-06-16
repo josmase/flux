@@ -60,7 +60,6 @@ spec:
   mountOptions:
     - ro
     - soft
-    - intr
     - bg
     - nfsvers=4.1
     - proto=tcp
@@ -71,6 +70,10 @@ spec:
     - wsize=1048576
     - noatime
     - nodiratime
+    # Disable directory entry caching so the kernel re-validates every lookup.
+    # Critical for preventing stale file handles on NFSv4.1 when files/dirs
+    # change on the server side between accesses.
+    - lookupcache=none
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
