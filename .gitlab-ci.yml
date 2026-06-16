@@ -1,0 +1,39 @@
+---
+# Pipeline that mirrors the pre-commit hook (utility-scripts/validation/validate.sh)
+# Runs on every push and MR: secrets check, structure check, kustomize build,
+# kubeconform CRD validation, and overlay validation.
+
+stages:
+  - validate
+
+flux-validate:
+  stage: validate
+  image: ubuntu:22.04
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get update && apt-get install -y --no-install-recommends
+      curl ca-certificates git python3 python3-pip
+      && rm -rf /var/lib/apt/lists/*
+
+    - curl -sL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+      -o /usr/local/bin/yq && chmod +x /usr/local/bin/yq && yq --version
+
+    - curl -sL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
+      | bash -s -- /usr/local/bin && kustomize version
+
+    - curl -sL "https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz"
+      | tar zxf - -C /usr/local/bin/ kubeconform && kubeconform -v
+
+    - curl -sL "https://github.com/getsops/sops/releases/latest/download/sops-v3.13.1.linux.amd64"
+      -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops && sops --version
+
+    - curl -sL "https://github.com/fluxcd/flux2/releases/latest/download/flux_VERSION_linux_amd64.tar.gz"
+      | tar zxf - -C /usr/local/bin/ flux && flux version
+
+    - pip3 install --no-cache-dir pyyaml
+
+  script:
+    - bash utility-scripts/validation/validate.sh
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
