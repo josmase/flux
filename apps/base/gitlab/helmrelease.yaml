@@ -30,6 +30,10 @@ spec:
       email: "gitlab@localhost.local"
 
     global:
+      appConfig:
+        terraformState:
+          enabled: true
+          bucket: gitlab-terraform-state
       hosts:
         domain: ${DOMAIN_INTERNAL}
         https: true
