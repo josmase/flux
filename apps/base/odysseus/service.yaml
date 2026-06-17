@@ -9,5 +9,5 @@ spec:
     app: odysseus
   ports:
     - name: http
-      port: 7000
-      targetPort: 7000
+      port: 3210
+      targetPort: 3210
