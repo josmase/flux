@@ -31,8 +31,7 @@ spec:
 
       containers:
         - name: provision
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:latest
-          imagePullPolicy: Always
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-06-17-511cb6cd
           env:
             - name: PG_HOST
               value: shared-postgres-rw.cnpg-system.svc
