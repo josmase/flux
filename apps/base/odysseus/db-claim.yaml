@@ -27,7 +27,7 @@ spec:
       serviceAccountName: db-provisioner
       containers:
         - name: provision
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/tools/db-provisioner:latest
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: PG_HOST
