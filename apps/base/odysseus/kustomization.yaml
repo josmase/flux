@@ -6,6 +6,7 @@ namespace: odysseus
 resources:
   - namespace.yaml
   - configmap.yaml
+  - default-app-config.yaml
   - pvc.yaml
   - db-claim.yaml
   - deployment.yaml
