@@ -21,7 +21,7 @@ spec:
       containers:
         - name: odysseus
           # Image tag updated by GitLab CI pipeline via k8s-deploy-image
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/odysseus:latest
+          image: registry.local.hejsan.xyz/josmase/apps/odysseus:2026-06-17-8e1ac58d
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
