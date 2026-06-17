@@ -32,8 +32,6 @@ spec:
               value: shared-postgres-rw.cnpg-system.svc
             - name: DB_CLAIM_CONFIGMAP
               value: odysseus-db-claim
-            - name: SUPERUSER
-              value: shared_postgres
           volumeMounts:
             - name: superuser-password
               mountPath: /etc/superuser-password
