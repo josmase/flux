@@ -28,6 +28,8 @@ spec:
           value: "gpu-only"
           effect: "NoSchedule"
 
+      serviceAccountName: jellyfin-log-watcher
+
       terminationGracePeriodSeconds: 120
       containers:
         - name: jellyfin
@@ -35,18 +37,22 @@ spec:
           ports:
             - containerPort: 8096
               name: http
-          # Liveness probe: pure HTTP check - Jellyfin's /health endpoint is
-          # lightweight and doesn't touch storage. If the process is stuck
-          # in D-state from NFS I/O, the HTTP server won't respond.
+          # Liveness probe: checks both the HTTP health endpoint (process
+          # responsiveness) and the NFS healthcheck file (filesystem health).
+          # Stale file handles on the NFS mount cause `ls .healthcheck` to
+          # fail, triggering a restart via the liveness probe.
           # failureThreshold=5 * periodSeconds=10 = 50s before restart.
-          # This avoids flapping from transient NFS latency blips.
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8096
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  curl -sf http://localhost:8096/health >/dev/null 2>&1 \
+                    && ls /mnt/storage/files/.healthcheck >/dev/null 2>&1
             initialDelaySeconds: 90
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 5
           # Startup probe: validates NFS media mount is available before
           # Jellyfin starts. If NFS is unreachable, Jellyfin has nothing to serve.
@@ -97,6 +103,34 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage/files
               readOnly: true
+        # Sidecar: tails Jellyfin container logs and deletes the pod when
+        # "Stale file handle" appears. This provides fast (sub-minute)
+        # recovery when transient stale handles aren't persistent enough
+        # to trigger the liveness probe's 50s threshold.
+        - name: log-watcher
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              kubectl logs "$POD_NAME" -c jellyfin -n "$NAMESPACE" --tail=0 --follow 2>/dev/null \
+                | grep -q "Stale file handle" \
+                && kubectl delete pod "$POD_NAME" -n "$NAMESPACE" --wait=false
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:

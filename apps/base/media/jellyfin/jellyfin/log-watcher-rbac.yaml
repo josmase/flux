@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jellyfin-log-watcher
+  namespace: media
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jellyfin-log-watcher
+  namespace: media
+rules:
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jellyfin-log-watcher
+  namespace: media
+subjects:
+  - kind: ServiceAccount
+    name: jellyfin-log-watcher
+    namespace: media
+roleRef:
+  kind: Role
+  name: jellyfin-log-watcher
+  apiGroup: rbac.authorization.k8s.io

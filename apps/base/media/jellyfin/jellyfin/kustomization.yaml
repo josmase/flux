@@ -6,6 +6,7 @@ resources:
   - persistence.yaml
   - ingress.yaml
   - service.yaml
+  - log-watcher-rbac.yaml
 
 labels:
   - includeSelectors: true
