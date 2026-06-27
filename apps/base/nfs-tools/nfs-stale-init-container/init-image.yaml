@@ -4,4 +4,4 @@ metadata:
   name: nfs-init-image
 data:
   # Updated by CI pipeline via k8s-deploy-image job
-  image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+  image: registry.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270
