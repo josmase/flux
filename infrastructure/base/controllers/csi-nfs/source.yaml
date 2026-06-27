@@ -5,4 +5,4 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://kubernetes-csi.github.io/csi-driver-nfs
+  url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
