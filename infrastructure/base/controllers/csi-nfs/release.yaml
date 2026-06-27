@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: csi-nfs-driver
+  namespace: kube-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: csi-driver-nfs
+      version: "4.x"
+      sourceRef:
+        kind: HelmRepository
+        name: csi-driver-nfs
+        namespace: flux-system
+      interval: 1m
+  values:
+    # Run controller on control-plane node (single-node K3s cluster)
+    controller:
+      runOnControlPlane: true
+      replicas: 1
+    # Node driver config
+    node:
+      kubeletPath: /var/lib/kubelet
+    # Use default driver name: nfs.csi.k8s.io
+    driver:
+      name: nfs.csi.k8s.io
+    # Enable RBAC for the node driver to access node info
+    rbac:
+      create: true
+    serviceAccount:
+      create: true
+    # Don't create the default storage class — we define our own
+    storageClass:
+      create: false

@@ -9,6 +9,7 @@ resources:
   - longhorn
   - reflector
   - nvidia-device-plugin
+  - csi-nfs
 
 configurations:
   - kustomizeconfig.yaml

@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: odysseus
+  name: chromadb
   labels:
-    app: odysseus
+    app: chromadb
 spec:
   selector:
-    app: odysseus
+    app: chromadb
   ports:
     - name: http
-      port: 7000
-      targetPort: 7000
+      port: 8000
+      targetPort: 8000

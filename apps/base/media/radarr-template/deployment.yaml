@@ -14,6 +14,25 @@ spec:
       labels:
         app: radarr
     spec:
+      initContainers:
+        - name: nfs-stale-check
+          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: radarr
           image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.2.0-nightly@sha256:9e05fe4fb5749239fab538c549a19d8f3401cdbb6002ffc72bc485a5632c287c

@@ -8,7 +8,13 @@ resources:
   - configmap.yaml
   - default-app-config.yaml
   - pvc.yaml
+  - chromadb-pvc.yaml
   - db-claim.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - chromadb-deployment.yaml
+  - chromadb-service.yaml
+  - searxng-config.yaml
+  - searxng-deployment.yaml
+  - searxng-service.yaml

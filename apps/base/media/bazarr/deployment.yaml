@@ -14,6 +14,25 @@ spec:
       labels:
         app: bazarr
     spec:
+      initContainers:
+        - name: nfs-stale-check
+          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: bazarr
           image: artifactory.local.hejsan.xyz/docker/linuxserver/bazarr:1.5.6@sha256:95f27692c3de6dbe130cd035d342d8138ec74ade7b62cfc52e11ae222c52c855

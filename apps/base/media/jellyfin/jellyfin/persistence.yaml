@@ -36,9 +36,12 @@ spec:
     requests:
       storage: 80Gi
 ---
-# Dedicated NFS PV for Jellyfin media - isolated from shared media volume
-# to eliminate I/O contention with other media apps during library scans.
-# Mount options are tuned for read-only, metadata-heavy workloads.
+# In-tree NFS PV for Jellyfin media — kept for rollback; CSI-backed PV below
+# handles production traffic with stale mount auto-recovery.
+#
+# Mount options tuned for read-only, metadata-heavy workloads with fast
+# failover: soft mounts, aggressive timeouts, no directory caching.
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -70,9 +73,45 @@ spec:
     - wsize=1048576
     - noatime
     - nodiratime
-    # Disable directory entry caching so the kernel re-validates every lookup.
-    # Critical for preventing stale file handles on NFSv4.1 when files/dirs
-    # change on the server side between accesses.
+    - lookupcache=none
+---
+# CSI-backed NFS PV for Jellyfin media — uses csi-driver-nfs for built-in
+# stale mount detection (os.Lstat → ESTALE) and auto-remount.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-media-nfs-csi-pv
+  labels:
+    media-app: jellyfin
+    purpose: media-readonly
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: "jellyfin-media"
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: nfs.csi.k8s.io
+    readOnly: true
+    volumeHandle: jellyfin-media-nfs
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /files
+  mountOptions:
+    - ro
+    - soft
+    - bg
+    - nfsvers=4.1
+    - proto=tcp
+    - timeo=30
+    - retrans=3
+    - actimeo=5
+    - rsize=1048576
+    - wsize=1048576
+    - noatime
+    - nodiratime
     - lookupcache=none
 ---
 apiVersion: v1
@@ -82,7 +121,7 @@ metadata:
   namespace: media
 spec:
   storageClassName: "jellyfin-media"
-  volumeName: jellyfin-media-nfs-pv
+  volumeName: jellyfin-media-nfs-csi-pv
   accessModes:
     - ReadOnlyMany
   resources:

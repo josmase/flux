@@ -14,6 +14,25 @@ spec:
       labels:
         app: plex
     spec:
+      initContainers:
+        - name: nfs-stale-check
+          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: plex
           image: artifactory.local.hejsan.xyz/docker/linuxserver/plex:1.41.0.8994-f2c27da23-ls238

@@ -7,7 +7,6 @@ data:
   # Point at the PC running llama.cpp on the same LAN
   LLM_HOST: "http://192.168.1.7:8090/v1"
   EMBEDDING_URL: "http://192.168.1.7:8090/v1"
-  # EMBEDDING_MODEL: "all-minilm:l6-v2"   # uncomment if needed
 
   # --- Database ---
   # DATABASE_URL is set via secretRef from db-provisioner output
@@ -17,6 +16,16 @@ data:
   LOCALHOST_BYPASS: "false"
   SECURE_COOKIES: "true"
   ALLOWED_ORIGINS: "https://odysseus.local.hejsan.xyz,http://localhost:7000"
+
+  # --- ChromaDB (vector store) ---
+  CHROMADB_HOST: "chromadb.odysseus.svc.cluster.local"
+  CHROMADB_PORT: "8000"
+
+  # --- SearXNG (web search) ---
+  SEARXNG_INSTANCE: "http://searxng.odysseus.svc:8080"
+
+  # --- Admin user ---
+  ODYSSEUS_ADMIN_USER: "admin"
 
   # --- Upload limits ---
   ODYSSEUS_CHAT_UPLOAD_MAX_BYTES: "52428800"    # 50 MB

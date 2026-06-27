@@ -20,13 +20,11 @@ spec:
     spec:
       containers:
         - name: odysseus
-          # Image tag updated by GitLab CI pipeline via k8s-deploy-image
-          # Image pulled through Artifactory proxy -> GitLab registry
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/odysseus:2026-06-17-8e1ac58d
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 3210
+              containerPort: 7000
               protocol: TCP
           envFrom:
             - configMapRef:
@@ -34,13 +32,11 @@ spec:
             - configMapRef:
                 name: default-app-config
           env:
-            # DATABASE_URL from db-provisioner output secret
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: odysseus-db-connection
                   key: uri
-            # Admin credentials from SOPS-encrypted production secret
             - name: ODYSSEUS_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -69,6 +65,12 @@ spec:
               mountPath: /app/data
             - name: logs
               mountPath: /app/logs
+            - name: ssh-keys
+              mountPath: /app/.ssh
+            - name: huggingface-cache
+              mountPath: /app/.cache/huggingface
+            - name: local-packages
+              mountPath: /app/.local
           resources:
             limits:
               memory: 4Gi
@@ -78,14 +80,14 @@ spec:
               cpu: "0.5"
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/ready
               port: http
             initialDelaySeconds: 15
             periodSeconds: 15
@@ -95,4 +97,10 @@ spec:
           persistentVolumeClaim:
             claimName: odysseus-data
         - name: logs
+          emptyDir: {}
+        - name: ssh-keys
+          emptyDir: {}
+        - name: huggingface-cache
+          emptyDir: {}
+        - name: local-packages
           emptyDir: {}

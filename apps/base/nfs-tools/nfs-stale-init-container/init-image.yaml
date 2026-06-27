@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nfs-init-image
+data:
+  # Updated by CI pipeline via k8s-deploy-image job
+  image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest

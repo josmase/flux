@@ -14,3 +14,4 @@ resources:
   - ../../base/controllers/reflector/
   - ../../base/controllers/nvidia-device-plugin/
   - ../../base/controllers/cloudnative-pg/
+  - ../../base/controllers/csi-nfs/

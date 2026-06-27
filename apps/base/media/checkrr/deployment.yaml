@@ -39,6 +39,24 @@ spec:
           volumeMounts:
             - name: checkrr-config-pvc
               mountPath: /checkrr-config
+        - name: nfs-stale-check
+          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: checkrr
           image: artifactory.local.hejsan.xyz/docker/aetaric/checkrr:3.6.1@sha256:c817e081e9397c240e5b13b09363fe26c9f94248489d3b4f0279e67495b1f12e

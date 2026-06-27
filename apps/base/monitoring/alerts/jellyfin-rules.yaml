@@ -54,3 +54,17 @@ spec:
               This may indicate stale NFS handles or probe failures.
               Check logs: kubectl logs -n {{ $labels.namespace }} {{ $labels.pod }}
               Check NFS mount: kubectl exec -n {{ $labels.namespace }} {{ $labels.pod }} -- ls /mnt/storage/files/.healthcheck
+
+        - alert: JellyfinCreateContainerError
+          expr: |
+            kube_pod_container_status_waiting_reason{namespace="media", reason="CreateContainerError"} == 1
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: jellyfin
+          annotations:
+            summary: "Jellyfin pod stuck in CreateContainerError (NFS stale mount)"
+            description: |
+              Jellyfin pod {{ $labels.pod }} cannot start because the NFS volume mount
+              is returning input/output error (stale file handle).
+              Action: ssh to GPU node and run: sudo umount -f /var/lib/kubelet/**/jellyfin-media-nfs*

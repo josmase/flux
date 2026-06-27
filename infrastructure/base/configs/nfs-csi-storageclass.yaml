@@ -1,0 +1,49 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi-jellyfin-media
+provisioner: nfs.csi.k8s.io
+allowVolumeExpansion: true
+mountOptions:
+  - ro
+  - soft
+  - bg
+  - nfsvers=4.1
+  - proto=tcp
+  - timeo=30
+  - retrans=3
+  - actimeo=5
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+  - lookupcache=none
+parameters:
+  server: storage.local.hejsan.xyz
+  share: /files
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi-shared-media
+provisioner: nfs.csi.k8s.io
+allowVolumeExpansion: true
+mountOptions:
+  - hard
+  - nfsvers=4.1
+  - async
+  - timeo=600
+  - retrans=3
+  - acregmin=30
+  - acregmax=120
+  - acdirmin=30
+  - acdirmax=120
+  - lookupcache=positive
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+parameters:
+  server: storage.local.hejsan.xyz
+  share: /

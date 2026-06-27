@@ -5,7 +5,7 @@ metadata:
   namespace: media
 spec:
   storageClassName: "manual"
-  volumeName: media-shared-nfs-pv
+  volumeName: media-shared-nfs-csi-pv  # kustomize namePrefix adds 'media-', matching PV: shared-nfs-csi-pv → media-shared-nfs-csi-pv
   accessModes:
     - ReadWriteMany
   resources:

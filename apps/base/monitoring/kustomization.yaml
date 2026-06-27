@@ -8,6 +8,7 @@ resources:
   - gotify
   - alertmanager-gotify-bridge
   - alerts
+  - servicemonitors
 
 commonLabels:
   app.kubernetes.io/part-of: monitoring

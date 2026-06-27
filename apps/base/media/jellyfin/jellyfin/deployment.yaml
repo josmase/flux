@@ -31,6 +31,25 @@ spec:
       serviceAccountName: jellyfin-log-watcher
 
       terminationGracePeriodSeconds: 120
+      initContainers:
+        - name: nfs-stale-check
+          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage/files"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage/files
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: jellyfin
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
