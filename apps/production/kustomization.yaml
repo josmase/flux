@@ -27,8 +27,6 @@ resources:
   - ../base/blog/
   - ../base/downloader/
 
-  - ../base/nfs-tools/
-
   - ../base/odysseus/
 
   - odysseus/
