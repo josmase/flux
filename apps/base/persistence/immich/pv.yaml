@@ -1,0 +1,67 @@
+---
+# In-tree NFS PV — kept for rollback; CSI-backed PV below for stale mount recovery
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: shared-nfs-pv
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: "manual"
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: storage.local.hejsan.xyz
+    path: "/"
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - async
+    - timeo=600
+    - retrans=3
+    - acregmin=30
+    - acregmax=120
+    - acdirmin=30
+    - acdirmax=120
+    - lookupcache=positive
+    - rsize=1048576
+    - wsize=1048576
+    - noatime
+    - nodiratime
+---
+# CSI-backed NFS PV — uses csi-driver-nfs for stale mount detection and auto-recovery
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: shared-nfs-csi-pv
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: "manual"
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: immich-shared-nfs
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - async
+    - timeo=600
+    - retrans=3
+    - acregmin=30
+    - acregmax=120
+    - acdirmin=30
+    - acdirmax=120
+    - lookupcache=positive
+    - rsize=1048576
+    - wsize=1048576
+    - noatime
+    - nodiratime

@@ -4,7 +4,7 @@ metadata:
   name: immich-shared-nfs-pvc
 spec:
   storageClassName: "manual"
-  volumeName: immich-shared-nfs-pv
+  volumeName: immich-shared-nfs-csi-pv
   accessModes:
     - ReadWriteMany
   resources:
