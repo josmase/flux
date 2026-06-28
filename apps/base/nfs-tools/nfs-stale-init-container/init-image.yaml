@@ -5,4 +5,4 @@ metadata:
   namespace: nfs-tools
 data:
   # Updated by CI pipeline via k8s-deploy-image job
-  image: registry.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270
+  image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270

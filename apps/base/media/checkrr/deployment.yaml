@@ -40,7 +40,7 @@ spec:
             - name: checkrr-config-pvc
               mountPath: /checkrr-config
         - name: nfs-stale-check
-          image: registry.gitlab.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:latest
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:latest
           securityContext:
             privileged: true
             capabilities:
