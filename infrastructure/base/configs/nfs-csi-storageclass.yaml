@@ -21,7 +21,7 @@ mountOptions:
   - lookupcache=none
 parameters:
   server: storage.local.hejsan.xyz
-  share: /files
+  share: /
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass

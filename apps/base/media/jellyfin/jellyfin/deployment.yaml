@@ -44,6 +44,7 @@ spec:
           volumeMounts:
             - name: shared-storage
               mountPath: /mnt/storage/files
+              subPath: files
           resources:
             requests:
               cpu: 10m
@@ -121,6 +122,7 @@ spec:
               mountPath: /config/cache/transcodes
             - name: shared-storage
               mountPath: /mnt/storage/files
+              subPath: files
               readOnly: true
         # Sidecar: tails Jellyfin container logs and deletes the pod when
         # "Stale file handle" appears. This provides fast (sub-minute)

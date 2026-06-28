@@ -98,7 +98,7 @@ spec:
     volumeHandle: jellyfin-media-nfs
     volumeAttributes:
       server: storage.local.hejsan.xyz
-      share: /files
+      share: /
   mountOptions:
     - ro
     - soft
