@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: odysseus
-          image: registry.local.hejsan.xyz/josmase/apps/odysseus:2026-06-28-36d3f78
+          image: registry.local.hejsan.xyz/josmase/apps/odysseus:2026-06-28-2038e5f
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
