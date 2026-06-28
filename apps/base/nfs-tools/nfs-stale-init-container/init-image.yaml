@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nfs-init-image
+  namespace: nfs-tools
 data:
   # Updated by CI pipeline via k8s-deploy-image job
   image: registry.local.hejsan.xyz/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270
