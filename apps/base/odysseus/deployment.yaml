@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: odysseus
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/odysseus:2026-06-17-8e1ac58d
+          image: registry.local.hejsan.xyz/josmase/apps/odysseus:2026-06-28-36d3f78
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
