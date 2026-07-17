@@ -23,7 +23,7 @@ spec:
         - name: gitlab-registry-pull
       containers:
         - name: arr-dashboard
-          image: registry.local.hejsan.xyz/external/kha-kis/arr-dashboard:latest
+          image: registry.local.hejsan.xyz/external/kha-kis/arr-dashboard:2026-07-17-dbf2da92
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
