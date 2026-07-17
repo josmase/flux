@@ -6,8 +6,3 @@ resources:
   - persistence.yaml
   - ingress.yaml
   - service.yaml
-
-labels:
-  - includeSelectors: true
-    pairs:
-      app: arr-dashboard

@@ -1,9 +1,14 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: arr-dashboard
+  labels:
+    app: arr-dashboard
 spec:
   replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
   strategy:
     type: Recreate
   selector:
@@ -14,9 +19,12 @@ spec:
       labels:
         app: arr-dashboard
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-pull
       containers:
         - name: arr-dashboard
-          image: artifactory.local.hejsan.xyz/docker/khak1s/arr-dashboard:2.21.0@sha256:57f9e975d0e2416a2e83540dd789315e73a3353184f312ad117dee706324b9b8
+          image: registry.local.hejsan.xyz/external/kha-kis/arr-dashboard:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: http

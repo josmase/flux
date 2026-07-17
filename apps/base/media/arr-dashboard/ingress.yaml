@@ -1,16 +1,18 @@
+---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: arr-dashboard
+  labels:
+    app: arr-dashboard
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`arr-dashboard.${DOMAIN_INTERNAL}`)
+    - match: Host(`arr-dashboard.${DOMAIN_EXTERNAL}`)
       kind: Rule
       services:
         - name: arr-dashboard
           port: http
-
   tls:
-    secretName: ${CERT_SECRET_INTERNAL}
+    secretName: ${CERT_SECRET_EXTERNAL}
