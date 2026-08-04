@@ -34,6 +34,10 @@ spec:
       initContainers:
         - name: nfs-stale-check
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:latest
+          # Use IfNotPresent: the image is already cached on the GPU node and
+          # the :latest tag defaults to Always, which forces a registry pull
+          # that fails (DNS sinkhole resolves the registry to 0.0.0.0 there).
+          imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
             capabilities:
