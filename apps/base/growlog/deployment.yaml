@@ -1,0 +1,32 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: growlog-web
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: growlog-web
+  template:
+    spec:
+      containers:
+        - name: growlog-web
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/web:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: API_URL
+              value: http://api:3000
+            - name: ZERO_URL
+              value: http://zero-cache:4848
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
