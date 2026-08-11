@@ -3,6 +3,8 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: growlog-web
+  labels:
+    app: growlog-web
 spec:
   entryPoints:
     - websecure

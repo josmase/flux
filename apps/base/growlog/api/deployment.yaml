@@ -1,0 +1,83 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  # No shared state yet — Recreate avoids overlapping pods during rollouts.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      initContainers:
+        # Runs schema migrations before the API accepts traffic.
+        # CONTRACT with apps/api Dockerfile (subtask 18): the api image must
+        # contain a bundled migration runner at /app/dist/migrate.js and the
+        # drizzle migration folder at /app/drizzle (copied from
+        # packages/schema/drizzle). It reads DB_URI and exits non-zero on failure.
+        - name: drizzle-migrate
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-11-PLACEHOLDER
+          env:
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+          command:
+            - bun
+            - /app/dist/migrate.js
+      containers:
+        - name: api
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-11-PLACEHOLDER
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-secrets
+                  key: BETTER_AUTH_SECRET
+            - name: BASE_URL
+              value: https://growlog.local.hejsan.xyz
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: "1"

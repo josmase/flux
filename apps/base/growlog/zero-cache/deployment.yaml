@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zero-cache
+  labels:
+    app: zero-cache
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  # RWO PVC (zero-cache-data) — Recreate avoids two pods racing for the volume.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: zero-cache
+  template:
+    metadata:
+      labels:
+        app: zero-cache
+    spec:
+      # First sync backfill against the upstream DB can take minutes.
+      terminationGracePeriodSeconds: 600
+      containers:
+        - name: zero-cache
+          image: rocicorp/zero:1.8.0
+          imagePullPolicy: IfNotPresent
+          env:
+            # Production mode is NODE_ENV=production → enforces ZERO_ADMIN_PASSWORD.
+            - name: NODE_ENV
+              value: production
+            # Direct, unpooled Postgres URL (host shared-postgres-rw.cnpg-system.svc) —
+            # Zero reads logical replication from this connection.
+            - name: ZERO_UPSTREAM_DB
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+            # Single-node setup: CVR + change DBs reuse the upstream DB.
+            # Set explicitly for clarity (docs default them to the upstream DB).
+            - name: ZERO_CVR_DB
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+            - name: ZERO_CHANGE_DB
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+            # SQLite replica persisted on the zero-cache-data PVC.
+            - name: ZERO_REPLICA_FILE
+              value: /data/replica.db
+            # Server-side auth + permissions live in the API service endpoints.
+            - name: ZERO_QUERY_URL
+              value: http://api:3000/api/zero/query
+            - name: ZERO_MUTATE_URL
+              value: http://api:3000/api/zero/mutate
+            # All writes go through the API mutate endpoint, not CRUD mutations.
+            - name: ZERO_ENABLE_CRUD_MUTATIONS
+              value: "false"
+            - name: ZERO_APP_ID
+              value: growlog
+            - name: ZERO_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-secrets
+                  key: ZERO_ADMIN_PASSWORD
+          ports:
+            - name: zero
+              containerPort: 4848
+          # GET /keepalive is the documented health endpoint (ZERO_PORT default 4848).
+          # failureThreshold 6 at periodSeconds 10 tolerates slow backfill startup.
+          livenessProbe:
+            httpGet:
+              path: /keepalive
+              port: 4848
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /keepalive
+              port: 4848
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: "1"
+          volumeMounts:
+            - name: zero-cache-data
+              mountPath: /data
+      volumes:
+        - name: zero-cache-data
+          persistentVolumeClaim:
+            claimName: zero-cache-data

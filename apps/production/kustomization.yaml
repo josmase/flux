@@ -28,6 +28,7 @@ resources:
   - ../base/downloader/
 
   - ../base/growlog/
+  - growlog/
 
   - ../base/odysseus/
 
