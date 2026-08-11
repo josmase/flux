@@ -30,7 +30,7 @@ flux-validate:
       -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops && sops --version
 
     - curl -sL "https://github.com/fluxcd/flux2/releases/download/v2.9.4/flux_2.9.4_linux_amd64.tar.gz"
-      | tar zxf - -C /usr/local/bin/ flux && flux version
+      | tar zxf - -C /usr/local/bin/ flux && flux --version
 
     - pip3 install --no-cache-dir pyyaml
 
