@@ -24,10 +24,12 @@ flux-validate:
     - curl -sL "https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz"
       | tar zxf - -C /usr/local/bin/ kubeconform && kubeconform -v
 
-    - curl -sL "https://github.com/getsops/sops/releases/latest/download/sops-v3.13.1.linux.amd64"
+    # Pin exact release versions: /releases/latest/download 404s once the latest
+    # release changes its asset names (broke on sops v3.13.2+).
+    - curl -sL "https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.linux.amd64"
       -o /usr/local/bin/sops && chmod +x /usr/local/bin/sops && sops --version
 
-    - curl -sL "https://github.com/fluxcd/flux2/releases/latest/download/flux_VERSION_linux_amd64.tar.gz"
+    - curl -sL "https://github.com/fluxcd/flux2/releases/download/v2.9.4/flux_2.9.4_linux_amd64.tar.gz"
       | tar zxf - -C /usr/local/bin/ flux && flux version
 
     - pip3 install --no-cache-dir pyyaml
