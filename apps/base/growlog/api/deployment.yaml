@@ -60,7 +60,7 @@ spec:
               containerPort: 3000
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -68,7 +68,7 @@ spec:
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 10
