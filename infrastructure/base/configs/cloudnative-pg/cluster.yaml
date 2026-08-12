@@ -12,6 +12,12 @@ spec:
   # --- PostgreSQL image ---
   imageName: ghcr.io/cloudnative-pg/postgresql:17.2
 
+  # Superuser credentials come from a sops-encrypted secret (managed in the
+  # production overlay) instead of CNPG auto-generating them, so the shared
+  # postgres superuser password is versioned as IaC.
+  superuserSecret:
+    name: shared-postgres-superuser
+
   # --- PostgreSQL configuration ---
   postgresql:
     pg_hba:

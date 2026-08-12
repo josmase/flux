@@ -10,3 +10,4 @@ resources:
 
   # Production secrets
   - secret-cf-token.yaml
+  - secret-shared-postgres-superuser.yaml
