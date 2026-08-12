@@ -10,6 +10,13 @@ data:
   database: growlog
   users: |
     [{"name": "growlog-user", "role": "replication", "secret": "growlog-db-connection"}]
+  # Superuser-only setup, run once by the provisioner in the growlog DB.
+  # Creates the Zero data publication that zero-cache consumes (via
+  # ZERO_APP_PUBLICATIONS) — avoids giving growlog-user SUPERUSER, which
+  # PostgreSQL 17 requires for "FOR TABLES IN SCHEMA" publications.
+  postInitSQL: |
+    DROP PUBLICATION IF EXISTS growlog_data;
+    CREATE PUBLICATION growlog_data FOR TABLES IN SCHEMA public WITH (publish_via_partition_root = true);
 ---
 # Provisioner Job — connects to shared-postgres (CNPG superuser via db-provisioner SA),
 # creates DB + users, writes Secret growlog-db-connection (uri key).
@@ -28,7 +35,7 @@ spec:
       serviceAccountName: db-provisioner
       containers:
         - name: provision
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-08-11-f3b93a37
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-08-13-0f6592ae
           env:
             - name: PG_HOST
               value: shared-postgres-rw.cnpg-system.svc
