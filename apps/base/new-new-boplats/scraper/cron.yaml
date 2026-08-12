@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: new-new-boplats-scraper
-              image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/scraper:2026-08-11-1be95ecc
+              image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/scraper:2026-08-13-b0ac39c3
               env:
                 - name: "DB_URI"
                   valueFrom:
