@@ -28,7 +28,7 @@ spec:
       serviceAccountName: db-provisioner
       containers:
         - name: provision
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-08-11-f3b93a3
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-08-11-f3b93a37
           env:
             - name: PG_HOST
               value: shared-postgres-rw.cnpg-system.svc
