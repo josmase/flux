@@ -35,11 +35,8 @@ mountOptions:
   - async
   - timeo=600
   - retrans=3
-  - acregmin=30
-  - acregmax=120
-  - acdirmin=30
-  - acdirmax=120
-  - lookupcache=positive
+  - actimeo=5
+  - lookupcache=none
   - rsize=1048576
   - wsize=1048576
   - noatime
