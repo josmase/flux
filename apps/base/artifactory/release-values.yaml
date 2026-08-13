@@ -1,25 +1,36 @@
 ## All values are under the 'artifactory' sub chart. According to https://github.com/jfrog/charts/blob/master/stable/artifactory-jcr/values.yaml
 artifactory:
-  databaseUpgradeReady: true
+  databaseUpgradeReady: "yes"
 
   artifactory:
     replicaCount: 1
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
-    
+
     persistence:
       size: 150Gi
-    #  existingClaim: artifactory-pvc
   nginx:
     enabled: true
   ingress:
     enabled: true
+    className: traefik
     hosts:
       - artifactory.local.hejsan.xyz
     tls:
       - secretName: local-hejsan-xyz-tls
   postgresql:
-    postgresqlPassword: somepassword
-    persistence:
-      enabled: true
-      size: 50Gi
+    # Pin PostgreSQL to the current (15.6) image to avoid an in-place 15->17
+    # data-directory migration during this chart upgrade. Upgrade PostgreSQL
+    # separately (dump/restore or pg_upgrade) at a later time.
+    image:
+      registry: releases-docker.jfrog.io
+      repository: bitnami/postgresql
+      tag: 15.6.0-debian-11-r16
+    auth:
+      username: artifactory
+      password: somepassword
+      database: artifactory
+    primary:
+      persistence:
+        enabled: true
+        size: 50Gi
