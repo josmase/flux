@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: growlog-web
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/web:2026-08-13-d02872d6
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/web:2026-08-13-bf3ce33c
           imagePullPolicy: IfNotPresent
           env:
             - name: API_URL
