@@ -27,7 +27,7 @@ spec:
         # drizzle migration folder at /app/drizzle (copied from
         # packages/schema/drizzle). It reads DB_URI and exits non-zero on failure.
         - name: drizzle-migrate
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-13-a9279d08
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-13-d02872d6
           env:
             - name: DB_URI
               valueFrom:
@@ -39,7 +39,7 @@ spec:
             - /app/dist/migrate.js
       containers:
         - name: api
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-13-a9279d08
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/api:2026-08-13-d02872d6
           env:
             - name: PORT
               value: "3000"
