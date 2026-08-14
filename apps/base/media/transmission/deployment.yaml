@@ -39,6 +39,15 @@ spec:
           ports:
             - containerPort: 9091
               name: http
+            - containerPort: 51413
+              name: peer-tcp
+              protocol: TCP
+            - containerPort: 51413
+              name: peer-udp
+              protocol: UDP
+          env:
+            - name: PEERPORT
+              value: "51413"
           envFrom:
             - configMapRef:
                 name: default-app-config
