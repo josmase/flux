@@ -1,0 +1,79 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: media
+  labels:
+    app: media
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  # RWO PVC (media-data) — Recreate avoids two pods racing for the volume.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: media
+  template:
+    metadata:
+      labels:
+        app: media
+    spec:
+      containers:
+        - name: media
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/media:placeholder
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3000"
+            # Shared growlog DB — media only reads the better-auth session/user
+            # tables to validate bearer tokens; it never runs migrations.
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-db-connection
+                  key: uri
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-secrets
+                  key: BETTER_AUTH_SECRET
+            - name: BASE_URL
+              value: https://growlog.local.hejsan.xyz
+            # Disk-backed blob store (Longhorn PVC), keyed users/{uid}/plants/{pid}/…
+            - name: STORAGE_DIR
+              value: /data
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 5
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: "1"
+          volumeMounts:
+            - name: media-data
+              mountPath: /data
+      volumes:
+        - name: media-data
+          persistentVolumeClaim:
+            claimName: media-data
