@@ -93,13 +93,11 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   csi:
     driver: nfs.csi.k8s.io
-    readOnly: true
     volumeHandle: jellyfin-media-nfs
     volumeAttributes:
       server: storage.local.hejsan.xyz
       share: /
   mountOptions:
-    - ro
     - soft
     - bg
     - nfsvers=4.1
