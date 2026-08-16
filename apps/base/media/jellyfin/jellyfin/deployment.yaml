@@ -127,7 +127,6 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage/files
               subPath: files
-              readOnly: true
         # Sidecar: tails Jellyfin container logs and deletes the pod when
         # "Stale file handle" appears. This provides fast (sub-minute)
         # recovery when transient stale handles aren't persistent enough
