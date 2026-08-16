@@ -27,3 +27,5 @@ kubeconfig*
 talosconfig*
 *.pub
 *.key
+# OpenCode session state
+.tmp/
