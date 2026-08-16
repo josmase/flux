@@ -272,8 +272,17 @@ def reshare_process(instance, add_file, drop_file, new_root):
     ensure_root_folder(instance, new_root)
     profile = default_quality_profile(instance)
 
+    # idempotency: snapshot current state once so re-runs only do remaining work
+    cur = api(instance, "GET", "/movie") or []
+    existing_tmdb = {m.get("tmdbId") for m in cur}
+    current_ids   = {m["id"] for m in cur}
+
     added_ids = []
+    skipped_add = 0
     for r in adds:
+        if r["tmdbId"] in existing_tmdb:
+            skipped_add += 1
+            continue
         obj = lookup_or_source(instance, r["tmdbId"], r["src"], r["src_id"])
         if obj is None:
             print(f"  !! add failed (no lookup for {r['title'][:40]}), skipped", file=sys.stderr)
@@ -289,10 +298,14 @@ def reshare_process(instance, add_file, drop_file, new_root):
         res = api(instance, "POST", "/movie", obj)
         if isinstance(res, dict) and res.get("id"):
             added_ids.append(res["id"])
-    print(f"  added {len(added_ids)}/{len(adds)}")
+            existing_tmdb.add(r["tmdbId"])
+    print(f"  added {len(added_ids)}/{len(adds)} (skipped {skipped_add} already present)")
 
     dropped = 0
     for r in drops:
+        if r["id"] not in current_ids:
+            dropped += 1  # already dropped in a previous run
+            continue
         if api(instance, "DELETE", f"/movie/{r['id']}?deleteFiles=false") is not None:
             dropped += 1
     print(f"  dropped {dropped}/{len(drops)}")
