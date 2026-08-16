@@ -76,10 +76,10 @@ key_for() { # kind (radarr|sonarr) num
   fi
 }
 
-# discover instances from the plans dir
-RADARR_INSTANCES=$(ls "$PLANS_DIR"/radarr-*.add.tsv "$PLANS_DIR"/radarr-*.drop.tsv "$PLANS_DIR"/radarr-*.plan.tsv 2>/dev/null \
+# discover instances from the plans dir (nullglob: reshare mode has no *.plan.tsv)
+RADARR_INSTANCES=$(shopt -s nullglob; files=("$PLANS_DIR"/radarr-*.add.tsv "$PLANS_DIR"/radarr-*.drop.tsv "$PLANS_DIR"/radarr-*.plan.tsv); printf '%s\n' "${files[@]}" \
   | sed -E 's/.*radarr-([0-9]+)\.(add|drop|plan)\.tsv/\1/' | sort -n -u | tr '\n' ' ')
-SONARR_INSTANCES=$(ls "$PLANS_DIR"/sonarr-*.plan.tsv 2>/dev/null \
+SONARR_INSTANCES=$(shopt -s nullglob; files=("$PLANS_DIR"/sonarr-*.plan.tsv); printf '%s\n' "${files[@]}" \
   | sed -E 's/.*sonarr-([0-9]+)\.plan\.tsv/\1/' | sort -n -u | tr '\n' ' ')
 
 [[ -n "$RADARR_INSTANCES" ]] || { echo "ERROR: no radarr plan files found in $PLANS_DIR" >&2; exit 1; }

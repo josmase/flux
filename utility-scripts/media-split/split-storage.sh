@@ -19,6 +19,10 @@
 #   and moves every movie folder to its NEW owner's subdir (from the owners
 #   TSV). Items already in their owner's subdir are skipped. This re-routes
 #   movies/1/X -> movies/9/X etc. after build-mapping.sh --reshare.
+#   If a target already exists (a duplicate copy of the same folder lives in
+#   another subdir), the source copy is DELETED and recorded in a dedupe
+#   manifest. The copy that survives is always the one in the owner's subdir
+#   (or the first one moved there), so the managed copy is preserved.
 #
 # Modes:
 #   --dry-run   (default) build and print the move plan, make no changes
@@ -31,7 +35,9 @@
 #   --manifest FILE     rollback manifest path (default:
 #                       /mnt/storage/backups/media-split-manifest-<timestamp>.tsv)
 #   --workdir DIR       scratch dir for the move plan (default: /tmp/media-split-work)
-#   --reroute           re-route items between numbered subdirs (re-shard)
+#   --reroute           re-route items between numbered subdirs (re-shard);
+#                       on target collision the source copy is DELETED
+#                       (dedupe) and logged in <manifest>.dedupe
 #
 # Examples:
 #   split-storage.sh --mapping-dir /tmp/media-split --dry-run
@@ -114,7 +120,7 @@ def target_dirs(owners):
 movies_targets = target_dirs(movies_owners)
 series_targets = target_dirs(series_owners)
 
-stats = {"movie_mv": 0, "movie_orphan": 0, "series_mv": 0, "series_orphan": 0, "skip": 0}
+stats = {"movie_mv": 0, "movie_orphan": 0, "series_mv": 0, "series_orphan": 0, "skip": 0, "dedupe": 0}
 
 def emit_mkdirs(src_root, targets):
     for target in targets:
@@ -170,11 +176,15 @@ for drive in drives:
                         if dst_owner == subdir:
                             continue  # already in the right subdir
                         dst = os.path.join(src_root, dst_owner, name)
-                        stats[f"{kind}_mv"] += 1
-                    if not os.path.lexists(dst):
-                        print(f"MV\t{src}\t{dst}")
-                    else:
-                        stats["skip"] += 1
+                        if not os.path.lexists(dst):
+                            stats[f"{kind}_mv"] += 1
+                            print(f"MV\t{src}\t{dst}")
+                        else:
+                            # target exists: a duplicate copy of the same folder
+                            # lives elsewhere; keep the one in the owner subdir
+                            # and delete this redundant source copy
+                            stats["dedupe"] += 1
+                            print(f"DEL\t{src}\t{dst}")
 
 import sys
 print("STATS\t" + "\t".join(f"{k}={v}" for k, v in stats.items()), file=sys.stderr)
@@ -188,6 +198,7 @@ fi
 echo "Move plan: $PLAN_FILE"
 echo "--- plan summary ---"
 echo "MV lines:   $(grep -c '^MV' "$PLAN_FILE")"
+echo "DEL lines:  $(grep -c '^DEL' "$PLAN_FILE")"
 echo "MKDIR lines: $(grep -c '^MKDIR' "$PLAN_FILE")"
 
 if [[ "$EXECUTE" == "0" ]]; then
@@ -223,5 +234,25 @@ while IFS=$'\t' read -r op src dst; do
   mv_count=$((mv_count + 1))
 done < "$PLAN_FILE"
 
-echo "DONE: $mv_count moves performed."
+# 3) DEL lines (dedupe): remove the redundant copy, log for audit/rollback
+dedupe_manifest="$MANIFEST.dedupe"
+: > "$dedupe_manifest"
+del_count=0
+while IFS=$'\t' read -r op src dst; do
+  [[ "$op" == "DEL" ]] || continue
+  if [[ ! -e "$src" ]]; then
+    echo "SKIP (source gone): $src" >&2
+    continue
+  fi
+  if [[ -e "$dst" ]]; then
+    rm -rf -- "$src"
+    printf '%s\t%s\n' "$src" "$dst" >> "$dedupe_manifest"
+    del_count=$((del_count + 1))
+  else
+    echo "SKIP (dedupe target gone): $dst" >&2
+  fi
+done < "$PLAN_FILE"
+
+echo "DONE: $mv_count moves, $del_count dedupe deletes performed."
 echo "Rollback manifest: $MANIFEST"
+echo "Dedupe manifest:   $dedupe_manifest"
