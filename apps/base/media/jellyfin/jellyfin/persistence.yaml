@@ -55,13 +55,12 @@ spec:
   volumeMode: Filesystem
   storageClassName: "jellyfin-media"
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: storage.local.hejsan.xyz
     path: "/files"
-  mountOptions:
-    - ro
+  mountOptions:  
     - soft
     - bg
     - nfsvers=4.1
@@ -90,7 +89,7 @@ spec:
   volumeMode: Filesystem
   storageClassName: "jellyfin-media"
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   csi:
     driver: nfs.csi.k8s.io
@@ -123,7 +122,7 @@ spec:
   storageClassName: "jellyfin-media"
   volumeName: jellyfin-media-nfs-csi-pv
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 110Ti
