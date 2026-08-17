@@ -76,20 +76,21 @@ spec:
 ---
 # CSI-backed NFS PV for Jellyfin media — uses csi-driver-nfs for built-in
 # stale mount detection (os.Lstat → ESTALE) and auto-remount.
+# Read/write enabled via mountOptions and mountPermissions (NFS export uses anonuid=1000)
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: jellyfin-media-nfs-csi-pv
   labels:
     media-app: jellyfin
-    purpose: media-readonly
+    purpose: media-readwrite
 spec:
   capacity:
     storage: 110Ti
   volumeMode: Filesystem
   storageClassName: "jellyfin-media"
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   csi:
     driver: nfs.csi.k8s.io
@@ -97,19 +98,16 @@ spec:
     volumeAttributes:
       server: storage.local.hejsan.xyz
       share: /
+      mountPermissions: "0775"
   mountOptions:
-    - soft
-    - bg
+    - hard
+    - rw
     - nfsvers=4.1
     - proto=tcp
-    - timeo=30
+    - timeo=600
     - retrans=3
-    - actimeo=5
     - rsize=1048576
     - wsize=1048576
-    - noatime
-    - nodiratime
-    - lookupcache=none
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -120,7 +118,7 @@ spec:
   storageClassName: "jellyfin-media"
   volumeName: jellyfin-media-nfs-csi-pv
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 110Ti

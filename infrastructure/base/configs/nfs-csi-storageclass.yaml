@@ -6,22 +6,18 @@ metadata:
 provisioner: nfs.csi.k8s.io
 allowVolumeExpansion: true
 mountOptions:
-  - ro
-  - soft
-  - bg
+  - hard
+  - rw
   - nfsvers=4.1
   - proto=tcp
-  - timeo=30
+  - timeo=600
   - retrans=3
-  - actimeo=5
   - rsize=1048576
   - wsize=1048576
-  - noatime
-  - nodiratime
-  - lookupcache=none
 parameters:
   server: storage.local.hejsan.xyz
   share: /
+  mountPermissions: "0775"
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass

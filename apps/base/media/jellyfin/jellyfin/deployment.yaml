@@ -30,6 +30,20 @@ spec:
 
       serviceAccountName: jellyfin-log-watcher
 
+      # Security context for Jellyfin (UID/GID 991) and NFS volume permissions
+      # Note: fsGroup requires NFS export with no_root_squash or squash_uid=991.
+      # Current export uses anonuid=1000, so fsGroup chown will fail on NFS mount.
+      # Workaround: CSI driver mountPermissions: "0775" set on PV/StorageClass.
+      # fsGroup still applies to Longhorn config PVC (jellyfin-config-pvc).
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+        fsGroupChangePolicy: "OnRootMismatch"
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
       terminationGracePeriodSeconds: 120
       initContainers:
         - name: nfs-stale-check
