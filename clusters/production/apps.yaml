@@ -16,7 +16,7 @@ spec:
   prune: true
   timeout: 30m0s
   force: true  # Force server-side apply to handle immutable fields
-  suspend: true  # Temporarily suspended during sonarr 2->6 split
+  # suspend: true  # Removed after sonarr 2->6 split complete
   decryption:
     provider: sops
     secretRef:
