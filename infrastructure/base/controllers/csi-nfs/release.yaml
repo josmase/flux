@@ -33,3 +33,17 @@ spec:
     # Don't create the default storage class — we define our own
     storageClass:
       create: false
+  # NFS volumes are pre-provisioned and shared with root squashing enabled.
+  # Prevent kubelet from recursively changing their ownership for pod fsGroup.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: storage.k8s.io
+              version: v1
+              kind: CSIDriver
+              name: nfs.csi.k8s.io
+            patch: |-
+              - op: add
+                path: /spec/fsGroupPolicy
+                value: "None"
