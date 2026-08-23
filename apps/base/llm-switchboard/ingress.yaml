@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: llm-switchboard
+  labels:
+    app: llm-switchboard
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`llm-switchboard.${DOMAIN_INTERNAL}`)
+      kind: Rule
+      services:
+        - name: llm-switchboard
+          port: http
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-switchboard
+  labels:
+    app: llm-switchboard
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate # SQLite on RWO PVC — never run two pods
+  selector:
+    matchLabels:
+      app: llm-switchboard
+  template:
+    metadata:
+      labels:
+        app: llm-switchboard
+    spec:
+      containers:
+        - name: llm-switchboard
+          image: registry.local.hejsan.xyz/josmase/apps/llm-switchboard:init # replaced by CI deploy job
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8787
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: llm-switchboard-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "0.5"
+            requests:
+              memory: 128Mi
+              cpu: "0.1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: llm-switchboard-data

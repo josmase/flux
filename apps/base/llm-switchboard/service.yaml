@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-switchboard
+  labels:
+    app: llm-switchboard
+spec:
+  selector:
+    app: llm-switchboard
+  ports:
+    - name: http
+      port: 8787
+      targetPort: 8787
