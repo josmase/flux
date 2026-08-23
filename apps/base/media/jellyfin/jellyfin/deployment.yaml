@@ -62,6 +62,28 @@ spec:
               memory: 32Mi
             limits:
               memory: 64Mi
+        # Pre-create the extracted-subtitle cache dir on the NFS share with
+        # correct ownership. kubelet auto-creates missing subPath dirs as
+        # root; the export root-squashes to anonuid=1000 so this lands as
+        # PUID 1000 anyway, but doing it explicitly keeps it deterministic.
+        # Digest-pinned + IfNotPresent so no pull is needed on the GPU node.
+        - name: subtitle-cache-init
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - mkdir -p /cache && chown 1000:1000 /cache
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /cache
+              subPath: files/.jellyfin-subtitle-cache
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
       containers:
         - name: jellyfin
           image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
@@ -134,6 +156,14 @@ spec:
             - name: shared-storage
               mountPath: /mnt/storage/files
               subPath: files
+            # Extracted-subtitle cache on the big NFS share instead of the
+            # 80Gi config PVC: SubtitleEncoder extraction grows unbounded
+            # (53G observed) and filled the config volume. Pure cache -
+            # Jellyfin re-extracts on demand. Dot-prefix keeps it invisible
+            # to library scans and other media tooling.
+            - name: shared-storage
+              mountPath: /config/data/data/subtitles
+              subPath: files/.jellyfin-subtitle-cache
         # Sidecar: tails Jellyfin container logs and deletes the pod when
         # "Stale file handle" appears. This provides fast (sub-minute)
         # recovery when transient stale handles aren't persistent enough
