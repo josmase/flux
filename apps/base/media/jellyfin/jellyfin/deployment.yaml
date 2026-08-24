@@ -3,9 +3,7 @@ kind: Deployment
 metadata:
   name: jellyfin
 spec:
-  # TEMPORARY zero-scale for config PVC migration (docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md)
-  # Phase A of the plan; restored to 1 in the cutover commit.
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -197,7 +195,7 @@ spec:
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
-            claimName: jellyfin-config-pvc-jellyfin-0
+            claimName: jellyfin-config-pvc-jellyfin-0-v2
         - name: jellyfin-transcode-pvc
           emptyDir: {}
         - name: shared-storage

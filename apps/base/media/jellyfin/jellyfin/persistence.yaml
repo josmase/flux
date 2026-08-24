@@ -1,44 +1,8 @@
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pvc-9175b25b-a542-4cac-bc9c-661e25ff4484
-  labels:
-    media-app: jellyfin
-spec:
-  capacity:
-    storage: 80Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: longhorn-gpu
-  csi:
-    driver: driver.longhorn.io
-    fsType: ext4
-    volumeHandle: pvc-9175b25b-a542-4cac-bc9c-661e25ff4484
-    volumeAttributes:
-      numberOfReplicas: "3"
-      staleReplicaTimeout: "20"
-  volumeMode: Filesystem
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-config-pvc-jellyfin-0
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn-gpu
-  selector:
-    matchLabels:
-      media-app: jellyfin
-  resources:
-    requests:
-      storage: 80Gi
----
 # Right-sized replacement volume (40Gi x 2 replicas via longhorn-gpu SC defaults).
 # Migration plan: docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md
-# Old 80Gi volume above is retained until the post-cutover confidence window closes.
+# Previous 80Gi volume (pvc-9175b25b-a542-4cac-bc9c-661e25ff4484, Retain) is kept
+# in the cluster as rollback safety net until the confidence window closes --
+# do NOT delete it before then. See §5 of the plan for the rollback procedure.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
