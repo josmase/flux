@@ -31,4 +31,5 @@ spec:
       ENVIRONMENT: "production"
       LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
       NETBOOT_IP: "192.168.1.183"
+      LIVE_ENDPOINT: "http://netboot-assets.local.hejsan.xyz"
       TRANSMISSION_PEER_IP: "192.168.1.184"
