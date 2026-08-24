@@ -13,23 +13,23 @@ Turns the incident's recommendations into concrete, verifiable work items ground
 
 ## Phase 0 — Guardrails (immediate, < half a day)
 
-### 0.1 Verify orphan auto-deletion actually works ⚠️ *highest suspicion item*
+### 0.1 Orphan auto-deletion — verified against live cluster ✅ *investigated 2026-08-24*
 
-The HelmRelease already set `orphanAutoDeletion: true`
-(`infrastructure/base/controllers/longhorn/release.yaml`), yet the incident's 123 GB orphaned
-replica dir was never reclaimed. In Longhorn v1.7 the legacy boolean is superseded by
-`orphan-resource-auto-deletion`, which takes an explicit resource-type list — the old key may be
-a silent no-op. **Status: fix merged into `release.yaml`; cluster verification pending Flux
-apply.**
+The HelmRelease had `orphanAutoDeletion: true` all along, and ground truth from the live
+cluster (88 Settings CRs enumerated on longhorn-manager v1.7.1) shows **only the legacy
+boolean exists in this version** — the granular `orphan-resource-auto-deletion` list arrives
+in a later Longhorn series. The attempted migration to the new key was reverted (it would
+have been a silent no-op).
+
+**Conclusion:** auto-deletion *was* enabled; the incident orphan survived because Longhorn's
+agents were dead during the DiskPressure deadlock window, not because of a broken setting.
+The real mitigations are Phase 1 alerting (detect the growth) and the runbook (break the
+deadlock fast). Revisit `orphanResourceAutoDeletion` when upgrading beyond v1.7.x:
 
 ```bash
-# What does the cluster think is set?
-kubectl -n longhorn-system get settings.longhorn.io \
-  -o custom-columns=NAME:.metadata.name,VALUE:.value --no-headers | grep -i orphan
+# After any Longhorn upgrade, check whether the granular setting is available:
+kubectl -n longhorn-system get settings.longhorn.io --no-headers | grep -i orphan
 ```
-
-**Verify:** the `orphan-resource-auto-deletion` Settings CR shows `replica-data-dir` and any
-orphaned-data CRs are reaped: `kubectl -n longhorn-system get orphandata -o name`.
 
 ### 0.2 Delete stale restore-era recurring job groups ✅ *done 2026-08-24*
 
