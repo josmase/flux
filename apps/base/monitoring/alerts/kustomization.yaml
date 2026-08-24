@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - deployment-statefulset-rules.yaml
   - jellyfin-rules.yaml
+  - node-storage-rules.yaml
 
 labels:
   - pairs:

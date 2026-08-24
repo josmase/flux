@@ -26,7 +26,10 @@ spec:
       disableReplicaRebuildOnCurrentNode: true
       allowVolumeCreationWithDegradedAvailability: false
       autoDeletePodWhenVolumeDetachedUnexpectedly: true
-      orphanAutoDeletion: true
+      # v1.7+ replacement for the deprecated boolean orphanAutoDeletion.
+      # The legacy key was set to true while a 123G orphaned replica-data-dir
+      # survived on ubuntu-ms-7977 (see docs/INCIDENT_2026-08-23_GPU_NODE_STORAGE.md).
+      orphanResourceAutoDeletion: "replica-data-dir"
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       replicaAutoBalance: least-effort
       defaultRecurringJobSelector:

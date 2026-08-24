@@ -1,0 +1,117 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: node-storage-alerts
+  namespace: monitoring
+spec:
+  groups:
+    # ------------------------------------------------------------------
+    # Node filesystem / kubelet pressure
+    # Fires weeks before DiskPressure evicts workloads.
+    # Ref: docs/INCIDENT_2026-08-23_GPU_NODE_STORAGE.md
+    # ------------------------------------------------------------------
+    - name: node-storage.rules
+      interval: 30s
+      rules:
+        - alert: NodeFilesystemAlmostFull
+          expr: |
+            (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay|squashfs"}
+              / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay|squashfs"}) < 0.20
+            and on(instance, mountpoint)
+            node_filesystem_readonly{mountpoint="/"} == 0
+          for: 10m
+          labels:
+            severity: warning
+            component: node-storage
+          annotations:
+            summary: "Root FS on {{ $labels.instance }} down to {{ $value | humanizePercentage }} free"
+            description: |
+              Available space below 20% for 10 minutes. At ~15% the kubelet raises
+              DiskPressure and starts evicting workloads. Investigate large consumers:
+              container images, /var/log, Longhorn replicas (/var/lib/longhorn).
+              Runbook: docs/RUNBOOK_DISK_PRESSURE.md
+
+        - alert: NodeFilesystemCritical
+          expr: |
+            (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay|squashfs"}
+              / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay|squashfs"}) < 0.12
+            and on(instance, mountpoint)
+            node_filesystem_readonly{mountpoint="/"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            component: node-storage
+          annotations:
+            summary: "Root FS on {{ $labels.instance }} down to {{ $value | humanizePercentage }} free"
+            description: |
+              Available space below 12% — DiskPressure eviction is imminent or active.
+              Act immediately per docs/RUNBOOK_DISK_PRESSURE.md.
+
+        - alert: NodeDiskPressure
+          expr: |
+            kube_node_status_condition{condition="DiskPressure",status="true"} == 1
+          for: 1m
+          labels:
+            severity: critical
+            component: node-storage
+          annotations:
+            summary: "Node {{ $labels.node }} has DiskPressure"
+            description: |
+              Kubelet reports DiskPressure on {{ $labels.node }}. Pods are being evicted
+              and scheduling is blocked. Free space or relax thresholds temporarily,
+              then address the underlying consumer.
+              Runbook: docs/RUNBOOK_DISK_PRESSURE.md
+
+    # ------------------------------------------------------------------
+    # Longhorn storage health
+    # NOTE: longhorn_volume_robustness only emits series for a subset of
+    # volumes (observed during implementation); value mapping verified
+    # empirically as 1 = degraded. CR-level truth remains
+    # `kubectl -n longhorn-system get volumes.longhorn.io`.
+    # ------------------------------------------------------------------
+    - name: longhorn-storage.rules
+      interval: 60s
+      rules:
+        - alert: LonghornVolumeDegraded
+          expr: |
+            longhorn_volume_robustness == 1
+          for: 15m
+          labels:
+            severity: warning
+            component: longhorn
+          annotations:
+            summary: "Longhorn volume {{ $labels.pvc }} ({{ $labels.pvc_namespace }}) degraded"
+            description: |
+              Volume {{ $labels.volume }} has been degraded for >15m (rebuilding or
+              reduced redundancy). If it does not return to healthy, check replica
+              failures and node disk space.
+
+        - alert: LonghornNodeStorageHigh
+          expr: |
+            longhorn_node_storage_usage_bytes / longhorn_node_storage_capacity_bytes > 0.80
+          for: 15m
+          labels:
+            severity: warning
+            component: longhorn
+          annotations:
+            summary: "Longhorn storage on {{ $labels.node }} above 80%"
+            description: |
+              Longhorn usage on {{ $labels.node }} exceeds 80% of capacity. Replica
+              scheduling and rebuilds may fail once minimal-available threshold (25%)
+              is crossed.
+
+        - alert: LonghornVolumeActualNearCapacity
+          expr: |
+            longhorn_volume_actual_size_bytes
+              / longhorn_volume_capacity_bytes > 0.90
+          for: 30m
+          labels:
+            severity: warning
+            component: longhorn
+          annotations:
+            summary: "Volume {{ $labels.pvc }} actual usage near provisioned size"
+            description: |
+              Actual on-disk usage of {{ $labels.volume }} (incl. snapshot generations)
+              is above 90% of provisioned capacity. Snapshot coalescing may be stalled;
+              check snapshot count and consider snapshot-cleanup / fs-trim jobs.
