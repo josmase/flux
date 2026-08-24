@@ -9,11 +9,9 @@ spec:
       app: resume
   template:
     spec:
-      imagePullSecrets:
-        - name: gitlab-registry-pull
       containers:
         - name: resume
-          image: registry.local.hejsan.xyz/josmase/personal/resume:2026-06-07-826455b7
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/personal/resume:2026-06-07-826455b7
           ports:
             - containerPort: 80
           resources:

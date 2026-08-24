@@ -39,6 +39,21 @@ This repository supports multiple environments (production and development) with
 - **Production**: Full infrastructure stack with Longhorn storage, all applications, and Let's Encrypt production certificates
 - **Development**: Minimal infrastructure (cert-manager, traefik, reflector), reduced resources, and Let's Encrypt staging certificates
 
+### Image Pull Convention (MANDATORY)
+
+**All cluster image pulls go through Artifactory (`artifactory.local.hejsan.xyz`) — never directly from the GitLab container registry.**
+
+| Image origin | URL pattern |
+|---|---|
+| josmase GitLab registry (via pull-through proxy) | `artifactory.local.hejsan.xyz/gitlab-registry/<project-path>:<tag>` |
+| Docker Hub (via proxy) | `artifactory.local.hejsan.xyz/docker/<upstream-path>:<tag>` |
+
+Rules:
+
+- Artifactory exposes public/anonymous pull endpoints → **no `imagePullSecrets`**; never reference or create `gitlab-registry-pull` for new deployments
+- CI pipelines write Artifactory URLs into manifests via the `ARTIFACTORY_REGISTRY` variable (see `k8s-deploy-image.yml` in ci-templates)
+- Remote repos cache on first pull — a fresh tag may 404 until the first deployment requests it
+
 ### Quick Setup (Automated)
 
 > **Note:** You need to create a Personal Access Token (PAT) with full repository access. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) and generate a new token with the `repo` scope selected.

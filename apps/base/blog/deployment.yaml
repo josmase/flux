@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: registry.local.hejsan.xyz/josmase/apps/blog:2026-08-13-335f7c90
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/blog:2026-08-13-335f7c90
           imagePullPolicy: IfNotPresent
           resources:
             limits:

@@ -20,7 +20,10 @@ spec:
     spec:
       containers:
         - name: llm-switchboard
-          image: registry.local.hejsan.xyz/josmase/apps/llm-switchboard:2026-08-23-dc0d80ea # replaced by CI deploy job
+<<<<<<< HEAD
+=======
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/llm-switchboard:2026-08-23-dc0d80ea # replaced by CI deploy job
+>>>>>>> 07ed47c (feat(registry): pull all images via Artifactory public endpoint)
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
