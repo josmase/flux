@@ -29,12 +29,10 @@ resources:
   - ../base/growlog/
   - growlog/
 
-  - ../base/odysseus/
 
   - ../base/llm-switchboard/
   - llm-switchboard/
 
-  - odysseus/
   - immich/
   - cloudflare-ddns/
   - artifactory/
