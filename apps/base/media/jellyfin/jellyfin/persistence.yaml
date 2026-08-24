@@ -8,6 +8,11 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config-pvc-jellyfin-0-v2
   namespace: media
+  labels:
+    # Longhorn picks this up: runs the Git-managed "backup" recurring job
+    # (group default) against this volume. The previous volume never had
+    # any recurring jobs -- see docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md §7.
+    recurring-job-group-backup: "true"
 spec:
   accessModes:
     - ReadWriteOnce
