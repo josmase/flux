@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: jellyfin
 spec:
-  replicas: 1
+  # TEMPORARY zero-scale for config PVC migration (docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md)
+  # Phase A of the plan; restored to 1 in the cutover commit.
+  replicas: 0
   strategy:
     type: Recreate
   selector:

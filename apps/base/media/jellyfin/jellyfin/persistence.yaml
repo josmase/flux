@@ -36,6 +36,22 @@ spec:
     requests:
       storage: 80Gi
 ---
+# Right-sized replacement volume (40Gi x 2 replicas via longhorn-gpu SC defaults).
+# Migration plan: docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md
+# Old 80Gi volume above is retained until the post-cutover confidence window closes.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config-pvc-jellyfin-0-v2
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-gpu
+  resources:
+    requests:
+      storage: 40Gi
+---
 # In-tree NFS PV for Jellyfin media — kept for rollback; CSI-backed PV below
 # handles production traffic with stale mount auto-recovery.
 #
