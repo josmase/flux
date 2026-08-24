@@ -18,7 +18,6 @@ resources:
   - ../base/headscale/
   - ../base/immich/
   - ../base/minecraft/
-  - ../base/netbootxyz/
   - ../base/gitlab/
   - ../base/gitlab-runners/
 
