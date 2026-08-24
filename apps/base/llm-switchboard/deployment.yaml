@@ -29,6 +29,9 @@ spec:
           envFrom:
             - secretRef:
                 name: llm-switchboard-secrets
+          env:
+            - name: NVIDIA_ENABLED
+              value: "false" # no NVIDIA API key configured; OpenRouter only
           volumeMounts:
             - name: data
               mountPath: /data
