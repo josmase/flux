@@ -18,6 +18,8 @@ spec:
       labels:
         app: llm-switchboard
     spec:
+      securityContext:
+        fsGroup: 1001 # let the non-root app user write the SQLite volume
       containers:
         - name: llm-switchboard
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/llm-switchboard:2026-08-23-dc0d80ea # replaced by CI deploy job
