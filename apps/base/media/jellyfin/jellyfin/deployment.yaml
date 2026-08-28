@@ -68,7 +68,7 @@ spec:
         # PUID 1000 anyway, but doing it explicitly keeps it deterministic.
         # Digest-pinned + IfNotPresent so no pull is needed on the GPU node.
         - name: subtitle-cache-init
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.11@sha256:4f6d8dfc53ec5a1ddf7a90e4338972d57d7b0adff6dc88b53184f8285d0b594f
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -86,7 +86,7 @@ spec:
               memory: 32Mi
       containers:
         - name: jellyfin
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.9@sha256:155fb51c745d1a2c28c8b300612bc728a5dd06097bbc62b8b1c76d174eb20366
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:10.11.11@sha256:4f6d8dfc53ec5a1ddf7a90e4338972d57d7b0adff6dc88b53184f8285d0b594f
           ports:
             - containerPort: 8096
               name: http
