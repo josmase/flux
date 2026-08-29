@@ -19,6 +19,12 @@ utility-scripts/
 │   ├── age_public.txt          # Age public key
 │   └── secrets/                # Private keys (gitignored)
 │       └── age.agekey          # Age private key
+├── media-split/                  # Media library split & Jellyfin repair
+│   ├── build-mapping.sh        # Build owner/plan mapping (Phase 0)
+│   ├── split-storage.sh        # Move files per drive (Phase 1)
+│   ├── update-instances.sh     # Update instance DBs (Phase 2)
+│   ├── verify-split.sh         # Verify split (Phase 4)
+│   └── jellyfin_library_repair/ # Jellyfin library path repair (Phase 3)
 ├── validation/                 # Validation & testing
 │   └── validate.sh             # Validate Flux manifests
 └── legacy/                     # Deprecated/reference scripts
@@ -297,6 +303,59 @@ cd utility-scripts/validation
 # Use in CI/CD
 ./validate.sh || exit 1
 ```
+
+### Media Split & Jellyfin Repair (`media-split/`)
+
+#### `media-split/jellyfin_library_repair/`
+Reconciles Jellyfin virtual-folder library paths after a media re-shard.
+Supports movie-only, series-only, and combined runs.  Default mode is
+read-only `--dry-run`; explicit `--execute` applies path changes.
+
+**Prerequisites:** Jellyfin v10.11.9, HTTPS/API credentials via `JELLYFIN_API_KEY`
+env var or `--from-cluster` Kubernetes Secret lookup, NFS storage reachable.
+
+**Usage:**
+```bash
+# Dry-run (default) — prints planned adds/removes, no mutations
+python3 -m jellyfin_library_repair.main \
+  --base-url https://jellyfin.example \
+  --movies-library "Movies" \
+  --movies-path /mnt/storage/files/movies/1 \
+  --movies-path /mnt/storage/files/movies/2 \
+  --movies-path /mnt/storage/files/movies/3 \
+  --from-cluster --cluster-secret jellyfin-api-key --cluster-key api-key
+
+# Execute — applies changes, runs one RefreshLibrary scan, verifies
+python3 -m jellyfin_library_repair.main \
+  --base-url https://jellyfin.example \
+  --movies-library "Movies" \
+  --movies-path /mnt/storage/files/movies/1 \
+  --movies-path /mnt/storage/files/movies/2 \
+  --movies-path /mnt/storage/files/movies/3 \
+  --series-library "TV Shows" \
+  --series-path /mnt/storage/files/series/1 \
+  --series-path /mnt/storage/files/series/2 \
+  --execute \
+  --from-cluster --cluster-secret jellyfin-api-key --cluster-key api-key
+```
+
+**Key flags:** `--dry-run` (default), `--execute`, `--movies-path` (repeatable),
+`--series-path` (repeatable), `--movies-obsolete-path`, `--series-obsolete-path`,
+`--timeout`, `--poll-interval`, `--poll-timeout`, `--insecure`, `--ca-file`.
+
+**What it does:**
+1. Validates all libraries and paths before any mutation
+2. Adds desired locations with `refreshLibrary=false`
+3. Removes only explicitly obsolete paths (verified absence required)
+4. Starts one polled `RefreshLibrary` scan (inter-process lock prevents concurrent scans)
+5. Verifies desired paths are present and obsolete paths are absent
+
+**Safety:** No `DELETE /Items`, no SQLite edits, no media file deletion, credentials
+never logged.  Rereads current state on every invocation (idempotent).  Aborts on
+unavailable storage, failed mutations, or running/cancelling scans.
+
+See `utility-scripts/media-split/README.md` for full documentation including
+prerequisites, examples, rollback, abort conditions, and warnings.
 
 ### Cluster Management (`cluster/`)
 

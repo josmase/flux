@@ -1,0 +1,108 @@
+"""Safe, side-effect-free configuration, planning, and orchestration for Jellyfin repairs.
+
+The package provides configuration validation, pure reconciliation planning,
+API-backed path reconciliation with scan lifecycle management, and
+post-repair verification.  Credentials are never logged or written to disk.
+"""
+
+from .models import (
+    ClusterSecretLookup,
+    ConfigurationError,
+    CurrentLibrary,
+    CurrentVirtualFolder,
+    CredentialSource,
+    DecisionAction,
+    LibraryConfig,
+    LibraryKind,
+    LibrarySpec,
+    PlanAction,
+    PlanDecision,
+    RepairConfig,
+    RepairConfiguration,
+    VirtualFolderState,
+    canonicalize_path,
+    validate_absolute_path,
+)
+from .planner import (
+    LibraryPlan,
+    PlanningError,
+    ReconciliationPlan,
+    build_plan,
+    build_library_plan,
+    build_reconciliation_plan,
+    create_plan,
+    make_plan,
+    plan_library,
+    plan_reconciliation,
+    serialize_plan,
+)
+from .reconcile import (
+    LibraryPathClient,
+    MutationResponseError,
+    PathReadinessError,
+    PathVerificationError,
+    ReconciliationError,
+    ReconciliationResult,
+    apply_plan,
+    apply_reconciliation,
+    reconcile,
+    reconcile_library_paths,
+    reconcile_paths,
+)
+from .verify import (
+    LibraryVerification,
+    VerificationError,
+    VerificationResult,
+    verify_library_paths,
+    verify_paths,
+)
+from .main import main
+
+__all__ = [
+    "ClusterSecretLookup",
+    "ConfigurationError",
+    "CurrentLibrary",
+    "CurrentVirtualFolder",
+    "CredentialSource",
+    "DecisionAction",
+    "LibraryConfig",
+    "LibraryKind",
+    "LibrarySpec",
+    "LibraryPlan",
+    "LibraryVerification",
+    "PlanDecision",
+    "PlanAction",
+    "PlanningError",
+    "ReconciliationPlan",
+    "RepairConfig",
+    "RepairConfiguration",
+    "VerificationError",
+    "VerificationResult",
+    "VirtualFolderState",
+    "canonicalize_path",
+    "validate_absolute_path",
+    "build_plan",
+    "build_library_plan",
+    "build_reconciliation_plan",
+    "create_plan",
+    "make_plan",
+    "plan_library",
+    "plan_reconciliation",
+    "serialize_plan",
+    "LibraryPathClient",
+    "MutationResponseError",
+    "PathReadinessError",
+    "PathVerificationError",
+    "ReconciliationError",
+    "ReconciliationResult",
+    "apply_plan",
+    "apply_reconciliation",
+    "reconcile",
+    "reconcile_library_paths",
+    "reconcile_paths",
+    "verify_library_paths",
+    "verify_paths",
+    "main",
+]
+
+__version__ = "0.1.0"

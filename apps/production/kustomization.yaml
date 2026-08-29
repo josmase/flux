@@ -15,7 +15,7 @@ resources:
   - ../base/longhorn/
   - ../base/persistence/
   - ../base/smart-home/
-  - ../base/headscale/
+  # - ../base/headscale/ # Removed: headscale deprecated, use tailscale instead
   - ../base/immich/
   - ../base/minecraft/
   - ../base/gitlab/

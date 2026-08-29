@@ -95,8 +95,10 @@ kubectl -n monitoring get secret alertmanager-kube-prometheus-stack-alertmanager
 
 ### 2.1 Right-size `jellyfin-config` (80 Gi × 3 replicas = 240 GB raw)
 
+**Detailed execution plan: [`PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md`](./PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md)**
+(target revised to 40 Gi after measuring 26 G live usage; 20 Gi would have been too small).
+
 The PV/PVC pair is Git-managed: `apps/base/media/jellyfin/jellyfin/persistence.yaml`.
-Live footprint is a fraction of 80 Gi. Target **20 Gi**.
 
 Procedure (maintenance window):
 

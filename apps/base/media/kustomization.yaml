@@ -9,7 +9,7 @@ resources:
   - prowlarr
   # Unified dashboard for all instances
   - arr-dashboard
-  - transmission
+  # - transmission # Disabled: broken watch directory, needs reconfiguration
   - jellyfin
   - checkrr
   - reiverr

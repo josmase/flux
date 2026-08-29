@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "Movies",
+    "CollectionType": "movies",
+    "LibraryOptions": {
+      "PathInfos": [
+        {"Path": "/srv/media/movies/1"},
+        {"Path": "/srv/media/movies/2"},
+        {"Path": "/srv/media/movies/legacy"},
+        {"Path": "/srv/media/movies/unmanaged"}
+      ]
+    }
+  },
+  {
+    "Name": "Series",
+    "CollectionType": "tvshows",
+    "Locations": [
+      "/srv/media/series/1",
+      "/srv/media/series/2",
+      "/srv/media/series/3",
+      "/srv/media/series/unmanaged"
+    ]
+  },
+  {
+    "Name": "Music",
+    "CollectionType": "music",
+    "Locations": ["/srv/media/music"]
+  }
+]

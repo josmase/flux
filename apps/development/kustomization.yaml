@@ -11,7 +11,7 @@ resources:
   # Selected lightweight apps from base
   - ../base/immich/
   - ../base/it-tools/
-  - ../base/headscale/
+  # - ../base/headscale/ # Removed: headscale deprecated, use tailscale instead
   - ../base/cloudflare-ddns/
   
   # Development secret overrides (override base secrets)
