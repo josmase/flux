@@ -15,7 +15,7 @@ spec:
       hostPID: true
       containers:
         - name: recovery-agent
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-mount-recovery:2026-08-14-578147fc
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-mount-recovery:2026-08-29-3e8657e3
           securityContext:
             privileged: true
             capabilities:
