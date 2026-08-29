@@ -22,7 +22,7 @@ spec:
         fsGroup: 1001 # let the non-root app user write the SQLite volume
       containers:
         - name: llm-switchboard
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/llm-switchboard:2026-08-29-1f98a19f # replaced by CI deploy job
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/llm-switchboard:2026-08-29-19d990df # replaced by CI deploy job
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
