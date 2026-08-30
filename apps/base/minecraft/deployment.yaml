@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: minecraft-server
-          image: artifactory.local.hejsan.xyz/docker/itzg/minecraft-server:2026.6.1@sha256:2a3ed0997720d79b7ed783a79e43143358b2e60d27daf15c2b1d27b59d04a6d8
+          image: artifactory.local.hejsan.xyz/docker/itzg/minecraft-server:2026.8.2@sha256:efa878ddb49cf5251b2e5f2ad71b08fd2f7236c1f7907433f6697258b31d2ce4
           imagePullPolicy: IfNotPresent
           env:
             - name: EULA
