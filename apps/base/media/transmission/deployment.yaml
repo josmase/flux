@@ -15,6 +15,34 @@ spec:
         app: transmission
     spec:
       initContainers:
+        - name: initialize-settings
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.1.3@sha256:c85eb732f0ae9e4152b76c2d7da26e50c1fb54c05d9723800c198385ff66c247
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              mkdir -p /mnt/storage/downloads/complete /mnt/storage/downloads/incomplete
+              if [ ! -s /config/settings.json ]; then
+                cp /defaults/settings.json /config/settings.json
+              fi
+              chown "$${PUID}:$${PGID}" /config/settings.json
+          envFrom:
+            - configMapRef:
+                name: default-app-config
+          volumeMounts:
+            - name: transmission-config
+              mountPath: /config
+            - name: transmission-settings
+              mountPath: /defaults
+              readOnly: true
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
         - name: nfs-stale-check
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:latest
           securityContext:
@@ -48,6 +76,8 @@ spec:
           env:
             - name: PEERPORT
               value: "51413"
+            - name: HOST_WHITELIST
+              value: "transmission,transmission.media,transmission.media.svc,transmission.media.svc.cluster.local,transmission.${DOMAIN_INTERNAL}"
           envFrom:
             - configMapRef:
                 name: default-app-config
@@ -55,6 +85,9 @@ spec:
             httpGet:
               path: /transmission/web/
               port: 9091
+              httpHeaders:
+                - name: Host
+                  value: transmission.media.svc.cluster.local
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -63,12 +96,15 @@ spec:
             httpGet:
               path: /transmission/web/
               port: 9091
+              httpHeaders:
+                - name: Host
+                  value: transmission.media.svc.cluster.local
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 2
           volumeMounts:
-            - name: transmission-config-pvc
+            - name: transmission-config
               mountPath: /config
             - name: shared-storage
               mountPath: /mnt/storage
@@ -80,9 +116,12 @@ spec:
               memory: 100Mi
               cpu: "0.1"
       volumes:
-        - name: transmission-config-pvc
+        - name: transmission-config
           persistentVolumeClaim:
-            claimName: transmission-config-pvc-transmission-0
+            claimName: transmission-config
+        - name: transmission-settings
+          configMap:
+            name: transmission-settings
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: media-media-shared-nfs-pvc

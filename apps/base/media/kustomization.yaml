@@ -9,7 +9,8 @@ resources:
   - prowlarr
   # Unified dashboard for all instances
   - arr-dashboard
-  # - transmission # Disabled: broken watch directory, needs reconfiguration
+  # Transmission is enabled by environment overlays because its persistence
+  # class and MetalLB address are environment-specific.
   - jellyfin
   - checkrr
   - reiverr
