@@ -1,9 +1,9 @@
-<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.0 | Updated: 2026-08-13 -->
+<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.1 | Updated: 2026-09-02 -->
 
 # Technical Domain
 
 **Purpose**: Tech stack, GitOps architecture, and manifest conventions for the Flux v2 repository (single source of desired cluster state for the josmase self-hosted platform).
-**Last Updated**: 2026-08-13
+**Last Updated**: 2026-09-02
 
 ## Quick Reference
 
@@ -30,31 +30,33 @@
 
 ## Code Patterns
 
-### Flux Kustomization (env-specific path + SOPS + substitution)
+### Flux Kustomization (target domain pattern; migration pending)
+
+Production applications currently use one legacy `apps` Kustomization. Do not copy that monolithic pattern or its global `force: true`. The target structure uses domain-level Kustomizations described in `gitops-application-ownership.md` and `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md`.
 
 ```yaml
-# clusters/production/apps.yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps
+  name: apps-media-download
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 10m
+  retryInterval: 1m
+  timeout: 5m
   dependsOn:
-    - name: infra-configs
+    - name: apps-media-foundation
   sourceRef: { kind: GitRepository, name: flux-system }
-  path: ./apps/production
+  path: ./apps/production/media/download
   prune: true
-  force: true
+  wait: true
   decryption:
     provider: sops
     secretRef: { name: sops-age }
   postBuild:
-    substitute:
-      DOMAIN_EXTERNAL: "hejsan.xyz"
-      STORAGE_CLASS: "longhorn"
-      LETSENCRYPT_SERVER: "https://acme-v02.api.letsencrypt.org/directory"
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
 ```
 
 ### SOPS-encrypted Secret (env overlay)
@@ -106,6 +108,11 @@ spec:
 - `base/` holds env-agnostic manifests only — **no secrets** (enforced by `validate-structure.sh`)
 - Env differences via Flux `postBuild.substitute`, not hardcoded domains/storage/certs
 - All secrets SOPS+Age encrypted, placed only in `production/`/`development/` overlays
+- Production desired state is deployed by commit/push and Flux reconciliation; never broadly apply a raw production Kustomize render with `kubectl`
+- Flux post-build substitution is part of the desired-state render; use strict Flux builds and reject unresolved `${...}` variables
+- Every Kubernetes object has one Flux inventory owner; ownership transfers require prune-safe staging
+- Cross-Kustomization references use stable explicit names and cannot rely on name transformations performed in another build
+- Application Kustomizations do not use `force: true` by default
 - Helm chart values via `configMapGenerator` with unique `-base`/`-development` names (see `docs/CONFIGMAP_PATTERN.md`)
 - Per-app layout: `deployment.yaml` + `service.yaml` + `ingress.yaml` + `kustomization.yaml`
 - Validate before merge: `bash utility-scripts/validation/validate.sh` (secrets, structure, kustomize build, kubeconform)
@@ -143,12 +150,16 @@ spec:
 - `utility-scripts/validation/validate.sh` — orchestrates secrets/structure/builds/kubeconform checks
 - `docs/CONFIGMAP_PATTERN.md` — Helm values ConfigMap layering pattern
 - `docs/MULTI_ENVIRONMENT.md` — environment strategy and patch guidance
+- `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` — target application boundaries, phased ownership migration, validation, and rollback
+- `.opencode/context/project-intelligence/gitops-application-ownership.md` — critical ownership and deployment invariants
 - `charts/web-app/` — custom Helm chart template
 
 ## Potential Improvements
 
 - `docs/MULTI_ENVIRONMENT.md` documents an older "inline patches" model that no longer matches the current base/overlay layout using `postBuild.substitute` — refresh it to reflect current mechanics
 - Bootstrap docs reference the GitHub mirror while the live `GitRepository` points at self-hosted GitLab — reconcile to avoid confusion
+- The production `apps` Kustomization is still monolithic and has demonstrated stuck drift detection; execute the domain split plan instead of extending the aggregate
+- Move the GitLab runner token and Grafana Gotify webhook tokens out of base Helm values into SOPS-encrypted production Secrets and rotate them
 
 ## Related Files
 
@@ -156,3 +167,4 @@ spec:
 - `docs/REFACTORING_PLAN.md` — base/overlay refactoring history
 - `docs/LOCAL_DEVELOPMENT.md` — local Kind workflows
 - `docs/UPGRADE_K3S.md` — K3s upgrade guide
+- `gitops-application-ownership.md` — domain ownership, substitution, deployment, and prune-safe handoff rules

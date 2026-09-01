@@ -1,0 +1,2 @@
+Namespace,PVC Name,Requested GiB,Actual GiB,New GiB (buffered)
+artifactory,artifactory-volume-artifactory-0,150,18.348,37

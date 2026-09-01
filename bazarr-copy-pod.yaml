@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bazarr-copy-helper
+  namespace: media
+spec:
+  restartPolicy: Never
+  containers:
+    - name: copy
+      image: artifactory.local.hejsan.xyz/docker/library/alpine:3.20
+      command: ["sh", "-c", "apk add --no-cache rsync >/dev/null && rsync -aHAX --numeric-ids --info=progress2 /old/ /new/ && echo SYNC-DONE"]
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - {name: old, mountPath: /old, readOnly: true}
+        - {name: new, mountPath: /new}
+  volumes:
+    - {name: old, persistentVolumeClaim: {claimName: bazarr-config-pvc-bazarr-0, readOnly: true}}
+    - {name: new, persistentVolumeClaim: {claimName: bazarr-config-pvc-bazarr-0-new}}

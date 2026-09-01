@@ -1,0 +1,119 @@
+<!-- Context: project-intelligence/gitops-application-ownership | Priority: critical | Version: 1.0 | Updated: 2026-09-02 -->
+
+# GitOps Application Ownership and Reconciliation Boundaries
+
+## Status
+
+The repository currently deploys production applications through one legacy Flux Kustomization named `apps`, pointing at `./apps/production`. A migration to domain-level Kustomizations is planned but not yet implemented. See `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` before changing application composition or Flux ownership.
+
+## Why this matters
+
+On 2026-09-01, a raw client-side apply of an unsubstituted production Kustomize render rewrote unrelated IngressRoutes with literal `${DOMAIN_*}` and `${CERT_SECRET_*}` values. Traefik rejected the routes and returned 404 for services including Jellyfin.
+
+Flux `postBuild.substitute` is part of rendering desired state. Plain `kustomize build` and `kubectl apply -k` do not reproduce it. The monolithic application inventory amplified one Transmission deployment operation into a cluster-wide ingress outage.
+
+## Architectural direction
+
+Use operational-domain reconciliation boundaries, not one Kustomization per Deployment and not one Kustomization for all applications.
+
+```text
+infra-controllers
+└── infra-configs
+    ├── apps-storage
+    │   ├── apps-media-foundation
+    │   │   ├── apps-media-download
+    │   │   ├── apps-media-arr
+    │   │   └── apps-media-playback
+    │   ├── apps-photos
+    │   ├── apps-services
+    │   └── apps-home
+    ├── apps-ops
+    ├── apps-observability
+    ├── apps-gitlab
+    └── apps-artifacts
+```
+
+Transmission belongs to `apps-media-download`; Jellyfin belongs to `apps-media-playback`. Sonarr/Radarr form `apps-media-arr`. All three depend on a single media foundation owner for the Namespace, shared config, and shared PVC contracts.
+
+## Non-negotiable ownership rules
+
+1. Every `{apiVersion, kind, namespace, name}` has one deployable Flux owner.
+2. Every Namespace has one owner; child domain Kustomizations do not duplicate it.
+3. IngressRoutes live with their application domain.
+4. Cluster-scoped storage resources do not live in arbitrary workload roots.
+5. Namespaced PVCs live with the domain controlling their lifecycle.
+6. Cross-Kustomization references use stable explicit names. They must not rely on a Kustomize namePrefix/nameSuffix transformation performed in another build.
+7. Base manifests are environment-neutral and contain no credentials.
+8. Production Secrets are SOPS-encrypted and composed from production overlays.
+9. Application Kustomizations default to `prune: true`, `wait: true`, a bounded timeout, and no `force`.
+10. `force: true` requires a narrowly scoped, documented exception.
+
+## Deployment rules
+
+Production desired state is changed through Git and Flux.
+
+Do not run either command against production aggregates or roots:
+
+```bash
+kustomize build apps/production | kubectl apply -f -
+kubectl apply -k apps/production
+```
+
+Use:
+
+1. repository validation;
+2. commit and push;
+3. `flux build kustomization <name> --path <path> --strict-substitute` for a cluster-aware preview;
+4. `flux reconcile kustomization <name> --with-source` for deployment;
+5. domain-specific health verification.
+
+Direct `kubectl` mutations are limited to explicit incident recovery or documented storage procedures. Never broadly apply an unverified render. After recovery, restore Flux ownership and verify live values match the Git-rendered result.
+
+## Substitution rules
+
+- Common non-secret values should come from `ConfigMap/cluster-vars` through `postBuild.substituteFrom` after the planned migration.
+- Missing deployment variables must fail CI and reconciliation.
+- Scan rendered production manifests for unresolved `${...}` values.
+- Escape runtime shell variables as `$${NAME}` so Flux leaves `${NAME}` for the container shell.
+- Never infer that a successful plain `kustomize build` proves Flux substitutions are correct.
+
+## Storage boundary warning
+
+The legacy media persistence build uses a `media-` namePrefix and Kustomize name-reference rewriting. This works only because consumers and storage currently render together. Splitting the builds without first stabilizing the PVC name will break references.
+
+Before separating media foundation from workloads, adopt the current live final claim name `media-media-shared-nfs-pvc` as the explicit cross-build contract and update all consumers without recreating the bound PVC. Any cosmetic rename is a separate storage migration. Storage identity preservation takes precedence over naming cleanliness.
+
+## Ownership migration safety
+
+Moving resources between Flux Kustomizations is prune-sensitive:
+
+1. Set the old owner to `prune: false` and confirm the live setting.
+2. Introduce new owners with `prune: false`.
+3. Compare old and new object-identity inventories.
+4. Reconcile and verify new ownership per domain.
+5. Retire the old owner only while pruning is disabled.
+6. Enable pruning on new owners one at a time after verification.
+
+Never delete an old Kustomization with `prune: true` after another Kustomization has adopted its objects; its final inventory can delete the adopted resources.
+
+## Routing guide
+
+| Change | Intended owner after migration |
+| --- | --- |
+| Traefik/Longhorn administrative routes, Cloudflare DDNS, Renovate | `apps-ops` |
+| Prometheus, Grafana, Gotify, alerts, ServiceMonitors | `apps-observability` |
+| Shared media Namespace/config/PVC contract | `apps-media-foundation` |
+| Transmission and download-support applications | `apps-media-download` |
+| Sonarr/Radarr fleet | `apps-media-arr` |
+| Jellyfin/Plex playback | `apps-media-playback` |
+| Immich | `apps-photos` |
+| GitLab and runners | `apps-gitlab` |
+| Artifactory | `apps-artifacts` |
+| Personal web/application services | `apps-services` |
+| Home automation and Minecraft | `apps-home` |
+
+Until the migration is complete, these are target ownership boundaries, not current Flux object names. Check the live Flux inventory before reconciling or pruning anything.
+
+## Required reference
+
+Read `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` for the complete phased migration, validation gates, dependency policy, handoff procedure, and rollback strategy.

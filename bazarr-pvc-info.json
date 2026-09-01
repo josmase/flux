@@ -1,0 +1,22 @@
+{
+  "pvc": {
+    "name": "bazarr-config-pvc-bazarr-0",
+    "namespace": "media",
+    "storageRequest": "5Gi",
+    "status": "Bound"
+  },
+  "pv": {
+    "name": "pvc-8d535a00-668b-4874-bc0c-a44d97d566e4",
+    "capacity": "5Gi",
+    "volumeHandle": "pvc-8d535a00-668b-4874-bc0c-a44d97d566e4",
+    "storageClass": "longhorn"
+  },
+  "longhornVolume": {
+    "actualSize": "1.318Gi",
+    "id": "pvc-8d535a00-668b-4874-bc0c-a44d97d566e4"
+  },
+  "labels": {
+    "media-app": "bazarr",
+    "app": "bazarr"
+  }
+}

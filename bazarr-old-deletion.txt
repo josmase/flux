@@ -1,0 +1,1 @@
+Old bazarr PVC bazarr-config-pvc-bazarr-0 and associated PV pvc-8d535a00-668b-4874-bc0c-a44d97d566e4 deleted.
