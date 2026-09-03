@@ -43,7 +43,7 @@ EXPECTED_DOMAINS: dict[str, tuple[str, set[str]]] = {
 # Ownership is deliberately transferred one domain at a time. This revision
 # activates only the small, non-data-bearing ops domain; every other candidate
 # remains an inert, orphan-safe definition until its own reviewed revision.
-ACTIVE_DOMAINS = {"apps-ops", "apps-observability", "apps-storage"}
+ACTIVE_DOMAINS = {"apps-ops", "apps-observability", "apps-storage", "apps-media-foundation"}
 
 EXPECTED_CLUSTER_VARS = {
     "CERT_SECRET_EXTERNAL": "hejsan-xyz-tls",
