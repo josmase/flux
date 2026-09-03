@@ -52,6 +52,19 @@ ACTIVE_DOMAINS = {
     "apps-media-download",
 }
 
+MEDIA_DOWNLOAD_HEALTH_CHECKS = [
+    {"apiVersion": "apps/v1", "kind": "Deployment", "name": name, "namespace": "media"}
+    for name in (
+        "arr-dashboard",
+        "bazarr",
+        "checkrr",
+        "prowlarr",
+        "reiverr",
+        "seerr",
+        "transmission",
+    )
+]
+
 EXPECTED_CLUSTER_VARS = {
     "CERT_SECRET_EXTERNAL": "hejsan-xyz-tls",
     "CERT_SECRET_INTERNAL": "local-hejsan-xyz-tls",
@@ -113,7 +126,12 @@ def validate_domain(
         errors.append(f"{prefix} must use deletionPolicy: Orphan")
     if "force" in spec:
         errors.append(f"{prefix} must not set force")
-    if spec.get("wait") is not True:
+    if name == "apps-media-download":
+        if spec.get("wait") is not False or spec.get("healthChecks") != MEDIA_DOWNLOAD_HEALTH_CHECKS:
+            errors.append(
+                f"{prefix} must use wait: false with the reviewed media deployment health checks"
+            )
+    elif spec.get("wait") is not True:
         errors.append(f"{prefix} must use wait: true")
     if not spec.get("timeout"):
         errors.append(f"{prefix} must declare a bounded timeout")

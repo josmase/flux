@@ -129,7 +129,36 @@ spec:
   path: ./apps/production/media/download
   prune: false
   deletionPolicy: Orphan
-  wait: true
+  wait: false
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: arr-dashboard
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: bazarr
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: checkrr
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: prowlarr
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: reiverr
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: seerr
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: transmission
+      namespace: media
   decryption:
     provider: sops
     secretRef:
