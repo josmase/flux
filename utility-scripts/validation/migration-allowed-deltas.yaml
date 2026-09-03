@@ -23,6 +23,12 @@ allowedIdentityRemovals:
     name: prowlarr-config-pvc-prowlarr-0
     reason: The old Prowlarr claim had a deletion timestamp and disappeared when its final consumer stopped.
 allowedManifestChanges:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: media
+    name: arr-dashboard-config
+    sha256: 018b770cf573b5bc685ad53dce873e4a304fa3415f54107e0154091a620f929e
+    reason: Retain the live 2Gi request; Kubernetes PVCs must never be shrunk.
   - apiVersion: apps/v1
     kind: Deployment
     namespace: media

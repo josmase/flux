@@ -8,4 +8,6 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 1Gi
+      # The bound claim was safely expanded during operations; never reconcile
+      # it back to the obsolete 1Gi request.
+      storage: 2Gi
