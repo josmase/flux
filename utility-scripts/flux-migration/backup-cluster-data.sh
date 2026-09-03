@@ -74,6 +74,18 @@ version_at_least() {
     [ "$(printf '%s\n%s\n' "$minimum" "$actual" | sort -V | head -n 1)" = "$minimum" ]
 }
 
+find_remote_backup_config() {
+    local volume_name=$1 snapshot_name=$2
+    # Longhorn v1.7.2 preserves a completed NFS backup even when a transient
+    # backup-store listing causes its Backup CR to be removed. The backup cfg
+    # is the authoritative, immutable record in that case. Volume and snapshot
+    # names are generated DNS-safe values, so interpolation into this command
+    # is safe.
+    kubectl -n "$NFS_PVC_NAMESPACE" exec "$WRITER_POD" -- sh -c \
+        "find /nfs/kubernetes/backupstore/volumes -type f -path '*/$volume_name/backups/backup_*.cfg' -exec grep -Fl '\"SnapshotName\":\"$snapshot_name\"' {} + 2>/dev/null | head -n 1" \
+        2>/dev/null || true
+}
+
 cleanup() {
     local status=$?
     trap - EXIT INT TERM
@@ -358,6 +370,7 @@ jq -n --arg run "$RUN_ID" --slurpfile volumes "$TEMP_DIR/longhorn-volumes-before
 PLAN_COUNT=$(jq 'length' "$TEMP_DIR/longhorn-backup-plan.json")
 [ "$PLAN_COUNT" -eq "$VOLUME_COUNT" ] || fail "Longhorn backup plan does not cover every captured volume"
 : > "$TEMP_DIR/longhorn-backup-actions.jsonl"
+: > "$TEMP_DIR/longhorn-backup-results.jsonl"
 
 while IFS=$'\t' read -r VOLUME_NAME SNAPSHOT_NAME; do
     echo "Creating Longhorn snapshot for $VOLUME_NAME ($SNAPSHOT_NAME)"
@@ -402,6 +415,17 @@ EOF
     BACKUP_DEADLINE=$(( $(date +%s) + BACKUP_TIMEOUT_SECONDS ))
     while true; do
         kubectl -n longhorn-system get backups.longhorn.io -o json > "$TEMP_DIR/longhorn-backups-after.json"
+        COMPLETED_BACKUP=$(jq -c --arg volume "$VOLUME_NAME" --arg snapshot "$SNAPSHOT_NAME" '
+          [.items[] | select(.status.volumeName == $volume and .status.snapshotName == $snapshot and .status.state == "Completed")]
+          | last // empty
+        ' "$TEMP_DIR/longhorn-backups-after.json")
+        if [ -n "$COMPLETED_BACKUP" ]; then
+            jq -nc --arg volume "$VOLUME_NAME" --arg snapshot "$SNAPSHOT_NAME" --argjson backup "$COMPLETED_BACKUP" '
+              {volume: $volume, snapshot: $snapshot, backup: $backup.metadata.name, createdAt: $backup.metadata.creationTimestamp,
+               url: $backup.status.url, validation: "Longhorn Backup CR"}
+            ' >> "$TEMP_DIR/longhorn-backup-results.jsonl"
+            break
+        fi
         BACKUP_STATE=$(jq -r --arg volume "$VOLUME_NAME" --arg snapshot "$SNAPSHOT_NAME" '
           [.items[] | select(.status.volumeName == $volume and .status.snapshotName == $snapshot)
            | .status.state] | if length == 0 then "missing" elif any(.[]; . == "Error") then "Error"
@@ -416,6 +440,22 @@ EOF
                 "$TEMP_DIR/longhorn-backups-after.json" >&2
             fail "Longhorn backup failed for volume $VOLUME_NAME"
         fi
+
+        REMOTE_BACKUP_CONFIG=$(find_remote_backup_config "$VOLUME_NAME" "$SNAPSHOT_NAME")
+        if [ -n "$REMOTE_BACKUP_CONFIG" ]; then
+            REMOTE_BACKUP_JSON=$(kubectl -n "$NFS_PVC_NAMESPACE" exec "$WRITER_POD" -- cat "$REMOTE_BACKUP_CONFIG")
+            if ! jq -e --arg snapshot "$SNAPSHOT_NAME" '
+                .Name != "" and .SnapshotName == $snapshot and (.Blocks | type == "array") and (.ProcessingBlocks | type == "object")
+            ' >/dev/null <<<"$REMOTE_BACKUP_JSON"; then
+                fail "NFS backup metadata is invalid for volume $VOLUME_NAME (snapshot $SNAPSHOT_NAME)"
+            fi
+            jq -c --arg volume "$VOLUME_NAME" --arg snapshot "$SNAPSHOT_NAME" '
+              {volume: $volume, snapshot: $snapshot, backup: .Name, createdAt: .CreatedTime,
+               url: ("nfs://storage.local.hejsan.xyz:/kubernetes?backup=" + .Name + "&volume=" + .VolumeName),
+               validation: "NFS backup metadata"}
+            ' <<<"$REMOTE_BACKUP_JSON" >> "$TEMP_DIR/longhorn-backup-results.jsonl"
+            break
+        fi
         [ "$(date +%s)" -lt "$BACKUP_DEADLINE" ] || fail "Longhorn backup timed out for volume $VOLUME_NAME (last state: $BACKUP_STATE)"
         echo "Waiting for Longhorn backup of $VOLUME_NAME (state: $BACKUP_STATE)"
         sleep 15
@@ -423,12 +463,7 @@ EOF
 done < <(jq -r '.[] | [.volume, .snapshot] | @tsv' "$TEMP_DIR/longhorn-backup-plan.json")
 
 kubectl -n longhorn-system get backups.longhorn.io -o json > "$TEMP_DIR/longhorn-backups-after.json"
-jq -n --slurpfile plan "$TEMP_DIR/longhorn-backup-plan.json" --slurpfile backups "$TEMP_DIR/longhorn-backups-after.json" '
-  [$plan[0][] as $item
-   | $backups[0].items[]
-   | select(.status.volumeName == $item.volume and .status.snapshotName == $item.snapshot and .status.state == "Completed")
-   | {volume: $item.volume, snapshot: $item.snapshot, backup: .metadata.name, createdAt: .metadata.creationTimestamp, url: .status.url}]
-' > "$TEMP_DIR/longhorn-backup-results.json"
+jq -s '.' "$TEMP_DIR/longhorn-backup-results.jsonl" > "$TEMP_DIR/longhorn-backup-results.json"
 MISSING_BACKUPS=$(jq -n --slurpfile plan "$TEMP_DIR/longhorn-backup-plan.json" --slurpfile results "$TEMP_DIR/longhorn-backup-results.json" \
     '[$plan[0][] | select(.volume as $volume | any($results[0][]; .volume == $volume) | not)] | length')
 [ "$MISSING_BACKUPS" -eq 0 ] || fail "$MISSING_BACKUPS Longhorn volume(s) lack a completed explicit backup"
