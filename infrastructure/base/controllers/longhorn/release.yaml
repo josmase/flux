@@ -12,7 +12,10 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: longhorn-repo
-      version: v1.7.1
+      # v1.7.2 backports the backup-controller fix for #9530. Earlier v1.7.1
+      # can delete a completed remote backup when a BackupVolume reconcile
+      # momentarily observes an empty NFS backup list.
+      version: v1.7.2
   interval: 1m0s
   values:
     preUpgradeChecker:
