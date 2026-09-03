@@ -40,6 +40,11 @@ EXPECTED_DOMAINS: dict[str, tuple[str, set[str]]] = {
     "apps-home": ("./apps/production/home", {"infra-configs"}),
 }
 
+# Ownership is deliberately transferred one domain at a time. This revision
+# activates only the small, non-data-bearing ops domain; every other candidate
+# remains an inert, orphan-safe definition until its own reviewed revision.
+ACTIVE_DOMAINS = {"apps-ops"}
+
 EXPECTED_CLUSTER_VARS = {
     "CERT_SECRET_EXTERNAL": "hejsan-xyz-tls",
     "CERT_SECRET_INTERNAL": "local-hejsan-xyz-tls",
@@ -91,8 +96,10 @@ def validate_domain(
 
     if metadata.get("namespace") != "flux-system":
         errors.append(f"{prefix} must be in flux-system")
-    if spec.get("suspend") is not True:
-        errors.append(f"{prefix} must remain suspended before ownership transfer")
+    expected_suspend = name not in ACTIVE_DOMAINS
+    if spec.get("suspend") is not expected_suspend:
+        state = "active" if name in ACTIVE_DOMAINS else "suspended"
+        errors.append(f"{prefix} must remain {state} at this ownership-transfer stage")
     if spec.get("prune") is not False:
         errors.append(f"{prefix} must use prune: false during ownership transfer")
     if spec.get("deletionPolicy") != "Orphan":
@@ -215,8 +222,8 @@ def main() -> int:
         errors.append("legacy Kustomization/apps must use deletionPolicy: Orphan before handoff")
     if "force" in legacy_spec:
         errors.append("legacy Kustomization/apps must not use global force")
-    if legacy_spec.get("suspend") is True:
-        errors.append("legacy Kustomization/apps must remain active in the preparation checkpoint")
+    if legacy_spec.get("suspend") is not True:
+        errors.append("legacy Kustomization/apps must remain suspended during ownership transfer")
 
     cluster_metadata = cluster_vars.get("metadata") or {}
     if cluster_vars.get("kind") != "ConfigMap" or cluster_metadata.get("name") != "cluster-vars":
@@ -287,8 +294,8 @@ def main() -> int:
         return 1
 
     print(
-        f"Validated {len(domains)} suspended production domain Kustomizations: "
-        "legacy prune is disabled, domain pruning is disabled, and substitutions are consistent"
+        f"Validated {len(domains)} production domain Kustomizations with "
+        f"{len(ACTIVE_DOMAINS)} active owner: legacy ownership remains suspended and orphan-safe"
     )
     return 0
 

@@ -5,6 +5,9 @@ metadata:
   name: apps
   namespace: flux-system
 spec:
+  # Ownership has moved to the staged domain Kustomizations. Keep this legacy
+  # aggregate inert so it cannot reclaim or prune resources during transfer.
+  suspend: true
   interval: 1m
   retryInterval: 10m
   dependsOn:

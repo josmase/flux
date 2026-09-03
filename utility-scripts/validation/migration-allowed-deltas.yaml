@@ -26,9 +26,27 @@ allowedManifestChanges:
   - apiVersion: apps/v1
     kind: Deployment
     namespace: media
+    name: bazarr
+    sha256: a3260954dec8f638f891b31fa6cc3ea7da3b4d42414528b701adf01df46ab6d0
+    reason: Preserve the recovered Bazarr claim and the reviewed Renovate image digest.
+  - apiVersion: apps/v1
+    kind: Deployment
+    namespace: media
+    name: jellyfin
+    sha256: 75b94c92726b2bc960bd3a142ae18e8853dbe1f2678f4194836dfdc17a6c7088
+    reason: Preserve the reviewed Jellyfin Renovate image digest update.
+  - apiVersion: apps/v1
+    kind: Deployment
+    namespace: media
+    name: transmission
+    sha256: 750740ff47d8f01ad9360c122df460206f4cb0719a34dc8613f75a76083c0b6c
+    reason: Preserve the reviewed Transmission Renovate image digest update.
+  - apiVersion: apps/v1
+    kind: Deployment
+    namespace: media
     name: prowlarr
-    sha256: 3b401f888e0cf4897ef8aae84d43327d66ee95fdd406ac1cc6733e6b834f3fff
-    reason: Mount the repaired Prowlarr replacement claim.
+    sha256: 2f28fe9d402b57427b8e7a4c57500a10353fb792efee73cf88e934dea4c4f073
+    reason: Mount the repaired Prowlarr replacement claim and preserve its reviewed Renovate image digest.
   - apiVersion: helm.toolkit.fluxcd.io/v2
     kind: HelmRelease
     namespace: monitoring
