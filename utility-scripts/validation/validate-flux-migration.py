@@ -49,6 +49,7 @@ ACTIVE_DOMAINS = {
     "apps-storage",
     "apps-media-foundation",
     "apps-media-playback",
+    "apps-media-download",
 }
 
 EXPECTED_CLUSTER_VARS = {
