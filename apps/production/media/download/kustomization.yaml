@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: media
+
+resources:
+  - ../../../base/media/arr-dashboard
+  - ../../../base/media/bazarr
+  - ../../../base/media/checkrr
+  - ../../../base/media/prowlarr
+  - ../../../base/media/reiverr
+  - ../../../base/media/seerr
+  - ../transmission
+  - ../checkrr
+  - ../reiverr
+
+components:
+  - ../../components/prune-protection

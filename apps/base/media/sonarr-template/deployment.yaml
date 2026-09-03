@@ -98,4 +98,4 @@ spec:
             claimName: config
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: media-media-shared-nfs-pvc

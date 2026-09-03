@@ -38,15 +38,15 @@ kustomize_config="kustomization.yaml"
 
 # skip Kubernetes Secrets due to SOPS fields failing validation
 kubeconform_flags=("-skip=Secret")
-kubeconform_config=("-strict" "-ignore-missing-schemas" "-schema-location" "default" "-schema-location" "/tmp/flux-crd-schemas" "-verbose")
+kubeconform_config=("-strict" "-ignore-missing-schemas" "-schema-location" "/tmp/flux-crd-schemas" "-schema-location" "default" "-verbose")
 
 SCHEMA_DIR="/tmp/flux-crd-schemas/master-standalone-strict"
-SCHEMA_URL="https://github.com/fluxcd/flux2/releases/latest/download/crd-schemas.tar.gz"
+SCHEMA_URL="https://github.com/fluxcd/flux2/releases/download/v2.8.8/crd-schemas.tar.gz"
 
 if [ ! -d "$SCHEMA_DIR" ] || [ -z "$(ls -A "$SCHEMA_DIR" 2>/dev/null)" ]; then
   echo "INFO - Downloading Flux OpenAPI schemas"
   mkdir -p "$SCHEMA_DIR"
-  curl -sL "$SCHEMA_URL" | tar zxf - -C "$SCHEMA_DIR"
+  curl -fsSL "$SCHEMA_URL" | tar zxf - -C "$SCHEMA_DIR"
 fi
 
 echo "INFO - Running validate-secrets.sh"
@@ -57,6 +57,10 @@ echo "INFO - Running validate-structure.sh"
 
 echo "INFO - Running validate-builds.sh"
 "$SCRIPT_DIR/validate-builds.sh"
+
+echo "INFO - Testing migration backup safety gates"
+bash -n utility-scripts/flux-migration/backup-cluster-data.sh
+python3 -m unittest utility-scripts/flux-migration/test_validate_backup_readiness.py
 
 find . -type f -name '*.yaml' -not -path './charts/*' -print0 | while IFS= read -r -d $'\0' file;
   do

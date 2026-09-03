@@ -1,0 +1,39 @@
+# Exact resource membership for each production reconciliation boundary.
+# Update only when a reviewed change intentionally moves/adds/removes ownership.
+domains:
+  apps-storage:
+    count: 1
+    sha256: 27153620110ce68e5281b87246254944507249a4301e854e25922fed75c2afdc
+  apps-ops:
+    count: 10
+    sha256: 2ef669ef4cf7f4cedc8c9f735b70b29afe5aa196066f539b03b0ad86277449c4
+  apps-observability:
+    count: 15
+    sha256: ea4869d77aafcd460f831cd18abedb866e5da943a8e6126eef5ae19e95056741
+  apps-media-foundation:
+    count: 5
+    sha256: 724981d6ed4856d815564e139041488b19feab2880d2247add3751a837179fb1
+  apps-media-download:
+    count: 37
+    sha256: d777dc1d465343a5efc553e274e1a449ea66de0ea7d002cac3fd2de8bb81a100
+  apps-media-arr:
+    count: 72
+    sha256: abc366c4c76fac689819b91006258fe82e28b894b3943bdd778b898c3c684782
+  apps-media-playback:
+    count: 12
+    sha256: 7fc02d5dbedea9d16f0d1168eaf6e0034015874b328bf59b36685903ad0a4e1d
+  apps-photos:
+    count: 19
+    sha256: 6d801fc64d71dbf783655546836801b15f29d0d2ad53beb6966aa447afba8e23
+  apps-gitlab:
+    count: 12
+    sha256: 37ee6568e707674c0993015a0eca3e097e062f46a978fc3dbd1404283b758b18
+  apps-artifacts:
+    count: 6
+    sha256: 3cd820077a524f31ddde36bf64e97613875fdaa0ae94c98ed14ce1ed304d47f9
+  apps-services:
+    count: 54
+    sha256: 165ddd10f689d975d421f3e3b2790aed6b3f661fcd923b66e9b8baa141005a94
+  apps-home:
+    count: 9
+    sha256: 5571490e3e70c5d2ea15bdb577641f3389f4750161ca022b2330255f05c7f706

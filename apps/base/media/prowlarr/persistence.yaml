@@ -23,14 +23,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prowlarr-config-pvc-prowlarr-0
+  name: prowlarr-config-pvc-prowlarr-0-v2
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: longhorn
-  selector:
-    matchLabels:
-      media-app: prowlarr
   resources:
     requests:
-      storage: 2Gi
+      storage: 3Gi

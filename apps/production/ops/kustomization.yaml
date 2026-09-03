@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/traefik-dashboard
+  - ../../base/longhorn
+  - ../../base/cloudflare-ddns
+  - ../../base/renovate-bot
+  - ../cloudflare-ddns
+  - ../renovate-bot
+  # - ../longhorn # Enable together with the Longhorn maintenance CronJob.
+
+components:
+  - ../components/prune-protection

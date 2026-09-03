@@ -5,6 +5,32 @@
 **Scope:** Production application reconciliation boundaries under `apps/` and `clusters/production/`  
 **Related incident:** An unsubstituted client-side apply of the production aggregate rewrote all `IngressRoute` host and TLS fields with literal `${...}` values, causing cluster-wide Traefik 404 responses.
 
+## Implementation progress
+
+Local groundwork completed on 2026-09-02; none of these items activate new Flux ownership by themselves:
+
+- [x] Added independently buildable roots for all twelve proposed production domains.
+- [x] Made the existing final shared-media claim name explicit in all media consumers.
+- [x] Moved the generic `manual` StorageClass into an independently composable storage base without changing its rendered identity.
+- [x] Added strict rendered-manifest validation for unresolved deployment variables and duplicate resource identities.
+- [x] Explicitly enabled `StrictPostBuildSubstitutions` in the Flux bootstrap overlay rather than editing generated controller manifests.
+- [x] Added the production `ConfigMap/cluster-vars` shared-value contract without switching existing consumers.
+- [x] Added suspended, prune-safe Flux objects for all twelve domain roots.
+- [x] Added explicit orphan deletion policy and prune protection for Namespaces, StorageClasses, PVs, and PVCs.
+- [x] Added exact per-domain inventory digests, workload-to-PVC checks, cluster-root rendering, and a pinned migration baseline.
+- [x] Added a guarded full recovery-set workflow for etcd, shared PostgreSQL, Longhorn, and NFS data.
+- [x] Added full semantic equivalence validation between the legacy aggregate and the union of proposed roots.
+- [x] Limited equivalence normalization to Flux's injected owner labels so previews remain comparable after domain owners receive distinct names.
+- [x] Proved that both renders contain the same 252 resources with equal parsed manifests.
+- [x] Consolidated deployment and migration safety rules in this plan and the OpenCode ownership context.
+- [ ] Diagnose and resolve the live legacy `apps` drift-detection hang.
+- [ ] Switch application Kustomizations from duplicated inline values to the shared `cluster-vars` contract.
+- [ ] Execute and independently verify a full recovery set on NFS.
+- [ ] Perform the live ownership transfer and retire the legacy aggregate.
+- [ ] Move and rotate plaintext GitLab runner and Gotify credentials.
+
+The proposed domain roots are CI/scaffolding paths until corresponding Flux Kustomization objects are deliberately introduced. Do not assume that creating a directory transfers live ownership.
+
 ## 1. Executive decision
 
 Replace the single production `apps` Flux Kustomization with operational-domain Kustomizations. Do not create one Flux Kustomization per Deployment and do not isolate Transmission alone.
@@ -41,7 +67,7 @@ This produces an unnecessarily large failure and operational blast radius. A Tra
 1. Limit reconciliation and pruning to meaningful operational domains.
 2. Keep closely coupled workloads together without creating one Flux object per Deployment.
 3. Isolate public playback from download-stack migrations.
-4. Give every Kubernetes object exactly one Flux inventory owner.
+4. Give every Kubernetes object rendered directly by repository desired state exactly one Flux inventory owner.
 5. Make cross-Kustomization resource names explicit and stable.
 6. Make missing post-build variables a hard validation failure.
 7. Remove global forced recreation from application reconciliation.
@@ -141,6 +167,8 @@ These rules are mandatory after migration:
 5. An application's IngressRoute is owned with the application, not in a central ingress aggregate.
 6. Monitoring rules and ServiceMonitors are owned by `apps-observability`, even when they select another domain.
 7. Encrypted Secrets are composed into the same production root as their consumer unless a documented shared-secret owner exists.
+
+Controller-generated children are deliberately outside this rendered inventory. Helm owns resources generated from HelmReleases, reflector owns reflected Secret copies, operators own their generated children, and an application or database may create runtime credentials. Flux must own the parent declaration and explicit inputs; generated children must not be copied into another Kustomize root.
 8. No deployable production root references a resource name that depends on a Kustomize name transformation performed in a different root.
 
 ## 9. Cross-boundary naming cleanup
@@ -247,9 +275,11 @@ Before ownership transfer:
 
 Do not start a prune-sensitive ownership migration while the only application reconciler is wedged without an explicit handoff procedure.
 
+Create and verify the complete recovery set described in `docs/FLUX_MIGRATION_BACKUP_AND_RECOVERY.md`. A successful `COMPLETE` marker, fresh Longhorn backup for every selected volume, logical shared-PostgreSQL dump, etcd snapshot, and verified NFS copy are mandatory release gates.
+
 ### Phase 1: Add validation and operator safeguards
 
-- Update runbooks to prohibit raw production aggregate applies.
+- Keep the deployment guidance and OpenCode context explicit that raw production aggregate applies are prohibited.
 - Add CI checks for unresolved deployment placeholders after Flux-equivalent rendering.
 - Add an object-identity inventory check.
 - Remove the generic OpenCode instruction to prefer `kubectl apply -f` for GitOps-managed resources.
@@ -286,6 +316,8 @@ apiVersion | kind | namespace | name
 
 The union of the new roots must equal the legacy inventory except for explicitly approved additions/removals. For matching identities, compare normalized manifests and review every semantic difference.
 
+Normalization may ignore only Flux's injected `kustomize.toolkit.fluxcd.io/name` and `kustomize.toolkit.fluxcd.io/namespace` labels. Those labels must change during ownership transfer. Application labels, annotations, and all resource specifications remain exact comparison inputs.
+
 Required gates:
 
 - no duplicate object identity among new roots;
@@ -298,14 +330,16 @@ Required gates:
 
 Ownership transfer must be staged:
 
-1. Set the legacy `apps` Kustomization to `prune: false` and confirm the live spec observes it.
-2. Suspend the legacy `apps` Kustomization only after its prune setting is safe.
-3. Add new Flux Kustomizations with `prune: false` initially.
+1. In a dedicated preparation change, set legacy `apps` to `prune: false`, remove global `force`, set `deletionPolicy: Orphan`, and confirm the live spec observes all three.
+2. In a separate change, introduce the new Flux Kustomizations suspended, with `prune: false` and `deletionPolicy: Orphan`.
+3. Suspend the legacy `apps` Kustomization only after the full NFS recovery set and live legacy safety settings are verified.
 4. Reconcile in dependency order: storage, foundations, then workload domains.
 5. Confirm each new inventory contains only its intended objects.
 6. Confirm no resource has conflicting ownership labels or duplicate definitions.
 
 Never delete the legacy Kustomization while it still has `prune: true`; its final inventory may delete resources already adopted by new Kustomizations.
+
+Steps 1 and 2 require separate pushed Git revisions and separate live observations. Flux reconcilers consume a shared GitRepository revision asynchronously, so resource ordering inside one commit is not a transaction boundary. The new-owner revision must not be reconciled until the legacy object's live spec is confirmed prune-safe.
 
 ### Phase 6: Transfer and verify ownership
 

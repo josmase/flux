@@ -1,0 +1,49 @@
+allowedIdentityAdditions:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: media
+    name: bazarr-config-pvc-bazarr-0-new
+    sha256: a908d28c9ab69960f3662c7df950a932836020900bd7b9e3bdc072ce57bb7ad5
+    reason: Adopt the live Bazarr recovery claim that the Deployment already mounts.
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: media
+    name: prowlarr-config-pvc-prowlarr-0-v2
+    sha256: 5a224fed28ac51a93ac8f6d3eb8cb942d4166e9b9d4cfeae131b431660b81cdb
+    reason: Replace the irreversibly terminating Prowlarr claim with the repaired live claim.
+allowedIdentityRemovals:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: media
+    name: bazarr-config-pvc-bazarr-0
+    reason: The old Bazarr claim was deleted during recovery and is no longer mounted.
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: media
+    name: prowlarr-config-pvc-prowlarr-0
+    reason: The old Prowlarr claim had a deletion timestamp and disappeared when its final consumer stopped.
+allowedManifestChanges:
+  - apiVersion: apps/v1
+    kind: Deployment
+    namespace: media
+    name: prowlarr
+    sha256: 3b401f888e0cf4897ef8aae84d43327d66ee95fdd406ac1cc6733e6b834f3fff
+    reason: Mount the repaired Prowlarr replacement claim.
+  - apiVersion: helm.toolkit.fluxcd.io/v2
+    kind: HelmRelease
+    namespace: monitoring
+    name: kube-prometheus-stack
+    sha256: 1e52dcd40e168a3e9cc6447822c8201731e544e260e247f049e42bced252362b
+    reason: Replace plaintext Grafana Gotify tokens with runtime Secret references.
+  - apiVersion: apps/v1
+    kind: Deployment
+    namespace: monitoring
+    name: alertmanager-gotify-bridge
+    sha256: 81db652d9fed4e198312f1f16bc3d51409c7bf8685fd23cc9ba5b6acf6eb0edf
+    reason: Load the Gotify bridge token from the encrypted production Secret.
+  - apiVersion: helm.toolkit.fluxcd.io/v2
+    kind: HelmRelease
+    namespace: gitlab-runners
+    name: gitlab-runner
+    sha256: c3cef4402ef9d6c05eee6baf149cfda10094e7a8a9c3ae04b474fae129c77827
+    reason: Load the GitLab runner token from the encrypted production Secret.

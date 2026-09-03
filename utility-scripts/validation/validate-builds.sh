@@ -33,7 +33,30 @@ NC='\033[0m' # No Color
 
 ERRORS=0
 
-# Ensures HelmRelease valuesFrom ConfigMap references resolve to concrete ConfigMaps in the rendered manifest
+PRODUCTION_DOMAINS=(
+    "apps-storage|./apps/production/storage"
+    "apps-ops|./apps/production/ops"
+    "apps-observability|./apps/production/observability"
+    "apps-media-foundation|./apps/production/media/foundation"
+    "apps-media-download|./apps/production/media/download"
+    "apps-media-arr|./apps/production/media/arr"
+    "apps-media-playback|./apps/production/media/playback"
+    "apps-photos|./apps/production/photos"
+    "apps-gitlab|./apps/production/developer-platform/gitlab"
+    "apps-artifacts|./apps/production/developer-platform/artifacts"
+    "apps-services|./apps/production/services"
+    "apps-home|./apps/production/home"
+)
+
+MIGRATION_BASE_REF="${MIGRATION_BASE_REF:-59baf1997b6ddfa13091e7f9e1527ae2bbd931fb}"
+
+echo "Checking production Flux migration safety"
+if ! python3 "$SCRIPT_DIR/validate-flux-migration.py"; then
+    exit 1
+fi
+echo ""
+
+# Ensures HelmRelease valuesFrom references resolve inside the owning rendered domain.
 check_helm_values_from() {
     local manifest=$1
     local context_name=$2
@@ -64,15 +87,15 @@ except yaml.YAMLError as exc:
     print(f"Failed to parse manifests for {context}: {exc}", file=sys.stderr)
     sys.exit(1)
 
-config_maps = set()
+value_sources = set()
 for doc in documents:
-    if isinstance(doc, dict) and doc.get("kind") == "ConfigMap":
+    if isinstance(doc, dict) and doc.get("kind") in {"ConfigMap", "Secret"}:
         metadata = doc.get("metadata", {})
         name = metadata.get("name")
         if not name:
             continue
         namespace = metadata.get("namespace") or "default"
-        config_maps.add((namespace, name))
+        value_sources.add((doc.get("kind"), namespace, name))
 
 missing = []
 for doc in documents:
@@ -87,17 +110,19 @@ for doc in documents:
     for entry in values_from:
         if not isinstance(entry, dict):
             continue
-        if entry.get("kind", "ConfigMap") != "ConfigMap":
+        source_kind = entry.get("kind", "ConfigMap")
+        if source_kind not in {"ConfigMap", "Secret"}:
             continue
         cm_name = entry.get("name")
         if not cm_name:
             continue
         cm_namespace = entry.get("namespace") or release_namespace
-        if (cm_namespace, cm_name) not in config_maps:
+        if (source_kind, cm_namespace, cm_name) not in value_sources:
             missing.append(
                 (
                     release_namespace,
                     release_name,
+                    source_kind,
                     cm_namespace,
                     cm_name,
                 )
@@ -105,9 +130,9 @@ for doc in documents:
 
 if missing:
     print(f"    Helm valuesFrom validation failed for context: {context}", file=sys.stderr)
-    for rel_ns, rel_name, cm_ns, cm_name in missing:
+    for rel_ns, rel_name, source_kind, cm_ns, cm_name in missing:
         print(
-            f"      - HelmRelease {rel_ns}/{rel_name} references ConfigMap {cm_ns}/{cm_name} which is not present in the rendered manifests",
+            f"      - HelmRelease {rel_ns}/{rel_name} references {source_kind} {cm_ns}/{cm_name} which is not present in the rendered manifests",
             file=sys.stderr,
         )
     sys.exit(42)
@@ -130,6 +155,56 @@ PY
         echo -e "  ${RED}✗ Helm valuesFrom check encountered an unexpected error${NC}"
     fi
     return 1
+}
+
+check_rendered_safety() {
+    local manifest=$1
+    local context_name=$2
+    local require_complete=${3:-false}
+
+    local tmpfile
+    tmpfile=$(mktemp)
+    printf '%s' "$manifest" > "$tmpfile"
+
+    local status=0
+    local validation_args=("$tmpfile" --context "$context_name")
+    if [ "$require_complete" = "true" ]; then
+        validation_args+=(--require-local-pvc-references --require-prune-protection)
+    fi
+    if python3 "$SCRIPT_DIR/validate-rendered-manifests.py" "${validation_args[@]}"; then
+        status=0
+    else
+        status=$?
+    fi
+
+    rm -f "$tmpfile"
+    return "$status"
+}
+
+check_rendered_schema() {
+    local manifest=$1
+    local context_name=$2
+    local schema_root="/tmp/flux-crd-schemas"
+
+    if ! command -v kubeconform >/dev/null 2>&1 || [ ! -d "$schema_root/master-standalone-strict" ]; then
+        return 0
+    fi
+
+    local tmpfile
+    tmpfile=$(mktemp)
+    printf '%s' "$manifest" > "$tmpfile"
+    if ! kubeconform \
+        -strict \
+        -ignore-missing-schemas \
+        -skip Secret \
+        -schema-location "$schema_root" \
+        -schema-location default \
+        "$tmpfile" >/dev/null; then
+        echo "    Schema validation failed for $context_name" >&2
+        rm -f "$tmpfile"
+        return 1
+    fi
+    rm -f "$tmpfile"
 }
 
 # Function to validate kustomize build
@@ -164,6 +239,7 @@ validate_flux() {
     local kustomization_file=$1
     local path=$2
     local name=$3
+    local require_complete=${4:-false}
 
     echo -e "${BLUE}Testing:${NC} $name (Flux)"
     echo "  Kustomization file: $kustomization_file"
@@ -171,7 +247,16 @@ validate_flux() {
 
     local kust_name=$(basename "$kustomization_file" .yaml)
 
-    if output=$(flux build kustomization "$kust_name" --path "$path" --kustomization-file "$kustomization_file" --dry-run 2>&1); then
+    if output=$(flux build kustomization "$kust_name" --path "$path" --kustomization-file "$kustomization_file" --dry-run --strict-substitute 2>&1); then
+        if ! check_rendered_safety "$output" "$name (Flux)" "$require_complete"; then
+            echo -e "  ${RED}✗ Rendered manifest safety check failed${NC}"
+            ERRORS=$((ERRORS + 1))
+            return 1
+        fi
+        if ! check_rendered_schema "$output" "$name (Flux)"; then
+            ERRORS=$((ERRORS + 1))
+            return 1
+        fi
         local lines=$(echo "$output" | wc -l)
         local resources=$(echo "$output" | grep -c "^kind:" || true)
         echo -e "  ${GREEN}✓ Success${NC}"
@@ -183,6 +268,180 @@ validate_flux() {
         echo "    Error: $output" | head -5
         ERRORS=$((ERRORS + 1))
         return 1
+    fi
+}
+
+render_production_domain_union() {
+    local output_file=$1
+    local failed=0
+
+    for domain in "${PRODUCTION_DOMAINS[@]}"; do
+        local domain_name=${domain%%|*}
+        local root_path=${domain#*|}
+        local materialized_spec
+        local domain_manifest
+        materialized_spec=$(mktemp)
+        domain_manifest=$(mktemp)
+
+        echo "  Kustomization: $domain_name" >&2
+        echo "  Path: $root_path" >&2
+        if ! python3 "$SCRIPT_DIR/materialize-flux-substitutions.py" \
+            --kustomization-file "clusters/production/apps-domains.yaml" \
+            --name "$domain_name" \
+            --cluster-vars "clusters/production/cluster-vars.yaml" \
+            > "$materialized_spec"; then
+            failed=1
+        elif ! output=$(flux build kustomization "$domain_name" \
+            --path "$root_path" \
+            --kustomization-file "$materialized_spec" \
+            --dry-run \
+            --strict-substitute 2>&1); then
+            echo "$output" >&2
+            failed=1
+        elif ! check_rendered_safety "$output" "$domain_name (Flux)"; then
+            failed=1
+        elif ! check_helm_values_from "$output" "$domain_name (Flux)"; then
+            failed=1
+        elif ! check_rendered_schema "$output" "$domain_name (Flux)"; then
+            failed=1
+        else
+            printf '%s\n' "$output" > "$domain_manifest"
+            if ! python3 "$SCRIPT_DIR/validate-domain-inventory.py" \
+                "$domain_manifest" \
+                --domain "$domain_name" \
+                --inventory "$SCRIPT_DIR/production-domain-inventory.yaml"; then
+                failed=1
+            else
+                printf '%s\n---\n' "$output" >> "$output_file"
+            fi
+        fi
+
+        rm -f "$materialized_spec" "$domain_manifest"
+        if [ "$failed" -ne 0 ]; then
+            return 1
+        fi
+    done
+}
+
+validate_production_cluster_root() {
+    echo -e "${BLUE}Testing:${NC} Production cluster root (Flux)"
+    local output
+    if ! output=$(flux build kustomization flux-system \
+        --path "./clusters/production" \
+        --kustomization-file "clusters/production/flux-system/gotk-sync.yaml" \
+        --dry-run --strict-substitute 2>&1); then
+        echo -e "  ${RED}✗ Failed${NC}"
+        echo "$output" | head -10
+        ERRORS=$((ERRORS + 1))
+        return
+    fi
+    if ! check_rendered_safety "$output" "production cluster root (Flux)"; then
+        ERRORS=$((ERRORS + 1))
+        return
+    fi
+    if ! check_rendered_schema "$output" "production cluster root (Flux)"; then
+        ERRORS=$((ERRORS + 1))
+        return
+    fi
+    local resources
+    resources=$(grep -c "^kind:" <<< "$output" || true)
+    echo -e "  ${GREEN}✓ Success${NC}"
+    echo "    Resources: $resources"
+}
+
+validate_production_domain_equivalence() {
+    local kustomization_file="clusters/production/apps.yaml"
+    local baseline_file
+    local candidate_file
+    baseline_file=$(mktemp)
+    candidate_file=$(mktemp)
+
+    echo -e "${BLUE}Testing:${NC} Complete proposed production domain equivalence"
+
+    local failed=0
+    if ! flux build kustomization apps --path "./apps/production" --kustomization-file "$kustomization_file" --dry-run --strict-substitute > "$baseline_file"; then
+        failed=1
+    fi
+
+    if [ "$failed" -eq 0 ] && ! render_production_domain_union "$candidate_file"; then
+        failed=1
+    fi
+
+    if [ "$failed" -eq 0 ] && ! python3 "$SCRIPT_DIR/validate-rendered-manifests.py" \
+        "$candidate_file" \
+        --require-local-pvc-references \
+        --require-prune-protection \
+        --context "complete proposed production domain union"; then
+        failed=1
+    fi
+
+    if [ "$failed" -eq 0 ] && ! python3 "$SCRIPT_DIR/compare-rendered-manifests.py" \
+        "$baseline_file" "$candidate_file" \
+        --exact-all --ignore-flux-ownership \
+        --context "complete proposed production domain split"; then
+        failed=1
+    fi
+
+    if [ "$failed" -ne 0 ]; then
+        echo -e "  ${RED}✗ Failed${NC}"
+        ERRORS=$((ERRORS + 1))
+    else
+        local resources
+        resources=$(grep -c "^kind:" "$candidate_file" || true)
+        echo -e "  ${GREEN}✓ Success${NC}"
+        echo "    Resources: $resources"
+    fi
+
+    rm -f "$baseline_file" "$candidate_file"
+}
+
+validate_migration_baseline() {
+    local baseline_tree
+    local archive_file
+    local baseline_file
+    local candidate_file
+    baseline_tree=$(mktemp -d)
+    archive_file=$(mktemp)
+    baseline_file=$(mktemp)
+    candidate_file=$(mktemp)
+    local failed=0
+
+    echo -e "${BLUE}Testing:${NC} Working tree against migration baseline $MIGRATION_BASE_REF"
+
+    if ! git cat-file -e "$MIGRATION_BASE_REF^{commit}"; then
+        echo "  Missing migration baseline commit $MIGRATION_BASE_REF"
+        failed=1
+    elif ! git archive --format=tar --output="$archive_file" "$MIGRATION_BASE_REF"; then
+        failed=1
+    elif ! tar -xf "$archive_file" -C "$baseline_tree"; then
+        failed=1
+    elif ! flux build kustomization apps \
+        --path "$baseline_tree/apps/production" \
+        --kustomization-file "$baseline_tree/clusters/production/apps.yaml" \
+        --dry-run --strict-substitute > "$baseline_file"; then
+        failed=1
+    elif ! flux build kustomization apps \
+        --path "./apps/production" \
+        --kustomization-file "clusters/production/apps.yaml" \
+        --dry-run --strict-substitute > "$candidate_file"; then
+        failed=1
+    elif ! python3 "$SCRIPT_DIR/compare-rendered-manifests.py" \
+        "$baseline_file" "$candidate_file" \
+        --exact-all --ignore-flux-ownership \
+        --ignore-flux-prune-protection \
+        --allowed-deltas "$SCRIPT_DIR/migration-allowed-deltas.yaml" \
+        --context "working tree against pre-migration baseline"; then
+        failed=1
+    fi
+
+    rm -f "$archive_file" "$baseline_file" "$candidate_file"
+    rm -rf "$baseline_tree"
+
+    if [ "$failed" -ne 0 ]; then
+        echo -e "  ${RED}✗ Failed${NC}"
+        ERRORS=$((ERRORS + 1))
+    else
+        echo -e "  ${GREEN}✓ Success${NC}"
     fi
 }
 
@@ -211,10 +470,17 @@ echo "================================================"
 echo ""
 
 if ! command -v flux &> /dev/null; then
-    echo -e "${RED}✗ Flux CLI not found - skipping Flux build tests${NC}"
+    echo -e "${RED}✗ Flux CLI not found${NC}"
     echo "  Install flux: https://fluxcd.io/flux/installation/"
+    ERRORS=$((ERRORS + 1))
 else
-    validate_flux "clusters/production/apps.yaml" "./apps/production" "Production Apps"
+    validate_production_cluster_root
+    echo ""
+    validate_flux "clusters/production/apps.yaml" "./apps/production" "Production Apps" true
+    echo ""
+    validate_production_domain_equivalence
+    echo ""
+    validate_migration_baseline
     echo ""
     validate_flux "clusters/development/apps.yaml" "./apps/development" "Development Apps"
     echo ""

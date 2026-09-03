@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/it-tools
+  - ../../base/new-new-boplats
+  - ../../base/resume
+  - ../../base/blog
+  - ../../base/downloader
+  - ../../base/growlog
+  - ../../base/llm-switchboard
+  - ../../base/persistence/default
+  - ../growlog
+  - ../llm-switchboard
+  - default-app-config.yaml
+
+components:
+  - ../components/prune-protection
+
+transformers:
+  - |-
+    apiVersion: builtin
+    kind: NamespaceTransformer
+    metadata:
+      name: default-namespace
+      namespace: default
+    unsetOnly: true

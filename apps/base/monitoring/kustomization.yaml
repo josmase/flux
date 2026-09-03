@@ -10,5 +10,8 @@ resources:
   - alerts
   - servicemonitors
 
-commonLabels:
-  app.kubernetes.io/part-of: monitoring
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: monitoring
+    includeSelectors: true
+    includeTemplates: true

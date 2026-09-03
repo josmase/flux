@@ -9,6 +9,9 @@ stages:
 flux-validate:
   stage: validate
   image: ubuntu:22.04
+  variables:
+    # The migration validation compares against the pinned pre-split revision.
+    GIT_DEPTH: "0"
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update && apt-get install -y --no-install-recommends

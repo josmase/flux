@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: longhorn-system
+
+# Production credential overlay for the currently disabled maintenance job.
+# Compose this root into apps-ops only when the matching CronJob is enabled.
+resources:
+  - longhorn-maintenance-ssh-secret.yaml

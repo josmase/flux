@@ -100,7 +100,7 @@ spec:
       volumes:
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: media-media-shared-nfs-pvc
         - name: checkrr-config-volume
           secret:
             secretName: checkrr-config

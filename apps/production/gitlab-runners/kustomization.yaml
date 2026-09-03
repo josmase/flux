@@ -3,3 +3,19 @@ kind: Kustomization
 
 resources:
   - secrets/
+
+patches:
+  - target:
+      group: helm.toolkit.fluxcd.io
+      version: v2
+      kind: HelmRelease
+      name: gitlab-runner
+      namespace: gitlab-runners
+    patch: |-
+      - op: add
+        path: /spec/valuesFrom
+        value:
+          - kind: Secret
+            name: gitlab-runner-token
+            valuesKey: runner-token
+            targetPath: runnerToken

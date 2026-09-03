@@ -24,8 +24,6 @@ spec:
     rbac:
       create: true
 
-    runnerToken: "glrt-dDoxCnU6Md0ZAqwYvhgGPWl8XMjVzkQQ.0w0wrhrw2"
-
     runners:
       tags: "kubernetes,local"
       privileged: true

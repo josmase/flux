@@ -1,7 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bazarr-config-pvc-bazarr-0
+  # This is the live replacement claim created during the Bazarr recovery.
+  # Keep the explicit final identity aligned with the Deployment volume.
+  name: bazarr-config-pvc-bazarr-0-new
   labels:
     media-app: bazarr
     app: bazarr

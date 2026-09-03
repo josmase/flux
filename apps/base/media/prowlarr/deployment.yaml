@@ -73,7 +73,7 @@ spec:
       volumes:
         - name: prowlarr-config-pvc
           persistentVolumeClaim:
-            claimName: prowlarr-config-pvc-prowlarr-0
+            claimName: prowlarr-config-pvc-prowlarr-0-v2
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: media-media-shared-nfs-pvc

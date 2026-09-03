@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-vars
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/component: cluster-configuration
+    app.kubernetes.io/part-of: flux
+    reconcile.fluxcd.io/watch: Enabled
+data:
+  CERT_SECRET_EXTERNAL: hejsan-xyz-tls
+  CERT_SECRET_INTERNAL: local-hejsan-xyz-tls
+  DOMAIN_EXTERNAL: hejsan.xyz
+  DOMAIN_INTERNAL: local.hejsan.xyz
+  ENVIRONMENT: production
+  LETSENCRYPT_SERVER: https://acme-v02.api.letsencrypt.org/directory
+  LIVE_ENDPOINT: http://netboot-assets.local.hejsan.xyz
+  STORAGE_CLASS: longhorn

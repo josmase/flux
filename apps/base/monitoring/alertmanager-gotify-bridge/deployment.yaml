@@ -23,7 +23,10 @@ spec:
             - name: GOTIFY_ENDPOINT
               value: "http://gotify.monitoring.svc.cluster.local:8080/message"
             - name: GOTIFY_TOKEN
-              value: "A7TvHUAUjtqng3X"
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-gotify-tokens
+                  key: warning
             - name: DEFAULT_PRIORITY
               value: "5"
 ---

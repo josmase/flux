@@ -4,4 +4,5 @@ namespace: longhorn-system
 resources:
   - ingress.yaml
   #- longhorn-maintenance-cronjob.yaml
-  #- longhorn-maintenance-ssh-secret.yaml
+  # The production-only SSH Secret lives under apps/production/longhorn/ and
+  # must be composed with this workload if maintenance is re-enabled.

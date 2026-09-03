@@ -76,4 +76,4 @@ spec:
             claimName: bazarr-config-pvc-bazarr-0-new
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-shared-nfs-pvc
+            claimName: media-media-shared-nfs-pvc

@@ -1,0 +1,61 @@
+---
+# In-tree NFS PV retained as the media rollback volume.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-shared-nfs-pv
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: storage.local.hejsan.xyz
+    path: /
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - async
+    - timeo=600
+    - retrans=3
+    - actimeo=5
+    - lookupcache=none
+    - rsize=1048576
+    - wsize=1048576
+    - noatime
+    - nodiratime
+---
+# CSI-backed NFS PV used for media stale-mount detection and recovery.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-shared-nfs-csi-pv
+spec:
+  capacity:
+    storage: 110Ti
+  volumeMode: Filesystem
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: media-shared-nfs
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - async
+    - timeo=600
+    - retrans=3
+    - actimeo=5
+    - lookupcache=none
+    - rsize=1048576
+    - wsize=1048576
+    - noatime
+    - nodiratime

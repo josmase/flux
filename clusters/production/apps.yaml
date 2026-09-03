@@ -13,10 +13,11 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production
-  prune: true
+  # Keep disabled throughout the ownership handoff. The legacy inventory must
+  # never prune resources after a domain Kustomization adopts them.
+  prune: false
+  deletionPolicy: Orphan
   timeout: 30m0s
-  force: true  # Force server-side apply to handle immutable fields
-  # suspend: true  # Removed after sonarr 2->6 split complete
   decryption:
     provider: sops
     secretRef:

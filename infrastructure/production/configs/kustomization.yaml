@@ -11,3 +11,18 @@ resources:
   # Production secrets
   - secret-cf-token.yaml
   - secret-shared-postgres-superuser.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: Secret
+      name: shared-postgres-superuser
+      namespace: cnpg-system
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+          reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "default,new-new-boplats"
+          reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+          reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "default,new-new-boplats"

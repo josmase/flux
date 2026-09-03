@@ -13,7 +13,3 @@ spec:
     name: flux-system
   path: ./apps/base/nfs-tools
   prune: true
-  force: true
-  postBuild:
-    substitute:
-      ENVIRONMENT: "production"

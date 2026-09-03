@@ -43,6 +43,9 @@ resources:
   - gitlab/
   - gitlab-runners/
 
+components:
+  - components/prune-protection
+
 transformers:
   - |-
     apiVersion: builtin
