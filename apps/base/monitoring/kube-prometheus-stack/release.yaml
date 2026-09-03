@@ -13,6 +13,11 @@ spec:
         name: kube-prometheus-stack-repo
       version: 64.0.0
   interval: 1m0s
+  upgrade:
+    remediation:
+      # A transient RWO volume handoff can outlast one Helm action. Retrying
+      # avoids leaving monitoring stalled after the replacement pod is ready.
+      retries: 3
   values:
     prometheus:
       prometheusSpec:
