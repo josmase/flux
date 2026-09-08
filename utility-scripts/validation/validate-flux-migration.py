@@ -53,6 +53,7 @@ ACTIVE_DOMAINS = {
     "apps-media-arr",
     "apps-photos",
     "apps-gitlab",
+    "apps-artifacts",
 }
 
 MEDIA_DOWNLOAD_HEALTH_CHECKS = [
