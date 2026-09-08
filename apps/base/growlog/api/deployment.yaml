@@ -53,6 +53,16 @@ spec:
                 secretKeyRef:
                   name: growlog-secrets
                   key: BETTER_AUTH_SECRET
+            - name: VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-secrets
+                  key: VAPID_PUBLIC_KEY
+            - name: VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: growlog-secrets
+                  key: VAPID_PRIVATE_KEY
             - name: BASE_URL
               value: https://growlog.local.hejsan.xyz
           ports:
