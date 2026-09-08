@@ -51,6 +51,7 @@ ACTIVE_DOMAINS = {
     "apps-media-playback",
     "apps-media-download",
     "apps-media-arr",
+    "apps-photos",
 }
 
 MEDIA_DOWNLOAD_HEALTH_CHECKS = [
