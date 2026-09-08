@@ -55,6 +55,7 @@ ACTIVE_DOMAINS = {
     "apps-gitlab",
     "apps-artifacts",
     "apps-services",
+    "apps-home",
 }
 
 MEDIA_DOWNLOAD_HEALTH_CHECKS = [

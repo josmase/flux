@@ -344,7 +344,7 @@ metadata:
   name: apps-home
   namespace: flux-system
 spec:
-  suspend: true
+  suspend: false
   interval: 10m
   retryInterval: 1m
   timeout: 10m
