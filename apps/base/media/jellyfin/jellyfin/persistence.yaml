@@ -21,44 +21,6 @@ spec:
     requests:
       storage: 40Gi
 ---
-# In-tree NFS PV for Jellyfin media — kept for rollback; CSI-backed PV below
-# handles production traffic with stale mount auto-recovery.
-#
-# Mount options tuned for read-only, metadata-heavy workloads with fast
-# failover: soft mounts, aggressive timeouts, no directory caching.
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: jellyfin-media-nfs-pv
-  labels:
-    media-app: jellyfin
-    purpose: media-readonly
-spec:
-  capacity:
-    storage: 110Ti
-  volumeMode: Filesystem
-  storageClassName: "jellyfin-media"
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: storage.local.hejsan.xyz
-    path: "/files"
-  mountOptions:  
-    - soft
-    - bg
-    - nfsvers=4.1
-    - proto=tcp
-    - timeo=30
-    - retrans=3
-    - actimeo=5
-    - rsize=1048576
-    - wsize=1048576
-    - noatime
-    - nodiratime
-    - lookupcache=none
----
 # CSI-backed NFS PV for Jellyfin media — uses csi-driver-nfs for built-in
 # stale mount detection (os.Lstat → ESTALE) and auto-remount.
 # Read/write enabled via mountOptions and mountPermissions (NFS export uses anonuid=1000)
