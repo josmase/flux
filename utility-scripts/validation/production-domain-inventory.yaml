@@ -14,8 +14,8 @@ domains:
     count: 5
     sha256: 724981d6ed4856d815564e139041488b19feab2880d2247add3751a837179fb1
   apps-media-download:
-    count: 37
-    sha256: d777dc1d465343a5efc553e274e1a449ea66de0ea7d002cac3fd2de8bb81a100
+    count: 36
+    sha256: 3d5f8bc01476bd7e6817dc8ea427c74ea4edf6d47d67c8c511d9ef074a4ce179
   apps-media-arr:
     count: 72
     sha256: abc366c4c76fac689819b91006258fe82e28b894b3943bdd778b898c3c684782

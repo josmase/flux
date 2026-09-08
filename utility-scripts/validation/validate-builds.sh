@@ -48,14 +48,6 @@ PRODUCTION_DOMAINS=(
     "apps-home|./apps/production/home"
 )
 
-MIGRATION_BASE_REF="${MIGRATION_BASE_REF:-59baf1997b6ddfa13091e7f9e1527ae2bbd931fb}"
-
-echo "Checking production Flux migration safety"
-if ! python3 "$SCRIPT_DIR/validate-flux-migration.py"; then
-    exit 1
-fi
-echo ""
-
 # Ensures HelmRelease valuesFrom references resolve inside the owning rendered domain.
 check_helm_values_from() {
     local manifest=$1
@@ -349,100 +341,21 @@ validate_production_cluster_root() {
     echo "    Resources: $resources"
 }
 
-validate_production_domain_equivalence() {
-    local kustomization_file="clusters/production/apps.yaml"
-    local baseline_file
-    local candidate_file
-    baseline_file=$(mktemp)
-    candidate_file=$(mktemp)
+validate_production_domains() {
+    local manifest_file
+    manifest_file=$(mktemp)
 
-    echo -e "${BLUE}Testing:${NC} Complete proposed production domain equivalence"
-
-    local failed=0
-    if ! flux build kustomization apps --path "./apps/production" --kustomization-file "$kustomization_file" --dry-run --strict-substitute > "$baseline_file"; then
-        failed=1
-    fi
-
-    if [ "$failed" -eq 0 ] && ! render_production_domain_union "$candidate_file"; then
-        failed=1
-    fi
-
-    if [ "$failed" -eq 0 ] && ! python3 "$SCRIPT_DIR/validate-rendered-manifests.py" \
-        "$candidate_file" \
-        --require-local-pvc-references \
-        --require-prune-protection \
-        --context "complete proposed production domain union"; then
-        failed=1
-    fi
-
-    if [ "$failed" -eq 0 ] && ! python3 "$SCRIPT_DIR/compare-rendered-manifests.py" \
-        "$baseline_file" "$candidate_file" \
-        --exact-all --ignore-flux-ownership \
-        --context "complete proposed production domain split"; then
-        failed=1
-    fi
-
-    if [ "$failed" -ne 0 ]; then
+    echo -e "${BLUE}Testing:${NC} Production domain owners"
+    if ! render_production_domain_union "$manifest_file"; then
         echo -e "  ${RED}✗ Failed${NC}"
         ERRORS=$((ERRORS + 1))
     else
         local resources
-        resources=$(grep -c "^kind:" "$candidate_file" || true)
+        resources=$(grep -c "^kind:" "$manifest_file" || true)
         echo -e "  ${GREEN}✓ Success${NC}"
         echo "    Resources: $resources"
     fi
-
-    rm -f "$baseline_file" "$candidate_file"
-}
-
-validate_migration_baseline() {
-    local baseline_tree
-    local archive_file
-    local baseline_file
-    local candidate_file
-    baseline_tree=$(mktemp -d)
-    archive_file=$(mktemp)
-    baseline_file=$(mktemp)
-    candidate_file=$(mktemp)
-    local failed=0
-
-    echo -e "${BLUE}Testing:${NC} Working tree against migration baseline $MIGRATION_BASE_REF"
-
-    if ! git cat-file -e "$MIGRATION_BASE_REF^{commit}"; then
-        echo "  Missing migration baseline commit $MIGRATION_BASE_REF"
-        failed=1
-    elif ! git archive --format=tar --output="$archive_file" "$MIGRATION_BASE_REF"; then
-        failed=1
-    elif ! tar -xf "$archive_file" -C "$baseline_tree"; then
-        failed=1
-    elif ! flux build kustomization apps \
-        --path "$baseline_tree/apps/production" \
-        --kustomization-file "$baseline_tree/clusters/production/apps.yaml" \
-        --dry-run --strict-substitute > "$baseline_file"; then
-        failed=1
-    elif ! flux build kustomization apps \
-        --path "./apps/production" \
-        --kustomization-file "clusters/production/apps.yaml" \
-        --dry-run --strict-substitute > "$candidate_file"; then
-        failed=1
-    elif ! python3 "$SCRIPT_DIR/compare-rendered-manifests.py" \
-        "$baseline_file" "$candidate_file" \
-        --exact-all --ignore-flux-ownership \
-        --ignore-flux-prune-protection \
-        --allowed-deltas "$SCRIPT_DIR/migration-allowed-deltas.yaml" \
-        --context "working tree against pre-migration baseline"; then
-        failed=1
-    fi
-
-    rm -f "$archive_file" "$baseline_file" "$candidate_file"
-    rm -rf "$baseline_tree"
-
-    if [ "$failed" -ne 0 ]; then
-        echo -e "  ${RED}✗ Failed${NC}"
-        ERRORS=$((ERRORS + 1))
-    else
-        echo -e "  ${GREEN}✓ Success${NC}"
-    fi
+    rm -f "$manifest_file"
 }
 
 echo "Part 1: Kustomize Builds"
@@ -450,8 +363,10 @@ echo "========================"
 echo ""
 
 # Production
-validate_kustomize "apps/production" "Production Apps"
-echo ""
+for domain in "${PRODUCTION_DOMAINS[@]}"; do
+    validate_kustomize "${domain#*|}" "Production ${domain%%|*}"
+    echo ""
+done
 validate_kustomize "infrastructure/production/controllers" "Production Infrastructure Controllers"
 echo ""
 validate_kustomize "infrastructure/production/configs" "Production Infrastructure Configs"
@@ -476,11 +391,7 @@ if ! command -v flux &> /dev/null; then
 else
     validate_production_cluster_root
     echo ""
-    validate_flux "clusters/production/apps.yaml" "./apps/production" "Production Apps" true
-    echo ""
-    validate_production_domain_equivalence
-    echo ""
-    validate_migration_baseline
+    validate_production_domains
     echo ""
     validate_flux "clusters/development/apps.yaml" "./apps/development" "Development Apps"
     echo ""

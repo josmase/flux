@@ -74,7 +74,23 @@ validate_kustomize_build() {
     fi
 }
 
-validate_kustomize_build "apps/production" "Production apps"
+PRODUCTION_APP_DOMAINS=(
+    "apps/production/ops"
+    "apps/production/observability"
+    "apps/production/storage"
+    "apps/production/media/foundation"
+    "apps/production/media/playback"
+    "apps/production/media/download"
+    "apps/production/media/arr"
+    "apps/production/photos"
+    "apps/production/developer-platform/gitlab"
+    "apps/production/developer-platform/artifacts"
+    "apps/production/services"
+    "apps/production/home"
+)
+for domain in "${PRODUCTION_APP_DOMAINS[@]}"; do
+    validate_kustomize_build "$domain" "Production ${domain#apps/production/}"
+done
 validate_kustomize_build "infrastructure/production/controllers" "Production infra controllers"
 validate_kustomize_build "infrastructure/production/configs" "Production infra configs"
 validate_kustomize_build "apps/development" "Development apps"
@@ -126,7 +142,7 @@ check_flux_path() {
     fi
 }
 
-check_flux_path "clusters/production/apps.yaml" "./apps/production" "Production apps"
+check_flux_path "clusters/production/apps-domains.yaml" "./apps/production/ops" "Production app domains"
 check_flux_path "clusters/production/infrastructure.yaml" "./infrastructure/production/controllers" "Production infra controllers"
 check_flux_path "clusters/production/infrastructure.yaml" "./infrastructure/production/configs" "Production infra configs"
 check_flux_path "clusters/development/apps.yaml" "./apps/development" "Development apps"
