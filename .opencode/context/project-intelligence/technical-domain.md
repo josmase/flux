@@ -1,170 +1,81 @@
-<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.1 | Updated: 2026-09-02 -->
+<!-- Context: project-intelligence/technical | Priority: critical | Version: 2.0 | Updated: 2026-09-08 -->
 
 # Technical Domain
 
-**Purpose**: Tech stack, GitOps architecture, and manifest conventions for the Flux v2 repository (single source of desired cluster state for the josmase self-hosted platform).
-**Last Updated**: 2026-09-02
+**Purpose:** Technology, GitOps architecture, and manifest conventions for the josmase self-hosted Kubernetes platform.
 
-## Quick Reference
+## Primary stack
 
-**Update Triggers**: Stack/version changes | New apps/controllers | New overlay patterns | Security/encryption changes
-**Audience**: Developers, AI agents
+| Layer | Technology | Purpose |
+| --- | --- | --- |
+| GitOps | Flux v2 | Git-backed production reconciliation through operational domains |
+| Templating | Kustomize | Environment-neutral bases plus production/development overlays |
+| Secrets | SOPS + Age | Encrypted overlays, decrypted only in-cluster |
+| Runtime | K3s | Kubernetes runtime |
+| Ingress | Traefik, cert-manager, reflector | Routing, wildcard certificates, and cross-namespace certificate copies |
+| Storage | Longhorn and NFS CSI | Replicated block storage and stable shared NFS mounts |
+| Databases | CloudNativePG, application databases | Managed PostgreSQL and application persistence |
+| Packaging | HelmRelease | Third-party application releases |
+| CI | GitLab CI | Manifest, render, schema, and ownership validation |
 
-## Primary Stack
+## Production GitOps architecture
 
-| Layer        | Technology                     | Version            | Rationale                                                |
-| ------------ | ------------------------------ | ------------------ | -------------------------------------------------------- |
-| GitOps       | Flux v2                        | 2.8.8 (CI: 2.9.4)  | declarative reconcile of desired state from git          |
-| Templating   | Kustomize                      | built-in           | base + env-overlay layering                              |
-| Secrets      | SOPS + Age                     | sops 3.13.3        | env-scoped encryption, decrypt in-cluster                |
-| Runtime      | K3s                            | >= v1.32.0         | lightweight k8s for self-hosting                        |
-| Ingress      | Traefik (Helm)                 | chart 37.1.1       | ingress controller, NodePort for local dev              |
-| TLS          | cert-manager + Let's Encrypt   | —                  | wildcard DNS-01 via Cloudflare                           |
-| Cert sync    | reflector                      | —                  | copy wildcard cert across namespaces                     |
-| Storage      | Longhorn                       | —                  | replicated block storage (prod default StorageClass)     |
-| Database     | CloudNativePG                  | —                  | Postgres operator (prod + dev)                           |
-| Packaging    | Helm (HelmRelease)             | —                  | third-party apps (gitlab, traefik, cert-manager, …)      |
-| Deps         | Renovate                       | —                  | automated manifest/version bumps (`renovate.json`)       |
-| CI           | GitLab CI                      | —                  | validate pipeline (`validate.sh`)                        |
-| Local dev    | Kind                           | —                  | local cluster testing (`kind-config.yaml`)               |
+Production does not have a monolithic applications Kustomization. `clusters/production/apps-domains.yaml` defines twelve active application owners, each with an independently buildable path under `apps/production/`.
 
-## Code Patterns
-
-### Flux Kustomization (target domain pattern; migration pending)
-
-Production applications currently use one legacy `apps` Kustomization. Do not copy that monolithic pattern or its global `force: true`. The target structure uses domain-level Kustomizations described in `gitops-application-ownership.md` and `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md`.
-
-```yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: apps-media-download
-  namespace: flux-system
-spec:
-  interval: 10m
-  retryInterval: 1m
-  timeout: 5m
-  dependsOn:
-    - name: apps-media-foundation
-  sourceRef: { kind: GitRepository, name: flux-system }
-  path: ./apps/production/media/download
-  prune: true
-  wait: true
-  decryption:
-    provider: sops
-    secretRef: { name: sops-age }
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-vars
+```text
+apps/production/
+├── storage/
+├── ops/
+├── observability/
+├── media/{foundation,download,arr,playback}/
+├── photos/
+├── developer-platform/{gitlab,artifacts}/
+├── services/
+└── home/
 ```
 
-### SOPS-encrypted Secret (env overlay)
+The structure exists to contain reconciliation failures and rollbacks within a meaningful operational domain. It prevents unrelated workloads from sharing a deployment transaction and gives future workloads an explicit owner. See `gitops-application-ownership.md` for placement criteria.
 
-```yaml
-# apps/production/growlog/secrets/secret.yaml
-apiVersion: v1
-kind: Secret
-metadata: { name: growlog-secrets }
-type: Opaque
-stringData:
-  BETTER_AUTH_SECRET: ENC[AES256_GCM,data:...,iv:...,tag:...,type:str]
-sops:
-  age:
-    - recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        ...
-  encrypted_regex: ^(data|stringData)$
-  version: 3.13.3
-```
+All active production domain owners currently use `prune: false` and `deletionPolicy: Orphan` as a conservative data-safety policy. Do not change those settings merely to tidy up inventory; resource deletion and ownership transfers need a dedicated review.
 
-### Helm values via configMapGenerator (base + overlay append)
+## Manifest conventions
 
-```yaml
-# infrastructure/base/controllers/ingress-traefik/release.yaml
-spec:
-  chart: { spec: { chart: traefik, version: 37.1.1 } }
-  valuesFrom:
-    - kind: ConfigMap
-      name: traefik-values-base   # dev overlay appends traefik-values-development
-```
+- `apps/base/` contains environment-neutral manifests and no credentials.
+- A production root composes its needed base resources, encrypted production Secrets, and local patches; it must build independently.
+- Common non-secret values come from `clusters/production/cluster-vars.yaml` through Flux `postBuild.substituteFrom`.
+- Flux strict substitution is required. Do not treat a plain Kustomize render as proof that a production render is safe.
+- Use explicit final names for references crossing domain boundaries. Preserve bound PVC identities.
+- Keep an application's IngressRoute, lifecycle-controlled PVC, and private Secret in its owner domain unless a shared owner is documented.
+- Helm-generated, operator-generated, and reflected child objects stay with their generating controller; do not duplicate them in a Kustomize root.
 
-## Naming Conventions
+## Safe production workflow
 
-| Type                | Convention                        | Example                                          |
-| ------------------- | --------------------------------- | ------------------------------------------------ |
-| App dirs            | kebab-case                        | `apps/base/new-new-boplats`, `apps/base/growlog` |
-| Overlays            | `base/` + `production/`/`development/` | `apps/production/growlog/`                 |
-| Flux Kustomizations | `infra-controllers`, `infra-configs`, `apps` | `clusters/production/apps.yaml`      |
-| Helm values CMs     | `{app}-values-{base\|development}` | `traefik-values-base`, `traefik-values-development` |
-| Secrets             | `secret.yaml` or `secrets/`       | `apps/production/immich/secret.yaml`             |
-| Substitution vars   | UPPER_SNAKE                      | `${DOMAIN_INTERNAL}`, `${STORAGE_CLASS}`         |
-| Image tags          | `<date>-<short-sha>`              | `2026-08-12-f05e3fb6`                            |
-| Registry            | `artifactory.local.hejsan.xyz`    | `.../gitlab-registry/josmase/apps/growlog/web`   |
+1. Select the owner domain using `.opencode/context/project-intelligence/gitops-application-ownership.md`.
+2. Add manifests to `apps/base/` and compose them from the owner’s production root.
+3. Run `utility-scripts/validation/validate-builds.sh` and `kustomize build apps/production/<domain>`.
+4. Commit and push.
+5. Reconcile the owner with `flux reconcile kustomization <owner> -n flux-system` and verify its workloads.
 
-## Code Standards
+Never apply a raw production Kustomize render with `kubectl`. Direct mutations are only for bounded incident recovery or documented storage actions, followed by Flux reconciliation.
 
-- `base/` holds env-agnostic manifests only — **no secrets** (enforced by `validate-structure.sh`)
-- Env differences via Flux `postBuild.substitute`, not hardcoded domains/storage/certs
-- All secrets SOPS+Age encrypted, placed only in `production/`/`development/` overlays
-- Production desired state is deployed by commit/push and Flux reconciliation; never broadly apply a raw production Kustomize render with `kubectl`
-- Flux post-build substitution is part of the desired-state render; use strict Flux builds and reject unresolved `${...}` variables
-- Every Kubernetes object has one Flux inventory owner; ownership transfers require prune-safe staging
-- Cross-Kustomization references use stable explicit names and cannot rely on name transformations performed in another build
-- Application Kustomizations do not use `force: true` by default
-- Helm chart values via `configMapGenerator` with unique `-base`/`-development` names (see `docs/CONFIGMAP_PATTERN.md`)
-- Per-app layout: `deployment.yaml` + `service.yaml` + `ingress.yaml` + `kustomization.yaml`
-- Validate before merge: `bash utility-scripts/validation/validate.sh` (secrets, structure, kustomize build, kubeconform)
-- Overlays use `NamespaceTransformer` (unsetOnly) + `kustomizeconfig.yaml` nameReference for HelmRelease valuesFrom
+## Naming and references
 
-## Security Requirements
+| Type | Convention | Example |
+| --- | --- | --- |
+| Flux owner | `apps-<operational-domain>` | `apps-media-playback` |
+| Base app directory | kebab-case | `apps/base/new-new-boplats` |
+| Production root | operational domain | `apps/production/services` |
+| Secrets | SOPS-encrypted overlay | `apps/production/growlog/secrets/secret.yaml` |
+| Shared substitution | upper snake case | `${DOMAIN_INTERNAL}` |
+| Image source | Artifactory proxy | `artifactory.local.hejsan.xyz/...` |
 
-- SOPS/Age encryption mandatory — never commit plaintext `data`/`stringData`
-- Env-scoped Age keys: prod vs dev recipients mapped by path regex in `.sops.yaml`
-- `base/` directories must contain zero secrets (CI fails otherwise)
-- Let's Encrypt **staging** for development, production ACME for production (avoid rate limits)
-- Wildcard certs issued via DNS-01 Cloudflare solver (`apiTokenSecretRef`), never hardcoded tokens
-- Age private keys live outside git (`utility-scripts/security/secrets/` is gitignored)
-- Staged secrets checked for plaintext in pre-commit + GitLab CI
+## References
 
-## 📂 Codebase References
-
-- `README.md` — setup, env overview, bootstrap, storage/cert guidance
-- `.sops.yaml` — SOPS creation rules (path → Age key mapping)
-- `.gitlab-ci.yml` — CI validate pipeline (installs yq/kustomize/kubeconform/sops/flux, runs `validate.sh`)
-- `renovate.json` — Renovate config for k8s manifests
-- `kind-config.yaml` — local Kind cluster with Traefik NodePort mappings (32080/32443)
-- `clusters/production/apps.yaml` — apps Kustomization (SOPS + substitution)
-- `clusters/production/infrastructure.yaml` — `infra-controllers` + `infra-configs`
-- `clusters/development/apps.yaml` — dev apps (staging certs, `STORAGE_CLASS: standard`)
-- `clusters/production/flux-system/gotk-sync.yaml` — GitRepository → `gitlab.local.hejsan.xyz/josmase/infrastructure/flux.git`
-- `apps/production/kustomization.yaml` — overlay selecting `../base/*` apps + `NamespaceTransformer`
-- `apps/base/growlog/` — multi-component app (deployment, ingress, `database/`, `zero-cache/`, `api/`)
-- `apps/base/gitlab/helmrelease.yaml` — HelmRelease with `${DOMAIN_INTERNAL}`/`${STORAGE_CLASS}` substitution
-- `infrastructure/base/controllers/ingress-traefik/` — traefik release + values ConfigMap
-- `infrastructure/base/configs/{certificate,cluster-issuer}.yaml` — wildcard certs + DNS-01 ClusterIssuer
-- `infrastructure/development/controllers/ingress-traefik/kustomization.yaml` — overlay ConfigMap append pattern
-- `utility-scripts/setup/setup-cluster.sh` — env bootstrap (Age keys, sops-age secret, Flux)
-- `utility-scripts/security/encrypt.sh` — SOPS encrypt/decrypt/rotate helper
-- `utility-scripts/validation/validate.sh` — orchestrates secrets/structure/builds/kubeconform checks
-- `docs/CONFIGMAP_PATTERN.md` — Helm values ConfigMap layering pattern
-- `docs/MULTI_ENVIRONMENT.md` — environment strategy and patch guidance
-- `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` — target application boundaries, phased ownership migration, validation, and rollback
-- `.opencode/context/project-intelligence/gitops-application-ownership.md` — critical ownership and deployment invariants
-- `charts/web-app/` — custom Helm chart template
-
-## Potential Improvements
-
-- `docs/MULTI_ENVIRONMENT.md` documents an older "inline patches" model that no longer matches the current base/overlay layout using `postBuild.substitute` — refresh it to reflect current mechanics
-- Bootstrap docs reference the GitHub mirror while the live `GitRepository` points at self-hosted GitLab — reconcile to avoid confusion
-- The production `apps` Kustomization is still monolithic and has demonstrated stuck drift detection; execute the domain split plan instead of extending the aggregate
-- Move the GitLab runner token and Grafana Gotify webhook tokens out of base Helm values into SOPS-encrypted production Secrets and rotate them
-
-## Related Files
-
-- `navigation.md` — index of project-intelligence context
-- `docs/REFACTORING_PLAN.md` — base/overlay refactoring history
-- `docs/LOCAL_DEVELOPMENT.md` — local Kind workflows
-- `docs/UPGRADE_K3S.md` — K3s upgrade guide
-- `gitops-application-ownership.md` — domain ownership, substitution, deployment, and prune-safe handoff rules
+- `clusters/production/apps-domains.yaml` — production application owner definitions
+- `clusters/production/infrastructure.yaml` — infrastructure owners
+- `clusters/production/cluster-vars.yaml` — shared substitutions
+- `.sops.yaml` — encrypted-secret creation rules
+- `utility-scripts/validation/validate.sh` — validation entry point
+- `utility-scripts/validation/production-domain-inventory.yaml` — domain resource inventories
+- `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` — historical architecture decision
+- `gitops-application-ownership.md` — mandatory future-workload placement and ownership rules
