@@ -7,7 +7,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: copy
-      image: artifactory.local.hejsan.xyz/docker/library/alpine:3.20
+      image: artifactory.local.hejsan.xyz/docker/library/alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
       command: ["sh", "-c", "apk add --no-cache rsync >/dev/null && rsync -aHAX --numeric-ids --info=progress2 /old/ /new/ && echo SYNC-DONE"]
       securityContext:
         runAsUser: 0
