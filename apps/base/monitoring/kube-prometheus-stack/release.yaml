@@ -43,9 +43,9 @@ spec:
             namespace: monitoring
             port: http-web
     grafana:
-      # Stop before copying the original claim. The original is explicitly
-      # retained with Helm's resource-policy: keep annotation.
-      enabled: false
+      # The original is explicitly retained with Helm's resource-policy: keep
+      # annotation until the migration rollback window has elapsed.
+      enabled: true
       persistence:
         enabled: true
         existingClaim: kube-prometheus-stack-grafana-resized
