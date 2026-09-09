@@ -14,14 +14,17 @@ labels:
       app: radarr-3
 
 patches:
-  # Temporarily stopped while copying to the replacement PVC.
+  # Switch to the verified replacement PVC and restore the deployment.
   - target:
       kind: Deployment
       name: radarr
     patch: |
       - op: replace
         path: /spec/replicas
-        value: 0
+        value: 1
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: config-resized
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
