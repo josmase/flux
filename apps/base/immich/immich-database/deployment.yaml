@@ -35,10 +35,11 @@ spec:
                   key: DB_DATABASE_NAME
             - name: POSTGRES_INITDB_ARGS
               value: "--data-checksums"
+            - name: PGDATA
+              value: /var/lib/postgresql/data
           volumeMounts:
             - name: immich-db-pvc
-              subPath: var/lib/postgresql/data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql
           ports:
             - containerPort: 5432
           resources:
@@ -51,4 +52,4 @@ spec:
       volumes:
         - name: immich-db-pvc
           persistentVolumeClaim:
-            claimName: immich-db-pvc-immich-postgres-0
+            claimName: immich-db-pvc-final

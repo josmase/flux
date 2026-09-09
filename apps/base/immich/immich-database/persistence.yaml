@@ -1,11 +1,15 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-db-pvc-immich-postgres-0
+  name: immich-db-pvc-final
+  labels:
+    app.kubernetes.io/part-of: immich
+    migration.josmase.dev/source: immich-db-pvc-immich-postgres-0
+    migration.josmase.dev/phase: cutover-complete
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
-      storage: 10Gi
+      storage: 9Gi
