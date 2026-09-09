@@ -4,7 +4,7 @@ metadata:
   name: reiverr-config-resized
   annotations:
     storage-migration.source-pvc: reiverr-config-pvc-reiverr-0
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: longhorn
@@ -18,7 +18,7 @@ metadata:
   name: reiverr-plugins-resized
   annotations:
     storage-migration.source-pvc: reiverr-plugins-pvc-reiverr-0
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: longhorn
