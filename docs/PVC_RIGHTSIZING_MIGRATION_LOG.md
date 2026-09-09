@@ -1,5 +1,21 @@
 # PVC right-sizing migration log
 
+## Artifactory data — completed 2026-09-09
+
+| Item | Value |
+|---|---|
+| Source PVC | `artifactory/artifactory-volume-artifactory-0` (150Gi) |
+| Replacement PVC | `artifactory/artifactory-data-resized` (50Gi) |
+| Source backup | `backup-e08141716d314824` from snapshot `artifactory-rightsize-source-20260909-engine` |
+| Replacement backup | `backup-05499c2394ee4a1e` from snapshot `artifactory-rightsize-target-20260909-engine` |
+| Copy validation | 7.3GiB on both filesystems; SHA-256 manifests matched |
+| Runtime validation | Artifactory StatefulSet and nginx, frontend, and JFrog bus deployments are all Ready; the new StatefulSet directly mounts `artifactory-data-resized` |
+| Rollback source | Old PVC remains defined and unmodified until 2026-09-23 |
+
+Do not delete the original claim or its Longhorn volume before the rollback date
+and an explicit cleanup review. Rollback is a Git change restoring the chart's
+original claim-template storage.
+
 ## Bazarr config — completed 2026-09-09
 
 | Item | Value |

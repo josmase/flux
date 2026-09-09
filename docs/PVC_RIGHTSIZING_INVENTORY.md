@@ -6,7 +6,8 @@ before each migration with `utility-scripts/longhorn-pvc-rightsizing-inventory.s
 
 | Namespace | PVC(s) | Request | Actual | Target / state |
 |---|---|---:|---:|---|
-| artifactory | artifactory-volume-artifactory-0 | 150Gi | 25.0Gi | 50Gi (user-selected target) |
+| artifactory | artifactory-volume-artifactory-0 | 150Gi | 25.0Gi | Retained rollback source through 2026-09-23 |
+| artifactory | artifactory-data-resized | 50Gi | 8.3Gi | Migrated, runtime-validated, and backed up 2026-09-09 |
 | artifactory | data-artifactory-postgresql-0 | 50Gi | 2.1Gi | Hold: volume health unknown |
 | cnpg-system | shared-postgres-{1,2,3} | 10Gi each | 0.5–0.6Gi | 1Gi each |
 | cnpg-system | shared-postgres-{1,2,3}-wal | 5Gi each | 3.4–3.5Gi | 5Gi each |
