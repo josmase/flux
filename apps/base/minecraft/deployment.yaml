@@ -77,7 +77,7 @@ spec:
       volumes:
         - name: minecraft-data
           persistentVolumeClaim:
-            claimName: minecraft-data-pvc
+            claimName: minecraft-data-resized
         - name: minecraft-modpacks
           persistentVolumeClaim:
-            claimName: minecraft-modpacks-pvc
+            claimName: minecraft-modpacks-resized

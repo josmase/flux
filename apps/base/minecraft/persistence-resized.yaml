@@ -5,7 +5,7 @@ metadata:
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-data-pvc
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
@@ -20,7 +20,7 @@ metadata:
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-modpacks-pvc
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
