@@ -4,6 +4,7 @@ metadata:
   name: artifactory
   namespace: artifactory
 spec:
+  suspend: true
   releaseName: artifactory
   chart:
     spec:
