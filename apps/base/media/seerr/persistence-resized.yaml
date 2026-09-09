@@ -4,7 +4,7 @@ metadata:
   name: seerr-config-resized
   annotations:
     storage-migration.source-pvc: seerr-config
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
