@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: immich-model-cache
           persistentVolumeClaim:
-            claimName: immich-model-cache-immich-machine-learning-0
+            claimName: immich-model-cache-resized

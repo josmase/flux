@@ -4,7 +4,7 @@ metadata:
   name: immich-model-cache-resized
   annotations:
     storage-migration.source-pvc: immich-model-cache-immich-machine-learning-0
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
