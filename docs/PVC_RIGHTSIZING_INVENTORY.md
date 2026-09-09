@@ -26,7 +26,8 @@ before each migration with `utility-scripts/longhorn-pvc-rightsizing-inventory.s
 | immich | immich-model-cache-immich-machine-learning-{1,2} | 10Gi each | — | Hold: unmounted/no telemetry |
 | llm-switchboard | llm-switchboard-data | 1Gi | 0.1Gi | 1Gi |
 | media | arr-dashboard-config-v2 | 2Gi | 1.8Gi | 3Gi expansion |
-| media | bazarr-config-pvc-bazarr-0-new | 2Gi | 0.3Gi | 1Gi |
+| media | bazarr-config-pvc-bazarr-0-new | 2Gi | 0.3Gi | Retained rollback source through 2026-09-23 |
+| media | bazarr-config-pvc-bazarr-0-resized | 1Gi | 0.1Gi | Migrated and validated 2026-09-09 |
 | media | checkrr-config-pvc-checkrr-0 | 5Gi | 0.2Gi | 1Gi |
 | media | jellyfin-config-pvc-jellyfin-0-v2 | 40Gi | 29.6Gi | 36Gi |
 | media | prowlarr-config-pvc-prowlarr-0-v2 | 3Gi | 0.7Gi | 1Gi |
