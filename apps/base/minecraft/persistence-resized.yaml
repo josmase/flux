@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minecraft-data-resized
+  namespace: minecraft
+  annotations:
+    storage-migration.source-pvc: minecraft-data-pvc
+    storage-migration.phase: prepare
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minecraft-modpacks-resized
+  namespace: minecraft
+  annotations:
+    storage-migration.source-pvc: minecraft-modpacks-pvc
+    storage-migration.phase: prepare
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 1Gi
