@@ -48,3 +48,19 @@ The Longhorn Snapshot CR controller reported `lost track of the corresponding
 snapshot info inside volume engine` for this volume. Direct Longhorn engine
 snapshots were used for the replacement backup; no source data was deleted.
 Rollback is a Git change returning the Deployment to `gotify-data-pvc`.
+
+## Grafana data — completed 2026-09-09
+
+| Item | Value |
+|---|---|
+| Source PVC | `monitoring/kube-prometheus-stack-grafana` (10Gi) |
+| Replacement PVC | `monitoring/kube-prometheus-stack-grafana-resized` (1Gi) |
+| Source recovery | Direct engine snapshot `grafana-rightsize-20260909-engine`; original PVC retained unchanged |
+| Replacement backup | `backup-a9da39f009404f39` from `grafana-rightsize-target-20260909-engine` |
+| Copy validation | 1 file on both volumes; 16KiB block-use difference; SHA-256 manifests matched |
+| Runtime validation | Grafana rollout succeeded on the replacement PVC; SQLite migrations completed with 0 changes |
+| Rollback source | Old PVC has Helm `resource-policy: keep` and remains unmodified until 2026-09-23 |
+
+Rollback is a Git change setting Grafana persistence `existingClaim` back to
+`kube-prometheus-stack-grafana`. Do not remove the keep annotation or delete
+the original claim before the rollback date and an explicit cleanup review.
