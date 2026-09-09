@@ -4,6 +4,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - pvc.yaml
+  - pvc-resized.yaml
 labels:
   - includeSelectors: true
     pairs:

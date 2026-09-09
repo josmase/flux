@@ -11,7 +11,7 @@ before each migration with `utility-scripts/longhorn-pvc-rightsizing-inventory.s
 | artifactory | data-artifactory-postgresql-0 | 50Gi | 2.1Gi | Hold: volume health unknown |
 | cnpg-system | shared-postgres-{1,2,3} | 10Gi each | 0.5–0.6Gi | 1Gi each |
 | cnpg-system | shared-postgres-{1,2,3}-wal | 5Gi each | 3.4–3.5Gi | 5Gi each |
-| default | media-data | 10Gi | 0.2Gi | 1Gi |
+| default | media-data | 10Gi | 0.2Gi | Hold: mounted by Growlog `media`; ownership/name mismatch—do not resize pending review |
 | default | zero-cache-data | 2Gi | 0.3Gi | 1Gi |
 | default | data-volume-new-new-boplats-database-2 | 9538Mi | 2.1Gi | Hold: unmounted/unknown |
 | default | logs-volume-new-new-boplats-database-0 | 2G | 0.5Gi | Hold: unmounted/unknown |

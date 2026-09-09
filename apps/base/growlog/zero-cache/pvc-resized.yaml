@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zero-cache-data-resized
+  labels:
+    app: zero-cache
+    storage-migration: zero-cache-2026-09
+  annotations:
+    storage-migration.source-pvc: zero-cache-data
+    storage-migration.target: 1Gi
+    storage-migration.phase: prepare
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
