@@ -5,7 +5,7 @@ metadata:
   labels:
     app: sonarr-6
     storage-migration: sonarr-6-config-2026-09
-    storage-migration-phase: copy-pending
+    storage-migration-phase: cutover-complete
     recurring-job-group.longhorn.io/default: enabled
 spec:
   accessModes: [ReadWriteOnce]
