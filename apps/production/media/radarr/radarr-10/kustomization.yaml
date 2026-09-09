@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../../base/media/radarr-template
   - persistence.yaml
+  - persistence-resized.yaml
 
 namePrefix: radarr-10-
 
@@ -13,6 +14,13 @@ labels:
       app: radarr-10
 
 patches:
+  - target:
+      kind: Deployment
+      name: radarr
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 0
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
