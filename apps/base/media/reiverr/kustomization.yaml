@@ -7,6 +7,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - persistence.yaml
+  - persistence-resized.yaml
   - service.yaml
   - ingress.yaml
 
