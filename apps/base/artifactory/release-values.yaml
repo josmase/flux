@@ -8,7 +8,8 @@ artifactory:
     joinKeySecretName: my-joinkey-secret
 
     persistence:
-      size: 150Gi
+      existingClaim: artifactory-data-resized
+      size: 50Gi
   nginx:
     enabled: true
   ingress:
