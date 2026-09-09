@@ -43,8 +43,12 @@ spec:
             namespace: monitoring
             port: http-web
     grafana:
+      # Stop before copying the original claim. The original is explicitly
+      # retained with Helm's resource-policy: keep annotation.
+      replicas: 0
       persistence:
         enabled: true
+        existingClaim: kube-prometheus-stack-grafana-resized
         storageClassName: longhorn
         accessModes: ["ReadWriteOnce"]
         size: 10Gi

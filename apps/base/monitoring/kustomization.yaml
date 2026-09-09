@@ -4,6 +4,7 @@ namespace: monitoring
 
 resources:
   - namespace.yaml
+  - grafana-persistence-resized.yaml
   - kube-prometheus-stack
   - gotify
   - alertmanager-gotify-bridge

@@ -1,0 +1,18 @@
+# Phase 1 of the Grafana Longhorn right-sizing migration.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kube-prometheus-stack-grafana-resized
+  labels:
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/name: grafana
+    storage-migration: grafana-data-2026-09
+    storage-migration-phase: copy-pending
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
