@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-resized
+  labels:
+    app: sonarr-4
+    storage-migration: sonarr-4-config-2026-09
+    storage-migration-phase: copy-pending
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn
+  resources: {requests: {storage: 1Gi}}

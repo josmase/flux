@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-resized
+  labels:
+    app: radarr-1
+    storage-migration: radarr-1-config-2026-09
+    storage-migration-phase: copy-pending
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn
+  resources: {requests: {storage: 22Gi}}

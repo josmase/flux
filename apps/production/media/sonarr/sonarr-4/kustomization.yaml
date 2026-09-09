@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../../base/media/sonarr-template
   - persistence.yaml
+  - persistence-resized.yaml
 
 namePrefix: sonarr-4-
 
@@ -13,6 +14,11 @@ labels:
       app: sonarr-4
 
 patches:
+  - target: {kind: Deployment, name: sonarr}
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 0
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
