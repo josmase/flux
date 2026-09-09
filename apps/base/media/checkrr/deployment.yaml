@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: checkrr
 spec:
-  # Temporarily stopped while copying to the replacement PVC.
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -107,4 +106,4 @@ spec:
             secretName: checkrr-config
         - name: checkrr-config-pvc
           persistentVolumeClaim:
-            claimName: checkrr-config-pvc-checkrr-0
+            claimName: checkrr-config-pvc-checkrr-0-resized
