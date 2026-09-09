@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: prowlarr
 spec:
-  replicas: 1
+  # Phase 1 right-sizing migration: remain stopped while the source claim is
+  # copied read-only into the replacement PVC.
+  replicas: 0
   strategy:
     type: Recreate
   selector:

@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - persistence.yaml
+  # Replacement PVC only; the Deployment is switched after copy validation.
+  - persistence-resized.yaml
   - ingress.yaml
   - service.yaml
 
