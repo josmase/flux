@@ -20,7 +20,10 @@ patches:
     patch: |
       - op: replace
         path: /spec/replicas
-        value: 0
+        value: 1
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: config-resized
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
