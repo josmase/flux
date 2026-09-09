@@ -9,6 +9,7 @@ resources:
   - service.yaml
   - deployment.yaml
   - persistence.yaml
+  - persistence-resized.yaml
 
 labels:
   - includeSelectors: true

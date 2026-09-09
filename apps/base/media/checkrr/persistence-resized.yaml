@@ -1,0 +1,17 @@
+# Phase 1 of the Checkrr Longhorn right-sizing migration.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: checkrr-config-pvc-checkrr-0-resized
+  labels:
+    app: checkrr
+    storage-migration: checkrr-config-2026-09
+    storage-migration-phase: copy-pending
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
