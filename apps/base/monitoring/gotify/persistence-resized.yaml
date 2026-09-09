@@ -1,0 +1,17 @@
+# Phase 1 of the Gotify Longhorn right-sizing migration.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gotify-data-pvc-resized
+  labels:
+    app: gotify
+    storage-migration: gotify-data-2026-09
+    storage-migration-phase: copy-pending
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi

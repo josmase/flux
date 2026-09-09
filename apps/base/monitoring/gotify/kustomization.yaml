@@ -2,6 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - persistence.yaml
+  # Replacement PVC only; the Deployment is switched after copy validation.
+  - persistence-resized.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
