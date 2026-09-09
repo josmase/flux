@@ -31,3 +31,20 @@ to `bazarr-config-pvc-bazarr-0-new`.
 Do not delete the old claim or its Longhorn volume before the rollback date and
 an explicit cleanup review. Rollback is a Git change returning the Deployment
 to `prowlarr-config-pvc-prowlarr-0-v2`.
+
+## Gotify data — completed 2026-09-09
+
+| Item | Value |
+|---|---|
+| Source PVC | `monitoring/gotify-data-pvc` (5Gi) |
+| Replacement PVC | `monitoring/gotify-data-pvc-resized` (1Gi) |
+| Source recovery | Completed Longhorn backup `backup-4b8d4e0781ad4ba4` from 2026-09-09; original PVC retained unchanged |
+| Replacement backup | `backup-e901977211ff4e53` from direct snapshot `gotify-rightsize-target-20260909-engine` |
+| Copy validation | 1 file on both volumes; 16KiB block-use difference; SHA-256 manifests matched |
+| Runtime validation | Gotify readiness `/health` returned HTTP 200 repeatedly; startup logs are clean |
+| Rollback source | Old PVC remains defined and unmodified until 2026-09-23 |
+
+The Longhorn Snapshot CR controller reported `lost track of the corresponding
+snapshot info inside volume engine` for this volume. Direct Longhorn engine
+snapshots were used for the replacement backup; no source data was deleted.
+Rollback is a Git change returning the Deployment to `gotify-data-pvc`.

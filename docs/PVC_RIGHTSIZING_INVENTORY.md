@@ -49,7 +49,8 @@ before each migration with `utility-scripts/longhorn-pvc-rightsizing-inventory.s
 | minecraft | minecraft-data-pvc | 20Gi | 0.7Gi | 1Gi |
 | minecraft | minecraft-modpacks-pvc | 5Gi | 0.1Gi | 1Gi |
 | monitoring | alertmanager-kube-prometheus-stack-alertmanager-db-alertmanager-kube-prometheus-stack-alertmanager-0 | 10Gi | 0.3Gi | 1Gi |
-| monitoring | gotify-data-pvc | 5Gi | 0.6Gi | 1Gi |
+| monitoring | gotify-data-pvc | 5Gi | 0.6Gi | Retained rollback source through 2026-09-23 |
+| monitoring | gotify-data-pvc-resized | 1Gi | 0.1Gi | Migrated and validated 2026-09-09 |
 | monitoring | kube-prometheus-stack-grafana | 10Gi | 0.4Gi | 1Gi |
 | monitoring | prometheus-kube-prometheus-stack-prometheus-db-prometheus-kube-prometheus-stack-prometheus-0 | 143Gi | 126.7Gi | 153Gi expansion |
 
