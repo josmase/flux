@@ -3,9 +3,7 @@ kind: Deployment
 metadata:
   name: bazarr
 spec:
-  # Phase 1 right-sizing migration: keep Bazarr stopped while the source claim
-  # is copied read-only into the replacement PVC.
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -75,7 +73,7 @@ spec:
       volumes:
         - name: bazarr-config-pvc
           persistentVolumeClaim:
-            claimName: bazarr-config-pvc-bazarr-0-new
+            claimName: bazarr-config-pvc-bazarr-0-resized
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc

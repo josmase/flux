@@ -9,7 +9,7 @@ metadata:
     media-app: bazarr
     app: bazarr
     storage-migration: bazarr-config-2026-09
-    storage-migration-phase: target-created
+    storage-migration-phase: cutover-complete
     recurring-job-group.longhorn.io/default: enabled
 spec:
   accessModes:
