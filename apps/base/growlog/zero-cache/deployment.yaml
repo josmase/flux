@@ -106,4 +106,4 @@ spec:
       volumes:
         - name: zero-cache-data
           persistentVolumeClaim:
-            claimName: zero-cache-data
+            claimName: zero-cache-data-resized

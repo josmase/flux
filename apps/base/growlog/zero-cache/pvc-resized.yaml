@@ -8,7 +8,7 @@ metadata:
   annotations:
     storage-migration.source-pvc: zero-cache-data
     storage-migration.target: 1Gi
-    storage-migration.phase: prepare
+    storage-migration.phase: cutover-complete
 spec:
   accessModes:
     - ReadWriteOnce
