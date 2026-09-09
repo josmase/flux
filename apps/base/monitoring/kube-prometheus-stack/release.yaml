@@ -29,7 +29,9 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 50Gi
+                  # Longhorn currently allocates ~126.7Gi for the 30-day TSDB.
+                  # This must grow (PVCs cannot shrink) to retain 20% headroom.
+                  storage: 153Gi
         # Enable alerting rules
         ruleNamespaceSelector: {}
         ruleSelector:

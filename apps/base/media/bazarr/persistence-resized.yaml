@@ -1,0 +1,20 @@
+# Phase 1 of the Bazarr Longhorn right-sizing migration.
+# Do not point the Deployment at this claim until the offline rsync and
+# application validation gates in docs/PVC_RIGHTSIZING_RUNBOOK.md succeed.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bazarr-config-pvc-bazarr-0-resized
+  labels:
+    media-app: bazarr
+    app: bazarr
+    storage-migration: bazarr-config-2026-09
+    storage-migration-phase: target-created
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
