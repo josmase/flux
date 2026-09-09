@@ -45,7 +45,7 @@ spec:
     grafana:
       # Stop before copying the original claim. The original is explicitly
       # retained with Helm's resource-policy: keep annotation.
-      replicas: 0
+      enabled: false
       persistence:
         enabled: true
         existingClaim: kube-prometheus-stack-grafana-resized
