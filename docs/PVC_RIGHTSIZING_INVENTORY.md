@@ -30,7 +30,8 @@ before each migration with `utility-scripts/longhorn-pvc-rightsizing-inventory.s
 | media | bazarr-config-pvc-bazarr-0-resized | 1Gi | 0.1Gi | Migrated and validated 2026-09-09 |
 | media | checkrr-config-pvc-checkrr-0 | 5Gi | 0.2Gi | 1Gi |
 | media | jellyfin-config-pvc-jellyfin-0-v2 | 40Gi | 29.6Gi | 36Gi |
-| media | prowlarr-config-pvc-prowlarr-0-v2 | 3Gi | 0.7Gi | 1Gi |
+| media | prowlarr-config-pvc-prowlarr-0-v2 | 3Gi | 0.7Gi | Retained rollback source through 2026-09-23 |
+| media | prowlarr-config-pvc-prowlarr-0-resized | 1Gi | 0.3Gi | Migrated and validated 2026-09-09 |
 | media | radarr-1-config | 30Gi | 17.7Gi | 22Gi |
 | media | radarr-2-config | 30Gi | 13.5Gi | 17Gi |
 | media | radarr-3-config | 30Gi | 2.4Gi | 3Gi |
