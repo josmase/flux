@@ -92,11 +92,11 @@ spec:
               mountPath: /checkrr-config/
           resources:
             limits:
-              memory: 500Mi
-              cpu: "1"
+              memory: 512Mi
+              cpu: 250m
             requests:
               memory: 320Mi
-              cpu: "0.1"
+              cpu: 100m
       volumes:
         - name: shared-storage
           persistentVolumeClaim:

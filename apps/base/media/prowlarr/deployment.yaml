@@ -65,11 +65,11 @@ spec:
               mountPath: /mnt/storage
           resources:
             limits:
-              memory: 400Mi
-              cpu: "1"
+              memory: 512Mi
+              cpu: 300m
             requests:
-              memory: 200Mi
-              cpu: "0.2"
+              memory: 320Mi
+              cpu: 100m
       volumes:
         - name: prowlarr-config-pvc
           persistentVolumeClaim:

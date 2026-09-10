@@ -43,11 +43,11 @@ spec:
             - containerPort: 5432
           resources:
             limits:
-              memory: 2Gi
-              cpu: "1"
-            requests:
               memory: 1Gi
-              cpu: "0.1"
+              cpu: 250m
+            requests:
+              memory: 768Mi
+              cpu: 50m
       volumes:
         - name: immich-db-pvc
           persistentVolumeClaim:

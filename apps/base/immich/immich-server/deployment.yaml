@@ -33,11 +33,11 @@ spec:
             - containerPort: 2283
           resources:
             limits:
-              memory: 2Gi
-              cpu: "1"
-            requests:
               memory: 1Gi
-              cpu: "0.1"
+              cpu: 500m
+            requests:
+              memory: 768Mi
+              cpu: 100m
       volumes:
         - name: shared-storage
           persistentVolumeClaim:

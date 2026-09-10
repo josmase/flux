@@ -87,11 +87,11 @@ spec:
               mountPath: /mnt/storage
           resources:
             limits:
-              memory: 1000Mi
-              cpu: "1"
+              memory: 512Mi
+              cpu: 300m
             requests:
-              memory: 250Mi
-              cpu: "0.1"
+              memory: 384Mi
+              cpu: 100m
       volumes:
         - name: config
           persistentVolumeClaim:

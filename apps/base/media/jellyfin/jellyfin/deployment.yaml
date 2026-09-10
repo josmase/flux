@@ -129,12 +129,12 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              cpu: 2000m
-              memory: 4Gi
+              cpu: 1500m
+              memory: 5Gi
               nvidia.com/gpu: 1
             limits:
-              cpu: 8000m
-              memory: 8Gi
+              cpu: 4000m
+              memory: 6Gi
               nvidia.com/gpu: 1
           env:
             # Enable hardware acceleration in Jellyfin

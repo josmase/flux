@@ -27,11 +27,11 @@ spec:
             - containerPort: 3003
           resources:
             limits:
-              memory: 3Gi
-              cpu: "5"
+              memory: 1Gi
+              cpu: "0.5"
             requests:
-              memory: 320Mi
-              cpu: "0.1"
+              memory: 512Mi
+              cpu: 50m
       volumes:
         - name: immich-model-cache
           persistentVolumeClaim:

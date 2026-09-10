@@ -87,10 +87,10 @@ spec:
               mountPath: /mnt/storage
           resources:
             limits:
-              memory: 900Mi
-              cpu: "1"
+              memory: 512Mi
+              cpu: 300m
             requests:
-              memory: 500Mi
+              memory: 384Mi
               cpu: 100m
       volumes:
         - name: config

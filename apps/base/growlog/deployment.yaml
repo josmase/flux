@@ -30,8 +30,8 @@ spec:
               value: http://zero-cache:4848
           resources:
             limits:
-              memory: 512Mi
-              cpu: "1"
+              memory: 64Mi
+              cpu: 100m
             requests:
-              memory: 256Mi
-              cpu: "0.2"
+              memory: 32Mi
+              cpu: 10m
