@@ -27,4 +27,4 @@ artifactory:
     primary:
       persistence:
         enabled: true
-        size: 3Gi
+        size: 50Gi
