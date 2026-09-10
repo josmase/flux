@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../../../base/media/radarr-template
-  - persistence.yaml
   - persistence-resized.yaml
 
 namePrefix: radarr-6-

@@ -7,7 +7,6 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - persistence-resized.yaml
   - persistence-rightsize.yaml
   - release.yaml
   - source.yaml

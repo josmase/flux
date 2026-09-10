@@ -8,7 +8,6 @@ resources:
   - ingress.yaml
   - service.yaml
   - deployment.yaml
-  - persistence.yaml
   - persistence-resized.yaml
 
 labels:
