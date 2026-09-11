@@ -57,7 +57,7 @@ spec:
               memory: 64Mi
       containers:
         - name: radarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.4.4-nightly@sha256:4c17310d12228c05afc08151615f27d4673c6c3b9c7471188d3c147adf2ed488
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/radarr:6.4.4-nightly@sha256:613537dcbb4dd7542a814db7e63cf20ddf2bb293b134cf56eac2c6b4e75d2133
           ports:
             - containerPort: 7878
               name: http
