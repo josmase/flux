@@ -4,6 +4,9 @@ metadata:
   name: shared-postgres-daily-backup
   namespace: cnpg-system
 spec:
+  # Paused until a tested VolumeSnapshotClass is restored. This schedule had
+  # accumulated failed backups against the missing longhorn-snapshot class.
+  suspend: true
   cluster:
     name: shared-postgres
   schedule: "0 0 2 * * *"

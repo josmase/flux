@@ -46,6 +46,12 @@ LINSTOR backup requires an S3-compatible endpoint; the existing Longhorn NFS
 backup path cannot be reused directly. Keep Longhorn backups running until an
 S3 backup and restore has passed.
 
+The `shared-postgres-daily-backup` schedule is temporarily suspended. It
+referenced a missing `longhorn-snapshot` class and accumulated failed backup
+objects while no cluster-wide snapshot controller was installed. Do not resume
+it until its snapshot class has been restored and one manual backup/restore has
+passed; avoid activating the historical backlog all at once.
+
 ## Workload migration
 
 Migrate one workload at a time. Stop its writers, create a new LINSTOR PVC,
