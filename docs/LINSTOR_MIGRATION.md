@@ -20,9 +20,12 @@ restored, and tested on LINSTOR.
 - `piraeus-node-prerequisites` raises `fs.inotify.max_user_instances` to 1024
   on workers at boot. The Ubuntu default was already exhausted by the existing
   container workload and prevented LINSTOR Satellites from starting.
-- The cluster-wide CSI `snapshot-controller` is deployed in `kube-system`.
-  Driver-specific snapshotter sidecars do not reconcile `VolumeSnapshot`
-  objects without this shared controller.
+- The cluster-wide CSI `snapshot-controller` manifests are installed in
+  `kube-system`, but the Deployment is held at zero replicas. Enabling it
+  exposed a historical CNPG backlog referencing the missing
+  `longhorn-snapshot` class and caused continuous failed snapshot retries.
+  Resolve that backlog and validate the intended snapshot classes before
+  scaling the controller up again.
 
 `FILE_THIN` shares each node's root filesystem with Longhorn. Monitor free
 space closely while both systems coexist, and migrate in small batches.
@@ -50,7 +53,14 @@ The `shared-postgres-daily-backup` schedule is temporarily suspended. It
 referenced a missing `longhorn-snapshot` class and accumulated failed backup
 objects while no cluster-wide snapshot controller was installed. Do not resume
 it until its snapshot class has been restored and one manual backup/restore has
-passed; avoid activating the historical backlog all at once.
+passed; avoid activating the historical backlog all at once. Existing Backup
+and VolumeSnapshot records are retained for explicit review and cleanup.
+
+The current LINSTOR `FILE_THIN` pools cannot pass the native snapshot gate:
+LINSTOR 1.34.2 rejects the snapshot request even though the pool reports
+`CanSnapshots=true`. Do not migrate production data until the storage provider
+is changed to a snapshot-capable configuration and snapshot plus S3 restore
+have both passed.
 
 ## Workload migration
 
