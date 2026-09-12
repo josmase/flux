@@ -16,3 +16,4 @@ resources:
   - ../../base/controllers/cloudnative-pg/
   - ../../base/controllers/csi-nfs/
   - ../../base/controllers/piraeus-operator/
+  - ../../base/controllers/snapshot-controller/

@@ -10,6 +10,7 @@ resources:
   - reflector
   - nvidia-device-plugin
   - csi-nfs
+  - snapshot-controller
 
 configurations:
   - kustomizeconfig.yaml

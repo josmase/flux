@@ -20,6 +20,9 @@ restored, and tested on LINSTOR.
 - `piraeus-node-prerequisites` raises `fs.inotify.max_user_instances` to 1024
   on workers at boot. The Ubuntu default was already exhausted by the existing
   container workload and prevented LINSTOR Satellites from starting.
+- The cluster-wide CSI `snapshot-controller` is deployed in `kube-system`.
+  Driver-specific snapshotter sidecars do not reconcile `VolumeSnapshot`
+  objects without this shared controller.
 
 `FILE_THIN` shares each node's root filesystem with Longhorn. Monitor free
 space closely while both systems coexist, and migrate in small batches.
