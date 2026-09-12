@@ -14,6 +14,9 @@ restored, and tested on LINSTOR.
 - Control-plane nodes do not run LINSTOR data-plane components.
 - The `linstor` StorageClass is intentionally not default and uses a `Retain`
   reclaim policy during migration.
+- `piraeus-node-prerequisites` raises `fs.inotify.max_user_instances` to 1024
+  on workers at boot. The Ubuntu default was already exhausted by the existing
+  container workload and prevented LINSTOR Satellites from starting.
 
 `FILE_THIN` shares each node's root filesystem with Longhorn. Monitor free
 space closely while both systems coexist, and migrate in small batches.
