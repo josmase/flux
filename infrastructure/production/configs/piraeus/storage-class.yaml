@@ -14,6 +14,10 @@ parameters:
   csi.storage.k8s.io/fstype: ext4
   linstor.csi.linbit.com/storagePool: pool1
   linstor.csi.linbit.com/placementCount: "2"
+  # FILE_THIN otherwise inherits the loop device's 4 KiB discard granularity.
+  # A 1 MiB resync chunk avoids hundreds of thousands of tiny hole-punch
+  # operations while retaining sparse-file-aware initial synchronization.
+  property.linstor.csi.linbit.com/DrbdOptions/Disk/rs-discard-granularity: "1048576"
   # Required for workloads scheduled on the diskless GPU worker and permits
   # failover to any worker when neither diskful replica is local.
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"

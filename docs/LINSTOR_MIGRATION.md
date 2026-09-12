@@ -9,6 +9,9 @@ restored, and tested on LINSTOR.
 - `kubernetes-node-204`, `kubernetes-node-205`, and `kubernetes-node-206`
   provide `FILE_THIN` storage from `/var/lib/linstor-pools/pool1`.
 - Volumes have two synchronous DRBD replicas on different storage workers.
+- DRBD uses 1 MiB discard-aware resync chunks. The FILE_THIN default inherited
+  4 KiB from the loop device and made initial sparse-volume synchronization
+  impractically slow on these hosts.
 - `ubuntu-ms-7977` runs a Satellite but has no storage pool. It accesses
   LINSTOR volumes using a diskless DRBD attachment.
 - Control-plane nodes do not run LINSTOR data-plane components.
