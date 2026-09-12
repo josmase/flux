@@ -75,8 +75,16 @@ spec:
           ports:
             - name: zero
               containerPort: 4848
+          # Initial replica restore/backfill can legitimately take several minutes.
+          # Keep liveness disabled until Zero is actually serving its health endpoint.
+          startupProbe:
+            httpGet:
+              path: /keepalive
+              port: 4848
+            periodSeconds: 5
+            failureThreshold: 120
+            timeoutSeconds: 5
           # GET /keepalive is the documented health endpoint (ZERO_PORT default 4848).
-          # failureThreshold 6 at periodSeconds 10 tolerates slow backfill startup.
           livenessProbe:
             httpGet:
               path: /keepalive

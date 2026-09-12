@@ -87,6 +87,64 @@ spec:
               reduced redundancy). If it does not return to healthy, check replica
               failures and node disk space.
 
+        - alert: LonghornWorkloadVolumeDetached
+          expr: |
+            (
+              max by (namespace, pod, persistentvolumeclaim) (
+                (kube_pod_status_phase{phase="Pending"} == 1)
+                * on (namespace, pod) group_left (persistentvolumeclaim)
+                kube_pod_spec_volumes_persistentvolumeclaims_info
+              )
+              * on (namespace, persistentvolumeclaim) group_left (volume)
+              label_replace(
+                label_replace(
+                  longhorn_volume_state == 2,
+                  "namespace", "$1", "pvc_namespace", "(.*)"
+                ),
+                "persistentvolumeclaim", "$1", "pvc", "(.*)"
+              )
+            ) > 0
+          for: 10m
+          labels:
+            severity: critical
+            component: longhorn
+          annotations:
+            summary: "Pending pod {{ $labels.namespace }}/{{ $labels.pod }} has a detached Longhorn volume"
+            description: |
+              The pod has waited for >10m while its referenced Longhorn volume
+              {{ $labels.volume }} remains detached. Check VolumeAttachment events,
+              engine state, and stale iSCSI sessions before restarting the node.
+
+        - alert: LonghornWorkloadVolumeTelemetryMissing
+          expr: |
+            (
+              max by (namespace, pod, persistentvolumeclaim) (
+                (kube_pod_status_phase{phase="Pending"} == 1)
+                * on (namespace, pod) group_left (persistentvolumeclaim)
+                kube_pod_spec_volumes_persistentvolumeclaims_info
+                * on (namespace, persistentvolumeclaim) group_left (storageclass)
+                kube_persistentvolumeclaim_info{storageclass=~"longhorn.*"}
+              )
+            )
+            unless on (namespace, persistentvolumeclaim)
+            label_replace(
+              label_replace(
+                longhorn_volume_state,
+                "namespace", "$1", "pvc_namespace", "(.*)"
+              ),
+              "persistentvolumeclaim", "$1", "pvc", "(.*)"
+            )
+          for: 10m
+          labels:
+            severity: critical
+            component: longhorn
+          annotations:
+            summary: "Pending pod {{ $labels.namespace }}/{{ $labels.pod }} has no Longhorn volume telemetry"
+            description: |
+              The pod references Longhorn PVC {{ $labels.persistentvolumeclaim }},
+              but the Longhorn manager exports no corresponding volume state.
+              Verify the PVC/PV/volume binding before any recovery or deletion.
+
         - alert: LonghornNodeStorageHigh
           expr: |
             longhorn_node_storage_usage_bytes / longhorn_node_storage_capacity_bytes > 0.80

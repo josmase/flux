@@ -38,7 +38,8 @@ application-level validation.
 5. Use native backup/restore rather than raw filesystem copying for CNPG and
    PostgreSQL. Force and verify Redis persistence before its offline copy.
 6. Change the workload to the new PVC, reconcile Flux, and validate readiness,
-   logs, read/write behaviour, and backup completion on the new volume.
+   logs and read/write behaviour. Create a fresh remote backup on the new volume,
+   then run the mandatory migration gate below.
 7. Leave the old PVC detached for 14 days. Before its eventual deletion, set
    its PV reclaim policy to `Retain`, take a final backup, and record explicit
    approval in the migration log. Rollback during the retention window means
@@ -60,3 +61,25 @@ application-level validation.
 An unmounted or unhealthy PVC is an investigation item, never an automatic
 deletion. Confirm it has no workload, CronJob, backup/restore job, or external
 consumer; preserve a backup; then wait 14 days after the ownership decision.
+
+Before declaring a cutover complete or approving deletion of its rollback PVC,
+capture the live objects and run the fail-closed validator:
+
+```bash
+tmpdir="$(mktemp -d)"
+kubectl get pvc -A -o json >"$tmpdir/pvcs.json"
+kubectl get pv -o json >"$tmpdir/pvs.json"
+kubectl -n longhorn-system get volumes.longhorn.io -o json >"$tmpdir/volumes.json"
+kubectl -n longhorn-system get replicas.longhorn.io -o json >"$tmpdir/replicas.json"
+kubectl -n longhorn-system get backups.longhorn.io -o json >"$tmpdir/backups.json"
+utility-scripts/validate-longhorn-migration.py \
+  --namespace <namespace> --pvc <replacement-pvc> --expected-replicas 3 \
+  --pvcs "$tmpdir/pvcs.json" --pvs "$tmpdir/pvs.json" \
+  --volumes "$tmpdir/volumes.json" --replicas "$tmpdir/replicas.json" \
+  --backups "$tmpdir/backups.json"
+```
+
+The gate rejects a non-Bound/non-Longhorn claim, missing or degraded volume,
+incorrect requested replica count, insufficient running replicas, and a missing
+or stale completed remote backup (48 hours by default). Record its `READY` output
+in the migration log. A failure cannot be waived by deleting the old claim.

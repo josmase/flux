@@ -13,6 +13,39 @@ spec:
       labels:
         app: immich-server
     spec:
+      initContainers:
+        - name: nfs-stale-check
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: /mnt/storage
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
+        - name: ensure-storage-directories
+          image: busybox@sha256:dc2d74b28e4cf8984fa52af1f39bc7c3d9c73760b41a74d629f5d11b1ab28616
+          command: ["/bin/sh", "-c"]
+          args:
+            - mkdir -p /mnt/storage/files/immich/data /mnt/storage/files/immich/external-library
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
       containers:
         - name: immich-server
           image: artifactory.local.hejsan.xyz/docker/immich-app/immich-server:v1.140.0

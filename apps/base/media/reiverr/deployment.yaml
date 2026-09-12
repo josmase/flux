@@ -20,6 +20,14 @@ spec:
           ports:
             - containerPort: 9494
               name: http
+          # Plugin discovery and migrations can exceed the liveness delay.
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 9494
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 120
           livenessProbe:
             httpGet:
               path: /api/health
