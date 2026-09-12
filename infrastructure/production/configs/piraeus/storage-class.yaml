@@ -1,0 +1,19 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: linstor
+  annotations:
+    # Promote only after migration validation. Longhorn remains the default
+    # during coexistence so no workload changes storage provider by accident.
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: linstor.csi.linbit.com
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  linstor.csi.linbit.com/storagePool: pool1
+  linstor.csi.linbit.com/placementCount: "2"
+  # Required for workloads scheduled on the diskless GPU worker and permits
+  # failover to any worker when neither diskful replica is local.
+  linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"

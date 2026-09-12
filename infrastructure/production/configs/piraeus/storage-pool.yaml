@@ -1,0 +1,20 @@
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: standard-worker-storage
+spec:
+  # The GPU worker participates as a diskless client. Its smaller filesystem is
+  # deliberately excluded from replica placement.
+  nodeAffinity:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: DoesNotExist
+          - key: gpu
+            operator: DoesNotExist
+  storagePools:
+    - name: pool1
+      fileThinPool:
+        # FILE_THIN is the supported non-destructive option when no unused raw
+        # block devices or pre-existing LVM thin pools are available.
+        directory: /var/lib/linstor-pools/pool1

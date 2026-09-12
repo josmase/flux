@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: piraeus-operator
+  namespace: piraeus-datastore
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: piraeus-operator
+    namespace: flux-system
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    installCRDs: true
+    operator:
+      options:
+        # This cluster is not managed by Cluster API.
+        clusterApiKubeconfig: "<none>"

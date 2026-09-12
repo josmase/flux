@@ -1,0 +1,15 @@
+apiVersion: piraeus.io/v1
+kind: LinstorCluster
+metadata:
+  name: linstorcluster
+spec:
+  # Keep storage data-plane components off the control-plane nodes. A LINSTOR
+  # Satellite is present on every worker so a volume can attach there even when
+  # that worker does not hold a diskful replica.
+  nodeAffinity:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: DoesNotExist
+  # Avoid draining multiple replica nodes concurrently during maintenance.
+  maxConcurrentEvacuations: 1

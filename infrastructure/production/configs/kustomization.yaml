@@ -7,6 +7,7 @@ kind: Kustomization
 resources:
   # Base infrastructure configs (reference the directory)
   - ../../base/configs/
+  - piraeus/
 
   # Production secrets
   - secret-cf-token.yaml

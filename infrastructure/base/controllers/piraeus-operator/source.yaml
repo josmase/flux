@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: piraeus-operator
+  namespace: flux-system
+spec:
+  interval: 1h
+  ref:
+    tag: 2.11.0
+  url: oci://ghcr.io/piraeusdatastore/piraeus-operator/piraeus
