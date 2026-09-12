@@ -11,5 +11,12 @@ spec:
       - matchExpressions:
           - key: node-role.kubernetes.io/control-plane
             operator: DoesNotExist
+  # The GPU worker is intentionally diskless, but it still needs the CSI,
+  # HA-controller, and Satellite components to attach remote DRBD volumes.
+  tolerations:
+    - key: workload
+      operator: Equal
+      value: gpu-only
+      effect: NoSchedule
   # Avoid draining multiple replica nodes concurrently during maintenance.
   maxConcurrentEvacuations: 1
