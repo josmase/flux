@@ -1,4 +1,4 @@
-<!-- Context: project-intelligence/technical | Priority: critical | Version: 2.0 | Updated: 2026-09-08 -->
+<!-- Context: project-intelligence/technical | Priority: critical | Version: 2.1 | Updated: 2026-09-13 -->
 
 # Technical Domain
 
@@ -13,7 +13,7 @@
 | Secrets | SOPS + Age | Encrypted overlays, decrypted only in-cluster |
 | Runtime | K3s | Kubernetes runtime |
 | Ingress | Traefik, cert-manager, reflector | Routing, wildcard certificates, and cross-namespace certificate copies |
-| Storage | Longhorn and NFS CSI | Replicated block storage and stable shared NFS mounts |
+| Storage | LINSTOR/DRBD pilot, Longhorn, NFS CSI, RustFS | Replicated block storage, migration compatibility, shared mounts, and S3-compatible recovery backups |
 | Databases | CloudNativePG, application databases | Managed PostgreSQL and application persistence |
 | Packaging | HelmRelease | Third-party application releases |
 | CI | GitLab CI | Manifest, render, schema, and ownership validation |
@@ -57,6 +57,16 @@ All active production domain owners currently use `prune: false` and `deletionPo
 5. Reconcile the owner with `flux reconcile kustomization <owner> -n flux-system` and verify its workloads.
 
 Never apply a raw production Kustomize render with `kubectl`. Direct mutations are only for bounded incident recovery or documented storage actions, followed by Flux reconciliation.
+
+## Storage architecture
+
+The cluster is migrating from Longhorn to Piraeus-managed LINSTOR. LINSTOR
+uses two synchronous DRBD replicas on dedicated LVM-thin worker disks, while
+RustFS on the independent storage server's mergerfs mount stores native full
+and incremental backups. Only Radarr-10 is on the LINSTOR pilot; all other
+Longhorn workloads remain in place until they are individually migrated and
+their rollback windows pass. Read `storage-architecture.md` before making any
+storage change.
 
 ## Naming and references
 
