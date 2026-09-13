@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: linstor-passphrase
+    namespace: piraeus-datastore
+type: Opaque
+stringData:
+    MASTER_PASSPHRASE: ENC[AES256_GCM,data:dU7xKU834UR5FARtCBun2lFTps5DYbO/EzzuCczUwQU3NqL0M2lsTUdNT+EXp/NO5W+oYLIpweFA87Wh2TiOVA==,iv:urN/WUFno+wj1rjI6N8wsYYYxTOIzrQ0dAieOoPWSFU=,tag:1jIXAqI/XVamvrMO2Mp5tQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvNVF4ckhMbVozWTRvcm5t
+            WXhlS0FnT2VVQ2FLQVBKYm41OWZMbnhoMjNRCnl2ZWVEZ0FNQmpXZWpWaUIyRGhK
+            dHo2T3VCdmY2bE8xazEwYjQySkdWTzgKLS0tIGhlcW9CREx4c0RUdjE4OS8zcmh3
+            bVI2bURwMEF3MmEwWU1wWTdGT253a0UK2wi1M97cN2rQgh7Sh24YDovQZOEyXQi/
+            yxyGZNboNrtC7OoSeiuyXOtcQDBgI5PROrsOlzIb2JEykTebW3o60A==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-09-13T08:19:40Z"
+    mac: ENC[AES256_GCM,data:Y04B9OYWwBKwsGKCkjH7JvocA3zC7k+SU+DUgjxk8PQHXmWRpYbI9ro1cQJ/GR4BfJ2tsTu93MeTnQ91nHWLs119st93GkiK6SjO2XhulOONX386/B7MDCn/LUYXTav5jkTvtBgkpylyZ+uhwSYrS1gQLtFswOlRvuEEklqgq7I=,iv:S/WHGW9NRynwwPZI+tKTi9KyUdVgdn4+wJfBUJLds0I=,tag:Wh1eOnY/DfItB9ryQKgd7Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1

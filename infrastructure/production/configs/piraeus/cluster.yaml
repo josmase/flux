@@ -3,6 +3,9 @@ kind: LinstorCluster
 metadata:
   name: linstorcluster
 spec:
+  # Persist the controller master passphrase so encrypted volume keys and S3
+  # remote credentials remain usable after controller restarts and recovery.
+  linstorPassphraseSecret: linstor-passphrase
   # Keep storage data-plane components off the control-plane nodes. A LINSTOR
   # Satellite is present on every worker so a volume can attach there even when
   # that worker does not hold a diskful replica.

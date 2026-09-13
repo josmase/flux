@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - cluster.yaml
+  - linstor-passphrase.yaml
   - satellite-network.yaml
   - storage-pool.yaml
   - pilot-storage-pool.yaml
