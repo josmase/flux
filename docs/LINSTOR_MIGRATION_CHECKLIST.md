@@ -201,12 +201,11 @@ sections; do not store credentials.
 
 ## Phase 4: Radarr-10 cutover
 
-- [~] Add 2 GiB `media/radarr-10-config-linstor` PVC. Manifest added;
-  Flux reconciliation and first-consumer binding pending.
-- [ ] Require two `UpToDate` replicas.
+- [x] Add 2 GiB `media/radarr-10-config-linstor` PVC.
+- [x] Require two `UpToDate` replicas.
 - [x] Trigger and verify a fresh source Longhorn backup.
-- [ ] Record pre-cutover Radarr health and configuration inventory.
-- [ ] Scale only Radarr-10 to zero.
+- [x] Record pre-cutover Radarr health and configuration inventory.
+- [~] Scale only Radarr-10 to zero through GitOps.
 - [ ] Verify the old claim is detached.
 - [ ] Copy source to target with stopped writers.
 - [ ] Run rsync dry-run comparison.
@@ -226,6 +225,13 @@ sections; do not store credentials.
 - Source Longhorn backup: `backup-c3c536cdbed746ce`, snapshot
   `radarr10-pre-linstor-20260913-0828`, state `Completed`, progress 100%,
   stored at the existing Longhorn NFS backup target.
+- Target LINSTOR resource: `pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b`,
+  2 GiB, diskful `UpToDate` replicas on workers 205 and 206.
+- Pre-cutover health: deployment 1/1 ready, HTTP `/ping` returned 200, zero
+  container restarts, source `/config` measured 894,217,247 bytes across
+  3,005 regular files.
+- Migration tooling preflight: Alpine 3.22 successfully installed and located
+  `rsync`, `sqlite3`, `getfattr`, and ACL tools before downtime began.
 - Copy start/end:
 - Source/target checksums:
 - SQLite integrity result:
