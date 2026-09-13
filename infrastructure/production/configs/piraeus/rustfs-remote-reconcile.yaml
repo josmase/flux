@@ -37,8 +37,8 @@ spec:
                   "$RUSTFS_ACCESS_KEY" \
                   "$RUSTFS_SECRET_KEY" 2>&1)"; then
                   printf '%s\n' "$output" |
-                    sed -e "s/${RUSTFS_ACCESS_KEY}/[REDACTED]/g" \
-                      -e "s/${RUSTFS_SECRET_KEY}/[REDACTED]/g" >&2
+                    sed -e "s/$RUSTFS_ACCESS_KEY/[REDACTED]/g" \
+                      -e "s/$RUSTFS_SECRET_KEY/[REDACTED]/g" >&2
                   exit 1
                 fi
               fi
