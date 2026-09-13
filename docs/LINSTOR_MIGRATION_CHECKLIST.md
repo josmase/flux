@@ -205,14 +205,14 @@ sections; do not store credentials.
 - [x] Require two `UpToDate` replicas.
 - [x] Trigger and verify a fresh source Longhorn backup.
 - [x] Record pre-cutover Radarr health and configuration inventory.
-- [~] Scale only Radarr-10 to zero through GitOps.
-- [ ] Verify the old claim is detached.
-- [ ] Copy source to target with stopped writers.
-- [ ] Run rsync dry-run comparison.
-- [ ] Compare ownership, modes, extended attributes, counts, and checksums.
-- [ ] Run SQLite integrity checks on every copied database.
-- [ ] Switch only Radarr-10 to the LINSTOR claim.
-- [ ] Restore one Radarr-10 replica.
+- [x] Scale only Radarr-10 to zero through GitOps.
+- [x] Verify the old claim is detached.
+- [x] Copy source to target with stopped writers.
+- [x] Run rsync dry-run comparison.
+- [x] Compare ownership, modes, extended attributes, counts, and checksums.
+- [x] Run SQLite integrity checks on every copied database.
+- [~] Switch only Radarr-10 to the LINSTOR claim through GitOps.
+- [~] Restore one Radarr-10 replica through GitOps.
 - [ ] Verify health/readiness and application logs.
 - [ ] Verify library, indexers, download clients, paths, queue, and history.
 - [ ] Verify NFS media access.
@@ -232,9 +232,21 @@ sections; do not store credentials.
   3,005 regular files.
 - Migration tooling preflight: Alpine 3.22 successfully installed and located
   `rsync`, `sqlite3`, `getfattr`, and ACL tools before downtime began.
-- Copy start/end:
-- Source/target checksums:
-- SQLite integrity result:
+- Copy start/end: maintenance window began after GitOps scale-down commit at
+  `2026-09-13T10:38:17+02:00`; final validation completed before
+  `2026-09-13T10:54:11+02:00`.
+- Source/target checksums: complete regular-file SHA-256 manifests matched
+  before database repair; checksum-mode `rsync -aHAXnrc --numeric-ids`
+  reported zero differences. After target log-index repair, the final
+  non-database checksum-mode rsync also reported zero differences.
+- SQLite integrity result: source `radarr.db` and both target databases report
+  `ok`. The source and copied `logs.db` shared a pre-existing corrupt
+  `IX_Logs_Time` index; it was rebuilt on the target only. After rebuilding
+  the same index in a temporary source copy, source/target logical dump hashes
+  match: `radarr.db` =
+  `b6136d47545d7e337937bc2dcd6441d198c84a767bb0d78c96b7afc6af5cb1ea`,
+  `logs.db` =
+  `d2c8baf1edae9a656e91cca57dc355fba524542c89c1a8b14c155be4f678e82f`.
 - Cutover commit:
 - Pilot start:
 - Rollback expiry:
