@@ -8,7 +8,7 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Pilot storage, snapshots, RustFS, full/incremental backup, and restore validated; Radarr-10 cutover preparation in progress`
+- Overall: `[~] Radarr-10 LINSTOR pilot active; Day 0 accepted and seven-day observation window in progress`
 - Current phase: `Phase 5 - seven-day Radarr-10 pilot acceptance`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
@@ -104,8 +104,7 @@ sections; do not store credentials.
 - [x] Add pilot Piraeus pool and resource group.
 - [x] Add non-default `linstor-pilot` StorageClass.
 - [x] Confirm the existing `linstor-snapshot` class supports LVM-thin.
-- [~] Add LINSTOR remote/schedule reconciliation. The RustFS remote is
-  reconciled; recurring schedule policy remains pending.
+- [x] Add LINSTOR remote/schedule reconciliation.
 - [ ] Add backup health/audit monitoring.
 - [x] Render and validate the Piraeus Kustomization.
 - [ ] Reconcile RustFS routing and verify TLS.
@@ -146,6 +145,11 @@ sections; do not store credentials.
   rotated, the exposed identity was deleted and verified absent, and all
   transient plaintext files were removed. Job failure diagnostics now redact
   both credential values.
+- Radarr-10 schedule: `radarr10-pilot` is enabled only for resource
+  `pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b`; incremental every six hours,
+  full every Sunday at 03:00, two local snapshots and four remote full backups
+  retained, with up to three retries on failure. Reconciliation Job
+  `linstor-radarr10-backup-schedule-reconcile-v1` completed.
 
 ## Phase 3: hot-add pilot disks
 
