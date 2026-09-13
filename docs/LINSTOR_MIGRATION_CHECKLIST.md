@@ -8,8 +8,8 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Pilot storage, snapshots, and RustFS validated; backup wiring pending`
-- Current phase: `Phase 2 - scoped RustFS secret and LINSTOR backup remote`
+- Overall: `[~] Pilot storage, snapshots, RustFS, full/incremental backup, and restore validated; Radarr-10 cutover preparation in progress`
+- Current phase: `Phase 4 - Radarr-10 pre-cutover backup and target PVC`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -37,7 +37,7 @@ sections; do not store credentials.
 - [x] Export Proxmox VM and storage evidence.
 - [x] Require all active Longhorn volumes to be healthy with two replicas.
 - [ ] Run the migration-recovery backup workflow.
-- [ ] Verify all recovery checksums and completion markers.
+- [x] Verify all pilot recovery checksums and completion markers.
 - [ ] Create the Proxmox NFS backup directory.
 - [ ] Register and test Proxmox NFS backup storage.
 
@@ -87,7 +87,9 @@ sections; do not store credentials.
 - Ansible worktree: RustFS and LINSTOR pilot roles added; both playbooks pass
   `ansible-playbook --syntax-check` with Ansible Core 2.21.4 and
   `community.general` 13.4.0 in a disposable local validation environment.
-- Ansible commit:
+- Ansible commits: `ef634b3` (RustFS and LINSTOR pilot roles) and `de70054`
+  (rotation of the scoped RustFS backup identity after a failed Job exposed the
+  original identity in CLI error output).
 - Deployment timestamp: 2026-09-13; systemd tracks foreground Docker Compose
   and restarts on failure, with `BindsTo=mnt-storage.mount`.
 - Bucket/policy validation: `linstor-backups`, 1 TiB quota, dedicated scoped
@@ -96,13 +98,14 @@ sections; do not store credentials.
 
 ## Phase 2: Flux pilot infrastructure
 
-- [ ] Add SOPS-encrypted scoped RustFS credentials.
+- [x] Add SOPS-encrypted scoped RustFS credentials.
 - [ ] Add selectorless RustFS Services and EndpointSlices.
 - [ ] Add Traefik API and console routes.
 - [x] Add pilot Piraeus pool and resource group.
 - [x] Add non-default `linstor-pilot` StorageClass.
 - [x] Confirm the existing `linstor-snapshot` class supports LVM-thin.
-- [ ] Add LINSTOR remote/schedule reconciliation.
+- [~] Add LINSTOR remote/schedule reconciliation. The RustFS remote is
+  reconciled; recurring schedule policy remains pending.
 - [ ] Add backup health/audit monitoring.
 - [x] Render and validate the Piraeus Kustomization.
 - [ ] Reconcile RustFS routing and verify TLS.
@@ -110,13 +113,15 @@ sections; do not store credentials.
 - [ ] Verify multipart upload and abort.
 - [ ] Verify storage-server restart persistence.
 - [x] Clean the exported, non-materialized CNPG snapshot backlog.
-- [~] Enable one snapshot-controller replica. The manifest is set to one and
-  the pilot test succeeded, but Flux reverted the manual live apply to the
-  uncommitted remote state of zero replicas.
+- [x] Enable one snapshot-controller replica and verify it remains available
+  after Flux reconciliation.
 
 ### Flux infrastructure evidence
 
-- Flux commit:
+- Flux commits: `7b85fda` (pilot infrastructure), `d551b68` (rotated SOPS
+  identity and corrected remote command), `91f3e46`, `6d82d1e`, `797166c`
+  (immutable Job replacement and safe diagnostics), and `372c09f` (persistent
+  SOPS-encrypted LINSTOR master passphrase).
 - Pilot pool manifest: two `LVM_THIN` pools named `linstor-pilot`, both
   `State: Ok` and `CanSnapshots: True`.
 - Pilot resource group: `linstor-pilot-rg`, place count two, storage pool
@@ -127,9 +132,20 @@ sections; do not store credentials.
 - Snapshot backlog archive: captured in
   `/tmp/linstor-radarr-pilot-20260912`; 181 CNPG requests have no status and
   no VolumeSnapshotContent. The CNPG schedule is suspended.
-- Snapshot-controller rollout: one replica successfully rolled out for the
-  pilot and created a ready LINSTOR VolumeSnapshotContent; Flux subsequently
-  restored the live replica count to zero pending commit/push.
+- Snapshot-controller rollout: one replica successfully rolled out, remained
+  available after Flux reconciliation, and created a ready LINSTOR
+  VolumeSnapshotContent.
+- RustFS remote: `rustfs-linstor-backups`, S3 path-style endpoint
+  `192.168.1.102:9000/linstor-backups`, created by completed reconciliation
+  Job `linstor-rustfs-remote-reconcile-v3`.
+- LINSTOR master-key gate: controller initially rejected encrypted remote
+  credentials because no master key existed. `linstorPassphraseSecret` now
+  references SOPS Secret `linstor-passphrase`; LinstorCluster reports
+  `Applied`, `Available`, and `Configured` as `True`.
+- Credential incident response: the initially scoped bucket identity was
+  rotated, the exposed identity was deleted and verified absent, and all
+  transient plaintext files were removed. Job failure diagnostics now redact
+  both credential values.
 
 ## Phase 3: hot-add pilot disks
 
@@ -148,7 +164,7 @@ sections; do not store credentials.
 - [x] Create two-replica scratch PVC.
 - [x] Test scratch read/write and DRBD replication.
 - [x] Test CSI snapshot and restore.
-- [ ] Test full and incremental RustFS backup.
+- [x] Test full and incremental RustFS backup.
 - [x] Restore the scratch snapshot with matching checksums.
 
 ### Pilot disk evidence
@@ -172,12 +188,23 @@ sections; do not store credentials.
   diskless resources on worker 204 and the GPU worker.
 - Scratch restore checksum: both `pilot.txt` and the 16 MiB random test file
   returned `OK` from `sha256sum -c SHA256SUMS`.
+- RustFS full backup: snapshot `back_20260913_082354`, status `Success`, backup
+  ID `pvc-672c64a5-fa00-4be2-b3f4-7996e1e00585_back_20260913_082354`.
+- RustFS incremental backup: snapshot `back_20260913_082540`, status `Success`,
+  based on the full backup above. The post-full marker checksum is
+  `5621025851ff7dcbd373db570bb6dd25d075ee7b1de50c651bbe3f503e323334`.
+- RustFS restore: latest chain restored to
+  `scratch-rustfs-restore-20260913`, then expanded to two diskful replicas on
+  workers 205 and 206 with diskless clients on the remaining workers.
+  Read-only CSI mount validation returned `OK` for `pilot.txt`, `random.bin`,
+  and the incremental-only `incremental.txt`.
 
 ## Phase 4: Radarr-10 cutover
 
-- [ ] Add 2 GiB `media/radarr-10-config-linstor` PVC.
+- [~] Add 2 GiB `media/radarr-10-config-linstor` PVC. Manifest added;
+  Flux reconciliation and first-consumer binding pending.
 - [ ] Require two `UpToDate` replicas.
-- [ ] Trigger and verify a fresh source Longhorn backup.
+- [x] Trigger and verify a fresh source Longhorn backup.
 - [ ] Record pre-cutover Radarr health and configuration inventory.
 - [ ] Scale only Radarr-10 to zero.
 - [ ] Verify the old claim is detached.
@@ -196,7 +223,9 @@ sections; do not store credentials.
 
 ### Radarr pilot evidence
 
-- Source Longhorn backup:
+- Source Longhorn backup: `backup-c3c536cdbed746ce`, snapshot
+  `radarr10-pre-linstor-20260913-0828`, state `Completed`, progress 100%,
+  stored at the existing Longhorn NFS backup target.
 - Copy start/end:
 - Source/target checksums:
 - SQLite integrity result:
