@@ -4,6 +4,10 @@ resources:
   - cluster.yaml
   - satellite-network.yaml
   - storage-pool.yaml
+  - pilot-storage-pool.yaml
   - storage-class.yaml
+  - pilot-storage-class.yaml
+  - rustfs-credentials.yaml
+  - rustfs-remote-reconcile.yaml
   - snapshot-class.yaml
   - node-prerequisites.yaml

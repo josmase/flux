@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-rustfs-remote-reconcile-v1
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-rustfs-remote-reconcile
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  backoffLimit: 6
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linstor-rustfs-remote-reconcile
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reconcile
+          image: quay.io/piraeusdatastore/piraeus-server:v1.34.2
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              controller="linstor-controller.piraeus-datastore.svc:3370"
+              remote="rustfs-linstor-backups"
+
+              if ! linstor --controllers "$controller" -m remote list |
+                grep -q "\"remote_name\": \"$remote\""; then
+                linstor --controllers "$controller" remote create s3 +                  --use-path-style +                  "$remote" +                  "http://192.168.1.102:9000" +                  "linstor-backups" +                  "us-east-1" +                  "$RUSTFS_ACCESS_KEY" +                  "$RUSTFS_SECRET_KEY"
+              fi
+
+              linstor --controllers "$controller" -m remote list |
+                grep -q "\"remote_name\": \"$remote\""
+          env:
+            - name: RUSTFS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: linstor-rustfs-credentials
+                  key: accessKey
+            - name: RUSTFS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: linstor-rustfs-credentials
+                  key: secretKey
