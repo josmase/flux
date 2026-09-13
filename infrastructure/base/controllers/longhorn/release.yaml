@@ -42,7 +42,10 @@ spec:
         - name: critical
           isGroup: true
       storageMinimalAvailablePercentage: 25
-      storageOverProvisioningPercentage: 100
+      # Temporary migration headroom: evacuating an oversized worker root disk
+      # concentrates the existing sparse Longhorn replicas on two workers.
+      # Physical free-space and the 25% minimum-available guard remain active.
+      storageOverProvisioningPercentage: 150
       guaranteedInstanceManagerCPU: "4"
       taintToleration: "workload=gpu-only:NoSchedule"
     persistence:
