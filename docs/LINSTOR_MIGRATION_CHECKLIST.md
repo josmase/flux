@@ -9,7 +9,7 @@ sections; do not store credentials.
 ## Current status
 
 - Overall: `[~] Pilot storage, snapshots, RustFS, full/incremental backup, and restore validated; Radarr-10 cutover preparation in progress`
-- Current phase: `Phase 4 - Radarr-10 pre-cutover backup and target PVC`
+- Current phase: `Phase 5 - seven-day Radarr-10 pilot acceptance`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -211,14 +211,14 @@ sections; do not store credentials.
 - [x] Run rsync dry-run comparison.
 - [x] Compare ownership, modes, extended attributes, counts, and checksums.
 - [x] Run SQLite integrity checks on every copied database.
-- [~] Switch only Radarr-10 to the LINSTOR claim through GitOps.
-- [~] Restore one Radarr-10 replica through GitOps.
-- [ ] Verify health/readiness and application logs.
-- [ ] Verify library, indexers, download clients, paths, queue, and history.
-- [ ] Verify NFS media access.
-- [ ] Verify a configuration change persists through restart.
-- [ ] Record pilot start time and seven-day rollback expiry.
-- [ ] Preserve the old Longhorn PVC unattached.
+- [x] Switch only Radarr-10 to the LINSTOR claim through GitOps.
+- [x] Restore one Radarr-10 replica through GitOps.
+- [x] Verify health/readiness and application logs.
+- [x] Verify library, indexers, download clients, paths, queue, and history.
+- [x] Verify NFS media access.
+- [x] Verify a configuration change persists through restart.
+- [x] Record pilot start time and seven-day rollback expiry.
+- [x] Preserve the old Longhorn PVC unattached.
 
 ### Radarr pilot evidence
 
@@ -247,13 +247,26 @@ sections; do not store credentials.
   `b6136d47545d7e337937bc2dcd6441d198c84a767bb0d78c96b7afc6af5cb1ea`,
   `logs.db` =
   `d2c8baf1edae9a656e91cca57dc355fba524542c89c1a8b14c155be4f678e82f`.
-- Cutover commit:
-- Pilot start:
-- Rollback expiry:
+- Cutover commit: `db3d73d`.
+- Post-cutover state app validation: deployment 1/1 ready with zero restarts;
+  `/ping` returned 200; 489 movies, two indexers, one download client, one
+  accessible root folder, and zero queue items. A missing Transmission path
+  was created as `/mnt/storage/downloads/complete/radarrten` using the existing
+  `1000:1000`/`0775` convention; Radarr then reported zero health items.
+- Restart persistence: marker SHA-256
+  `6414a79a0a384290ae79c4f01472ced9b8d4660619a84f889b9305dea7fbde44`
+  survived a pod replacement unchanged and was removed afterwards.
+- Target HA after cutover: diskful `UpToDate` replicas on workers 205 and 206;
+  source Longhorn volume remains detached and retained.
+- First Radarr LINSTOR backup: full snapshot `back_20260913_090033`, status
+  `Success`, backup ID
+  `pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b_back_20260913_090033`.
+- Pilot start: `2026-09-13T11:01:00+02:00`.
+- Rollback expiry: `2026-09-20T11:01:00+02:00`, subject to all Phase 5 gates.
 
 ## Phase 5: seven-day pilot acceptance
 
-- [ ] Day 0 health check.
+- [x] Day 0 health check.
 - [ ] Day 1 health and backup check.
 - [ ] Day 2 health and backup check.
 - [ ] Day 3 health and backup check.

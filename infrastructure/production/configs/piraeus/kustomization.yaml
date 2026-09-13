@@ -10,5 +10,6 @@ resources:
   - pilot-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
+  - radarr10-backup-schedule-reconcile.yaml
   - snapshot-class.yaml
   - node-prerequisites.yaml

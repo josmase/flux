@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-radarr10-backup-schedule-reconcile-v1
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-backup-schedule-reconcile
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  backoffLimit: 6
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linstor-backup-schedule-reconcile
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reconcile
+          image: quay.io/piraeusdatastore/piraeus-server:v1.34.2
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              controller="linstor-controller.piraeus-datastore.svc:3370"
+              remote="rustfs-linstor-backups"
+              schedule="radarr10-pilot"
+              resource="pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b"
+
+              if ! linstor --controllers "$controller" -m schedule list |
+                grep -q "\"schedule_name\": \"$schedule\""; then
+                linstor --controllers "$controller" schedule create \
+                  -i "0 */6 * * *" \
+                  -l 2 \
+                  -r 4 \
+                  --on-failure RETRY \
+                  --max-retries 3 \
+                  "$schedule" \
+                  "0 3 * * SUN"
+              else
+                linstor --controllers "$controller" schedule modify \
+                  -f "0 3 * * SUN" \
+                  -i "0 */6 * * *" \
+                  -l 2 \
+                  -r 4 \
+                  --on-failure RETRY \
+                  --max-retries 3 \
+                  "$schedule"
+              fi
+
+              linstor --controllers "$controller" backup schedule enable \
+                --rd "$resource" \
+                "$remote" \
+                "$schedule"
+
+              linstor --controllers "$controller" schedule list-by-resource \
+                --active-only \
+                --resource "$resource" \
+                --remote "$remote" \
+                --schedule "$schedule"
