@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-remote-reconcile-v1
+  name: linstor-rustfs-remote-reconcile-v2
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-remote-reconcile
