@@ -28,7 +28,14 @@ spec:
 
               if ! linstor --controllers "$controller" -m remote list |
                 grep -q "\"remote_name\": \"$remote\""; then
-                linstor --controllers "$controller" remote create s3 +                  --use-path-style +                  "$remote" +                  "http://192.168.1.102:9000" +                  "linstor-backups" +                  "us-east-1" +                  "$RUSTFS_ACCESS_KEY" +                  "$RUSTFS_SECRET_KEY"
+                linstor --controllers "$controller" remote create s3 \
+                  --use-path-style \
+                  "$remote" \
+                  "http://192.168.1.102:9000" \
+                  "linstor-backups" \
+                  "us-east-1" \
+                  "$RUSTFS_ACCESS_KEY" \
+                  "$RUSTFS_SECRET_KEY"
               fi
 
               linstor --controllers "$controller" -m remote list |
