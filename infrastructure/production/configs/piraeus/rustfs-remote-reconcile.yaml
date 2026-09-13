@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-remote-reconcile-v2
+  name: linstor-rustfs-remote-reconcile-v3
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-remote-reconcile
@@ -28,14 +28,19 @@ spec:
 
               if ! linstor --controllers "$controller" -m remote list |
                 grep -q "\"remote_name\": \"$remote\""; then
-                linstor --controllers "$controller" remote create s3 \
+                if ! output="$(linstor --controllers "$controller" remote create s3 \
                   --use-path-style \
                   "$remote" \
                   "http://192.168.1.102:9000" \
                   "linstor-backups" \
                   "us-east-1" \
                   "$RUSTFS_ACCESS_KEY" \
-                  "$RUSTFS_SECRET_KEY"
+                  "$RUSTFS_SECRET_KEY" 2>&1)"; then
+                  printf '%s\n' "$output" |
+                    sed -e "s/${RUSTFS_ACCESS_KEY}/[REDACTED]/g" \
+                      -e "s/${RUSTFS_SECRET_KEY}/[REDACTED]/g" >&2
+                  exit 1
+                fi
               fi
 
               linstor --controllers "$controller" -m remote list |
