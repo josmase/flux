@@ -8,8 +8,8 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Radarr-10 LINSTOR pilot active; Day 0 accepted and seven-day observation window in progress`
-- Current phase: `Phase 5 - seven-day Radarr-10 pilot acceptance`
+- Overall: `[~] Radarr-10 LINSTOR pilot healthy; permanent-storage preparation started on worker 205`
+- Current phase: `Phase 6 - worker 205 ready for approved workload drain`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -38,8 +38,8 @@ sections; do not store credentials.
 - [x] Require all active Longhorn volumes to be healthy with two replicas.
 - [ ] Run the migration-recovery backup workflow.
 - [x] Verify all pilot recovery checksums and completion markers.
-- [ ] Create the Proxmox NFS backup directory.
-- [ ] Register and test Proxmox NFS backup storage.
+- [x] Create the Proxmox NFS backup directory.
+- [x] Register and test Proxmox NFS backup storage.
 
 ### Phase 0 evidence
 
@@ -60,6 +60,14 @@ sections; do not store credentials.
   active one-replica Longhorn volume. Its desired replica count was changed
   from one to two; both replicas reached `running` and the volume returned to
   `healthy` before pilot work continued.
+- Proxmox recovery storage: `/mnt/storage/kubernetes/proxmox-backups` on the
+  storage server's mergerfs mount is exported through the existing NFSv4 root,
+  registered in Proxmox as `proxmox-backups`, and passed a write test. It had
+  approximately 3.3 TiB available when prepared on 2026-09-13.
+- Git remote gate: the local GitHub remote was removed. `origin` is the only
+  remaining fetch/push remote and points to
+  `https://gitlab.local.hejsan.xyz/josmase/infrastructure/flux.git`. Flux
+  reconciled GitLab revision `24ece33d4b3a1d1a7802a22daa59e229f809baf2`.
 
 ## Phase 1: Ansible and RustFS
 
@@ -70,7 +78,7 @@ sections; do not store credentials.
 - [ ] Implement RustFS health and capacity monitoring.
 - [x] Implement parameterized `storage/linstor_lvm` role.
 - [x] Add guarded pilot-disk playbook.
-- [ ] Add final-disk and post-conversion validation playbooks.
+- [x] Add final-disk and post-conversion validation playbooks.
 - [x] Run Ansible syntax checks.
 - [x] Run RustFS check mode against the storage server.
 - [x] Deploy RustFS.
@@ -291,10 +299,11 @@ sections; do not store credentials.
 
 Repeat every item for 205 before beginning 206.
 
-- [ ] Evacuate Longhorn replicas from target worker.
-- [ ] Confirm two healthy copies remain elsewhere.
-- [ ] Cordon and drain target worker.
-- [ ] Require ext4 minimum estimate at or below 220 GiB.
+- [x] Evacuate Longhorn replicas from target worker.
+- [x] Confirm two healthy copies remain elsewhere.
+- [!] Cordon and drain target worker; explicit approval for broad production
+  pod eviction is pending.
+- [x] Require ext4 minimum estimate at or below 220 GiB.
 - [ ] Shut down VM.
 - [ ] Create and verify powered-off NFS `vzdump` backup.
 - [ ] Allocate empty 250 GiB output LV.
@@ -315,6 +324,54 @@ Repeat every item for 205 before beginning 206.
 - [ ] Verify Ansible idempotency.
 - [ ] Label final storage ready and uncordon.
 - [ ] Confirm cluster and Proxmox health before the next worker.
+
+### Worker 205 preparation evidence
+
+- Longhorn scheduling is disabled on `kubernetes-node-205` and node eviction
+  is requested. The temporary GitOps-managed over-provisioning setting is 150%
+  while the 25% physical free-space floor remains enabled.
+- Evacuation reduced the worker from 47 replicas to seven without degrading
+  an attached volume. The remaining seven are healthy, attached volumes with
+  three replicas already placed one each on workers 204, 205, and 206.
+  Longhorn correctly cannot create a replacement because hard replica
+  anti-affinity forbids two replicas of one volume on either remaining worker.
+- The remaining claims are Grafana (10 GiB), Immich model cache (10 GiB),
+  Transmission (1 GiB), Bazarr (5 GiB), GitLab Gitaly (50 GiB), Immich
+  PostgreSQL (10 GiB), and Prometheus (143 GiB). Before reducing these to the
+  planned two-copy baseline, a manual backup pass was started from the standard
+  Longhorn `backup` CronJob; every affected volume had to register a fresh
+  remote backup before evacuation could continue.
+- No soft anti-affinity exception will be used: two replicas on the same worker
+  would not protect against worker failure. Once the fresh backup gate passes,
+  the seven volumes can use the documented two-replica baseline on workers 204
+  and 206 so their worker-205 replicas can be removed.
+- Fresh remote-backup gate passed before replica removal. Backup IDs were
+  `backup-6b3dd215271c44f6` (Grafana), `backup-5fe4f92ecf864894`
+  (Immich model cache), `backup-488f1d15ee6d4cd7` (Transmission),
+  `backup-c7fdd967e5f14e47` (Bazarr), `backup-01fe328097e0483f`
+  (GitLab Gitaly), `backup-62dcbc747a9e4903` (Immich PostgreSQL), and
+  `backup-b802354b2df34a41` (Prometheus). The standard bulk Job hit a
+  transient Longhorn admission-webhook timeout on an unrelated Prowlarr
+  volume; Bazarr was therefore backed up with a scoped one-shot request and
+  the temporary recurring-job selector was removed afterward.
+- The seven historical three-replica volumes were changed to the configured
+  two-replica baseline. Longhorn then removed every remaining worker-205
+  replica; all attached Longhorn volumes remained healthy.
+- After evacuation, `/var/lib/longhorn` used 37 MiB, `/var/lib/rancher` used
+  100 GiB, and `/` used 104.2 GiB. `resize2fs -P /dev/sda1` estimated
+  29,414,600 4-KiB blocks (approximately 112.2 GiB), comfortably below the
+  220 GiB stop threshold. The filesystem will still be shrunk offline.
+- The drain dry run identified Longhorn's instance-manager PDB as the expected
+  final blocker while volume engines still run on worker 205. The safe order
+  is to evict non-DaemonSet workloads except the instance manager, wait for
+  engines to relocate, then drain the released instance manager. The node was
+  uncordoned after the production drain action was denied pending fresh
+  explicit approval.
+- Ansible commit `27033a2` adds the final 750 GiB disk playbook, guarded
+  `linstor_vg/linstor_thin` creation, an 80%/20% thin-pool auto-extension
+  profile, and read-only post-conversion validation. Both playbooks passed
+  `ansible-playbook --syntax-check`. The commit is local because publishing it
+  directly to GitLab `main` requires fresh explicit approval.
 
 ## Phase 7: move pilot resource to final pools
 
