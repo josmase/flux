@@ -381,6 +381,10 @@ Repeat every item for 205 before beginning 206.
   became stale when mergerfs segfaulted on the storage server, was remounted,
   and the three parts remained intact. Concatenated `zstd -t` verification is
   currently running; VMA verification and checksums remain pending.
+- The concatenated split stream passed `zstd -t` at
+  `2026-09-16T00:19:00+02:00` (`rc=0`). A detached `vma verify -` is now
+  reading the same stream; the powered-off backup gate remains open until it
+  returns success.
 - During the window, worker 204 hit extreme memory pressure and LINSTOR
   liveness timeouts. A temporary non-persistent 8 GiB swap file restored node
   and satellite responsiveness; it is not in `fstab` and must be removed
