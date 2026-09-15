@@ -9,7 +9,7 @@ sections; do not store credentials.
 ## Current status
 
 - Overall: `[~] Radarr-10 LINSTOR pilot healthy; permanent-storage preparation started on worker 205`
-- Current phase: `Phase 6 - worker 205 ready for approved workload drain`
+- Current phase: `Phase 6 - worker 205 drained and stopped; split-stream powered-off backup in progress`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -301,11 +301,10 @@ Repeat every item for 205 before beginning 206.
 
 - [x] Evacuate Longhorn replicas from target worker.
 - [x] Confirm two healthy copies remain elsewhere.
-- [!] Cordon and drain target worker; explicit approval for broad production
-  pod eviction is pending.
+- [x] Cordon and drain target worker.
 - [x] Require ext4 minimum estimate at or below 220 GiB.
-- [ ] Shut down VM.
-- [ ] Create and verify powered-off NFS `vzdump` backup.
+- [x] Shut down VM.
+- [~] Create and verify powered-off NFS `vzdump` backup.
 - [ ] Allocate empty 250 GiB output LV.
 - [ ] Boot rescue ISO and confirm root is unmounted.
 - [ ] Run pre-shrink `e2fsck`.
@@ -361,17 +360,37 @@ Repeat every item for 205 before beginning 206.
   100 GiB, and `/` used 104.2 GiB. `resize2fs -P /dev/sda1` estimated
   29,414,600 4-KiB blocks (approximately 112.2 GiB), comfortably below the
   220 GiB stop threshold. The filesystem will still be shrunk offline.
-- The drain dry run identified Longhorn's instance-manager PDB as the expected
-  final blocker while volume engines still run on worker 205. The safe order
-  is to evict non-DaemonSet workloads except the instance manager, wait for
-  engines to relocate, then drain the released instance manager. The node was
-  uncordoned after the production drain action was denied pending fresh
-  explicit approval.
+- Worker 205 was cordoned and drained after explicit approval. Non-DaemonSet
+  workloads relocated first; after confirming zero Longhorn engines and zero
+  replicas on the node, the empty instance manager was removed with PDB
+  eviction bypass. Only DaemonSets remained. Radarr-10 recovered Ready on
+  worker 204 through a diskless DRBD attachment while its two diskful replicas
+  remained `UpToDate` on workers 205 and 206.
+- VM 205 was shut down cleanly with `qm shutdown 205 --timeout 120` and was
+  confirmed stopped. The first conventional compressed `vzdump` reached 81%
+  before one mergerfs branch filled: mergerfs cannot split a single archive
+  file between branches. `vzdump` aborted cleanly and removed the incomplete
+  archive; the source disks were unchanged. A replacement powered-off backup
+  is streaming through `split` into maximum 200 GiB compressed parts so each
+  file fits on an individual branch. Conversion remains blocked until the
+  pipeline succeeds and both zstd and VMA stream verification pass.
+- The split-stream backup completed as three files under
+  `/mnt/pve/proxmox-backups/dump/` (`part-000` 200 GiB, `part-001` 200 GiB,
+  `part-002` 60 GiB). The original single-file attempt failed at 81% after a
+  mergerfs branch filled; no source disk was modified. The NFS export briefly
+  became stale when mergerfs segfaulted on the storage server, was remounted,
+  and the three parts remained intact. Concatenated `zstd -t` verification is
+  currently running; VMA verification and checksums remain pending.
+- During the window, worker 204 hit extreme memory pressure and LINSTOR
+  liveness timeouts. A temporary non-persistent 8 GiB swap file restored node
+  and satellite responsiveness; it is not in `fstab` and must be removed
+  after worker 205 returns.
 - Ansible commit `27033a2` adds the final 750 GiB disk playbook, guarded
   `linstor_vg/linstor_thin` creation, an 80%/20% thin-pool auto-extension
   profile, and read-only post-conversion validation. Both playbooks passed
-  `ansible-playbook --syntax-check`. The commit is local because publishing it
-  directly to GitLab `main` requires fresh explicit approval.
+  `ansible-playbook --syntax-check` and was pushed to GitLab `main`. Flux
+  commit `3532d09` records the preparation evidence and was also pushed to
+  GitLab `main`. Both repositories now use GitLab as their only remote.
 
 ## Phase 7: move pilot resource to final pools
 
