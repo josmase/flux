@@ -29,13 +29,13 @@ metadata:
   namespace: longhorn-system
 spec:
   name: kubernetes-node-205
-  allowScheduling: true
+  allowScheduling: false
   disks:
     default-disk-8b9bea7d9940a62d:
-      allowScheduling: true
+      allowScheduling: false
       diskDriver: ""
       diskType: filesystem
-      evictionRequested: false
+      evictionRequested: true
       path: /var/lib/longhorn/
       storageReserved: 107374182400
       tags: []

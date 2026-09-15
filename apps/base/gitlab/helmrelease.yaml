@@ -150,9 +150,16 @@ spec:
         existingSecret: gitlab-redis-password
         existingSecretPasswordKey: redis-password
       master:
+        nodeSelector:
+          kubernetes.io/hostname: kubernetes-node-206
+        tolerations:
+          - key: drbd.linbit.com/lost-quorum
+            operator: Exists
+            effect: NoSchedule
         persistence:
           storageClass: ${STORAGE_CLASS}
           size: 10Gi
+          existingClaim: redis-data-gitlab-redis-master-0
         resources:
           requests:
             cpu: 100m

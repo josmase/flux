@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: immich-machine-learning
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
