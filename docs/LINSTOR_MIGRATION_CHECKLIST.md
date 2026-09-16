@@ -385,8 +385,13 @@ Repeat every item for 205 before beginning 206.
   `2026-09-16T00:19:00+02:00` (`rc=0`).
 - VMA verification of the concatenated stream completed at
   `2026-09-16T02:12:30+02:00` (`rc=0`). The powered-off backup is now
-  structurally verified; per-part SHA-256 checksums are the remaining backup
-  evidence item before disk conversion.
+  structurally verified. Per-part SHA-256 verification completed at
+  `2026-09-16T09:19:00+02:00` (`rc=0`): `part-000` =
+  `3262c651d2a823822e565ef3f8145a5b5e856e8c8c2b6ec48c6fc0c6242c493a`,
+  `part-001` =
+  `c2ff5c03c22d23415db7e833501003b7cbd8b75ca05283b8e0bdcd5fc337681e`,
+  `part-002` =
+  `be1af9d386fe20380c42930095b92ead92583d5cd976828e06c085d5217a826c`.
 - During the window, worker 204 hit extreme memory pressure and LINSTOR
   liveness timeouts. A temporary non-persistent 8 GiB swap file restored node
   and satellite responsiveness; it is not in `fstab` and must be removed
