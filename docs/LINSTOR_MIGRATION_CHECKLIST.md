@@ -9,7 +9,7 @@ sections; do not store credentials.
 ## Current status
 
 - Overall: `[~] Radarr-10 LINSTOR pilot healthy; permanent-storage preparation started on worker 205`
-- Current phase: `Phase 6 - worker 205 drained and stopped; split-stream powered-off backup in progress`
+- Current phase: `Phase 6 - worker 205 rollback complete after converted-disk GRUB boot failure; source boot LV retained`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -310,8 +310,10 @@ Repeat every item for 205 before beginning 206.
 - [ ] Run pre-shrink `e2fsck`.
 - [ ] Shrink ext4 to 230 GiB.
 - [ ] Run post-shrink `e2fsck`.
-- [ ] Run `virt-resize` dry run.
-- [ ] Copy old disk to new disk with `virt-resize`.
+- [x] Run `virt-resize` dry run.
+- [x] Copy old disk to new disk with `virt-resize` (completed `rc=0`; target filesystem checks passed).
+- [x] Attempt boot from converted disk; it stopped at `grub rescue>` and was rolled back.
+- [ ] Diagnose and correct bootloader/partition-layout issue before retrying conversion.
 - [ ] Validate the new disk read-only.
 - [ ] Switch `scsi0`, retaining the old LV as unused.
 - [ ] Complete first boot validation.
