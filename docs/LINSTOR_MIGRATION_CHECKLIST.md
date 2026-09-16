@@ -426,7 +426,7 @@ Repeat every item for 205 before beginning 206.
   `kubernetes-node-206` GitLab Redis pin was removed (`7150080`). The same
   immutable-claim alignment was then applied to Radarr-4 (`09b6137`) and
   Radarr-6 through Radarr-9 (`abfc23f`). All four commits were pushed to GitLab
-  `main`; the final Flux source revision is `abfc23f` and every Kustomization
+  `main`; the final Flux source revision is `11d585b` and every Kustomization
   reports `Ready=True`/`ReconciliationSucceeded`.
 - Prometheus cutover is validated. The source Longhorn volume was backed up
   through the named migration snapshot and manager `snapshotBackup`; Longhorn
