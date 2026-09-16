@@ -1,7 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prometheus-kube-prometheus-stack-prometheus-db-linstor-copy
+  # Prometheus Operator appends the StatefulSet name and ordinal to the
+  # volume-claim-template name. Keep this explicit target equal to the PVC
+  # Helm will generate after the cutover.
+  name: prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
   labels:
