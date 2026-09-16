@@ -304,7 +304,7 @@ Repeat every item for 205 before beginning 206.
 - [x] Cordon and drain target worker.
 - [x] Require ext4 minimum estimate at or below 220 GiB.
 - [x] Shut down VM.
-- [~] Create and verify powered-off NFS `vzdump` backup.
+- [x] Create and verify powered-off NFS `vzdump` backup.
 - [ ] Allocate empty 250 GiB output LV.
 - [ ] Boot rescue ISO and confirm root is unmounted.
 - [ ] Run pre-shrink `e2fsck`.
@@ -379,12 +379,14 @@ Repeat every item for 205 before beginning 206.
   `part-002` 60 GiB). The original single-file attempt failed at 81% after a
   mergerfs branch filled; no source disk was modified. The NFS export briefly
   became stale when mergerfs segfaulted on the storage server, was remounted,
-  and the three parts remained intact. Concatenated `zstd -t` verification is
-  currently running; VMA verification and checksums remain pending.
+  and the three parts remained intact. Concatenated `zstd -t` and `vma verify`
+  both completed successfully; per-part checksums remain pending.
 - The concatenated split stream passed `zstd -t` at
-  `2026-09-16T00:19:00+02:00` (`rc=0`). A detached `vma verify -` is now
-  reading the same stream; the powered-off backup gate remains open until it
-  returns success.
+  `2026-09-16T00:19:00+02:00` (`rc=0`).
+- VMA verification of the concatenated stream completed at
+  `2026-09-16T02:12:30+02:00` (`rc=0`). The powered-off backup is now
+  structurally verified; per-part SHA-256 checksums are the remaining backup
+  evidence item before disk conversion.
 - During the window, worker 204 hit extreme memory pressure and LINSTOR
   liveness timeouts. A temporary non-persistent 8 GiB swap file restored node
   and satellite responsiveness; it is not in `fstab` and must be removed
