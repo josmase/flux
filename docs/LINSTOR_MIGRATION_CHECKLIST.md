@@ -325,6 +325,7 @@ Repeat every item for 205 before beginning 206.
 - [x] Fix Ansible LVM profile-field compatibility and root-disk-size parsing; changes pushed to GitLab Ansible (`b242e9f`).
 - [x] Radarr 1 pilot cutover: copied 22 GiB config to LINSTOR, switched deployment to `radarr-1-config-linstor`, and verified `Running` on worker 205.
 - [x] Migrate Radarr 2–12: copied each configuration PVC to `linstor`, switched deployments, and verified all 12 instances `Running` on worker 205.
+- [x] Migrate Radarr 10 from `linstor-pilot` to permanent `linstor` pool; copy and startup validation passed.
 - [ ] Delete old unused LV only after acceptance.
 - [ ] Add 750 GiB `linstor-data-<node>` disk.
 - [ ] Initialize final `linstor_vg/linstor_thin` with Ansible.

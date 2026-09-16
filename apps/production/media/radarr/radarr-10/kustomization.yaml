@@ -23,7 +23,7 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-linstor
+        value: config-final
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
