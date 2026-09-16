@@ -150,8 +150,6 @@ spec:
         existingSecret: gitlab-redis-password
         existingSecretPasswordKey: redis-password
       master:
-        nodeSelector:
-          kubernetes.io/hostname: kubernetes-node-206
         podAnnotations:
           migration.josmase.io/redis-statefulset: existing-claim
         tolerations:
