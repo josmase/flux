@@ -8,7 +8,7 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Prometheus LINSTOR cutover validated; worker-206 evacuation is blocked on retained Longhorn replicas`
+- Overall: `[~] Prometheus LINSTOR cutover validated; worker-206 running replicas evacuated and conversion gate passed`
 - Current phase: `Phase 6 - worker 206 workload evacuation and capacity gate`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
@@ -439,26 +439,49 @@ Repeat every item for 205 before beginning 206.
   worker 206 was removed only after the worker-204 replica was retained and the
   source desired replica count was reduced to one.
 - Worker 206 is Kubernetes-cordoned (`Ready,SchedulingDisabled`) and has no
-  Longhorn engine/current volume attachment. Its Longhorn disk is intentionally
-  still `allowScheduling: true, evictionRequested: false` because replica
-  evacuation is not yet safe. The node currently reports `/` 983 GiB total,
-  266 GiB used, 718 GiB free; `/var/lib/longhorn` uses 227 GiB and
+  Longhorn engines or current volume attachments. Its Longhorn node and disk
+  are now persistently guarded with `allowScheduling: false` and
+  `evictionRequested: false` (Flux manifest updated locally and queued for the
+  next GitLab commit). After the controlled cleanup, the node reports `/` 983
+  GiB total, 152 GiB used, 831 GiB free; `/var/lib/longhorn` uses 113 GiB and
   `/var/lib/rancher` uses 24 GiB. `resize2fs -P /dev/sda1` estimates
-  72,387,799 4-KiB blocks (approximately 276.1 GiB), above the 220 GiB
+  42,107,131 4-KiB blocks (approximately 160.4 GiB), below the 220 GiB
   conversion stop threshold.
-- Longhorn inventory shows 63 volumes with a surviving replica outside worker
-  206. Six physical replica volumes are still worker-206-only and must be
-  preserved or backed up before their replicas can be removed: historical
-  released `pvc-2477cfbf-0693-4e1a-b598-b21c3c4c9b1f` (10 GiB),
-  `pvc-4aecbd08-0181-4ad2-8b63-0caa79e29b5f` (3 GiB),
-  `pvc-50f1de0b-45ad-4584-a207-b3bdc692ca81` (1 GiB), and retained recovered
-  `radarr-11-config-recovered-20260915`, `radarr-3-config-recovered-20260915`,
-  and `radarr-5-config-recovered-20260915` (3 GiB each). The active
-  `gitlab-redis-recovered-20260915` volume has only one usable running copy on
-  worker 206 (the other replica object is unassigned/stopped), so it must be
-  re-replicated before worker 206 can be converted. No PVC, PV, or Longhorn
-  volume object was deleted; the old Jellyfin and Artifactory copies were left
-  untouched.
+- The seven worker-206-only recovery volumes were backed up before cleanup:
+  `backup-c313b831739c45dc` (Redis), `backup-d667315c09db487e` (released
+  Redis), `backup-43a73ca29bfb48cb` (Radarr-3 source),
+  `backup-15c08bee908a40d7` (Immich model-cache),
+  `backup-a86f0777793346da`, `backup-60c09a35e6354721`, and
+  `backup-d9b8040c58864992` (recovered Radarr-11/3/5). The Redis volume was
+  first re-replicated to worker 204 (`gitlab-redis-recovered-20260915-r-9f6ffab0`),
+  then its worker-206 replica was removed; Redis remained healthy and Ready on
+  worker 205.
+- Attached healthy volumes were cleaned with the Longhorn `replicaRemove`
+  action only after confirming a running outside replica and a completed recent
+  backup. This covered GitLab MinIO/Gitaly/Redis, current Artifactory,
+  CNPG-1/3/4 data and WAL, Jellyfin v2, LLM Switchboard, monitoring, and the
+  media services (arr-dashboard, Prowlarr, Sonarr 1-6, Bazarr, Transmission,
+  Seerr, Checkrr, and Reiverr). Each retained volume is healthy on its outside
+  copy; desired replica count is temporarily one until final LINSTOR
+  re-replication.
+- Detached source volumes whose outside replica was stopped were handled with
+  exact worker-206 Replica-object deletion only after a completed Longhorn
+  backup was present. This removed the old Radarr, Immich, CNPG, GitLab source,
+  Minecraft, media-data, cache, and monitoring source copies while retaining
+  their PVC/PV/Longhorn Volume objects and outside replica objects. No PVC, PV,
+  or Longhorn Volume object was deleted. Retained old Jellyfin/Artifactory
+  sources and the unbacked Immich inspection copy remain stopped on worker 206.
+- Detached-source sequencing deviation: a test on
+  `pvc-cdb2d94f-71b8-46a7-8ab5-bc4630ab582e` reduced the desired count before
+  removal; Longhorn selected the worker-206 copy and discarded the transient
+  outside object, so its API removal was rejected. The source still has a
+  completed backup (`backup-399ce86c2ac74918`) and its worker-206 copy is
+  intentionally retained for now. Subsequent detached cleanup deletes the
+  exact target first and adjusts the desired count afterward.
+- Eleven stopped Replica objects remain on worker 206 by design: the retained
+  Jellyfin/Artifactory sources, the unbacked Immich inspection source, and the
+  seven backup-only worker-206 sources listed above. They have no engines or
+  active mounts and do not block the offline conversion gate.
 - Cluster validation after the controlled drain found no Pending,
   CrashLoopBackOff, ContainerCreating, or Init-pending application pods.
   GitLab PostgreSQL, Redis, MinIO, registry, webservice, runner, and sidekiq
@@ -466,13 +489,11 @@ Repeat every item for 205 before beginning 206.
 
 #### Worker 206 pending gates
 
-- [!] Disable Longhorn scheduling and evict redundant worker-206 replicas only
-  after explicit approval to re-replicate/preserve the six worker-206-only
-  volumes and the active GitLab Redis volume. The admission safety check
-  currently rejects broad eviction because some volumes have no surviving
-  copy.
-- [ ] Re-run `resize2fs -P` after replica evacuation and require an estimate at
-  or below 220 GiB.
+- [x] Disable Longhorn scheduling and evacuate all running worker-206 replicas
+  and engines. Retained stopped source copies remain protected by completed
+  backups and are not mounted.
+- [x] Re-run `resize2fs -P` after replica evacuation; the estimate is
+  approximately 160.4 GiB, below the 220 GiB stop threshold.
 - [ ] Shut down VM 206, create and verify the split-stream powered-off VMA
   backup, then perform the offline 250 GiB boot-disk conversion and bootloader
   validation used for worker 205.
