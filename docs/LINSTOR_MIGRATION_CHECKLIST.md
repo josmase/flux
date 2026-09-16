@@ -423,8 +423,11 @@ Repeat every item for 205 before beginning 206.
   204 after all application workloads had converged.
 - GitOps drift found during the drain was corrected before proceeding:
   Radarr-2 now uses `storageClassName: linstor` (`577f968`), and the hard
-  `kubernetes-node-206` GitLab Redis pin was removed (`7150080`). Both commits
-  were pushed to GitLab `main`.
+  `kubernetes-node-206` GitLab Redis pin was removed (`7150080`). The same
+  immutable-claim alignment was then applied to Radarr-4 (`09b6137`) and
+  Radarr-6 through Radarr-9 (`abfc23f`). All four commits were pushed to GitLab
+  `main`; the final Flux source revision is `abfc23f` and every Kustomization
+  reports `Ready=True`/`ReconciliationSucceeded`.
 - Prometheus cutover is validated. The source Longhorn volume was backed up
   through the named migration snapshot and manager `snapshotBackup`; Longhorn
   reported backup ID `backup-0e0d74c06fa747ea` at
