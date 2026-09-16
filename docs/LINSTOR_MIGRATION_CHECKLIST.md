@@ -318,7 +318,10 @@ Repeat every item for 205 before beginning 206.
 - [ ] Validate the new disk read-only.
 - [ ] Switch `scsi0`, retaining the old LV as unused.
 - [x] Complete first boot validation: VM 205 booted from `vm-205-boot-convert`; Kubernetes node is `Ready`.
-- [ ] Complete second boot validation.
+- [x] Complete second cold-boot validation: worker 205 returned `Ready`; LINSTOR satellite and CSI pods recovered.
+- [x] Remove the retained original boot LV after successful validation.
+- [x] Create and attach permanent 750 GiB data LV `vm-205-disk-2` (serial `linstor-data-205`).
+- [ ] Run Ansible final-storage initialization and validation on worker 205.
 - [ ] Delete old unused LV only after acceptance.
 - [ ] Add 750 GiB `linstor-data-<node>` disk.
 - [ ] Initialize final `linstor_vg/linstor_thin` with Ansible.
