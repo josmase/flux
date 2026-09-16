@@ -152,6 +152,8 @@ spec:
       master:
         nodeSelector:
           kubernetes.io/hostname: kubernetes-node-206
+        podAnnotations:
+          migration.josmase.io/redis-statefulset: existing-claim
         tolerations:
           - key: drbd.linbit.com/lost-quorum
             operator: Exists
