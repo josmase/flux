@@ -4,11 +4,11 @@ metadata:
   name: config-linstor
   labels:
     app: radarr-11
-    storage-migration: radarr-11-linstor-pilot-2026-09
-    storage-migration-phase: pilot-active
+    storage-migration: radarr-11-linstor-final-2026-09
+    storage-migration-phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-pilot
+  storageClassName: linstor
   resources:
     requests:
       storage: 3Gi

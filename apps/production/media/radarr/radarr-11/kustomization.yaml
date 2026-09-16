@@ -22,11 +22,11 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-recovered
+        value: config-linstor
       - op: add
         path: /spec/template/spec/nodeSelector
         value:
-          kubernetes.io/hostname: kubernetes-node-206
+          kubernetes.io/hostname: kubernetes-node-205
       - op: add
         path: /spec/template/spec/tolerations
         value:
@@ -44,9 +44,3 @@ patches:
       - op: replace
         path: /spec/routes/0/services/0/name
         value: radarr-11-radarr
-  - target: {kind: Deployment, name: radarr}
-    patch: |-
-      - op: add
-        path: /spec/template/spec/nodeSelector
-        value:
-          kubernetes.io/hostname: kubernetes-node-205
