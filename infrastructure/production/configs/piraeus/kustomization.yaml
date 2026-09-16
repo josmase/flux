@@ -10,6 +10,7 @@ resources:
   - storage-class.yaml
   - pilot-storage-class.yaml
   - final-storage-class.yaml
+  - final-bootstrap-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
   - radarr10-backup-schedule-reconcile.yaml

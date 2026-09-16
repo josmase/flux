@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - grafana-gotify-tokens.yaml
+  - prometheus-linstor-copy-pvc.yaml
