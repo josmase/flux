@@ -6,8 +6,10 @@ resources:
   - satellite-network.yaml
   - storage-pool.yaml
   - pilot-storage-pool.yaml
+  - final-storage-pool.yaml
   - storage-class.yaml
   - pilot-storage-class.yaml
+  - final-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
   - radarr10-backup-schedule-reconcile.yaml

@@ -1,0 +1,20 @@
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: final-lvm-thin-storage
+spec:
+  # Permanent worker data disks are selected explicitly.  The node label is
+  # added only after the matching serial/size disk has passed Ansible
+  # validation; this prevents the operator from probing an unprepared disk.
+  nodeAffinity:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: storage.josmase.io/linstor-final
+            operator: In
+            values:
+              - "true"
+  storagePools:
+    - name: linstor-thin
+      lvmThinPool:
+        volumeGroup: linstor_vg
+        thinPool: linstor_thin

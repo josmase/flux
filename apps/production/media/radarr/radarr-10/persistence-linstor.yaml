@@ -1,7 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: config-linstor
+  # The deployment mounts this claim as config-final.  Keep the resource
+  # name aligned with the already-bound final LINSTOR PVC; changing a bound
+  # claim's storageClassName would otherwise fail Flux reconciliation.
+  name: config-final
   labels:
     app: radarr-10
     storage-migration: radarr-10-linstor-final-2026-09
