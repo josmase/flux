@@ -313,7 +313,8 @@ Repeat every item for 205 before beginning 206.
 - [x] Run `virt-resize` dry run.
 - [x] Copy old disk to new disk with `virt-resize` (completed `rc=0`; target filesystem checks passed).
 - [x] Attempt boot from converted disk; it stopped at `grub rescue>` and was rolled back.
-- [ ] Diagnose and correct bootloader/partition-layout issue before retrying conversion.
+- [x] Diagnose boot failure: source `grub.cfg` hard-codes `hd0,gpt16`; `virt-resize` renumbered the boot partition to GPT 3, causing `grub rescue>`.
+- [ ] Correct bootloader/partition layout (preserve GPT numbers or reinstall/regenerate GRUB) before retrying conversion.
 - [ ] Validate the new disk read-only.
 - [ ] Switch `scsi0`, retaining the old LV as unused.
 - [ ] Complete first boot validation.
