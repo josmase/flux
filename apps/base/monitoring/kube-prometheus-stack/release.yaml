@@ -24,8 +24,13 @@ spec:
         retention: 30d
         storageSpec:
           volumeClaimTemplate:
+            metadata:
+              # The target PVC was copied while Prometheus was stopped.  The
+              # explicit name prevents the operator from trying to mutate the
+              # immutable Longhorn claim during the cutover.
+              name: prometheus-kube-prometheus-stack-prometheus-db-linstor
             spec:
-              storageClassName: longhorn
+              storageClassName: linstor-final-bootstrap
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
