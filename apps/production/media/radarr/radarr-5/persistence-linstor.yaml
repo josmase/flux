@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-linstor
+  labels:
+    app: radarr-5
+    storage-migration: radarr-5-linstor-pilot-2026-09
+    storage-migration-phase: pilot-active
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor-pilot
+  resources:
+    requests:
+      storage: 3Gi

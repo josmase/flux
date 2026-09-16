@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../../base/media/radarr-template
   - persistence-resized.yaml
+  - persistence-linstor.yaml
   - persistence-recovered.yaml
 
 namePrefix: radarr-3-
@@ -46,3 +47,9 @@ patches:
       - op: replace
         path: /spec/routes/0/services/0/name
         value: radarr-3-radarr
+  - target: {kind: Deployment, name: radarr}
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/hostname: kubernetes-node-205

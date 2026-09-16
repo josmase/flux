@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../../base/media/radarr-template
   - persistence-resized.yaml
+  - persistence-linstor.yaml
 
 namePrefix: radarr-4-
 
@@ -20,7 +21,7 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-resized
+        value: config-linstor
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
@@ -32,3 +33,9 @@ patches:
       - op: replace
         path: /spec/routes/0/services/0/name
         value: radarr-4-radarr
+  - target: {kind: Deployment, name: radarr}
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/hostname: kubernetes-node-205
