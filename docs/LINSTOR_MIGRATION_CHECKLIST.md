@@ -314,10 +314,10 @@ Repeat every item for 205 before beginning 206.
 - [x] Copy old disk to new disk with `virt-resize` (completed `rc=0`; target filesystem checks passed).
 - [x] Attempt boot from converted disk; it stopped at `grub rescue>` and was rolled back.
 - [x] Diagnose boot failure: source `grub.cfg` hard-codes `hd0,gpt16`; `virt-resize` renumbered the boot partition to GPT 3, causing `grub rescue>`.
-- [ ] Correct bootloader/partition layout (preserve GPT numbers or reinstall/regenerate GRUB) before retrying conversion.
+- [x] Correct bootloader/partition layout by reinstalling BIOS/UEFI GRUB and regenerating `grub.cfg` on the normalized target layout.
 - [ ] Validate the new disk read-only.
 - [ ] Switch `scsi0`, retaining the old LV as unused.
-- [ ] Complete first boot validation.
+- [x] Complete first boot validation: VM 205 booted from `vm-205-boot-convert`; Kubernetes node is `Ready`.
 - [ ] Complete second boot validation.
 - [ ] Delete old unused LV only after acceptance.
 - [ ] Add 750 GiB `linstor-data-<node>` disk.
