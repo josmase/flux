@@ -8,12 +8,12 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Radarr-10 LINSTOR pilot healthy; permanent-storage preparation started on worker 205`
-- Current phase: `Phase 6 - worker 205 rollback complete after converted-disk GRUB boot failure; source boot LV retained`
+- Overall: `[~] Prometheus LINSTOR cutover validated; worker-206 evacuation is blocked on retained Longhorn replicas`
+- Current phase: `Phase 6 - worker 206 workload evacuation and capacity gate`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
-- Last updated: `2026-09-13 Europe/Stockholm`
+- Last updated: `2026-09-16 Europe/Stockholm`
 
 ## Phase 0: safety baseline
 
@@ -412,6 +412,70 @@ Repeat every item for 205 before beginning 206.
   `ansible-playbook --syntax-check` and was pushed to GitLab `main`. Flux
   commit `3532d09` records the preparation evidence and was also pushed to
   GitLab `main`. Both repositories now use GitLab as their only remote.
+
+### Worker 206 execution evidence
+
+- The first drain attempt was rolled back after worker 204 became memory
+  constrained and several stateful workloads hit stale Longhorn attachments.
+  GitLab PostgreSQL/Redis/MinIO and dependent GitLab controllers were recovered
+  without deleting a PVC, PV, Longhorn volume, or replica. The follow-up drain
+  cordoned both workers 204 and 206 while 206 was evacuated, then uncordoned
+  204 after all application workloads had converged.
+- GitOps drift found during the drain was corrected before proceeding:
+  Radarr-2 now uses `storageClassName: linstor` (`577f968`), and the hard
+  `kubernetes-node-206` GitLab Redis pin was removed (`7150080`). Both commits
+  were pushed to GitLab `main`.
+- Prometheus cutover is validated. The source Longhorn volume was backed up
+  through the named migration snapshot and manager `snapshotBackup`; Longhorn
+  reported backup ID `backup-0e0d74c06fa747ea` at
+  `2026-09-16T18:35:02Z`. A helper pod copied the source to LINSTOR target PVC
+  `pvc-d610406b-6f59-4170-aeb8-9d44c21ce2c5`. `rsync --dry-run --checksum`
+  returned `done=0`; SHA-256 manifests matched for 129 files on each side and
+  both roots remained owned by `0:2000:2775`. Prometheus is Ready on worker
+  205 with a healthy TSDB/WAL replay and zero restarts. The source replica on
+  worker 206 was removed only after the worker-204 replica was retained and the
+  source desired replica count was reduced to one.
+- Worker 206 is Kubernetes-cordoned (`Ready,SchedulingDisabled`) and has no
+  Longhorn engine/current volume attachment. Its Longhorn disk is intentionally
+  still `allowScheduling: true, evictionRequested: false` because replica
+  evacuation is not yet safe. The node currently reports `/` 983 GiB total,
+  266 GiB used, 718 GiB free; `/var/lib/longhorn` uses 227 GiB and
+  `/var/lib/rancher` uses 24 GiB. `resize2fs -P /dev/sda1` estimates
+  72,387,799 4-KiB blocks (approximately 276.1 GiB), above the 220 GiB
+  conversion stop threshold.
+- Longhorn inventory shows 63 volumes with a surviving replica outside worker
+  206. Six physical replica volumes are still worker-206-only and must be
+  preserved or backed up before their replicas can be removed: historical
+  released `pvc-2477cfbf-0693-4e1a-b598-b21c3c4c9b1f` (10 GiB),
+  `pvc-4aecbd08-0181-4ad2-8b63-0caa79e29b5f` (3 GiB),
+  `pvc-50f1de0b-45ad-4584-a207-b3bdc692ca81` (1 GiB), and retained recovered
+  `radarr-11-config-recovered-20260915`, `radarr-3-config-recovered-20260915`,
+  and `radarr-5-config-recovered-20260915` (3 GiB each). The active
+  `gitlab-redis-recovered-20260915` volume has only one usable running copy on
+  worker 206 (the other replica object is unassigned/stopped), so it must be
+  re-replicated before worker 206 can be converted. No PVC, PV, or Longhorn
+  volume object was deleted; the old Jellyfin and Artifactory copies were left
+  untouched.
+- Cluster validation after the controlled drain found no Pending,
+  CrashLoopBackOff, ContainerCreating, or Init-pending application pods.
+  GitLab PostgreSQL, Redis, MinIO, registry, webservice, runner, and sidekiq
+  converged; worker 204 is schedulable again and worker 206 remains isolated.
+
+#### Worker 206 pending gates
+
+- [!] Disable Longhorn scheduling and evict redundant worker-206 replicas only
+  after explicit approval to re-replicate/preserve the six worker-206-only
+  volumes and the active GitLab Redis volume. The admission safety check
+  currently rejects broad eviction because some volumes have no surviving
+  copy.
+- [ ] Re-run `resize2fs -P` after replica evacuation and require an estimate at
+  or below 220 GiB.
+- [ ] Shut down VM 206, create and verify the split-stream powered-off VMA
+  backup, then perform the offline 250 GiB boot-disk conversion and bootloader
+  validation used for worker 205.
+- [ ] Attach the empty 750 GiB `linstor-data-206` disk, run the guarded Ansible
+  final-storage playbook from the `ansible` jumphost, validate the thin pool,
+  and only then label/uncordon worker 206.
 
 ## Phase 7: move pilot resource to final pools
 
