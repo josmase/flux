@@ -21,6 +21,7 @@ spec:
   values:
     prometheus:
       prometheusSpec:
+        replicas: 1
         retention: 30d
         storageSpec:
           volumeClaimTemplate:
