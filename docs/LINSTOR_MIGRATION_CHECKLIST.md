@@ -8,12 +8,12 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] VM-206 powered off; split-stream VMA backup complete, integrity gates in progress`
-- Current phase: `Phase 6 - worker 206 powered-off backup and boot-disk conversion`
+- Overall: `[~] Worker-206 boot/storage conversion complete; permanent LINSTOR pool ready; Phase 7 workload cutover pending`
+- Current phase: `Phase 7 - final-pool readiness (worker 206 complete; pilot cutover pending)`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
-- Last updated: `2026-09-16 Europe/Stockholm`
+- Last updated: `2026-09-17 Europe/Stockholm`
 
 ## Phase 0: safety baseline
 
@@ -326,13 +326,16 @@ Repeat every item for 205 before beginning 206.
 - [x] Radarr 1 pilot cutover: copied 22 GiB config to LINSTOR, switched deployment to `radarr-1-config-linstor`, and verified `Running` on worker 205.
 - [x] Migrate Radarr 2–12: copied each configuration PVC to `linstor`, switched deployments, and verified all 12 instances `Running` on worker 205.
 - [x] Migrate Radarr 10 from `linstor-pilot` to permanent `linstor` pool; copy and startup validation passed.
-- [ ] Delete old unused LV only after acceptance.
-- [ ] Add 750 GiB `linstor-data-<node>` disk.
-- [ ] Initialize final `linstor_vg/linstor_thin` with Ansible.
-- [ ] Verify 680 GiB thin data, 4 GiB metadata, and reserve.
-- [ ] Verify Ansible idempotency.
-- [ ] Label final storage ready and uncordon.
-- [ ] Confirm cluster and Proxmox health before the next worker.
+- [x] Delete old unused LV only after acceptance (worker 206 source LV removed after
+  two successful boot validations; the verified VMA parts remain on the NFS
+  backup export).
+- [x] Add 750 GiB `linstor-data-206` disk (`vm-206-disk-2`, `/dev/sdc`).
+- [x] Initialize final `linstor_vg/linstor_thin` with the guarded Ansible
+  playbook from the jumphost.
+- [x] Verify 680 GiB thin data, 4 GiB metadata, and reserve.
+- [x] Verify Ansible idempotency (second run `changed=0`).
+- [x] Label final storage ready and uncordon worker 206.
+- [x] Confirm cluster, LINSTOR, and Proxmox health before the next worker.
 
 ### Worker 205 preparation evidence
 
@@ -526,12 +529,56 @@ Repeat every item for 205 before beginning 206.
   backups and are not mounted.
 - [x] Re-run `resize2fs -P` after replica evacuation; the estimate is
   approximately 160.4 GiB, below the 220 GiB stop threshold.
-- [~] VM 206 is shut down and the split-stream powered-off VMA backup passed
-  per-part SHA-256 plus concatenated zstd/VMA integrity; perform the offline
-  250 GiB boot-disk conversion and bootloader validation used for worker 205.
-- [ ] Attach the empty 750 GiB `linstor-data-206` disk, run the guarded Ansible
+- [x] VM 206 was shut down and the split-stream powered-off VMA backup passed
+  per-part SHA-256 plus concatenated zstd/VMA integrity; the offline 250 GiB
+  boot-disk conversion and bootloader validation completed.
+- [x] Attach the empty 750 GiB `linstor-data-206` disk, run the guarded Ansible
   final-storage playbook from the `ansible` jumphost, validate the thin pool,
   and only then label/uncordon worker 206.
+
+#### Worker 206 conversion and final-storage evidence
+
+- The source root filesystem was shrunk offline to exactly 230 GiB after the
+  post-evacuation `resize2fs -P` estimate of approximately 160.4 GiB. The first
+  post-shrink preen check found an extent inconsistency; a full `e2fsck -f -y`
+  repaired the extent/bitmap metadata (including two orphaned, already-deleted
+  Longhorn snapshot-file inodes), and a follow-up `e2fsck -f -p` returned 0.
+- `virt-resize --no-extra-partition --resize /dev/sda1=230G` copied the source
+  into `vm-206-boot-convert` and returned `VIRT_RESIZE_RC=0`. The target layout
+  is GPT1 BIOS-grub, GPT2 EFI, GPT3 BOOT, and GPT4 root. Target `/boot` and root
+  `e2fsck` checks returned 0; the target EFI bytes were restored from the clean
+  source EFI partition after `virt-resize` left stale free-space FAT bytes, and
+  source/target EFI SHA-256 hashes then matched with `fsck.fat -n` returning 0.
+- BIOS and UEFI `grub-install` completed without errors. `update-grub` emitted
+  three probe segfault lines and produced no kernel entries, so the complete
+  source `grub.cfg` was restored with only `gpt16` hints changed to `gpt3`;
+  `grub-script-check` returned 0 and all six Ubuntu kernel entries are present.
+- VM 206 booted from `vm-206-boot-convert` twice (initial boot and a cold
+  shutdown/start). Both times the node returned `Ready`, k3s was active, and
+  `/dev/sda4` (root), `/dev/sda3` (BOOT), and `/dev/sda2` (UEFI) mounted at the
+  expected paths. Longhorn manager/CSI and LINSTOR satellite/CSI pods recovered;
+  Longhorn scheduling remains disabled on this node.
+- The converted root had checksum-mismatched Python 3.12 files, which caused
+  Ansible setup and `update-grub` probes to segfault. Reinstalling the four
+  Python runtime packages plus `libpython3.12t64` restored `python3 -S`,
+  `landscape-sysinfo`, and Ansible fact gathering; `dpkg -V` is clean for those
+  packages. This repair was required before storage automation.
+- Proxmox removed the exact retained `unused0` source LV only after the two boot
+  validations. A new 750 GiB `vm-206-disk-2` was attached as `scsi2` with serial
+  `linstor-data-206`; the guest sees it as an unmounted `/dev/sdc`.
+- The GitLab-matching Ansible checkout on the jumphost was used from its
+  `ansible/` subdirectory. The guarded final-storage run passed the exact
+  serial/size, non-root, and empty-disk assertions and created
+  `linstor_vg/linstor_thin` (680 GiB data, 4 GiB metadata) with
+  `linstor_thin_autoextend`; the second run completed with `changed=0`.
+  The read-only `validate-linstor-storage` playbook returned 12 ok, 0 changed,
+  0 failed. The jumphost's stale GitHub origin was replaced with the GitLab-only
+  SSH URL; its pre-existing local changes remain in `stash@{0}`.
+- Label `storage.josmase.io/linstor-final=true` was applied only after Ansible
+  validation. Piraeus reports `final-lvm-thin-storage` applied to workers 205
+  and 206, and the controller lists `linstor-thin` on both nodes with worker
+  206 at 680 GiB total/free. Worker 206 was then uncordoned and is `Ready` with
+  no taints; no production workload cutover has started yet.
 
 ## Phase 7: move pilot resource to final pools
 
