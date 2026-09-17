@@ -47,11 +47,11 @@ spec:
   # --- Storage ---
   storage:
     size: 10Gi
-    storageClass: longhorn
+    storageClass: linstor-final
 
   walStorage:
     size: 5Gi
-    storageClass: longhorn
+    storageClass: linstor-final
 
   # --- Resources ---
   resources:
@@ -84,7 +84,7 @@ spec:
   # --- Backup (volume snapshots via Longhorn) ---
   backup:
     volumeSnapshot:
-      className: longhorn-snapshot
+      className: linstor-snapshot
       snapshotOwnerReference: cluster
     retentionPolicy: "30d"
 
