@@ -607,6 +607,7 @@ Repeat every item for 205 before beginning 206.
 - [x] Migrate `arr-dashboard-config-v2` to `arr-dashboard-config-linstor`: 32 files, 819,722,651 bytes; `prod.db` SHA-256 `7464333e3405d...`; `secrets.json` SHA-256 `7747fb2acf3a...`; source retained; target copied with UID/GID 1000; helper removed after verification.
 - [x] Migrate `bazarr-config-pvc-bazarr-0-resized` -> `bazarr-config-linstor`: 24 files, 56,606,443 bytes; `bazarr.db` SHA-256 `928d354a39e1d093a37138864d18a39d09a391c3d32a9977489d811b33806b5e`; source retained; copied with UID/GID 1000.
 - [x] Migrate `checkrr-config-pvc-checkrr-0-resized` -> `checkrr-config-linstor`: 9 files, 39,807,930 bytes; `database/checkrr.db` SHA-256 `8fb384b1d20e8a3d2f1aeb2a5ebb5c1309ab4e02669b003dc90893c8179062b0`; source retained; copied with UID/GID 1000.
+- [~] Prepare `prowlarr-config-pvc-prowlarr-0-resized` -> `prowlarr-config-linstor`; source remains retained and Prowlarr is stopped pending target binding/copy.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.

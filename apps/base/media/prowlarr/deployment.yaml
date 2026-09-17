@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: prowlarr
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -73,7 +73,7 @@ spec:
       volumes:
         - name: prowlarr-config-pvc
           persistentVolumeClaim:
-            claimName: prowlarr-config-pvc-prowlarr-0-resized
+            claimName: prowlarr-config-linstor
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc
