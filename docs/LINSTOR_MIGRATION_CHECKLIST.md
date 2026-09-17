@@ -612,6 +612,7 @@ Repeat every item for 205 before beginning 206.
 - [~] Forensics: source and target have identical 285-file inventories and matching `sonarr.db`, WAL/SHM, `logs.db`, and `config.xml` hashes. A source-side startup probe is being added to distinguish slow initialization from a storage-specific failure.
 - [x] Migrate `sonarr-4-config-resized` -> `sonarr-4-config-linstor`: 278 files; `sonarr.db` SHA-256 `3a7b973eca15e8c2912aea5fce7d98ce5d360218b39bbdaad0cffbab2007ba71`; `logs.db` SHA-256 `69f7897928334f42939967617d1368517d994ca424c9ee8cc5684d1dee491ada`; source retained; copied with UID/GID 1000. Sonarr-3 remains paused.
 - [!] Sonarr-4 LINSTOR cutover rolled back: 278 files and database hashes matched, but the Sonarr process exited with `SIGSEGV` on the target. Source claim restored; LINSTOR target retained for comparison. This reproduces the Sonarr-3 failure pattern.
+- [!] Root cause evidence: worker206 kernel logs show continuous Sonarr `SIGSEGV` faults in `libcoreclr.so`; worker204 has no matching faults. Worker206 runs Ubuntu kernel `6.8.0-139`, while worker204 runs `6.8.0-136` on the same Ryzen 9 3900X CPU. Keep Sonarr/Radarr off worker206 until the kernel/runtime issue is remediated.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
