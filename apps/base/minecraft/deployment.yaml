@@ -77,7 +77,7 @@ spec:
       volumes:
         - name: minecraft-data
           persistentVolumeClaim:
-            claimName: minecraft-data-resized
+            claimName: minecraft-data-linstor
         - name: minecraft-modpacks
           persistentVolumeClaim:
-            claimName: minecraft-modpacks-resized
+            claimName: minecraft-modpacks-linstor
