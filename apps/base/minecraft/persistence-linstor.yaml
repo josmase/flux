@@ -5,7 +5,7 @@ metadata:
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-data-resized
-    storage-migration.phase: copy-target
+    storage-migration.phase: final-active
   labels:
     storage-migration: minecraft-linstor-final-2026-09
 spec:
@@ -22,7 +22,7 @@ metadata:
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-modpacks-resized
-    storage-migration.phase: copy-target
+    storage-migration.phase: final-active
   labels:
     storage-migration: minecraft-linstor-final-2026-09
 spec:

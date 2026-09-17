@@ -591,8 +591,10 @@ Repeat every item for 205 before beginning 206.
   (`1726bbfe…dbc56c76`); the pod reached `Ready` on worker 206 with diskful
   LINSTOR resources `UpToDate` on workers 205 and 206. The Longhorn source
   remains retained for rollback.
-- [~] Prepare the scaled-down Minecraft workload with retained `linstor-final`
-  targets for data and modpacks; copy and activation gates remain pending.
+- [x] Migrate and activate Minecraft on retained `linstor-final` targets for
+  data and modpacks. UID-1000 tar copy preserved the world file list and
+  ownership/modes; both target claims are two-replica LINSTOR resources. The
+  source Longhorn claims remain retained for rollback.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
