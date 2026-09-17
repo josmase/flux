@@ -616,6 +616,8 @@ Repeat every item for 205 before beginning 206.
 - [x] Sonarr-3 and Sonarr-4 activated on their verified `linstor-final` copies with node selectors pinned to worker204. Both pods are Ready, listening on port 8989, and Flux `apps-media-arr` is Ready at `main@sha1:3862feb5`.
 - [~] Prepare Sonarr-5 and Sonarr-6 for worker204/`linstor-final` cutover; source claims remain retained pending copy validation.
 - [x] Migrate Sonarr-5 and Sonarr-6 to `linstor-final` on worker204: Sonarr-5 285 files (`sonarr.db` `d530960f0ed35b4141117b603e560daded7f9d5d9302a82307b59bf07cdfd8ae`, `logs.db` `0dd20c22568c810b41a1405585ee3db1f0a3d8666fb71fb0da3c9f0d07a23909`); Sonarr-6 335 files (`sonarr.db` `e627d332ff3b7d5baf537d1fe45221669967cc329ef091ace1d43a5cb47e6942`, `logs.db` `394a1cc080a1af86f8affc42420efd67bada3b7ee99b839e463c85815c904e83`). Both pods Ready with normal startup logs; source claims retained.
+- [~] Prepare Sonarr-1 and Sonarr-2 for worker204/`linstor-final` cutover; source claims remain retained pending copy validation.
+- [x] Migrate Sonarr-1 and Sonarr-2 to `linstor-final` on worker204: Sonarr-1 318 files (`sonarr.db` `438065705891bc665365b3ab4f21e10f43d8255ec032b08f071442d78994109c`, `logs.db` `8a72a66a8031c984ffaf8149a41cbb14a3f2cfc1f4e8f027fcb067165d6a2b6d`); Sonarr-2 337 files (`sonarr.db` `4ac14b3eb5224e3f25f91d386f42ce81c0734bbf243f91ca44c6716eb47df588`, `logs.db` `fba26495d4040bc77ea413b1f226099114fdf54b86ef0b3681b55915a18be609`).
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
