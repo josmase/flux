@@ -593,8 +593,10 @@ Repeat every item for 205 before beginning 206.
   remains retained for rollback.
 - [x] Migrate and activate Minecraft on retained `linstor-final` targets for
   data and modpacks. UID-1000 tar copy preserved the world file list and
-  ownership/modes; both target claims are two-replica LINSTOR resources. The
-  source Longhorn claims remain retained for rollback.
+  ownership/modes (220 data files, 164,004,787 data bytes; modpacks contained
+  no files outside `lost+found`); both target claims are two-replica LINSTOR
+  resources. The server reached `Ready` on worker 206 and logged clean world
+  saves/RCON startup. The source Longhorn claims remain retained for rollback.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
