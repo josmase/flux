@@ -86,6 +86,7 @@ spec:
 
   # --- Backup (volume snapshots via Longhorn) ---
   backup:
+    target: prefer-standby
     volumeSnapshot:
       className: linstor-snapshot
       snapshotOwnerReference: cluster
