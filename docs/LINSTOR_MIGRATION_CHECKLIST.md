@@ -8,8 +8,8 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Prometheus LINSTOR cutover validated; worker-206 running replicas evacuated and conversion gate passed`
-- Current phase: `Phase 6 - worker 206 workload evacuation and capacity gate`
+- Overall: `[~] VM-206 powered off; split-stream VMA backup complete, integrity gates in progress`
+- Current phase: `Phase 6 - worker 206 powered-off backup and boot-disk conversion`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -486,6 +486,38 @@ Repeat every item for 205 before beginning 206.
   CrashLoopBackOff, ContainerCreating, or Init-pending application pods.
   GitLab PostgreSQL, Redis, MinIO, registry, webservice, runner, and sidekiq
   converged; worker 204 is schedulable again and worker 206 remains isolated.
+- Proxmox pre-conversion gate (2026-09-16 23:47 CEST): VM 206 is on
+  Proxmox VE `8.4.1` with `Kubernetes:vm-206-disk-0` (1,039,872 MiB) and
+  `Kubernetes:vm-206-disk-1` (64 GiB pilot). The Kubernetes VG has
+  approximately 317.5 GiB free. The stale `proxmox-backups` NFS handle was
+  lazily unmounted and explicitly remounted from
+  `192.168.1.102:/kubernetes/proxmox-backups`; existing worker-205 parts were
+  readable afterward. The storage mergerfs branches have 175--352 GiB free,
+  so VM-206 is being streamed to 150 GiB maximum parts to keep every file
+  below the smallest branch's free space.
+- VM 206 was cleanly shut down (`qm shutdown 206 --timeout 120`) and reports
+  `stopped`. A stop-mode `vzdump 206 --stdout --compress zstd` stream wrote
+  `vzdump-qemu-206-2026_09_16-23_47_49.vma.zst.part-*` under the NFS export;
+  `pipefail` captured the pipeline result and the Proxmox log is stored
+  alongside the parts. The stream completed successfully after 2:36:01 with
+  1.05 TiB transferred and `PIPELINE_RC=0`. Four parts were produced: three
+  at exactly 161,061,273,600 bytes (150 GiB) and a final 56,753,860,424-byte
+  part. Per-part SHA-256, concatenated zstd, and VMA structure checks all
+  passed before any disk conversion. The SHA-256 manifest is stored beside the
+  parts; `zstd -t` returned `ZSTD_RC=0` and `vma verify -` returned
+  `VMA_RC=0`.
+- VM-206 backup verification evidence (2026-09-17 Europe/Stockholm):
+  `part-000` =
+  `6a222269f86a48ebb6f1dfac465194bf1db848c6ca34ce529e0ddc8644b7d924`,
+  `part-001` =
+  `f7de6cbb3a298833d516463e983d687ff87a2c060768c052438a54124018931f`,
+  `part-002` =
+  `7959785113039ac54dd4d500d9e3d4be6ea9d92d8a0b72cb9e3efd7870fa3340`,
+  `part-003` =
+  `67e91d3e9151165c9a05f5cef29dd3d38be604675a58c66fefeef050ffbeaf37`.
+  Proxmox's zstd test reported 987,616,232,448 decompressed bytes and
+  returned zero; the VMA verifier returned zero. The four part files and the
+  Proxmox log remain on `/mnt/storage/kubernetes/proxmox-backups/dump/`.
 
 #### Worker 206 pending gates
 
@@ -494,9 +526,9 @@ Repeat every item for 205 before beginning 206.
   backups and are not mounted.
 - [x] Re-run `resize2fs -P` after replica evacuation; the estimate is
   approximately 160.4 GiB, below the 220 GiB stop threshold.
-- [ ] Shut down VM 206, create and verify the split-stream powered-off VMA
-  backup, then perform the offline 250 GiB boot-disk conversion and bootloader
-  validation used for worker 205.
+- [~] VM 206 is shut down and the split-stream powered-off VMA backup passed
+  per-part SHA-256 plus concatenated zstd/VMA integrity; perform the offline
+  250 GiB boot-disk conversion and bootloader validation used for worker 205.
 - [ ] Attach the empty 750 GiB `linstor-data-206` disk, run the guarded Ansible
   final-storage playbook from the `ansible` jumphost, validate the thin pool,
   and only then label/uncordon worker 206.
