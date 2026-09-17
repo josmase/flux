@@ -615,6 +615,7 @@ Repeat every item for 205 before beginning 206.
 - [!] Root cause evidence: worker206 kernel logs show continuous Sonarr `SIGSEGV` faults in `libcoreclr.so`; worker204 has no matching faults. Worker206 runs Ubuntu kernel `6.8.0-139`, while worker204 runs `6.8.0-136` on the same Ryzen 9 3900X CPU. Keep Sonarr/Radarr off worker206 until the kernel/runtime issue is remediated.
 - [x] Sonarr-3 and Sonarr-4 activated on their verified `linstor-final` copies with node selectors pinned to worker204. Both pods are Ready, listening on port 8989, and Flux `apps-media-arr` is Ready at `main@sha1:3862feb5`.
 - [~] Prepare Sonarr-5 and Sonarr-6 for worker204/`linstor-final` cutover; source claims remain retained pending copy validation.
+- [x] Migrate Sonarr-5 and Sonarr-6 to `linstor-final` on worker204: Sonarr-5 285 files (`sonarr.db` `d530960f0ed35b4141117b603e560daded7f9d5d9302a82307b59bf07cdfd8ae`, `logs.db` `0dd20c22568c810b41a1405585ee3db1f0a3d8666fb71fb0da3c9f0d07a23909`); Sonarr-6 335 files (`sonarr.db` `e627d332ff3b7d5baf537d1fe45221669967cc329ef091ace1d43a5cb47e6942`, `logs.db` `394a1cc080a1af86f8affc42420efd67bada3b7ee99b839e463c85815c904e83`). Both pods Ready with normal startup logs; source claims retained.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
