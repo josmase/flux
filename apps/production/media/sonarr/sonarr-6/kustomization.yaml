@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../../base/media/sonarr-template
   - persistence-resized.yaml
+  - persistence-linstor.yaml
 
 namePrefix: sonarr-6-
 
@@ -20,7 +21,17 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-resized
+        value: config-linstor
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value: {kubernetes.io/hostname: kubernetes-node-204}
+      - op: add
+        path: /spec/template/spec/containers/0/startupProbe
+        value:
+          httpGet: {path: /health, port: 8989}
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute
