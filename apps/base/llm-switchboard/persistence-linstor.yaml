@@ -4,7 +4,7 @@ metadata:
   name: llm-switchboard-data-linstor
   annotations:
     storage-migration.source-pvc: llm-switchboard-data
-    storage-migration.phase: copy-target
+    storage-migration.phase: final-active
   labels:
     app: llm-switchboard
     storage-migration: llm-switchboard-linstor-final-2026-09

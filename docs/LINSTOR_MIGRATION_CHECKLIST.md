@@ -597,8 +597,12 @@ Repeat every item for 205 before beginning 206.
   no files outside `lost+found`); both target claims are two-replica LINSTOR
   resources. The server reached `Ready` on worker 206 and logged clean world
   saves/RCON startup. The source Longhorn claims remain retained for rollback.
-- [~] Prepare `llm-switchboard-data` for a controlled LINSTOR cutover; the
-  target claim is pending reconciliation and the source workload is stopped.
+- [x] Prepare `llm-switchboard-data` for a controlled LINSTOR cutover; the
+  source workload was stopped while its target claim was provisioned.
+- [x] Migrate and activate `llm-switchboard-data` on `linstor-final`. The
+  source and target each contain one file/65,536 bytes; `router.db` SHA-256
+  matched (`a51e08c1…ca267800`), and the source Longhorn claim remains retained
+  for rollback.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
