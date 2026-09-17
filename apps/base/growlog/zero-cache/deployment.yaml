@@ -114,4 +114,4 @@ spec:
       volumes:
         - name: zero-cache-data
           persistentVolumeClaim:
-            claimName: zero-cache-data-resized
+            claimName: zero-cache-data-linstor

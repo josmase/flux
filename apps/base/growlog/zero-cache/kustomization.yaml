@@ -4,6 +4,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - pvc-resized.yaml
+  - persistence-linstor.yaml
 labels:
   - includeSelectors: true
     pairs:
