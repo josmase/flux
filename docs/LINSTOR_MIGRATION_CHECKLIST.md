@@ -588,8 +588,9 @@ Repeat every item for 205 before beginning 206.
 - [x] Migrate and activate the first scaled-down workload
   (`default/zero-cache`) on a retained `linstor-final` target. The source and
   target both measured 274,432 bytes/one file; `replica.db` SHA-256 matched
-  (`1726bbfe…dbc56c76`); startup validation passed. The Longhorn source remains
-  retained for rollback.
+  (`1726bbfe…dbc56c76`); the pod reached `Ready` on worker 206 with diskful
+  LINSTOR resources `UpToDate` on workers 205 and 206. The Longhorn source
+  remains retained for rollback.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
