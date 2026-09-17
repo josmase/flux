@@ -6,7 +6,7 @@ metadata:
   labels:
     app: arr-dashboard
 spec:
-  replicas: 1
+  replicas: 0
   progressDeadlineSeconds: 600
   revisionHistoryLimit: 2
   strategy:
@@ -19,6 +19,10 @@ spec:
       labels:
         app: arr-dashboard
     spec:
+      tolerations:
+        - key: drbd.linbit.com/lost-quorum
+          operator: Exists
+          effect: NoSchedule
       containers:
         - name: arr-dashboard
           image: artifactory.local.hejsan.xyz/docker/khak1s/arr-dashboard:2.24.1@sha256:bd24ff75a61708de22c31947ea8f7efbe1c44ea870c3af9eb0f021968c5d4bab
@@ -57,4 +61,4 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: arr-dashboard-config-v2
+            claimName: arr-dashboard-config-linstor
