@@ -6,4 +6,5 @@ resources:
 
 patches:
   - path: persistence-patch.yaml
+  - path: deployment-patch.yaml
   - path: peer-service-patch.yaml

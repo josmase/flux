@@ -7,3 +7,6 @@ resources:
 
 components:
   - ../components/prune-protection
+
+patches:
+  - path: gotify-deployment-patch.yaml

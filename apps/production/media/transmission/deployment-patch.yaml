@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmission
+spec:
+  template:
+    spec:
+      volumes:
+        - name: transmission-config
+          persistentVolumeClaim:
+            claimName: transmission-config-final
