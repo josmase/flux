@@ -52,4 +52,4 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: seerr-config-resized
+            claimName: seerr-config-final

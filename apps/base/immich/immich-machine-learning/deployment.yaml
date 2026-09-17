@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: immich-model-cache
           persistentVolumeClaim:
-            claimName: immich-model-cache-resized
+            claimName: immich-model-cache-final

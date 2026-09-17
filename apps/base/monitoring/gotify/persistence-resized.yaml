@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gotify-data-pvc-resized
+  name: gotify-data-final
   labels:
     app: gotify
     storage-migration: gotify-data-2026-09
@@ -11,7 +11,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: longhorn
+  storageClassName: linstor-final
   resources:
     requests:
       storage: 1Gi

@@ -22,17 +22,22 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-linstor
+        value: config-final
       - op: add
         path: /spec/template/spec/nodeSelector
         value:
-          kubernetes.io/hostname: kubernetes-node-205
+          kubernetes.io/hostname: kubernetes-node-204
       - op: add
         path: /spec/template/spec/tolerations
         value:
           - key: drbd.linbit.com/lost-quorum
             operator: Exists
             effect: NoSchedule
+  - target: {kind: Deployment, name: radarr}
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/startupProbe
+        value: {httpGet: {path: /ping, port: 7878}, periodSeconds: 10, timeoutSeconds: 5, failureThreshold: 30}
   # Patch the IngressRoute hostname and service reference
   - target:
       kind: IngressRoute

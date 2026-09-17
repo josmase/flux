@@ -54,7 +54,7 @@ spec:
       enabled: true
       persistence:
         enabled: true
-        existingClaim: kube-prometheus-stack-grafana-resized
+        existingClaim: grafana-data-final
         storageClassName: longhorn
         accessModes: ["ReadWriteOnce"]
         size: 10Gi

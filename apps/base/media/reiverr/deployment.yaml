@@ -76,7 +76,7 @@ spec:
       volumes:
         - name: reiverr-config-pvc
           persistentVolumeClaim:
-            claimName: reiverr-config-resized
+            claimName: reiverr-config-final
         - name: reiverr-plugins-pvc
           persistentVolumeClaim:
-            claimName: reiverr-plugins-resized
+            claimName: reiverr-plugins-final
