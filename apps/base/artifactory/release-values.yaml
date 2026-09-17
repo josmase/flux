@@ -28,6 +28,6 @@ artifactory:
     primary:
       persistence:
         enabled: true
-        existingClaim: data-artifactory-postgresql-final
-        storageClass: linstor-final
-        size: 3Gi
+        existingClaim: artifactory-pg17-recovered
+        storageClass: linstor-final-bootstrap
+        size: 5Gi
