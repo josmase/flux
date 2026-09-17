@@ -14,6 +14,8 @@ spec:
       labels:
         app: reiverr
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubernetes-node-204
       containers:
         - name: reiverr
           image: artifactory.local.hejsan.xyz/docker/aleksilassila/reiverr:v2.2.0
