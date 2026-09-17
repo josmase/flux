@@ -8,7 +8,7 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Worker-206 final pool ready; zero-cache migrated; Jellyfin deferred`
+- Overall: `[~] Worker-206 final pool ready; three workloads migrated; Jellyfin deferred`
 - Current phase: `Phase 7 - staged workload migration (media/config cohorts pending)`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
@@ -602,7 +602,8 @@ Repeat every item for 205 before beginning 206.
 - [x] Migrate and activate `llm-switchboard-data` on `linstor-final`. The
   source and target each contain one file/65,536 bytes; `router.db` SHA-256
   matched (`a51e08c1…ca267800`), and the source Longhorn claim remains retained
-  for rollback.
+  for rollback. The pod returned `Ready` on worker 206 and logs confirmed
+  normal model-catalog/API startup.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
