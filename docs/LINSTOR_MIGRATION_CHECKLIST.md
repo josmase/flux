@@ -604,8 +604,7 @@ Repeat every item for 205 before beginning 206.
   matched (`a51e08c1…ca267800`), and the source Longhorn claim remains retained
   for rollback. The pod returned `Ready` on worker 206 and logs confirmed
   normal model-catalog/API startup.
-- [~] Prepare `arr-dashboard-config-v2` for a controlled LINSTOR cutover; the
-  target claim is pending reconciliation and only Arr Dashboard is stopped.
+- [x] Migrate `arr-dashboard-config-v2` to `arr-dashboard-config-linstor`: 32 files, 819,722,651 bytes; `prod.db` SHA-256 `7464333e3405d...`; `secrets.json` SHA-256 `7747fb2acf3a...`; source retained; target copied with UID/GID 1000; helper removed after verification.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
