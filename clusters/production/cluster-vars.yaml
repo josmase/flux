@@ -16,4 +16,4 @@ data:
   ENVIRONMENT: production
   LETSENCRYPT_SERVER: https://acme-v02.api.letsencrypt.org/directory
   LIVE_ENDPOINT: http://netboot-assets.local.hejsan.xyz
-  STORAGE_CLASS: longhorn
+  STORAGE_CLASS: linstor-final

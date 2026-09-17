@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-postgresql-linstor
+  labels:
+    app.kubernetes.io/part-of: gitlab
+    storage-migration: gitlab-linstor-2026-09
+    storage-migration-phase: copy-target
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor-final
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-redis-linstor
+  labels:
+    app.kubernetes.io/part-of: gitlab
+    storage-migration: gitlab-linstor-2026-09
+    storage-migration-phase: copy-target
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor-final
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-minio-linstor
+  labels:
+    app.kubernetes.io/part-of: gitlab
+    storage-migration: gitlab-linstor-2026-09
+    storage-migration-phase: copy-target
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor-final
+  resources:
+    requests:
+      storage: 30Gi

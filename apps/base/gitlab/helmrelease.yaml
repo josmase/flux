@@ -122,6 +122,7 @@ spec:
         persistence:
           storageClass: ${STORAGE_CLASS}
           size: 20Gi
+          existingClaim: gitlab-postgresql-linstor
         resources:
           requests:
             cpu: 250m
@@ -159,7 +160,7 @@ spec:
         persistence:
           storageClass: ${STORAGE_CLASS}
           size: 10Gi
-          existingClaim: redis-data-gitlab-redis-master-0
+          existingClaim: gitlab-redis-linstor
         resources:
           requests:
             cpu: 100m
@@ -178,6 +179,7 @@ spec:
       persistence:
         storageClass: ${STORAGE_CLASS}
         size: 30Gi
+        existingClaim: gitlab-minio-linstor
       resources:
         requests:
           cpu: 100m
