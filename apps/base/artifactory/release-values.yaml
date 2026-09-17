@@ -8,7 +8,8 @@ artifactory:
     joinKeySecretName: my-joinkey-secret
 
     persistence:
-      existingClaim: artifactory-data-rightsize-12gi
+      existingClaim: artifactory-data-final
+      storageClassName: linstor-final
       size: 12Gi
   nginx:
     enabled: true
@@ -24,7 +25,9 @@ artifactory:
       username: artifactory
       password: somepassword
       database: artifactory
-    primary:
-      persistence:
-        enabled: true
-        size: 3Gi
+      primary:
+        persistence:
+          enabled: true
+          existingClaim: data-artifactory-postgresql-final
+          storageClass: linstor-final
+          size: 3Gi
