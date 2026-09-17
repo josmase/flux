@@ -608,7 +608,7 @@ Repeat every item for 205 before beginning 206.
 - [x] Migrate `bazarr-config-pvc-bazarr-0-resized` -> `bazarr-config-linstor`: 24 files, 56,606,443 bytes; `bazarr.db` SHA-256 `928d354a39e1d093a37138864d18a39d09a391c3d32a9977489d811b33806b5e`; source retained; copied with UID/GID 1000.
 - [x] Migrate `checkrr-config-pvc-checkrr-0-resized` -> `checkrr-config-linstor`: 9 files, 39,807,930 bytes; `database/checkrr.db` SHA-256 `8fb384b1d20e8a3d2f1aeb2a5ebb5c1309ab4e02669b003dc90893c8179062b0`; source retained; copied with UID/GID 1000.
 - [x] Migrate `prowlarr-config-pvc-prowlarr-0-resized` -> `prowlarr-config-linstor`: 880 files, 165,479,633 file bytes; `prowlarr.db` SHA-256 `a3b2f9e48669339b814a17a52ba076839ffc55c3c1549dbd570cac5f79396bec`; `logs.db` SHA-256 `c52566b7ca9a33695fbfc3ca309214f24e3bc9f733ce155079d7ca5ea085e5e8`; source retained; copied with UID/GID 1000.
-- [x] Migrate `sonarr-3-config-resized` -> `sonarr-3-config-linstor`: 285 files; `sonarr.db` SHA-256 `85a38139a4fd5c7f3791ccd4513ecf35447f42a3fef4747a646086f0a52acb90`; `logs.db` SHA-256 `0f7c7aa3ced613eecb54678f960a468a1bd73ea39cef97cc43a8a93310baa2a7`; source retained; copied with UID/GID 1000.
+- [!] Sonarr-3 LINSTOR copy rolled back: 285 files copied and checksums matched, but the Sonarr process exited with `SIGSEGV` on the target. Deployment restored to retained `sonarr-3-config-resized`; LINSTOR target remains preserved for forensic comparison. Do not migrate additional Sonarr/Radarr claims until this is resolved.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
