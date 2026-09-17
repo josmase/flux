@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: checkrr
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -106,4 +106,4 @@ spec:
             secretName: checkrr-config
         - name: checkrr-config-pvc
           persistentVolumeClaim:
-            claimName: checkrr-config-pvc-checkrr-0-resized
+            claimName: checkrr-config-linstor
