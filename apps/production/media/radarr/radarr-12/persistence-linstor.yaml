@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: config-linstor
+  name: config-final
   labels:
     app: radarr-12
     storage-migration: radarr-12-linstor-final-2026-09
     storage-migration-phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: linstor-final
   resources:
     requests:
       storage: 2Gi

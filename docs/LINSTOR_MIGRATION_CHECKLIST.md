@@ -619,6 +619,9 @@ Repeat every item for 205 before beginning 206.
 - [~] Prepare Sonarr-1 and Sonarr-2 for worker204/`linstor-final` cutover; source claims remain retained pending copy validation.
 - [x] Migrate Sonarr-1 and Sonarr-2 to `linstor-final` on worker204: Sonarr-1 318 files (`sonarr.db` `438065705891bc665365b3ab4f21e10f43d8255ec032b08f071442d78994109c`, `logs.db` `8a72a66a8031c984ffaf8149a41cbb14a3f2cfc1f4e8f027fcb067165d6a2b6d`); Sonarr-2 337 files (`sonarr.db` `4ac14b3eb5224e3f25f91d386f42ce81c0734bbf243f91ca44c6716eb47df588`, `logs.db` `fba26495d4040bc77ea413b1f226099114fdf54b86ef0b3681b55915a18be609`).
 - [x] Migrate Radarr-1 from old `linstor` to `linstor-final` on worker204: 3,961 files; `radarr.db` SHA-256 `58739dbbe2fabd54a1a27717fe648972aee83a8a92ca063ced59b0de1fc0842c`; `logs.db` SHA-256 `4321e1af5939d4ef341c6e617fa82643c19dafbf2f1f30f383fcd4f5c6bb6718`; old LINSTOR source retained.
+- [x] Migrate Radarr-2 through Radarr-9 from retained old `linstor` claims to separate `linstor-final` claims on worker204. `radarr.db` and `logs.db` SHA-256 checksums matched source-to-target for each copy; all source claims remain retained for rollback.
+- [x] Migrate Radarr-10 from retained `radarr-10-config-final` (`linstor`) to `radarr-10-config-final-new` (`linstor-final`) on worker204. `radarr.db` SHA-256 `4e5412e2642eb49045f8c555530e03f19853ffdc0eaad8b5fbd880086d001033`; `logs.db` SHA-256 `63ae205ea2f911fbed9661f4e86f6119f4ec7dded07a26075b002183268280f4`; old claim retained.
+- [x] Migrate Radarr-11 and Radarr-12 from retained old `linstor` claims to `linstor-final` on worker204. Radarr-11 `radarr.db` `f35369517246b1a4ccaa2aa08d91bd3639e2ca1ea18918fab545e0868cc13c51`, `logs.db` `6f416b7bfa4604997921ea8e88c3f949f44e6e638b577b8a2b84639fa5bb947f`; Radarr-12 `radarr.db` `a8eec39a9239ce326ebedb1458460241857db23aa391a8bb581376d83c81772d`, `logs.db` `2cee394b3bbcb04ebafa09253863e509d5b26423743bee0d72a4eb606c385b62`; sources retained.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
@@ -633,7 +636,7 @@ Repeat every item for 205 before beginning 206.
 
 - [ ] Migrate caches and monitoring.
 - [ ] Migrate media configuration workloads.
-- [ ] Migrate remaining Radarr instances.
+- [x] Migrate remaining Radarr instances (Radarr-2 through Radarr-12); every Arr deployment now has a retained-source copy on `linstor-final` and is prepared for worker204 activation.
 - [ ] Migrate Minecraft and Immich.
 - [ ] Migrate Artifactory and GitLab.
 - [ ] Migrate CNPG using logical backup/restore.
