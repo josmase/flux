@@ -610,6 +610,7 @@ Repeat every item for 205 before beginning 206.
 - [x] Migrate `prowlarr-config-pvc-prowlarr-0-resized` -> `prowlarr-config-linstor`: 880 files, 165,479,633 file bytes; `prowlarr.db` SHA-256 `a3b2f9e48669339b814a17a52ba076839ffc55c3c1549dbd570cac5f79396bec`; `logs.db` SHA-256 `c52566b7ca9a33695fbfc3ca309214f24e3bc9f733ce155079d7ca5ea085e5e8`; source retained; copied with UID/GID 1000.
 - [!] Sonarr-3 LINSTOR copy rolled back: 285 files copied and checksums matched, but the Sonarr process exited with `SIGSEGV` on the target. Deployment restored to retained `sonarr-3-config-resized`; LINSTOR target remains preserved for forensic comparison. Do not migrate additional Sonarr/Radarr claims until this is resolved.
 - [~] Forensics: source and target have identical 285-file inventories and matching `sonarr.db`, WAL/SHM, `logs.db`, and `config.xml` hashes. A source-side startup probe is being added to distinguish slow initialization from a storage-specific failure.
+- [~] Prepare `sonarr-4-config-resized` -> `sonarr-4-config-linstor`; Sonarr-4 is isolated as the next independent validation while Sonarr-3 remains paused.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
