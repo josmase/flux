@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: bazarr
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -73,7 +73,7 @@ spec:
       volumes:
         - name: bazarr-config-pvc
           persistentVolumeClaim:
-            claimName: bazarr-config-pvc-bazarr-0-resized
+            claimName: bazarr-config-linstor
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc
