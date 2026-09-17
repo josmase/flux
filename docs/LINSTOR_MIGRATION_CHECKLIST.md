@@ -605,7 +605,7 @@ Repeat every item for 205 before beginning 206.
   for rollback. The pod returned `Ready` on worker 206 and logs confirmed
   normal model-catalog/API startup.
 - [x] Migrate `arr-dashboard-config-v2` to `arr-dashboard-config-linstor`: 32 files, 819,722,651 bytes; `prod.db` SHA-256 `7464333e3405d...`; `secrets.json` SHA-256 `7747fb2acf3a...`; source retained; target copied with UID/GID 1000; helper removed after verification.
-- [~] Prepare `bazarr-config-pvc-bazarr-0-resized` -> `bazarr-config-linstor`; source remains retained and Bazarr is stopped pending target binding/copy.
+- [x] Migrate `bazarr-config-pvc-bazarr-0-resized` -> `bazarr-config-linstor`: 24 files, 56,606,443 bytes; `bazarr.db` SHA-256 `928d354a39e1d093a37138864d18a39d09a391c3d32a9977489d811b33806b5e`; source retained; copied with UID/GID 1000.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
