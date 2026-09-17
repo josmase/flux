@@ -6,6 +6,7 @@ namespace: llm-switchboard
 resources:
   - namespace.yaml
   - pvc.yaml
+  - persistence-linstor.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml

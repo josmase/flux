@@ -5,7 +5,7 @@ metadata:
   labels:
     app: llm-switchboard
 spec:
-  replicas: 1
+  replicas: 0
   progressDeadlineSeconds: 600
   revisionHistoryLimit: 2
   strategy:
@@ -61,4 +61,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: llm-switchboard-data
+            claimName: llm-switchboard-data-linstor
