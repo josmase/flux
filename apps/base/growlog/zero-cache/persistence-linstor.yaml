@@ -5,7 +5,7 @@ metadata:
   labels:
     app: zero-cache
     storage-migration: zero-cache-linstor-final-2026-09
-    storage-migration-phase: copy-target
+    storage-migration-phase: final-active
   annotations:
     storage-migration.source-pvc: zero-cache-data-resized
     storage-migration.target: 1Gi

@@ -8,8 +8,8 @@ sections; do not store credentials.
 
 ## Current status
 
-- Overall: `[~] Worker-206 final pool ready; eligible workload migration started; Jellyfin deferred`
-- Current phase: `Phase 7 - staged workload migration (zero-cache target prepared)`
+- Overall: `[~] Worker-206 final pool ready; zero-cache migrated; Jellyfin deferred`
+- Current phase: `Phase 7 - staged workload migration (media/config cohorts pending)`
 - Pilot workload: `media/radarr-10-radarr`
 - Source PVC: `media/radarr-10-config-resized`
 - Target PVC: `media/radarr-10-config-linstor`
@@ -585,8 +585,11 @@ Repeat every item for 205 before beginning 206.
 - [x] Defer Jellyfin configuration migration: it remains on `longhorn-gpu` until
   LINSTOR diskless/remote attach is validated on the GPU node; its NFS media claim
   remains unchanged.
-- [~] Prepare the first scaled-down workload (`default/zero-cache`) with a
-  retained `linstor-final` target; copy and activation gates remain pending.
+- [x] Migrate and activate the first scaled-down workload
+  (`default/zero-cache`) on a retained `linstor-final` target. The source and
+  target both measured 274,432 bytes/one file; `replica.db` SHA-256 matched
+  (`1726bbfe…dbc56c76`); startup validation passed. The Longhorn source remains
+  retained for rollback.
 - [ ] Reconcile final `linstor-thin`, `linstor-ha`, and `linstor` class.
 - [ ] Add first final-pool Radarr replica and wait for `UpToDate`.
 - [ ] Remove first pilot-pool replica.
