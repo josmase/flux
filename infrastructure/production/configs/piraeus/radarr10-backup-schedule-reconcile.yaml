@@ -17,7 +17,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: reconcile
-          image: quay.io/piraeusdatastore/piraeus-server:v1.34.2
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:8c8bc7c8ca5bff81d1325620f9f50209dbf4fbecf13a07d5ce6a244a6e5e60f6
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
