@@ -645,7 +645,7 @@ Repeat every item for 205 before beginning 206.
 - [ ] Complete every seven-day per-workload rollback window.
 - [ ] Take final recovery backups.
 - [ ] Remove retired Longhorn volumes.
-- [ ] Convert worker 204 to 250 GiB boot plus 750 GiB data.
+- [x] Convert worker 204 to 250 GiB boot plus 750 GiB data. New VM provisioned via OpenTofu (direct cloud-image, no template), disk serial `linstor-data-204` set, guarded Ansible playbook created `linstor_vg/linstor_thin` (680 GiB data / 4 GiB metadata), node joined k3s cluster and is Ready, LINSTOR satellite online, `linstor-thin` storage pool registered, node labeled `storage.josmase.io/linstor-final=true`.
 - [ ] Rebalance LINSTOR across all three workers.
 - [ ] Verify exactly two diskful replicas per production resource.
 - [ ] Promote `linstor` to default.
@@ -670,3 +670,9 @@ Record any blocker or deviation here before continuing:
   write a mode-0600 temporary plaintext Secret on the control host, encrypt it
   with the production age recipient, and delete the plaintext in an always
   cleanup block.
+- Active 2026-09-19: Artifactory PostgreSQL (`artifactory-postgresql-0`) is
+  CrashLoopBackOff with SIGSEGV during recovery on worker 206 (known worker206
+  kernel fault pattern). This takes the Artifactory registry down (503), which
+  blocks image pulls for pods scheduled on the new worker 204. Needs the
+  PostgreSQL StatefulSet moved off worker 206 (e.g. to worker 204) and/or the
+  worker206 kernel issue remediated.
