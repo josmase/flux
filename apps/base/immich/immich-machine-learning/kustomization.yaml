@@ -5,6 +5,7 @@ resources:
   - deployment.yaml
   - persistence.yaml
   - persistence-resized.yaml
+  - persistence-linstor.yaml
   - service.yaml
 
 labels:

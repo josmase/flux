@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-db-pvc-final-linstor
+  labels:
+    app.kubernetes.io/part-of: immich
+    migration.josmase.dev/source: immich-db-pvc-final
+    migration.josmase.dev/phase: copy-target
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 9Gi

@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-0-linstor
+  annotations:
+    storage-migration.source-pvc: immich-model-cache-immich-machine-learning-0
+    storage-migration.phase: copy-target
+  labels:
+    app: immich-machine-learning
+    storage-migration: immich-ml-linstor-2026-09
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-1-linstor
+  annotations:
+    storage-migration.source-pvc: immich-model-cache-immich-machine-learning-1
+    storage-migration.phase: copy-target
+  labels:
+    app: immich-machine-learning
+    storage-migration: immich-ml-linstor-2026-09
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-2-linstor
+  annotations:
+    storage-migration.source-pvc: immich-model-cache-immich-machine-learning-2
+    storage-migration.phase: copy-target
+  labels:
+    app: immich-machine-learning
+    storage-migration: immich-ml-linstor-2026-09
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-resized-linstor
+  annotations:
+    storage-migration.source-pvc: immich-model-cache-resized
+    storage-migration.phase: copy-target
+  labels:
+    app: immich-machine-learning
+    storage-migration: immich-ml-linstor-2026-09
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 1Gi
