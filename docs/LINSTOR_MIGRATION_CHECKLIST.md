@@ -670,9 +670,13 @@ Record any blocker or deviation here before continuing:
   write a mode-0600 temporary plaintext Secret on the control host, encrypt it
   with the production age recipient, and delete the plaintext in an always
   cleanup block.
-- Active 2026-09-19: Artifactory PostgreSQL (`artifactory-postgresql-0`) is
+- Resolved 2026-09-19: Artifactory PostgreSQL (`artifactory-postgresql-0`) was
   CrashLoopBackOff with SIGSEGV during recovery on worker 206 (known worker206
-  kernel fault pattern). This takes the Artifactory registry down (503), which
-  blocks image pulls for pods scheduled on the new worker 204. Needs the
-  PostgreSQL StatefulSet moved off worker 206 (e.g. to worker 204) and/or the
-  worker206 kernel issue remediated.
+  kernel fault pattern), taking the Artifactory registry down (503) and
+  blocking image pulls for pods on the new worker 204. Fixed by pinning the
+  PostgreSQL primary to worker 204 via `postgresql.primary.nodeSelector`
+  (`kubernetes.io/hostname: kubernetes-node-204`) in
+  `apps/base/artifactory/release-values.yaml`. PostgreSQL recovered cleanly on
+  204, registry back up, all 34 pods on worker 204 Running. Reiverr image
+  `v2.2.0` was absent from the registry and was copied from worker 205 to 204
+  via `ctr images export/import`.
