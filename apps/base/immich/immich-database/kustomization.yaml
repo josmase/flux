@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - service.yaml
   - deployment.yaml
-  - persistence.yaml
   - persistence-linstor.yaml
 
 labels:

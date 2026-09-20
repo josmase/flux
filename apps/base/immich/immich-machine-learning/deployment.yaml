@@ -21,8 +21,14 @@ spec:
             - secretRef:
                 name: immich-secrets
           volumeMounts:
-            - name: immich-model-cache
-              mountPath: /cache
+            - name: immich-model-cache-0
+              mountPath: /cache/0
+            - name: immich-model-cache-1
+              mountPath: /cache/1
+            - name: immich-model-cache-2
+              mountPath: /cache/2
+            - name: immich-model-cache-resized
+              mountPath: /cache/resized
           ports:
             - containerPort: 3003
           resources:
@@ -33,6 +39,15 @@ spec:
               memory: 512Mi
               cpu: 50m
       volumes:
-        - name: immich-model-cache
+        - name: immich-model-cache-0
           persistentVolumeClaim:
-            claimName: immich-model-cache-final
+            claimName: immich-model-cache-ml-0-linstor
+        - name: immich-model-cache-1
+          persistentVolumeClaim:
+            claimName: immich-model-cache-ml-1-linstor
+        - name: immich-model-cache-2
+          persistentVolumeClaim:
+            claimName: immich-model-cache-ml-2-linstor
+        - name: immich-model-cache-resized
+          persistentVolumeClaim:
+            claimName: immich-model-cache-resized-linstor
