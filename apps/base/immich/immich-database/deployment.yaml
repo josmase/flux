@@ -16,6 +16,21 @@ spec:
     spec:
       securityContext:
         fsGroup: 999
+      initContainers:
+        # postgres runs as uid 26/gid 999 in the CNPG image; the data dir on a
+        # fresh LINSTOR volume is root-owned, so chown it before initdb.
+        - name: chown-data-dir
+          image: ghcr.io/cloudnative-pg/postgresql:17.2
+          securityContext:
+            runAsUser: 0
+          command:
+            - /bin/sh
+            - -c
+            - chown -R 26:999 /var/lib/postgresql/data
+          volumeMounts:
+            - name: immich-db-pvc
+              subPath: var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
           image: ghcr.io/cloudnative-pg/postgresql:17.2
