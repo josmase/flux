@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: immich-postgres
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -14,9 +14,11 @@ spec:
       labels:
         app: immich-postgres
     spec:
+      securityContext:
+        fsGroup: 999
       containers:
         - name: postgres
-          image: artifactory.local.hejsan.xyz/docker/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+          image: ghcr.io/cloudnative-pg/postgresql:17.2
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
