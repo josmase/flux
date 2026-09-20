@@ -195,7 +195,7 @@ spec:
       volumes:
         - name: jellyfin-config-pvc
           persistentVolumeClaim:
-            claimName: jellyfin-config-pvc-jellyfin-0-v2
+            claimName: jellyfin-config-pvc-jellyfin-0-linstor
         - name: jellyfin-transcode-pvc
           emptyDir: {}
         - name: shared-storage
