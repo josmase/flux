@@ -12,8 +12,8 @@ volumeBindingMode: WaitForFirstConsumer
 parameters:
   csi.storage.k8s.io/fstype: ext4
   linstor.csi.linbit.com/storagePool: linstor-thin
-  # This class is temporary: worker 205 is the only final-pool satellite
-  # until worker 206 receives its dedicated data disk.
-  linstor.csi.linbit.com/placementCount: "1"
+  # Now that every worker has a dedicated final data disk, volumes on this
+  # class get the same two-diskful-replica baseline as linstor-final.
+  linstor.csi.linbit.com/placementCount: "2"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
   property.linstor.csi.linbit.com/DrbdOptions/Disk/rs-discard-granularity: "1048576"

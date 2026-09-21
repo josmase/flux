@@ -646,8 +646,17 @@ Repeat every item for 205 before beginning 206.
 - [ ] Take final recovery backups.
 - [ ] Remove retired Longhorn volumes.
 - [x] Convert worker 204 to 250 GiB boot plus 750 GiB data. New VM provisioned via OpenTofu (direct cloud-image, no template), disk serial `linstor-data-204` set, guarded Ansible playbook created `linstor_vg/linstor_thin` (680 GiB data / 4 GiB metadata), node joined k3s cluster and is Ready, LINSTOR satellite online, `linstor-thin` storage pool registered, node labeled `storage.josmase.io/linstor-final=true`.
+- [x] Harden `linstor-final-bootstrap` volumes to two replicas: bumped RG
+  `sc-bf2eb171-88be-5480-975c-242890d59721` place-count to 2; autoplace added a
+  second diskful replica on worker 205 (Artifactory PG `pvc-9799a120…` synced
+  `UpToDate`, Prometheus TSDB `pvc-b03417aa…` syncing) plus diskless copies on
+  `ubuntu-ms-7977`. SC `linstor-final-bootstrap` updated to `placementCount: "2"`
+  in the repo (was temporary single-replica).
 - [ ] Rebalance LINSTOR across all three workers.
-- [ ] Verify exactly two diskful replicas per production resource.
+- [x] Verify exactly two diskful replicas per production resource: 68/68
+  LINSTOR resources have two diskful `UpToDate` replicas (all) plus one
+  diskless copy; verified 2026-09-21 after hardening the last two
+  `linstor-final-bootstrap` volumes (Artifactory Postgres + Prometheus TSDB).
 - [ ] Promote `linstor` to default.
 - [ ] Verify zero active Longhorn PVs or mounts.
 - [ ] Restore from RustFS again.
