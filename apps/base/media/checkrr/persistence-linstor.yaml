@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: checkrr-config-linstor
+  name: checkrr-config-triple
   annotations:
     storage-migration.source-pvc: checkrr-config-pvc-checkrr-0-resized
     storage-migration.phase: copy-target
   labels:
     app: checkrr
-    storage-migration: checkrr-linstor-final-2026-09
+    storage-migration: checkrr-linstor-triple-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi
