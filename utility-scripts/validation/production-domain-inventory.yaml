@@ -26,8 +26,8 @@ domains:
     count: 19
     sha256: bbe79f657f0f2ba84db4f67d8cdac54e60e15621a54d30c14bc48c913b118621
   apps-gitlab:
-    count: 17
-    sha256: 9febe51c449f1d63618a49a9660c179b503470d10da04278dc9e427b24fcbfa8
+    count: 15
+    sha256: f27837f40f1bfe9d240ad9633db393dcd299218fb44770462364c42b584231dd
   apps-artifacts:
     count: 7
     sha256: a7aeadb25375cbd61420f6ba457c3603ee991d725dcba0e963fb614a4f7a28d3

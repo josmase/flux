@@ -5,6 +5,5 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
-  - redis-recovered-pv-pvc.yaml
   - linstor-target-pvcs.yaml
   - ingressroute.yaml
