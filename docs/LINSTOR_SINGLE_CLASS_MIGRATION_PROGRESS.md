@@ -130,6 +130,7 @@ checksums, and rollback decisions.
 | `media/radarr-4-config-final` | `linstor-final/linstor-thin` | `media/radarr-4-config-triple` | CSI snapshot `radarr-4-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 4 running on node 204 from `linstor-final-triple`; source retained |
 | `media/radarr-3-config-final` | `linstor-final/linstor-thin` | `media/radarr-3-config-triple` | CSI snapshot `radarr-3-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 3 rollout succeeded on `linstor-final-triple`; source retained |
 | `media/radarr-2-config-final` | `linstor-final/linstor-thin` | `media/radarr-2-config-triple` | CSI snapshot `radarr-2-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 2 running on node 204 from `linstor-final-triple`; source retained |
+| `media/radarr-1-config-final` | `linstor-final/linstor-thin` | `media/radarr-1-config-triple` | CSI snapshot `radarr-1-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 1 running on node 204 from `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
