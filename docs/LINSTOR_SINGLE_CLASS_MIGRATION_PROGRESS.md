@@ -119,6 +119,8 @@ checksums, and rollback decisions.
 | `media/transmission-config-final` | `linstor-final/linstor-thin` | `media/transmission-config-triple` | CSI snapshot `transmission-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Transmission rollout succeeded on `linstor-final-triple`; source retained |
 | `minecraft/minecraft-data-linstor` | `linstor-final/linstor-thin` | `minecraft/minecraft-data-triple` | CSI snapshot `minecraft-data-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Minecraft running on node 205 from `linstor-final-triple`; source retained |
 | `minecraft/minecraft-modpacks-linstor` | `linstor-final/linstor-thin` | `minecraft/minecraft-modpacks-triple` | CSI snapshot `minecraft-modpacks-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Minecraft running on node 205 from both `linstor-final-triple` PVCs; sources retained |
+| `media/radarr-10-config-final-new` | `linstor-final/linstor-thin` | `media/radarr-10-config-triple` | CSI snapshot `radarr-10-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 10 running on node 204 from `linstor-final-triple`; source retained |
+| `media/radarr-11-config-final` | `linstor-final/linstor-thin` | `media/radarr-11-config-triple` | CSI snapshot `radarr-11-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Radarr 11 rollout succeeded on `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
