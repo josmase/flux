@@ -9,8 +9,8 @@ checksums, and rollback decisions.
 
 ## Current status
 
-- Overall: `[~] Pilot cutover in progress`
-- Current phase: `Phase 2 - target pilot`
+- Overall: `[~] Pilot complete; batch migration ready`
+- Current phase: `Phase 3 - bound PVC migration`
 - Last updated: `2026-09-22 Europe/Stockholm`
 - Operator: `Codex`
 - Flux revision: `main@sha1:2940f690cb849e1c59e2a318bdf52ad6aaf8d257`
@@ -26,7 +26,7 @@ checksums, and rollback decisions.
 - [x] Target capacity estimate supports a third replica.
 - [x] Complete PVC-to-resource inventory.
 - [x] Complete unbound-resource ownership inventory.
-- [ ] Capture verified baseline backup evidence.
+- [x] Capture verified baseline backup evidence.
 
 ### Baseline evidence
 
@@ -70,7 +70,7 @@ checksums, and rollback decisions.
 - [x] Validate `linstor-final-triple`.
 - [x] Migrate one small non-critical PVC.
 - [x] Verify three replicas and `UpToDate` state.
-- [ ] Verify snapshot restore.
+- [x] Verify snapshot restore.
 - [x] Verify RustFS backup restore.
 
 ### Phase 3 — Bound PVC migration
@@ -109,7 +109,7 @@ checksums, and rollback decisions.
 
 | Namespace/PVC | Source class/pool | Target PVC | Backup ID/time | Checksum | Cutover | Rollback expiry | Notes |
 |---|---|---|---|---|---|---|---|
-| `default/zero-cache-data-linstor` | `linstor-final/linstor-thin` | `default/zero-cache-data-triple` | `pvc-12ccfb65-b8c5-4955-bef8-fa0bc6f71282_back_20260922_192531` / success | source/target manifests match | live cutover complete; startup probe warming | pending | Three `UpToDate` diskful replicas on 204/205/206; source retained |
+| `default/zero-cache-data-linstor` | `linstor-final/linstor-thin` | `default/zero-cache-data-triple` | `pvc-12ccfb65-b8c5-4955-bef8-fa0bc6f71282_back_20260922_192531` / success | source/target manifests match; snapshot restore readable | live cutover complete | pending | Three `UpToDate` diskful replicas on 204/205/206; restored disposable PVC `zero-cache-snapshot-restore` mounted and verified |
 
 ## Unbound-resource ledger
 
