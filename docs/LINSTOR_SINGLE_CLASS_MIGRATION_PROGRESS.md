@@ -134,6 +134,7 @@ checksums, and rollback decisions.
 | `media/sonarr-6-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-6-config-triple` | CSI snapshot `sonarr-6-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 6 rollout succeeded on `linstor-final-triple`; source retained |
 | `media/sonarr-5-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-5-config-triple` | CSI snapshot `sonarr-5-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 5 rollout succeeded on `linstor-final-triple`; source retained |
 | `media/sonarr-4-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-4-config-triple` | CSI snapshot `sonarr-4-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 4 rollout succeeded on `linstor-final-triple`; source retained |
+| `media/sonarr-3-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-3-config-triple` | CSI snapshot `sonarr-3-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 3 rollout succeeded on `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
