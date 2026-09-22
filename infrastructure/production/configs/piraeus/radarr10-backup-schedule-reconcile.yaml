@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-radarr10-backup-schedule-reconcile-v1
+  name: linstor-radarr10-backup-schedule-reconcile-v2
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-backup-schedule-reconcile
