@@ -138,6 +138,7 @@ checksums, and rollback decisions.
 | `media/sonarr-2-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-2-config-triple` | CSI snapshot `sonarr-2-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 2 rollout succeeded on `linstor-final-triple`; source retained |
 | `media/sonarr-1-config-linstor` | `linstor-final/linstor-thin` | `media/sonarr-1-config-triple` | CSI snapshot `sonarr-1-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Sonarr 1 rollout succeeded on `linstor-final-triple`; source retained |
 | `media/arr-dashboard-config-linstor` | `linstor-final/linstor-thin` | `media/arr-dashboard-config-triple` | CSI snapshot `arr-dashboard-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Arr dashboard running on node 205 from `linstor-final-triple`; source retained |
+| `monitoring/gotify-data-final` | `linstor-final/linstor-thin` | `monitoring/gotify-data-triple` | CSI snapshot `gotify-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Gotify rollout succeeded on `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
