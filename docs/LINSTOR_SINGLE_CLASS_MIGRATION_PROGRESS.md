@@ -113,6 +113,8 @@ checksums, and rollback decisions.
 | `media/checkrr-config-linstor` | `linstor-final/linstor-thin` | `media/checkrr-config-triple` | CSI snapshot `checkrr-config-linstor-snapshot` / ready | restored PVC mounted; workload healthy | live cutover complete | pending | Checkrr running on node 205 from `linstor-final-triple`; source retained |
 | `media/bazarr-config-linstor` | `linstor-final/linstor-thin` | `media/bazarr-config-triple` | CSI snapshot `bazarr-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Bazarr running on node 205 from `linstor-final-triple`; source retained |
 | `media/prowlarr-config-linstor` | `linstor-final/linstor-thin` | `media/prowlarr-config-triple` | CSI snapshot `prowlarr-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Prowlarr running on node 205 from `linstor-final-triple`; source retained |
+| `media/seerr-config-final` | `linstor-final/linstor-thin` | `media/seerr-config-triple` | CSI snapshot `seerr-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Seerr running on node 205 from `linstor-final-triple`; source retained |
+| `media/reiverr-config-final` | `linstor-final/linstor-thin` | `media/reiverr-config-triple` | CSI snapshot `reiverr-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Reiverr running on node 204 from `linstor-final-triple`; source retained; plugins PVC unchanged |
 
 ## Unbound-resource ledger
 
