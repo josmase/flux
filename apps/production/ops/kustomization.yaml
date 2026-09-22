@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../base/traefik-dashboard
-  - ../../base/longhorn
   - ../../base/cloudflare-ddns
   - ../../base/renovate-bot
   - ../cloudflare-ddns

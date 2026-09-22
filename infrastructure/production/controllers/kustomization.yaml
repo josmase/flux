@@ -8,7 +8,6 @@ resources:
   # ALL infrastructure controllers
   - ../../base/controllers/cert-manager/
   - ../../base/controllers/ingress-traefik/
-  - ../../base/controllers/longhorn/
   - ../../base/controllers/mongodb-operator/
   - ../../base/controllers/local-path-provisioner/
   - ../../base/controllers/reflector/

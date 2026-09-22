@@ -6,7 +6,6 @@ resources:
   - mongodb-operator
   - local-path-provisioner
   #- nfs-subdir
-  - longhorn
   - reflector
   - nvidia-device-plugin
   - csi-nfs
