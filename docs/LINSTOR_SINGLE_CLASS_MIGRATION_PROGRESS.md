@@ -141,6 +141,7 @@ checksums, and rollback decisions.
 | `monitoring/gotify-data-final` | `linstor-final/linstor-thin` | `monitoring/gotify-data-triple` | CSI snapshot `gotify-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Gotify rollout succeeded on `linstor-final-triple`; source retained |
 | `monitoring/grafana-data-final` | `linstor-final/linstor-thin` | `monitoring/grafana-data-triple` | CSI snapshot `grafana-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Grafana rollout succeeded on `linstor-final-triple`; source retained |
 | `immich/immich-model-cache-resized-linstor` | `linstor-final/linstor-thin` | `immich/immich-model-cache-ml-triple` | CSI snapshot `immich-model-cache-resized-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Immich ML rollout succeeded on `linstor-final-triple`; source retained |
+| `llm-switchboard/llm-switchboard-data-linstor` | `linstor-final/linstor-thin` | `llm-switchboard/llm-switchboard-data-triple` | CSI snapshot `llm-switchboard-data-linstor-snapshot` / ready | target attached; workload remains intentionally unavailable due known image-pull failure | storage cutover complete | pending | Deployment is on the new target; Flux health exclusion remains active |
 
 ## Unbound-resource ledger
 
