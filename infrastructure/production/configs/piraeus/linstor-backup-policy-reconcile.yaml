@@ -49,7 +49,7 @@ spec:
                   *) full="0 3 * * SUN"; incremental="0 3 * * *"; local_keep=2; remote_keep=7 ;;
                 esac
                 safe="$(printf '%s-%s' "$namespace" "$name" | tr -c '[:alnum:]' '-')"
-                schedule="policy-${safe}"
+                schedule="policy-$${safe}"
                 if ! linstor --controllers "$controller" -m schedule list | grep -q "schedule_name.*$schedule"; then
                   linstor --controllers "$controller" schedule create -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
                 else
