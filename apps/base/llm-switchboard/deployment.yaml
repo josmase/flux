@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: llm-switchboard
+  annotations:
+    kustomize.toolkit.fluxcd.io/health-check: disabled
   labels:
     app: llm-switchboard
 spec:

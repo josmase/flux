@@ -3,6 +3,8 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: new-new-boplats-web
+  annotations:
+    kustomize.toolkit.fluxcd.io/health-check: disabled
 spec:
   replicas: 3
   progressDeadlineSeconds: 600
