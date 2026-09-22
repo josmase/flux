@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: media-data
+  name: media-data-triple
   labels:
     app: media
 spec:
-  storageClassName: longhorn
+  storageClassName: linstor-final-triple
   accessModes:
     - ReadWriteOnce
   resources:

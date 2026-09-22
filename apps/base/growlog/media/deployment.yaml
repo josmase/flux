@@ -76,4 +76,4 @@ spec:
       volumes:
         - name: media-data
           persistentVolumeClaim:
-            claimName: media-data
+            claimName: media-data-triple

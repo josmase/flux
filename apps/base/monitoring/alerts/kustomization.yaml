@@ -4,6 +4,7 @@ resources:
   - deployment-statefulset-rules.yaml
   - jellyfin-rules.yaml
   - node-storage-rules.yaml
+  - linstor-rules.yaml
 
 labels:
   - pairs:

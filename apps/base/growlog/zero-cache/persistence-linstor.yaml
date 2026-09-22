@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: zero-cache-data-linstor
+  name: zero-cache-data-triple
   labels:
     app: zero-cache
-    storage-migration: zero-cache-linstor-final-2026-09
+    storage-migration: single-class-pilot-2026-09-22
     storage-migration-phase: final-active
   annotations:
     storage-migration.source-pvc: zero-cache-data-resized
@@ -12,7 +12,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

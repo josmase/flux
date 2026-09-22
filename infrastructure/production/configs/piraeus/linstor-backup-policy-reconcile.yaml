@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-backup-policy-reconcile-v1
+  namespace: piraeus-datastore
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400
+  template:
+    spec:
+      serviceAccountName: linstor-protection-policy
+      restartPolicy: OnFailure
+      volumes:
+        - name: work
+          emptyDir: {}
+      initContainers:
+        - name: inventory
+          image: bitnami/kubectl:1.30.2
+          volumeMounts:
+            - name: work
+              mountPath: /work
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              : > /work/pvcs.tsv
+              kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
+              awk '$3 == "linstor-final" || $3 == "linstor-final-bootstrap" {print $1 "\t" $2}' |
+              while IFS="$(printf '\t')" read -r namespace name; do
+                pv="$(kubectl get pvc -n "$namespace" "$name" -o jsonpath='{.spec.volumeName}')"
+                handle="$(kubectl get pv "$pv" -o jsonpath='{.spec.csi.volumeHandle}' 2>/dev/null || true)"
+                [ -n "$handle" ] && printf '%s\t%s\t%s\n' "$namespace" "$name" "$handle" >> /work/pvcs.tsv
+              done
+      containers:
+        - name: reconcile
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:8c8bc7c8ca5bff81d1325620f9f50209dbf4fbecf13a07d5ce6a244a6e5e60f6
+          volumeMounts:
+            - name: work
+              mountPath: /work
+              readOnly: true
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              controller="linstor-controller.piraeus-datastore.svc:3370"
+              remote="rustfs-linstor-backups"
+              while IFS="$(printf '\t')" read -r namespace name resource; do
+                case "$namespace/$name" in
+                  cnpg-system/*|gitlab/*) full="0 2 * * SUN"; incremental="0 */6 * * *"; local_keep=3; remote_keep=14 ;;
+                  immich/*model*|growlog/*cache*) echo "skip cache $namespace/$name"; continue ;;
+                  *) full="0 3 * * SUN"; incremental="0 3 * * *"; local_keep=2; remote_keep=7 ;;
+                esac
+                safe="$(printf '%s-%s' "$namespace" "$name" | tr -c '[:alnum:]' '-')"
+                schedule="policy-${safe}"
+                if ! linstor --controllers "$controller" -m schedule list | grep -q "schedule_name.*$schedule"; then
+                  linstor --controllers "$controller" schedule create -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
+                else
+                  linstor --controllers "$controller" schedule modify -f "$full" -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule"
+                fi
+                linstor --controllers "$controller" backup schedule enable --rd "$resource" "$remote" "$schedule"
+                echo "reconciled $namespace/$name tier schedule=$schedule"
+              done < /work/pvcs.tsv

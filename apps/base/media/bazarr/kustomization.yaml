@@ -5,7 +5,6 @@ resources:
   - deployment.yaml
   # Replacement PVC only. The Deployment remains on the source claim until
   # the documented backup/copy/validation cutover is completed.
-  - persistence-resized.yaml
   - persistence-linstor.yaml
   - ingress.yaml
   - service.yaml

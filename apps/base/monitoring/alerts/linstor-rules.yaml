@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: linstor-protection-rules
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: linstor-protection
+      rules:
+        - alert: LinstorThinPoolHighUsage
+          expr: |
+            100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/var/lib/linstor.*"}
+              / node_filesystem_size_bytes{mountpoint=~"/var/lib/linstor.*"}) > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: LINSTOR storage is above 80% usage
+            description: LINSTOR storage on {{ $labels.instance }} has less than 20% free space.
+        - alert: LinstorThinPoolCriticalUsage
+          expr: |
+            100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/var/lib/linstor.*"}
+              / node_filesystem_size_bytes{mountpoint=~"/var/lib/linstor.*"}) > 90
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: LINSTOR storage is above 90% usage
+            description: Suspend non-critical backup/snapshot creation and investigate capacity.
+        - alert: LinstorProtectionValidationFailed
+          expr: kube_job_status_failed{job_name=~"linstor-protection-policy-validate.*"} > 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: LINSTOR protection policy validation failed
+            description: One or more LINSTOR PVCs may not have a valid protection tier.

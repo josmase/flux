@@ -8,9 +8,14 @@ resources:
   - final-storage-pool.yaml
   - storage-class.yaml
   - final-storage-class.yaml
+  - triple-storage-class.yaml
   - final-bootstrap-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
   - radarr10-backup-schedule-reconcile.yaml
+  - linstor-protection-policy.yaml
+  - linstor-protection-validate.yaml
+  - linstor-backup-policy-reconcile.yaml
+  - snapshot-retention-policy.yaml
   - snapshot-class.yaml
   - node-prerequisites.yaml

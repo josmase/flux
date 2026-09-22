@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-snapshot-retention-policy
+  namespace: piraeus-datastore
+data:
+  policy.yaml: |
+    version: 1
+    standard:
+      hourly: 12
+      daily: 7
+      weekly: 4
+    critical:
+      hourly: 12
+      daily: 7
+      weekly: 4
+    cache:
+      hourly: 0
+      daily: 0
+      weekly: 0
+    ownership: linstor-protection-policy

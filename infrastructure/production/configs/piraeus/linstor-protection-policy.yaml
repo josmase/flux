@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-protection-policy
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-protection-policy
+    app.kubernetes.io/part-of: piraeus-datastore
+data:
+  policy.yaml: |
+    version: 1
+    defaults:
+      standard:
+        full: "0 3 * * SUN"
+        incremental: "0 3 * * *"
+        keep_local: 2
+        keep_remote: 7
+      critical:
+        full: "0 2 * * SUN"
+        incremental: "0 */6 * * *"
+        keep_local: 3
+        keep_remote: 14
+      cache:
+        enabled: false
+    critical:
+      - namespace: cnpg-system
+        name: "*"
+      - namespace: gitlab
+        name: "*"
+    cache:
+      - namespace: immich
+        name: "*model*"
+      - namespace: growlog
+        name: "*cache*"
+    exclusions: []

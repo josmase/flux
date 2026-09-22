@@ -1,26 +1,3 @@
-# Right-sized replacement volume (40Gi x 2 replicas via longhorn-gpu SC defaults).
-# Migration plan: docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md
-# Previous 80Gi volume (pvc-9175b25b-a542-4cac-bc9c-661e25ff4484, Retain) is kept
-# in the cluster as rollback safety net until the confidence window closes --
-# do NOT delete it before then. See §5 of the plan for the rollback procedure.
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-config-pvc-jellyfin-0-v2
-  namespace: media
-  labels:
-    # Longhorn picks this up: runs the Git-managed "backup" recurring job
-    # (group default) against this volume. The previous volume never had
-    # any recurring jobs -- see docs/PVC_RIGHTSIZE_PLAN_JELLYFIN_CONFIG.md §7.
-    recurring-job-group-backup: "true"
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn-gpu
-  resources:
-    requests:
-      storage: 40Gi
----
 # LINSTOR migration target volume (40Gi x 2 replicas via linstor-final SC).
 # Migration plan: docs/JELLYFIN_LINSTOR_MIGRATION_PLAN.md
 # This volume will have 2 diskful replicas on workers 204/205/206 and a
