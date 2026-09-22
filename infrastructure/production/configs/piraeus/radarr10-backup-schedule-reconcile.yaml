@@ -25,8 +25,8 @@ spec:
             - |
               controller="linstor-controller.piraeus-datastore.svc:3370"
               remote="rustfs-linstor-backups"
-              schedule="radarr10-pilot"
-              resource="pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b"
+              schedule="radarr10-config"
+              resource="pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf"
 
               if ! linstor --controllers "$controller" -m schedule list |
                 grep -q "\"schedule_name\": \"$schedule\""; then
