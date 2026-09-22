@@ -140,6 +140,7 @@ checksums, and rollback decisions.
 | `media/arr-dashboard-config-linstor` | `linstor-final/linstor-thin` | `media/arr-dashboard-config-triple` | CSI snapshot `arr-dashboard-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Arr dashboard running on node 205 from `linstor-final-triple`; source retained |
 | `monitoring/gotify-data-final` | `linstor-final/linstor-thin` | `monitoring/gotify-data-triple` | CSI snapshot `gotify-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Gotify rollout succeeded on `linstor-final-triple`; source retained |
 | `monitoring/grafana-data-final` | `linstor-final/linstor-thin` | `monitoring/grafana-data-triple` | CSI snapshot `grafana-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Grafana rollout succeeded on `linstor-final-triple`; source retained |
+| `immich/immich-model-cache-resized-linstor` | `linstor-final/linstor-thin` | `immich/immich-model-cache-ml-triple` | CSI snapshot `immich-model-cache-resized-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Immich ML rollout succeeded on `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
