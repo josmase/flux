@@ -116,6 +116,7 @@ checksums, and rollback decisions.
 | `media/seerr-config-final` | `linstor-final/linstor-thin` | `media/seerr-config-triple` | CSI snapshot `seerr-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Seerr running on node 205 from `linstor-final-triple`; source retained |
 | `media/reiverr-config-final` | `linstor-final/linstor-thin` | `media/reiverr-config-triple` | CSI snapshot `reiverr-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Reiverr running on node 204 from `linstor-final-triple`; source retained; plugins PVC unchanged |
 | `media/reiverr-plugins-final` | `linstor-final/linstor-thin` | `media/reiverr-plugins-triple` | CSI snapshot `reiverr-plugins-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Reiverr running on node 204 from both `linstor-final-triple` PVCs; sources retained |
+| `media/transmission-config-final` | `linstor-final/linstor-thin` | `media/transmission-config-triple` | CSI snapshot `transmission-config-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Transmission rollout succeeded on `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
