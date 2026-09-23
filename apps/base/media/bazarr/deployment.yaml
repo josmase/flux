@@ -73,7 +73,7 @@ spec:
       volumes:
         - name: bazarr-config-pvc
           persistentVolumeClaim:
-            claimName: bazarr-config-triple
+            claimName: bazarr-config-linstor-v2
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc
