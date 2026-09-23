@@ -13,7 +13,7 @@ checksums, and rollback decisions.
 - Current phase: `Phase 3 - guarded pause (GitLab cutover complete; Jellyfin pilot blocked)`
 - Last updated: `2026-09-23 Europe/Stockholm`
 - Operator: `Codex`
-- Flux revision: `main@sha1:01ff69189af2bb2610367f10b215b9e4652c01c2`
+- Flux revision: `main@sha1:01ff69189af2bb2610367f10b215b9e4652c01c2` (last observed; `3781c2a9` is pushed and awaiting source-controller fetch)
 
 ## Safety baseline
 
@@ -195,3 +195,8 @@ checksums, and rollback decisions.
   Do not start the bulk class cutover until a non-disruptive snapshot/restore
   test succeeds for this source class or an equivalent backup-restore path is
   proven.
+- After pushing the SOPS credential manifests in `3781c2a9`, the
+  source-controller has intermittently received HTTP 502 responses while
+  fetching GitLab's `info/refs` endpoint. The live GitLab release and
+  `apps-gitlab` remain Ready at the last good revision; retry source
+  reconciliation before treating the new secret manifests as applied.
