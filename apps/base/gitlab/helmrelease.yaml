@@ -45,7 +45,7 @@ spec:
         key: password
 
       persistence:
-        storageClass: ${STORAGE_CLASS}
+        storageClass: linstor-final-triple
 
       redis:
         password:
@@ -81,8 +81,7 @@ spec:
       gitaly:
         replicaCount: 1
         persistence:
-          storageClass: ${STORAGE_CLASS}
-          existingClaim: repo-data-gitlab-gitaly-triple
+          storageClass: linstor-final-triple
           size: 50Gi
         resources:
           requests:
@@ -121,7 +120,7 @@ spec:
       primary:
         replicaCount: 1
         persistence:
-          storageClass: ${STORAGE_CLASS}
+          storageClass: linstor-final-triple
           size: 20Gi
           existingClaim: gitlab-postgresql-triple
         resources:
@@ -159,7 +158,7 @@ spec:
             operator: Exists
             effect: NoSchedule
         persistence:
-          storageClass: ${STORAGE_CLASS}
+          storageClass: linstor-final-triple
           size: 10Gi
           existingClaim: gitlab-redis-triple
         resources:
@@ -178,7 +177,7 @@ spec:
       install: true
       replicas: 1
       persistence:
-        storageClass: ${STORAGE_CLASS}
+        storageClass: linstor-final-triple
         size: 30Gi
         existingClaim: gitlab-minio-triple
       resources:
@@ -194,7 +193,7 @@ spec:
       ingress:
         enabled: false
       persistence:
-        storageClass: ${STORAGE_CLASS}
+        storageClass: linstor-final-triple
         size: 50Gi
       database:
         enabled: true
