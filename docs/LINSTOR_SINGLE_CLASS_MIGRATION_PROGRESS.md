@@ -258,3 +258,10 @@ checksums, and rollback decisions.
   `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
   The deployment is Ready 1/1 on node 206. Source claims and snapshots remain
   retained for rollback.
+- Transmission retry v2 (2026-09-23) was rolled back after a fresh
+  quiesced snapshot restored a matching manifest (`def4d9ce5d9aa6b4607ce23e78893c94f37128bd39ecefc928513d2e7f8d3737`) but the
+  canonical target again failed attach-time fsck with `Resize inode not valid`.
+- Checkrr retry v4 (2026-09-23) was rolled back after a fresh snapshot
+  restored a mismatching manifest (`d0e9f5e28c6675be95ba4b9ebee5c32bd2852f119416a4c25ac89009a4920db5`
+  source vs `4719b8f5fa3d689d5b4542d9a4c2cca708862513128dcefcccc191b70bc6df40`
+  target). Source remains authoritative and Checkrr is Ready 1/1.
