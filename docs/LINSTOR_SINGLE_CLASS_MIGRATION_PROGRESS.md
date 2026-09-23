@@ -9,11 +9,11 @@ checksums, and rollback decisions.
 
 ## Current status
 
-- Overall: `[!] Canonical class cutover gated by immutable PVC classes and workload recovery blockers`
+- Overall: `[~] Jellyfin migrated and zero-cache retry is starting on canonical linstor`
 - Current phase: `Phase 5 - canonical class transition readiness`
 - Last updated: `2026-09-23 Europe/Stockholm`
 - Operator: `Codex`
-- Flux revision: `main@sha1:be49a0f770e243185bb0e7abe40708fd56600556`
+- Flux revision: `main@sha1:80cdd2cb84ebd2b10883650ef7ec439cd7ae20d7`
 
 ### Live verification — 2026-09-23
 
@@ -39,6 +39,14 @@ checksums, and rollback decisions.
   a verified snapshot/backup, checksum, cutover, and rollback window); simply
   changing `linstor-final-triple` strings in GitOps would cause reconciliation
   failures and is not safe.
+
+- Jellyfin now runs from `media/jellyfin-config-pvc-jellyfin-0-canonical` on
+  `linstor`; the original PVC, snapshot, and target remain retained for
+  rollback. Core config/database checksums matched while quiesced, and the
+  GPU-node health endpoint is healthy.
+- Zero-cache retry uses fresh snapshot `zero-cache-data-to-canonical-v2` and
+  target `default/zero-cache-data-linstor-v2` on `linstor`. `replica.db`
+  matched exactly before cutover; startup/replay readiness is still pending.
 
 ## Safety baseline
 
@@ -182,6 +190,9 @@ checksums, and rollback decisions.
 | `cnpg-system/shared-postgres-{5,6,7,8}` (+ WAL PVCs) | `linstor-final/linstor-thin` | `cnpg-system/shared-postgres-{9,10,11}` (+ WAL PVCs) | CSI snapshots `shared-postgres-{5,6,7,8}*to-triple` / ready | CNPG cluster healthy with 3/3 instances | rolling replacement complete | pending | CNPG rotated all active instances onto `linstor-final-triple`; final active PVCs are `shared-postgres-9/10/11` and WAL companions |
 | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap/linstor-thin` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | CSI snapshot `prometheus-linstor-bootstrap-to-triple` / ready | target mounted; Prometheus pod 2/2 Ready | live cutover complete | pending | Prometheus restored to `linstor-final-triple` on node 205; source retained |
 | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-alertmanager-kube-prometheus-stack-alertmanager-0` | `linstor-final/linstor-thin` | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` | CSI snapshot `alertmanager-linstor-to-triple` / ready | target mounted; Alertmanager pod 2/2 Ready | live cutover complete | pending | Alertmanager restored to `linstor-final-triple` on node 205; source retained |
+
+| `media/jellyfin-config-pvc-jellyfin-0-linstor` | `linstor-final/linstor-thin` | `media/jellyfin-config-pvc-jellyfin-0-canonical` | CSI snapshot `jellyfin-config-to-canonical` / ready | core `jellyfin.db`, `kodisyncqueue.db`, and `system.xml` matched | live cutover complete; 2/2 healthy on GPU node | pending | Canonical `linstor` target has three replicas; source retained |
+| `default/zero-cache-data-triple` | `linstor-final-triple/linstor-thin` | `default/zero-cache-data-linstor-v2` | CSI snapshot `zero-cache-data-to-canonical-v2` / ready | `replica.db` matched: `c8e810ac94d29a99b11c37385d87fc1d4274ff7975f9aeddf5b8d4ed23a0375e` | cutover in progress; replay/startup validation pending | pending | Writer quiesced before snapshot; v1 target/snapshot retained for forensics |
 
 ## Unbound-resource ledger
 
