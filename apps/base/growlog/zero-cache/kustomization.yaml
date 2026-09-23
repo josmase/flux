@@ -6,6 +6,8 @@ resources:
   - persistence-linstor.yaml
   - snapshot-canonical.yaml
   - persistence-canonical.yaml
+  - snapshot-canonical-v2.yaml
+  - persistence-canonical-v2.yaml
 labels:
   - includeSelectors: true
     pairs:
