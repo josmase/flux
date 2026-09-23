@@ -287,3 +287,7 @@ checksums, and rollback decisions.
   2026-09-23; the old data PVC was deleted by explicit request. The new PVC is
   Bound on `linstor`; the workload remains in `ImagePullBackOff` because its
   referenced registry image is unavailable.
+- The inactive Growlog media Deployment now references blank
+  `default/growlog-media-data-linstor` on `linstor`; the old pending
+  `media-data-triple` claim was deleted. It remains scaled to zero and has no
+  active consumer.

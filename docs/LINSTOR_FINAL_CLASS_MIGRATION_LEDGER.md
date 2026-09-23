@@ -165,6 +165,14 @@ canonical three-replica StorageClass named `linstor`.
 - The workload remains unavailable solely because its referenced registry image
   is missing; storage cutover itself completed.
 
+## Growlog media blank migration (2026-09-23)
+
+- The inactive `default/media` Deployment was switched from the old pending
+  `media-data-triple` claim to blank canonical PVC
+  `growlog-media-data-linstor`; the old claim was deleted.
+- The Deployment remains scaled to zero, so the new PVC stays Pending until it
+  is intentionally started.
+
 ```text
 Service/PVC:
 Source PVC/class:

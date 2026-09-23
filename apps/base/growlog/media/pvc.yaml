@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: media-data-triple
+  name: growlog-media-data-linstor
   labels:
     app: media
 spec:
-  storageClassName: linstor-final-triple
+  storageClassName: linstor
   accessModes:
     - ReadWriteOnce
   resources:

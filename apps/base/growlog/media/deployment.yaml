@@ -76,4 +76,4 @@ spec:
       volumes:
         - name: media-data
           persistentVolumeClaim:
-            claimName: media-data-triple
+            claimName: growlog-media-data-linstor
