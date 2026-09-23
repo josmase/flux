@@ -102,6 +102,24 @@ canonical three-replica StorageClass named `linstor`.
   deployment is Ready 1/1 on node 206.
 - Source PVC and snapshot are retained for rollback validation.
 
+## GitLab PostgreSQL investigation (2026-09-23)
+
+- The source PostgreSQL StatefulSet was restored from the authoritative
+  `gitlab-postgresql-triple` claim and is Ready 1/1 on node 206.
+- The restored target `gitlab-postgresql-linstor` is retained but was never
+  attached to the workload after the mismatch.
+- A read-only comparison found 223 differing PostgreSQL relation/WAL files
+  plus `pg_internal.init`/`pg_stat_tmp` differences. The target checksum was
+  `41c0f4a4116cc8a4bf8b23f0a29cef3ea0f70505c7500dd43b7718332b5fd76a` while
+  the source checksum after recovery was `d7e1bcfc0425b0f717cb7d3e0ca52defbe2250b59110bb0e03194570825951bf`.
+- The first source checksum captured immediately after the snapshot was
+  `be8d199b7669f52cdbb3bbf344181cdc3a6fc2c4573287af24d840556c9e5775`.
+  This indicates the snapshot was not a transactionally consistent PostgreSQL
+  backup; force-deleting the pod before snapshot completion likely left dirty
+  buffers/WAL state. Do not promote this target. A future retry must use a
+  graceful PostgreSQL shutdown (or a native pgBackRest/base-backup workflow)
+  and verify recovery before cutover.
+
 ## Per-service evidence template
 
 ```text
