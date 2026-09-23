@@ -6,11 +6,19 @@ resources:
   - ../../../base/gitlab-runners
   - ../../gitlab
   - ../../gitlab-runners
+  - redis-canonical.yaml
 
 components:
   - ../../components/prune-protection
 
 patches:
+  - path: redis-canonical-patch.yaml
+    target:
+      group: helm.toolkit.fluxcd.io
+      version: v2
+      kind: HelmRelease
+      name: gitlab
+      namespace: gitlab
   - target:
       group: helm.toolkit.fluxcd.io
       version: v2

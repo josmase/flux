@@ -1,0 +1,26 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: gitlab-redis-to-canonical
+  namespace: gitlab
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: gitlab-redis-triple
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-redis-linstor
+  namespace: gitlab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: linstor
+  dataSource:
+    name: gitlab-redis-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
