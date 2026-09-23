@@ -149,6 +149,7 @@ checksums, and rollback decisions.
 | `artifactory/artifactory-data-final` | `linstor-final/linstor-thin` | `artifactory/artifactory-data-triple` | CSI snapshot `artifactory-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Artifactory StatefulSet restored to 8/8 Running on node 206; source retained |
 | `artifactory/artifactory-pg17-recovered` | `linstor-final-bootstrap/linstor-thin` | `artifactory/artifactory-pg17-triple` | CSI snapshot `artifactory-pg17-recovered-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Artifactory PostgreSQL StatefulSet running on node 204 from `linstor-final-triple`; source retained |
 | `gitlab/gitlab-postgresql-linstor` | `linstor-final/linstor-thin` | `gitlab/gitlab-postgresql-triple` | CSI snapshot `gitlab-postgresql-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | GitLab PostgreSQL StatefulSet running on node 206 from `linstor-final-triple`; source retained |
+| `gitlab/gitlab-redis-linstor` | `linstor-final/linstor-thin` | `gitlab/gitlab-redis-triple` | CSI snapshot `gitlab-redis-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | GitLab Redis StatefulSet running on node 205 from `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
