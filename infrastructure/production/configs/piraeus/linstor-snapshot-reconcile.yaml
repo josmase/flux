@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linstor-snapshot-reconcile
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-snapshot-reconcile
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: linstor-snapshot-reconcile
+        spec:
+          serviceAccountName: linstor-protection-policy
+          restartPolicy: OnFailure
+          containers:
+            - name: reconcile
+              image: bitnami/kubectl:1.30.2
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  set -eu
+                  snapshot_class=linstor-snapshot
+                  hour="$(date -u +%H)"
+                  weekday="$(date -u +%u)"
+                  stamp="$(date -u +%Y%m%d%H)"
+                  kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
+                  awk '$3 == "linstor" {print $1 "\t" $2}' |
+                  while IFS="$(printf '\t')" read -r namespace pvc; do
+                    [ -n "$namespace" ] || continue
+                    case "$namespace/$pvc" in
+                      immich/*model*|growlog/*cache*) tier=cache; continue ;;
+                      cnpg-system/*|gitlab/*) tier=critical ;;
+                      *) tier=standard ;;
+                    esac
+                    safe="$(printf '%s-%s' "$namespace" "$pvc" | tr -c '[:alnum:]' '-' | cut -c1-38)"
+                    create_snapshot() {
+                      retention="$1"
+                      suffix="$2"
+                      name="snapshot-${safe}-${suffix}"
+                      printf '%s\n' \
+                        'apiVersion: snapshot.storage.k8s.io/v1' \
+                        'kind: VolumeSnapshot' \
+                        'metadata:' \
+                        "  name: ${name}" \
+                        "  namespace: ${namespace}" \
+                        '  labels:' \
+                        '    protection.josmase.dev/managed: "true"' \
+                        "    protection.josmase.dev/tier: ${tier}" \
+                        "    protection.josmase.dev/retention: ${retention}" \
+                        "    protection.josmase.dev/created: ${stamp}" \
+                        'spec:' \
+                        "  volumeSnapshotClassName: ${snapshot_class}" \
+                        '  source:' \
+                        "    persistentVolumeClaimName: ${pvc}" |
+                        kubectl apply -f -
+                    }
+                    create_snapshot hourly "h-${stamp}"
+                    [ "$hour" = "03" ] && create_snapshot daily "d-$(date -u +%Y%m%d)"
+                    [ "$hour" = "04" ] && [ "$weekday" = "7" ] && create_snapshot weekly "w-$(date -u +%G%V)"
+                    for retention in hourly daily weekly; do
+                      case "$retention" in hourly) keep=12 ;; daily) keep=7 ;; weekly) keep=4 ;; esac
+                      snapshots="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention" -o custom-columns=NAME:.metadata.name --no-headers --sort-by=.metadata.creationTimestamp)"
+                      count="$(printf '%s\n' "$snapshots" | sed '/^$/d' | wc -l)"
+                      remove=$((count - keep))
+                      [ "$remove" -gt 0 ] || continue
+                      printf '%s\n' "$snapshots" | sed '/^$/d' | head -n "$remove" | xargs -r -n1 kubectl delete volumesnapshot -n "$namespace"
+                    done
+                  done

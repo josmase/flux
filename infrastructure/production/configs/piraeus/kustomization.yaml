@@ -16,6 +16,7 @@ resources:
   - linstor-protection-policy.yaml
   - linstor-protection-validate.yaml
   - linstor-backup-policy-reconcile.yaml
+  - linstor-snapshot-reconcile.yaml
   - snapshot-retention-policy.yaml
   - snapshot-class.yaml
   - node-prerequisites.yaml
