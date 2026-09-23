@@ -1,17 +1,16 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: llm-switchboard-data-triple
+  name: llm-switchboard-data-linstor
   annotations:
-    storage-migration.source-pvc: llm-switchboard-data
-    storage-migration.phase: final-active
+    storage-migration.phase: canonical-blank
   labels:
     app: llm-switchboard
     storage-migration: llm-switchboard-linstor-final-2026-09
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final-triple
+  storageClassName: linstor
   resources:
     requests:
       storage: 1Gi

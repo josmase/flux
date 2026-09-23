@@ -157,6 +157,14 @@ canonical three-replica StorageClass named `linstor`.
 
 ## Per-service evidence template
 
+## LLM Switchboard blank migration (2026-09-23)
+
+- The old `llm-switchboard-data-triple` PVC was deleted by explicit request.
+- A blank `llm-switchboard-data-linstor` PVC was provisioned on canonical
+  StorageClass `linstor` and the Deployment now references it.
+- The workload remains unavailable solely because its referenced registry image
+  is missing; storage cutover itself completed.
+
 ```text
 Service/PVC:
 Source PVC/class:

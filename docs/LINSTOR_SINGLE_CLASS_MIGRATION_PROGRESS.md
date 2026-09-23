@@ -283,3 +283,7 @@ checksums, and rollback decisions.
   differed from the current source (`89f2410a66efaf2f8e4d03205f5b2489b4071c61667be9d01d2cefa268d4508e`),
   so no cutover was performed. The deployment remains Ready on
   `transmission-config-triple`.
+- LLM Switchboard was switched to a blank `llm-switchboard-data-linstor` PVC on
+  2026-09-23; the old data PVC was deleted by explicit request. The new PVC is
+  Bound on `linstor`; the workload remains in `ImagePullBackOff` because its
+  referenced registry image is unavailable.
