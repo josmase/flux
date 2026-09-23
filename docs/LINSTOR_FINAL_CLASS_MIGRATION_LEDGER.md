@@ -29,12 +29,13 @@ canonical three-replica StorageClass named `linstor`.
 |---|---|---|---|---|
 | Jellyfin | `media/jellyfin-config-pvc-jellyfin-0-linstor` (`linstor-final`) | `media/jellyfin-config-pvc-jellyfin-0-canonical` (`linstor`) | Quiesced snapshot; core DB/config checksums matched; GPU pod 2/2; `/health` OK | Source and snapshot retained |
 | Zero-cache | `default/zero-cache-data-triple` (`linstor-final-triple`) | `default/zero-cache-data-linstor-v2` (`linstor`) | Quiesced snapshot; `replica.db` checksum `c8e810ac94d29a99b11c37385d87fc1d4274ff7975f9aeddf5b8d4ed23a0375e` matched; pod 1/1; `/keepalive` OK | Source and failed v1 target/snapshot retained |
+| Gotify | `monitoring/gotify-data-triple` (`linstor-final-triple`) | `monitoring/gotify-data-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `bd3e7d54cc3c56b9cc78e20015a5a246f39d8eb791deb4aec216d118ece38e75` matched; pod 1/1 on node 206 | Source and snapshot retained |
 
 ## Pending services
 
 | Priority | Service/PVC | Source class | Target plan | State | Next action |
 |---:|---|---|---|---|---|
-| 1 | Next eligible stateful workload | `linstor-final-triple` or legacy class | New PVC on `linstor` from quiesced snapshot | pending | Inventory and select the smallest safe workload |
+| 1 | Next eligible stateful workload | `linstor-final-triple` or legacy class | New PVC on `linstor` from quiesced snapshot | pending | Inventory and select the next smallest safe workload |
 
 ## Per-service evidence template
 
@@ -53,4 +54,3 @@ Rollback expiry:
 Commit:
 Notes/blockers:
 ```
-
