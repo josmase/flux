@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data-linstor
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/name: grafana
+    storage-migration: final-class-2026-09-23
+    storage-migration-phase: canonical-target
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: linstor
+  dataSource:
+    name: grafana-data-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  resources:
+    requests:
+      storage: 10Gi

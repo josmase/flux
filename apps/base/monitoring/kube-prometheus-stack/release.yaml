@@ -56,8 +56,8 @@ spec:
         kubernetes.io/hostname: kubernetes-node-204
       persistence:
         enabled: true
-        existingClaim: grafana-data-triple
-        storageClassName: linstor-final-triple
+        existingClaim: grafana-data-linstor
+        storageClassName: linstor
         accessModes: ["ReadWriteOnce"]
         size: 10Gi
       # Load Gotify tokens as env vars with a prefix (uses Grafana chart envFromSecrets)
