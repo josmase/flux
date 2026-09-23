@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-protection-policy-validate-v1
+  name: linstor-protection-policy-validate-v2
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-protection-policy-validate
