@@ -22,6 +22,11 @@ canonical three-replica StorageClass named `linstor`.
 - Canonical StorageClass: `linstor` (`linstor-thin`, placement count 3)
 - Current mode: one-service-at-a-time
 - Source PVCs are retained by default.
+- Failed retry target PVCs were removed on 2026-09-23 at the user's request;
+  authoritative source PVCs and all snapshots were preserved. Clean replacement
+  targets `media/transmission-config-linstor-v3` and
+  `media/checkrr-config-linstor-v5` were created from the retained latest
+  snapshots and are currently Pending until a consumer is scheduled.
 
 ## Completed final-class migrations
 

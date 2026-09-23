@@ -265,3 +265,8 @@ checksums, and rollback decisions.
   restored a mismatching manifest (`d0e9f5e28c6675be95ba4b9ebee5c32bd2852f119416a4c25ac89009a4920db5`
   source vs `4719b8f5fa3d689d5b4542d9a4c2cca708862513128dcefcccc191b70bc6df40`
   target). Source remains authoritative and Checkrr is Ready 1/1.
+- At the user's request, failed target PVCs for Transmission and Checkrr were
+  deleted while source PVCs and snapshots were retained. New clean targets
+  `transmission-config-linstor-v3` and `checkrr-config-linstor-v5` were created
+  from the retained snapshots; both remain Pending until a test consumer is
+  scheduled.
