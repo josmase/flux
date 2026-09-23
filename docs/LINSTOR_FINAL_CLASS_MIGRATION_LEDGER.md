@@ -31,6 +31,7 @@ canonical three-replica StorageClass named `linstor`.
 | Zero-cache | `default/zero-cache-data-triple` (`linstor-final-triple`) | `default/zero-cache-data-linstor-v2` (`linstor`) | Quiesced snapshot; `replica.db` checksum `c8e810ac94d29a99b11c37385d87fc1d4274ff7975f9aeddf5b8d4ed23a0375e` matched; pod 1/1; `/keepalive` OK | Source and failed v1 target/snapshot retained |
 | Gotify | `monitoring/gotify-data-triple` (`linstor-final-triple`) | `monitoring/gotify-data-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `bd3e7d54cc3c56b9cc78e20015a5a246f39d8eb791deb4aec216d118ece38e75` matched; pod 1/1 on node 206 | Source and snapshot retained |
 | Grafana | `monitoring/grafana-data-triple` (`linstor-final-triple`) | `monitoring/grafana-data-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `6975db4e4d70cf796e6bc5da9e0acfebf0fea370a0c42fec033f1fc882243d1d` matched; Grafana 3/3 and `/api/health` database `ok` | Source and snapshot retained |
+| Alertmanager | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` (`linstor-final-triple`) | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `88e11f7dbf5bc58c60fffeb1680d6fda41dc91cbbf90571d9348614b8da6930d` matched; pod 2/2 and `/-/ready` OK | Source, snapshot, and short-name target retained |
 
 ## Pending services
 
