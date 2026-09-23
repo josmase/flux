@@ -3,8 +3,8 @@ kind: CronJob
 metadata:
   name: configarr
 spec:
-  suspend: true
-  schedule: "17 * * * *"
+  suspend: false
+  schedule: "* * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 5
