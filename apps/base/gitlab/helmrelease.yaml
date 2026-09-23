@@ -45,7 +45,7 @@ spec:
         key: password
 
       persistence:
-        storageClass: linstor-final-triple
+        storageClass: ${STORAGE_CLASS}
 
       redis:
         password:
@@ -81,7 +81,7 @@ spec:
       gitaly:
         replicaCount: 1
         persistence:
-          storageClass: linstor-final-triple
+          storageClass: ${STORAGE_CLASS}
           size: 50Gi
         resources:
           requests:
@@ -173,13 +173,13 @@ spec:
       metrics:
         enabled: false
 
-    minio:
-      install: true
-      replicas: 1
-      persistence:
-        storageClass: linstor-final-triple
-        size: 30Gi
-        existingClaim: gitlab-minio-triple
+      minio:
+        install: true
+        replicas: 1
+        persistence:
+          storageClass: ${STORAGE_CLASS}
+          size: 30Gi
+          existingClaim: gitlab-minio
       resources:
         requests:
           cpu: 100m
@@ -193,7 +193,7 @@ spec:
       ingress:
         enabled: false
       persistence:
-        storageClass: linstor-final-triple
+        storageClass: ${STORAGE_CLASS}
         size: 50Gi
       database:
         enabled: true

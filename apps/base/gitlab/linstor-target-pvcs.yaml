@@ -33,7 +33,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gitlab-minio-triple
+  name: gitlab-minio
   namespace: gitlab
   labels:
     app.kubernetes.io/part-of: gitlab
@@ -41,7 +41,7 @@ metadata:
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final-triple
+  storageClassName: linstor-final
   resources:
     requests:
       storage: 30Gi
