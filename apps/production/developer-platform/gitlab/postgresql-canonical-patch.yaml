@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/values/postgresql/primary/persistence/storageClass
+  value: linstor
+- op: replace
+  path: /spec/values/postgresql/primary/persistence/existingClaim
+  value: gitlab-postgresql-linstor-v2
