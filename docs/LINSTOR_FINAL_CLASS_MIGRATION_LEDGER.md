@@ -34,6 +34,7 @@ canonical three-replica StorageClass named `linstor`.
 | Alertmanager | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` (`linstor-final-triple`) | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `88e11f7dbf5bc58c60fffeb1680d6fda41dc91cbbf90571d9348614b8da6930d` matched; pod 2/2 and `/-/ready` OK | Source, snapshot, and short-name target retained |
 | Radarr-1 | `media/radarr-1-config-triple` (`linstor-final-triple`) | `media/radarr-1-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `923aa37a30c33df1fb9e9d5487c04c0babe83976a434dae4490a5a45be233fb0` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
 | Radarr-2 | `media/radarr-2-config-triple` (`linstor-final-triple`) | `media/radarr-2-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `f129090d6eaa40245536e7e8dca0f74048396dd87fe0e6ab299749f4099fb7dd` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
+| Radarr-3 | `media/radarr-3-config-triple` (`linstor-final-triple`) | `media/radarr-3-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `a9c6b80cfd9713ac83dce7847b328aaf45bf2e541e0454d6363c2e321e37e3fc` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
 
 ## Pending services
 
