@@ -29,19 +29,3 @@ spec:
   resources:
     requests:
       storage: 10Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: gitlab-minio
-  namespace: gitlab
-  labels:
-    app.kubernetes.io/part-of: gitlab
-    storage-migration: gitlab-linstor-2026-09
-    storage-migration-phase: copy-target
-spec:
-  accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final-triple
-  resources:
-    requests:
-      storage: 30Gi
