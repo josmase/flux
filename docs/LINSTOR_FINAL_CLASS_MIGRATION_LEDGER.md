@@ -35,6 +35,7 @@ canonical three-replica StorageClass named `linstor`.
 | Radarr-1 | `media/radarr-1-config-triple` (`linstor-final-triple`) | `media/radarr-1-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `923aa37a30c33df1fb9e9d5487c04c0babe83976a434dae4490a5a45be233fb0` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
 | Radarr-2 | `media/radarr-2-config-triple` (`linstor-final-triple`) | `media/radarr-2-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `f129090d6eaa40245536e7e8dca0f74048396dd87fe0e6ab299749f4099fb7dd` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
 | Radarr-3 | `media/radarr-3-config-triple` (`linstor-final-triple`) | `media/radarr-3-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `a9c6b80cfd9713ac83dce7847b328aaf45bf2e541e0454d6363c2e321e37e3fc` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
+| Radarr-4 | `media/radarr-4-config-triple` (`linstor-final-triple`) | `media/radarr-4-config-linstor` (`linstor`) | Quiesced snapshot; normalized full-file manifest checksum `0c907c95750a2ac7027ebacff45c8d4aad9cf091e84753fec04679c428202b32` matched; pod 1/1 Ready on node 204 | Source and snapshot retained |
 
 ## Pending services
 
