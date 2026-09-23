@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-policy-reconcile-v1
+  name: linstor-backup-policy-reconcile-v2
   namespace: piraeus-datastore
 spec:
   backoffLimit: 3
