@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reiverr
+spec:
+  template:
+    spec:
+      volumes:
+        - name: reiverr-config-pvc
+          persistentVolumeClaim:
+            claimName: reiverr-config-linstor
+        - name: reiverr-plugins-pvc
+          persistentVolumeClaim:
+            claimName: reiverr-plugins-linstor

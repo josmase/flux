@@ -1,0 +1,17 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: reiverr-config-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: reiverr-config-triple
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: reiverr-plugins-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: reiverr-plugins-triple

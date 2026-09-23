@@ -7,7 +7,6 @@ resources:
   - ../../../base/media/bazarr
   - ../../../base/media/checkrr
   - ../../../base/media/prowlarr
-  - ../../../base/media/reiverr
   - ../../../base/media/seerr
   - ../transmission
   - ../checkrr
