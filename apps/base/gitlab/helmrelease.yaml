@@ -150,6 +150,14 @@ spec:
             cpu: 500m
             memory: 512Mi
 
+      toolbox:
+        backups:
+          objectStorage:
+            backend: s3
+            config:
+              secret: gitlab-backup-object-storage
+              key: config
+
     postgresql:
       install: true
       image:
@@ -214,14 +222,6 @@ spec:
 
     minio:
       install: false
-
-    toolbox:
-      backups:
-        objectStorage:
-          backend: s3
-          config:
-            secret: gitlab-backup-object-storage
-            key: config
 
     registry:
       enabled: true
