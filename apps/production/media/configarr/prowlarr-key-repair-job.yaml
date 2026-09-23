@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: prowlarr-key-repair-all
+  name: prowlarr-key-repair-post-radarr1
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
