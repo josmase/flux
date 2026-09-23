@@ -22,7 +22,7 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-final-new
+        value: config-triple
   - target: {kind: Deployment, name: radarr}
     patch: |-
       - op: add

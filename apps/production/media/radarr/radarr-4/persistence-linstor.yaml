@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: config-final
+  name: config-triple
   labels:
     app: radarr-4
     storage-migration: radarr-4-linstor-final-2026-09
     storage-migration-phase: final-active
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 3Gi

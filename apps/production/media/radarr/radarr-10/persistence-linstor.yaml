@@ -4,14 +4,14 @@ metadata:
   # The deployment mounts this claim as config-final.  Keep the resource
   # name aligned with the already-bound final LINSTOR PVC; changing a bound
   # claim's storageClassName would otherwise fail Flux reconciliation.
-  name: config-final-new
+  name: config-triple
   labels:
     app: radarr-10
     storage-migration: radarr-10-linstor-final-2026-09
     storage-migration-phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 2Gi
