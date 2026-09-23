@@ -4,4 +4,10 @@ kind: Kustomization
 namespace: minecraft
 
 resources:
+  - ../../base/minecraft
   - secret.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
+
+patches:
+  - path: deployment-canonical.yaml

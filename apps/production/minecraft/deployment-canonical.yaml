@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server
+  namespace: minecraft
+spec:
+  template:
+    spec:
+      volumes:
+        - name: minecraft-data
+          persistentVolumeClaim:
+            claimName: minecraft-data-linstor
+        - name: minecraft-modpacks
+          persistentVolumeClaim:
+            claimName: minecraft-modpacks-linstor
