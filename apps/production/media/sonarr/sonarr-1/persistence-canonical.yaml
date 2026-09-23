@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-linstor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 4Gi
+  storageClassName: linstor
+  dataSource:
+    name: sonarr-1-config-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
