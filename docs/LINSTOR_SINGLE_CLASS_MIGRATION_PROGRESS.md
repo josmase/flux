@@ -9,11 +9,36 @@ checksums, and rollback decisions.
 
 ## Current status
 
-- Overall: `[!] Bulk cutover blocked by LINSTOR CSI snapshot/clone recovery`
-- Current phase: `Phase 3 - guarded pause (GitLab cutover complete; Jellyfin pilot blocked)`
+- Overall: `[!] Canonical class cutover gated by immutable PVC classes and workload recovery blockers`
+- Current phase: `Phase 5 - canonical class transition readiness`
 - Last updated: `2026-09-23 Europe/Stockholm`
 - Operator: `Codex`
-- Flux revision: `main@sha1:01ff69189af2bb2610367f10b215b9e4652c01c2` (last observed; `3781c2a9` is pushed and awaiting source-controller fetch)
+- Flux revision: `main@sha1:be49a0f770e243185bb0e7abe40708fd56600556`
+
+### Live verification — 2026-09-23
+
+- All Kubernetes nodes are `Ready`; all four LINSTOR satellites and the
+  `LinstorCluster` are healthy (`Available=True`, `Configured=True`).
+- The canonical `linstor` StorageClass is present, non-default, backed by
+  `linstor-thin`, and configured for three diskful replicas.
+- The active replacement inventory is 52 Bound PVCs on
+  `linstor-final-triple`, one Jellyfin PVC on `linstor-final`, and one
+  intentionally unbound `default/media-data-triple` claim for a scaled-to-zero
+  workload. No active PVC currently uses `linstor-final-bootstrap`.
+- Artifactory recovered after the node-204 reset: Artifactory is `8/8`, Nginx
+  is `1/1`, PostgreSQL is `1/1`, endpoints are populated, and the registry
+  ping returns HTTP 200. The elevated restart counts are historical recovery
+  evidence, not current readiness failures.
+- `apps-media-arr`, `apps-photos`, and `apps-services` still report health
+  failures or reconciliation in progress. Radarr-1/2 are waiting on volume
+  initialization; the LLM Switchboard and boplats web pods now reach the
+  registry but their requested image manifests/blobs return `NotFound`.
+  These are image/workload issues, not LINSTOR replica failures.
+- Existing PVC `storageClassName` fields are immutable once bound. The final
+  class transition must therefore replace claims one workload at a time (with
+  a verified snapshot/backup, checksum, cutover, and rollback window); simply
+  changing `linstor-final-triple` strings in GitOps would cause reconciliation
+  failures and is not safe.
 
 ## Safety baseline
 
@@ -75,12 +100,13 @@ checksums, and rollback decisions.
 
 ### Phase 3 — Bound PVC migration
 
-- [ ] Standard workloads migrated.
-- [ ] Monitoring and cache workloads migrated.
-- [ ] Arr/media configuration migrated.
+- [x] Standard workloads migrated to three-replica targets.
+- [x] Monitoring and cache workloads migrated to three-replica targets.
+- [x] Arr/media configuration migrated to three-replica targets.
 - [x] GitLab migrated.
 - [x] PostgreSQL migrated.
-- [ ] Remaining bound PVCs migrated.
+- [~] Remaining bound PVCs migrated; Jellyfin remains on `linstor-final` for
+  the GPU-node exception.
 
 ### Phase 4 — Legacy pool migration
 
@@ -92,7 +118,7 @@ checksums, and rollback decisions.
 
 - [ ] No PVC references retired classes.
 - [ ] Retired StorageClasses removed safely.
-- [ ] Final class named exactly `linstor` created with three replicas.
+- [x] Final class named exactly `linstor` created with three replicas.
 - [ ] All GitOps PVC references use `storageClassName: linstor`.
 - [ ] Temporary class removed.
 
@@ -200,3 +226,9 @@ checksums, and rollback decisions.
   fetching GitLab's `info/refs` endpoint. The live GitLab release and
   `apps-gitlab` remain Ready at the last good revision; retry source
   reconciliation before treating the new secret manifests as applied.
+- After Artifactory recovered, retries for the remaining failed workloads no
+  longer returned `503`; the LLM Switchboard and boplats web image requests
+  now return registry `NotFound` for the requested manifest/blob. Their pods
+  remain unready until those image artifacts are restored or their GitOps
+  references are corrected. Radarr-1/2 were recreated and are waiting for
+  volume initialization; their LINSTOR PVCs remain intact.
