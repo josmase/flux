@@ -8,8 +8,8 @@ artifactory:
     joinKeySecretName: my-joinkey-secret
 
     persistence:
-      existingClaim: artifactory-data-triple
-      storageClassName: linstor-final-triple
+      existingClaim: artifactory-data-linstor
+      storageClassName: linstor
       size: 12Gi
   nginx:
     enabled: true

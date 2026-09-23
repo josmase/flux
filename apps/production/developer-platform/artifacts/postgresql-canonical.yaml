@@ -24,3 +24,30 @@ spec:
     name: artifactory-pg17-to-canonical
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: artifactory-data-to-canonical
+  namespace: artifactory
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: artifactory-data-triple
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: artifactory-data-linstor
+  namespace: artifactory
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 12Gi
+  storageClassName: linstor
+  dataSource:
+    name: artifactory-data-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
