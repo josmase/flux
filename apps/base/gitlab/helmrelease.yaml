@@ -175,14 +175,14 @@ spec:
       metrics:
         enabled: false
 
-      minio:
-        install: false
-        replicas: 1
-        persistence:
-          enabled: false
-          storageClass: linstor-final-triple
-          size: 50Gi
-          existingClaim: gitlab-minio
+    minio:
+      install: false
+      replicas: 1
+      persistence:
+        enabled: false
+        storageClass: linstor-final-triple
+        size: 50Gi
+        existingClaim: gitlab-minio
       resources:
         requests:
           cpu: 100m
