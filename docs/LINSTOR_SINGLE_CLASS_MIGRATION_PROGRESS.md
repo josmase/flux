@@ -136,6 +136,7 @@ checksums, and rollback decisions.
 | Namespace/PVC | Source class/pool | Target PVC | Backup ID/time | Checksum | Cutover | Rollback expiry | Notes |
 |---|---|---|---|---|---|---|---|
 | `default/zero-cache-data-linstor` | `linstor-final/linstor-thin` | `default/zero-cache-data-triple` | `pvc-12ccfb65-b8c5-4955-bef8-fa0bc6f71282_back_20260922_192531` / success | source/target manifests match; snapshot restore readable | live cutover complete | pending | Three `UpToDate` diskful replicas on 204/205/206; restored disposable PVC `zero-cache-snapshot-restore` mounted and verified |
+| `default/zero-cache-data-triple` | `linstor-final-triple/linstor-thin` | `default/zero-cache-data-linstor` | CSI snapshot `zero-cache-data-to-canonical` / ready | **mismatch**: source `ee5ce14a…f035254dd`, target `c8e810ac…d23a0375e` for `replica.db` | rolled back; source authoritative | pending | Canonical target has three `UpToDate` replicas but is retained for forensics; writer activity was not quiesced before the snapshot, so no data was deleted |
 | `media/checkrr-config-linstor` | `linstor-final/linstor-thin` | `media/checkrr-config-triple` | CSI snapshot `checkrr-config-linstor-snapshot` / ready | restored PVC mounted; workload healthy | live cutover complete | pending | Checkrr running on node 205 from `linstor-final-triple`; source retained |
 | `media/bazarr-config-linstor` | `linstor-final/linstor-thin` | `media/bazarr-config-triple` | CSI snapshot `bazarr-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Bazarr running on node 205 from `linstor-final-triple`; source retained |
 | `media/prowlarr-config-linstor` | `linstor-final/linstor-thin` | `media/prowlarr-config-triple` | CSI snapshot `prowlarr-config-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Prowlarr running on node 205 from `linstor-final-triple`; source retained |
@@ -232,3 +233,10 @@ checksums, and rollback decisions.
   remain unready until those image artifacts are restored or their GitOps
   references are corrected. Radarr-1/2 were recreated and are waiting for
   volume initialization; their LINSTOR PVCs remain intact.
+- Canonical-class zero-cache pilot on 2026-09-23 was rolled back: the
+  `linstor` claim provisioned three `UpToDate` replicas and the workload was
+  switched back to its retained `linstor-final-triple` claim after the
+  snapshot restore produced a different `replica.db` checksum. The source
+  remains authoritative; the target and CSI snapshot are retained. Future
+  claim replacement must quiesce the writer before taking the source
+  snapshot, then verify checksums before cutover.
