@@ -12,5 +12,8 @@ resources:
   - ../checkrr
   - ../reiverr
 
+patches:
+  - path: checkrr-deployment-patch.yaml
+
 components:
   - ../../components/prune-protection

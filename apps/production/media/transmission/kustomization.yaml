@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../../../apps/base/media/transmission
+  - persistence-clean-target.yaml
 
 patches:
   - path: deployment-patch.yaml

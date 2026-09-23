@@ -269,4 +269,11 @@ checksums, and rollback decisions.
   deleted while source PVCs and snapshots were retained. New clean targets
   `transmission-config-linstor-v3` and `checkrr-config-linstor-v5` were created
   from the retained snapshots; both remain Pending until a test consumer is
-  scheduled.
+  scheduled. Because the data was confirmed disposable, both targets were then
+  recreated as blank `linstor` volumes and the workloads were switched to them;
+  both are Ready 1/1.
+- Transmission replacement target v3 mounted successfully for validation, but
+  its checksum (`def4d9ce5d9aa6b4607ce23e78893c94f37128bd39ecefc928513d2e7f8d3737`)
+  differed from the current source (`89f2410a66efaf2f8e4d03205f5b2489b4071c61667be9d01d2cefa268d4508e`),
+  so no cutover was performed. The deployment remains Ready on
+  `transmission-config-triple`.

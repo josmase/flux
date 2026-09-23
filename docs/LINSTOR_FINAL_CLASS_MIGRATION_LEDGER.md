@@ -26,7 +26,16 @@ canonical three-replica StorageClass named `linstor`.
   authoritative source PVCs and all snapshots were preserved. Clean replacement
   targets `media/transmission-config-linstor-v3` and
   `media/checkrr-config-linstor-v5` were created from the retained latest
-  snapshots and are currently Pending until a consumer is scheduled.
+  snapshots; after confirming the data is disposable, those replacement PVCs
+  were recreated as blank `linstor` volumes and both workloads were switched
+  to them. The source claims and snapshots remain retained for audit.
+
+- Replacement validation: Transmission v3 was attached to a temporary
+  read-only validation pod without fsck failure, but its normalized manifest
+  checksum `def4d9ce5d9aa6b4607ce23e78893c94f37128bd39ecefc928513d2e7f8d3737`
+  differed from the current source checksum
+  `89f2410a66efaf2f8e4d03205f5b2489b4071c61667be9d01d2cefa268d4508e`.
+  Cutover was blocked and the workload remains on the source claim.
 
 ## Completed final-class migrations
 

@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: transmission
+  name: checkrr
 spec:
   template:
     spec:
       volumes:
-        - name: transmission-config
+        - name: checkrr-config-pvc
           persistentVolumeClaim:
-            claimName: transmission-config-linstor-v3
+            claimName: checkrr-config-linstor-v5
