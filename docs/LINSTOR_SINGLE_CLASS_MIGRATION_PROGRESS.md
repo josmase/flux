@@ -192,7 +192,7 @@ checksums, and rollback decisions.
 | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-alertmanager-kube-prometheus-stack-alertmanager-0` | `linstor-final/linstor-thin` | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` | CSI snapshot `alertmanager-linstor-to-triple` / ready | target mounted; Alertmanager pod 2/2 Ready | live cutover complete | pending | Alertmanager restored to `linstor-final-triple` on node 205; source retained |
 
 | `media/jellyfin-config-pvc-jellyfin-0-linstor` | `linstor-final/linstor-thin` | `media/jellyfin-config-pvc-jellyfin-0-canonical` | CSI snapshot `jellyfin-config-to-canonical` / ready | core `jellyfin.db`, `kodisyncqueue.db`, and `system.xml` matched | live cutover complete; 2/2 healthy on GPU node | pending | Canonical `linstor` target has three replicas; source retained |
-| `default/zero-cache-data-triple` | `linstor-final-triple/linstor-thin` | `default/zero-cache-data-linstor-v2` | CSI snapshot `zero-cache-data-to-canonical-v2` / ready | `replica.db` matched: `c8e810ac94d29a99b11c37385d87fc1d4274ff7975f9aeddf5b8d4ed23a0375e` | cutover in progress; replay/startup validation pending | pending | Writer quiesced before snapshot; v1 target/snapshot retained for forensics |
+| `default/zero-cache-data-triple` | `linstor-final-triple/linstor-thin` | `default/zero-cache-data-linstor-v2` | CSI snapshot `zero-cache-data-to-canonical-v2` / ready | `replica.db` matched: `c8e810ac94d29a99b11c37385d87fc1d4274ff7975f9aeddf5b8d4ed23a0375e` | live cutover complete; 1/1 Ready and `/keepalive` OK | pending | Writer quiesced before snapshot; v1 target/snapshot retained for forensics |
 
 ## Unbound-resource ledger
 
