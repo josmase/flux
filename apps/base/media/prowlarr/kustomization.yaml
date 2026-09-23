@@ -5,6 +5,8 @@ resources:
   - deployment.yaml
   # Replacement PVC only; the Deployment is switched after copy validation.
   - persistence-linstor.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
   - ingress.yaml
   - service.yaml
 
