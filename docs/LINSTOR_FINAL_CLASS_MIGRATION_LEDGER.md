@@ -54,6 +54,21 @@ canonical three-replica StorageClass named `linstor`.
 |---:|---|---|---|---|---|
 | 1 | Next eligible stateful workload | `linstor-final-triple` or legacy class | New PVC on `linstor` from quiesced snapshot | pending | Inventory and select the next smallest safe workload |
 
+## Checkrr investigation (2026-09-23)
+
+- The source volume was checked offline on node 206 with `e2fsck -fn` and
+  passed cleanly (`28/65808 files`, `22820/263102 blocks`).
+- Both canonical clones (`checkrr-config-linstor` and a fresh v3 clone made
+  while the source was fully unmounted) reproduced the same ext4 metadata
+  faults: invalid resize inode, deleted/incorrect directory entries for
+  `log`, `backup`, and `cache`, and bitmap/reference-count mismatches.
+- User-file manifests still matched (`8` files; v3 checksum
+  `5f65119d02dff0ef1f3281c83061a71bdb3f1f966cc0c69abca0d9eb7be7c083`).
+- This isolates the defect to the LINSTOR CSI snapshot/restore path for this
+  volume, rather than application writes or replica divergence. The source
+  workload was restored and is Ready; all defective targets and snapshots are
+  retained for repair/vendor analysis.
+
 ## Per-service evidence template
 
 ```text
