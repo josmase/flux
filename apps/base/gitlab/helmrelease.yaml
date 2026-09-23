@@ -43,7 +43,7 @@ spec:
           enabled: false
 
       minio:
-        enabled: false
+        enabled: true
 
       initialRootPassword:
         secret: gitlab-initial-root-password
@@ -179,13 +179,12 @@ spec:
         enabled: false
 
     minio:
-      install: false
+      install: true
       replicas: 1
       persistence:
-        enabled: false
+        enabled: true
         storageClass: linstor-final-triple
-        size: 50Gi
-        existingClaim: gitlab-minio
+        size: 30Gi
       resources:
         requests:
           cpu: 100m
