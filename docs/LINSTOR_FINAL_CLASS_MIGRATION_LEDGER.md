@@ -49,13 +49,14 @@ canonical three-replica StorageClass named `linstor`.
 | Prowlarr | `media/prowlarr-config-triple` (`linstor-final-triple`) | `media/prowlarr-config-linstor` (`linstor`) | Quiesced snapshot `prowlarr-data-to-canonical`; normalized full-file manifest checksum `2bd89bc85853f441f064086a5f819d18885e4d71146cd2f05217bd4264dc5f39` matched (892 files); target Bound with canonical 3-replica placement; pod 1/1 Ready on node 206 | Source and snapshot retained |
 | Seerr | `media/seerr-config-triple` (`linstor-final-triple`) | `media/seerr-config-linstor` (`linstor`) | Quiesced snapshot `seerr-data-to-canonical`; normalized full-file manifest checksum `6206f278e2bc761fe4267909572e00de0d92fce2643a2d68b0d72f85fc3bf1ac` matched (36 files); target Bound with canonical 3-replica placement; pod 1/1 Ready on node 206 and server ready on port 5055 | Source and snapshot retained |
 | Arr-dashboard | `media/arr-dashboard-config-triple` (`linstor-final-triple`) | `media/arr-dashboard-config-linstor` (`linstor`) | Quiesced snapshot `arr-dashboard-data-to-canonical`; normalized full-file manifest checksum `f189c4902de8d4a0776dc0e251cada2a07f0c32a89875957f1eac35e94aef839` matched (36 files); target Bound with canonical 3-replica placement; pod 1/1 Ready on node 204 and server healthy on port 3001 | Source and snapshot retained |
+| Transmission | `media/transmission-config-triple` (`linstor-final-triple`) | `media/transmission-config-linstor` (`linstor`) | Quiesced snapshot `transmission-data-to-canonical`; normalized full-file manifest checksum `d1bfb88b750c1fa18c3826ab4806f48b60a4983fa4857f5a700313bd74636f07` matched; target Bound with three LINSTOR resources on nodes 204/205/206; pod 1/1 Ready on node 206 | Source and snapshot retained |
 | Checkrr | `media/checkrr-config-triple` (`linstor-final-triple`) | `media/checkrr-config-linstor` (`linstor`) | **Blocked**: normalized manifest checksum `2a6a890991fc64898a80526a4845a98ec23c9d5d2e253e386d6073d4bab3fb5c` matched (8 files; filesystem reported recoverable `Bad message` entries), but target failed CSI fsck (`Resize inode not valid; UNEXPECTED INCONSISTENCY`). Rolled back to source; pod 1/1 Ready on node 206. | Source authoritative and healthy; target/snapshot retained for fsck investigation |
 
 ## Pending services
 
 | Priority | Service/PVC | Source class | Target plan | State | Next action |
 |---:|---|---|---|---|---|
-| 1 | Next eligible stateful workload | `linstor-final-triple` or legacy class | New PVC on `linstor` from quiesced snapshot | pending | Inventory and select the next smallest safe workload |
+| 1 | Checkrr (`media/checkrr-config-triple`) | `linstor-final-triple` | File-level copy to a fresh `linstor` PVC; do not use the defective CSI snapshot path until the CSI/LINSTOR upgrade is tested | blocked | CSI snapshot restore reproduces ext4 metadata corruption; source remains authoritative |
 
 ## Checkrr investigation (2026-09-23)
 
@@ -79,6 +80,17 @@ canonical three-replica StorageClass named `linstor`.
   `v1.13.x` together with LINSTOR `1.35+` in a disposable test volume before
   retrying snapshot-based migration. The current cluster is CSI `v1.12.0`
   with LINSTOR `1.34.2`.
+
+## Transmission migration (2026-09-23)
+
+- The deployment was scaled to zero before snapshot creation.
+- Snapshot `transmission-data-to-canonical` restored to
+  `media/transmission-config-linstor` on the canonical `linstor` class.
+- Source and target normalized manifests matched:
+  `d1bfb88b750c1fa18c3826ab4806f48b60a4983fa4857f5a700313bd74636f07`.
+- The target has three LINSTOR resources on nodes 204, 205, and 206; the
+  deployment is Ready 1/1 on node 206.
+- Source PVC and snapshot are retained for rollback validation.
 
 ## Per-service evidence template
 

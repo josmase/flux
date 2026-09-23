@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: transmission-config-triple
 spec:
-  storageClassName: linstor-final-triple
+  storageClassName: linstor

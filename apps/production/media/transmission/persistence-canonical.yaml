@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: transmission-config-linstor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: linstor
+  dataSource:
+    name: transmission-data-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
