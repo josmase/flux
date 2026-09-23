@@ -4,15 +4,11 @@ metadata:
   name: config-linstor
   labels:
     app: radarr-1
-    storage-migration: final-class-2026-09-23
-    storage-migration-phase: canonical-target
+    storage-migration: clean-rebuild-2026-09-24
+    storage-migration-phase: clean-target
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: linstor
-  dataSource:
-    name: radarr-1-data-to-canonical
-    kind: VolumeSnapshot
-    apiGroup: snapshot.storage.k8s.io
   resources:
     requests:
-      storage: 22Gi
+      storage: 2Gi
