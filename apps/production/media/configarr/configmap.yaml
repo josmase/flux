@@ -7,14 +7,33 @@ data:
     telemetry: false
 
     sonarr:
+      sonarr-1:
+        base_url: http://sonarr-1-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_1_API_KEY
+        root_folders: [/mnt/storage/files/series/1]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: sonarrone
+                tv_directory: ""
+          delete_unmanaged: {enabled: false}
       sonarr-2:
         base_url: http://sonarr-2-sonarr.media.svc.cluster.local:8989
         api_key: !env SONARR_2_API_KEY
-        root_folders:
-          - /mnt/storage/files/series/2
+        root_folders: [/mnt/storage/files/series/2]
         download_clients:
           data:
-            - name: Transmission
+            - name: Transmission - Media
               type: Transmission
               enable: true
               priority: 1
@@ -27,17 +46,74 @@ data:
                 url_base: /transmission/
                 tv_category: sonarrtwo
                 tv_directory: ""
-          delete_unmanaged:
-            enabled: false
-
+          delete_unmanaged: {enabled: false}
+      sonarr-3:
+        base_url: http://sonarr-3-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_3_API_KEY
+        root_folders: [/mnt/storage/files/series/3]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: sonarrthree
+                tv_directory: ""
+          delete_unmanaged: {enabled: false}
+      sonarr-4:
+        base_url: http://sonarr-4-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_4_API_KEY
+        root_folders: [/mnt/storage/files/series/4]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: sonarrfour
+                tv_directory: ""
+          delete_unmanaged: {enabled: false}
+      sonarr-5:
+        base_url: http://sonarr-5-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_5_API_KEY
+        root_folders: [/mnt/storage/files/series/5]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: sonarrfive
+                tv_directory: ""
+          delete_unmanaged: {enabled: false}
       sonarr-6:
         base_url: http://sonarr-6-sonarr.media.svc.cluster.local:8989
         api_key: !env SONARR_6_API_KEY
-        root_folders:
-          - /mnt/storage/files/series/6
+        root_folders: [/mnt/storage/files/series/6]
         download_clients:
           data:
-            - name: Transmission
+            - name: Transmission - Media
               type: Transmission
               enable: true
               priority: 1
@@ -50,10 +126,237 @@ data:
                 url_base: /transmission/
                 tv_category: seriessix
                 tv_directory: ""
-          delete_unmanaged:
-            enabled: false
+          delete_unmanaged: {enabled: false}
 
-    radarr: {}
+    radarr:
+      radarr-1:
+        base_url: http://radarr-1-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_1_API_KEY
+        root_folders: [/mnt/storage/files/movies/1]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: ""
+          delete_unmanaged: {enabled: false}
+      radarr-2:
+        base_url: http://radarr-2-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_2_API_KEY
+        root_folders: [/mnt/storage/files/movies/2]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: ""
+          delete_unmanaged: {enabled: false}
+      radarr-3:
+        base_url: http://radarr-3-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_3_API_KEY
+        root_folders: [/mnt/storage/files/movies/3]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: ""
+          delete_unmanaged: {enabled: false}
+      radarr-4:
+        base_url: http://radarr-4-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_4_API_KEY
+        root_folders: [/mnt/storage/files/movies/4]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrfour
+          delete_unmanaged: {enabled: false}
+      radarr-5:
+        base_url: http://radarr-5-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_5_API_KEY
+        root_folders: [/mnt/storage/files/movies/5]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrfive
+          delete_unmanaged: {enabled: false}
+      radarr-6:
+        base_url: http://radarr-6-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_6_API_KEY
+        root_folders: [/mnt/storage/files/movies/6]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrsix
+          delete_unmanaged: {enabled: false}
+      radarr-7:
+        base_url: http://radarr-7-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_7_API_KEY
+        root_folders: [/mnt/storage/files/movies/7]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrseven
+          delete_unmanaged: {enabled: false}
+      radarr-8:
+        base_url: http://radarr-8-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_8_API_KEY
+        root_folders: [/mnt/storage/files/movies/8]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarreight
+          delete_unmanaged: {enabled: false}
+      radarr-9:
+        base_url: http://radarr-9-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_9_API_KEY
+        root_folders: [/mnt/storage/files/movies/9]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrnine
+          delete_unmanaged: {enabled: false}
+      radarr-10:
+        base_url: http://radarr-10-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_10_API_KEY
+        root_folders: [/mnt/storage/files/movies/10]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrten
+          delete_unmanaged: {enabled: false}
+      radarr-11:
+        base_url: http://radarr-11-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_11_API_KEY
+        root_folders: [/mnt/storage/files/movies/11]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarreleven
+          delete_unmanaged: {enabled: false}
+      radarr-12:
+        base_url: http://radarr-12-radarr.media.svc.cluster.local:7878
+        api_key: !env RADARR_12_API_KEY
+        root_folders: [/mnt/storage/files/movies/12]
+        download_clients:
+          data:
+            - name: Transmission - Media
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                movie_category: radarrtwelve
+          delete_unmanaged: {enabled: false}
 
     prowlarr:
       main:
@@ -61,28 +364,23 @@ data:
         api_key: !env PROWLARR_API_KEY
         applications:
           data:
-            - name: Sonarr 2
-              type: Sonarr
-              sync_level: fullSync
-              fields:
-                prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696
-                baseUrl: http://sonarr-2-sonarr.media.svc.cluster.local:8989
-                apiKey: !env SONARR_2_API_KEY
-                syncCategories: [5000, 5010, 5020, 5030, 5040, 5045, 5050, 5090]
-                animeSyncCategories: [5070]
-                syncAnimeStandardFormatSearch: true
-              tags: []
-            - name: Sonarr 6
-              type: Sonarr
-              sync_level: fullSync
-              fields:
-                prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696
-                baseUrl: http://sonarr-6-sonarr.media.svc.cluster.local:8989
-                apiKey: !env SONARR_6_API_KEY
-                syncCategories: [5000, 5010, 5020, 5030, 5040, 5045, 5050, 5090]
-                animeSyncCategories: [5070]
-                syncAnimeStandardFormatSearch: true
-              tags: []
-          delete_unmanaged:
-            enabled: false
+            - {name: Sonarr 1, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-1-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_1_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Sonarr 2, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-2-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_2_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Sonarr 3, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-3-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_3_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Sonarr 4, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-4-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_4_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Sonarr 5, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-5-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_5_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Sonarr 6, type: Sonarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://sonarr-6-sonarr.media.svc.cluster.local:8989, apiKey: !env SONARR_6_API_KEY, syncCategories: [5000,5010,5020,5030,5040,5045,5050,5090], animeSyncCategories: [5070], syncAnimeStandardFormatSearch: true}, tags: []}
+            - {name: Radarr 1, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-1-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_1_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 2, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-2-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_2_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 3, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-3-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_3_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 4, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-4-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_4_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 5, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-5-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_5_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 6, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-6-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_6_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 7, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-7-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_7_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 8, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-8-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_8_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 9, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-9-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_9_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 10, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-10-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_10_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 11, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-11-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_11_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+            - {name: Radarr 12, type: Radarr, sync_level: fullSync, fields: {prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696, baseUrl: http://radarr-12-radarr.media.svc.cluster.local:7878, apiKey: !env RADARR_12_API_KEY, syncCategories: [2000,2010,2020,2030,2040,2045,2050,2060,2070,2080,2090]}, tags: []}
+          delete_unmanaged: {enabled: false}
           sync_indexers: true

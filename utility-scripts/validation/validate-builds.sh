@@ -40,7 +40,7 @@ PRODUCTION_DOMAINS=(
     "apps-media-foundation|./apps/production/media/foundation"
     "apps-media-download|./apps/production/media/download"
     "apps-media-arr|./apps/production/media/arr"
-    "apps-media-sonarr-pilot|./apps/production/media/sonarr-pilot"
+    "apps-media-configarr|./apps/production/media/configarr"
     "apps-media-playback|./apps/production/media/playback"
     "apps-photos|./apps/production/photos"
     "apps-gitlab|./apps/production/developer-platform/gitlab"
