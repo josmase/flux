@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: checkrr-config-linstor
+  labels:
+    app: checkrr
+    storage-migration: checkrr-linstor-canonical-2026-09
+    storage-migration-phase: cutover-complete
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor
+  dataSource:
+    name: checkrr-data-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  resources:
+    requests:
+      storage: 1Gi

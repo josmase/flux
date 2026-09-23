@@ -9,6 +9,8 @@ resources:
   - service.yaml
   - deployment.yaml
   - persistence-linstor.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
 
 labels:
   - includeSelectors: true
