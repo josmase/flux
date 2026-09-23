@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - ../../../../base/media/sonarr-template
   - persistence-linstor.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
 
 namePrefix: sonarr-6-
 
@@ -21,6 +23,9 @@ patches:
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
         value: config-triple
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: config-linstor
       - op: add
         path: /spec/template/spec/nodeSelector
         value: {kubernetes.io/hostname: kubernetes-node-204}
