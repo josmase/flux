@@ -68,6 +68,14 @@ canonical three-replica StorageClass named `linstor`.
   volume, rather than application writes or replica divergence. The source
   workload was restored and is Ready; all defective targets and snapshots are
   retained for repair/vendor analysis.
+- Repair trial: offline `e2fsck -fy` on the original clone repaired the
+  metadata and allowed it to mount, but the repaired clone still failed the
+  application manifest check (9 files including `lost+found/#15`; the
+  `database/checkrr.db` checksum differed). It was not promoted.
+- Deferred platform update: evaluate upgrading LINSTOR CSI from `v1.12.0` to
+  `v1.13.x` together with LINSTOR `1.35+` in a disposable test volume before
+  retrying snapshot-based migration. The current cluster is CSI `v1.12.0`
+  with LINSTOR `1.34.2`.
 
 ## Per-service evidence template
 
