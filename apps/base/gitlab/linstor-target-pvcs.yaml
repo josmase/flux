@@ -44,4 +44,4 @@ spec:
   storageClassName: linstor-final-triple
   resources:
     requests:
-      storage: 50Gi
+      storage: 30Gi
