@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config-pvc-jellyfin-0-canonical
+  namespace: media
+  labels:
+    recurring-job-group-backup: "true"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: linstor
+  dataSource:
+    name: jellyfin-config-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  resources:
+    requests:
+      storage: 40Gi
