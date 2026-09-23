@@ -177,6 +177,7 @@ spec:
         install: false
         replicas: 1
         persistence:
+          enabled: false
           storageClass: linstor-final-triple
           size: 50Gi
           existingClaim: gitlab-minio
