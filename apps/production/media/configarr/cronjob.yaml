@@ -4,7 +4,7 @@ metadata:
   name: configarr
 spec:
   suspend: false
-  schedule: "* * * * *"
+  schedule: "17 * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 5
@@ -23,7 +23,7 @@ spec:
               imagePullPolicy: IfNotPresent
               env:
                 - name: DRY_RUN
-                  value: "true"
+                  value: "false"
               envFrom:
                 - secretRef:
                     name: configarr-env
