@@ -3,8 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../../../apps/base/media/transmission
-  - snapshot-canonical.yaml
-  - persistence-canonical.yaml
 
 patches:
   - path: deployment-patch.yaml
