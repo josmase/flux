@@ -30,6 +30,6 @@ artifactory:
         kubernetes.io/hostname: kubernetes-node-204
       persistence:
         enabled: true
-        existingClaim: artifactory-pg17-triple
-        storageClass: linstor-final-bootstrap
+        existingClaim: artifactory-pg17-linstor
+        storageClass: linstor
         size: 5Gi

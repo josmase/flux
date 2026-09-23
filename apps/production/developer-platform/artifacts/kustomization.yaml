@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../../base/artifactory
   - ../../artifactory
+  - postgresql-canonical.yaml
 
 components:
   - ../../components/prune-protection
