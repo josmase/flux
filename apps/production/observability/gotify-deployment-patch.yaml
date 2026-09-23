@@ -8,4 +8,4 @@ spec:
       volumes:
         - name: gotify-data
           persistentVolumeClaim:
-            claimName: gotify-data-triple
+            claimName: gotify-data-linstor

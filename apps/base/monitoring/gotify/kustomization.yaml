@@ -5,6 +5,9 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - persistence-resized.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
 
 labels:
   - pairs:
