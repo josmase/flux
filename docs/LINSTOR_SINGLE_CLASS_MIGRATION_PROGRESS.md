@@ -157,3 +157,6 @@ checksums, and rollback decisions.
 - Bazarr initially hit an Artifactory image-pull timeout during cutover. A
   retry succeeded; the init image and application image pulled successfully,
   and Bazarr is now Running from the three-replica target PVC.
+- GitLab MinIO target `gitlab-minio-triple` was restored and attached, but
+  the pod hit an image-pull failure during cutover. The deployment was
+  reverted to the source PVC; target and snapshot are retained for retry.
