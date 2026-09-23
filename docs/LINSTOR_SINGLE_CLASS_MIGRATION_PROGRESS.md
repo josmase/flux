@@ -10,10 +10,10 @@ checksums, and rollback decisions.
 ## Current status
 
 - Overall: `[!] Bulk cutover blocked by LINSTOR CSI snapshot/clone recovery`
-- Current phase: `Phase 3 - bound PVC migration (guarded pause)`
+- Current phase: `Phase 3 - guarded pause (GitLab cutover complete; Jellyfin pilot blocked)`
 - Last updated: `2026-09-23 Europe/Stockholm`
 - Operator: `Codex`
-- Flux revision: `main@sha1:2940f690cb849e1c59e2a318bdf52ad6aaf8d257`
+- Flux revision: `main@sha1:01ff69189af2bb2610367f10b215b9e4652c01c2`
 
 ## Safety baseline
 
@@ -78,8 +78,8 @@ checksums, and rollback decisions.
 - [ ] Standard workloads migrated.
 - [ ] Monitoring and cache workloads migrated.
 - [ ] Arr/media configuration migrated.
-- [ ] GitLab migrated.
-- [ ] PostgreSQL migrated.
+- [x] GitLab migrated.
+- [x] PostgreSQL migrated.
 - [ ] Remaining bound PVCs migrated.
 
 ### Phase 4 — Legacy pool migration
@@ -151,7 +151,7 @@ checksums, and rollback decisions.
 | `gitlab/gitlab-postgresql-linstor` | `linstor-final/linstor-thin` | `gitlab/gitlab-postgresql-triple` | CSI snapshot `gitlab-postgresql-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | GitLab PostgreSQL StatefulSet running on node 206 from `linstor-final-triple`; source retained |
 | `gitlab/gitlab-redis-linstor` | `linstor-final/linstor-thin` | `gitlab/gitlab-redis-triple` | CSI snapshot `gitlab-redis-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | GitLab Redis StatefulSet running on node 205 from `linstor-final-triple`; source retained |
 | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final/linstor-thin` | `gitlab/repo-data-gitlab-gitaly-0` | CSI snapshot `gitlab-gitaly-linstor-to-triple` / ready | replacement claim bound and Gitaly pod 1/1 Ready | live cutover complete | pending | Same-name replacement claim recreated on `linstor-final-triple` from snapshot; Gitaly healthy on node 205 |
-| `gitlab/gitlab-minio` | `linstor-final/linstor-thin` | `gitlab/gitlab-minio-triple` | CSI snapshot `gitlab-minio-snapshot` / ready | target retained; workload blocked by unavailable MinIO image/chart object-storage validation | storage copy complete, cutover blocked | pending | Target triple PVC retained; GitLab MinIO remains a known image/configuration blocker |
+| `gitlab/gitlab-minio` | `linstor-final/linstor-thin` | `gitlab/gitlab-minio-triple` | CSI snapshot `gitlab-minio-snapshot` / ready | target retained; bundled MinIO disabled in the successful Helm revision 47 rollout | no active MinIO workload; target retained for rollback window | pending | RustFS is now the sole GitLab object-storage target; reclaim this unused target only after the rollback window |
 | `cnpg-system/shared-postgres-{5,6,7,8}` (+ WAL PVCs) | `linstor-final/linstor-thin` | `cnpg-system/shared-postgres-{9,10,11}` (+ WAL PVCs) | CSI snapshots `shared-postgres-{5,6,7,8}*to-triple` / ready | CNPG cluster healthy with 3/3 instances | rolling replacement complete | pending | CNPG rotated all active instances onto `linstor-final-triple`; final active PVCs are `shared-postgres-9/10/11` and WAL companions |
 | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap/linstor-thin` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | CSI snapshot `prometheus-linstor-bootstrap-to-triple` / ready | target mounted; Prometheus pod 2/2 Ready | live cutover complete | pending | Prometheus restored to `linstor-final-triple` on node 205; source retained |
 | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-alertmanager-kube-prometheus-stack-alertmanager-0` | `linstor-final/linstor-thin` | `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` | CSI snapshot `alertmanager-linstor-to-triple` / ready | target mounted; Alertmanager pod 2/2 Ready | live cutover complete | pending | Alertmanager restored to `linstor-final-triple` on node 205; source retained |
@@ -180,10 +180,11 @@ checksums, and rollback decisions.
   `shared-postgres-9/10/11` and WAL companions.
 - GitLab external object-storage configuration now points at the RustFS S3
   endpoint, disables the bundled MinIO chart, and separates application and
-  toolbox backup credentials. The corresponding `gitlab` namespace secrets
-  were bootstrapped live from the existing SOPS-managed RustFS credential;
-  they still need to be persisted as SOPS-encrypted GitOps data before this
-  gate is complete.
+  toolbox backup credentials. Helm revision 47 completed successfully, all
+  GitLab Deployments/StatefulSets are Ready, and Flux `apps-gitlab` is Ready
+  at `main@sha1:01ff6918`. The corresponding `gitlab` namespace secrets are
+  now persisted as SOPS-encrypted GitOps manifests under
+  `apps/production/gitlab/secrets/`.
 - The Jellyfin pilot to canonical `linstor` was aborted before cutover:
   `VolumeSnapshot/media/jellyfin-config-to-canonical` never became ready and
   the clone PVC remained Pending. A stale GPU-node `VolumeAttachment` then
