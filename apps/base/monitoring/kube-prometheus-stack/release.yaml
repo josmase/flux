@@ -153,9 +153,9 @@ spec:
         storage:
           volumeClaimTemplate:
             metadata:
-              name: alertmanager-kube-prometheus-stack-alertmanager-db-triple
+              name: alertmanager-kube-prometheus-stack-alertmanager-db-linstor
             spec:
-              storageClassName: linstor-final-triple
+              storageClassName: linstor
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:

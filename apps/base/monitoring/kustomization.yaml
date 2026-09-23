@@ -7,6 +7,8 @@ resources:
   - grafana-persistence-resized.yaml
   - grafana-snapshot-canonical.yaml
   - grafana-persistence-canonical.yaml
+  - alertmanager-snapshot-canonical.yaml
+  - alertmanager-persistence-canonical.yaml
   - kube-prometheus-stack
   - gotify
   - alertmanager-gotify-bridge
