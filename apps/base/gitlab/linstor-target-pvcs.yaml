@@ -41,8 +41,7 @@ metadata:
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
-  volumeName: pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 30Gi

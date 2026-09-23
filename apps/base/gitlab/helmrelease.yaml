@@ -177,7 +177,7 @@ spec:
         install: true
         replicas: 1
         persistence:
-          storageClass: ${STORAGE_CLASS}
+          storageClass: linstor-final-triple
           size: 30Gi
           existingClaim: gitlab-minio
       resources:
