@@ -1,0 +1,11 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: arr-dashboard-data-to-canonical
+  labels:
+    app: arr-dashboard
+    storage-migration: arr-dashboard-linstor-canonical-2026-09
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: arr-dashboard-config-triple
