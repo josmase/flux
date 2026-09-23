@@ -171,3 +171,10 @@ checksums, and rollback decisions.
 - GitLab MinIO target `gitlab-minio-triple` was restored and attached, but
   the pod hit an image-pull failure during cutover. The deployment was
   reverted to the source PVC; target and snapshot are retained for retry.
+- All non-Jellyfin source PVCs were removed after target readiness and replica
+  validation. The remaining `media/jellyfin-config-pvc-jellyfin-0-linstor`
+  PVC is intentionally retained because Jellyfin still requires the GPU node,
+  which is not yet on the triple-replica LINSTOR pool.
+- The shared CNPG cluster was rotated instance-by-instance onto
+  `linstor-final-triple`; it is healthy at 3/3 with active PVCs
+  `shared-postgres-9/10/11` and WAL companions.
