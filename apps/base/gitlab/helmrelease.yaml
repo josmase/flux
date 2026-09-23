@@ -8,6 +8,8 @@ spec:
   timeout: 15m
   upgrade:
     force: true
+    remediation:
+      retries: 3
   chart:
     spec:
       chart: gitlab
