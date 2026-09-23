@@ -8,4 +8,4 @@ spec:
       volumes:
         - name: transmission-config
           persistentVolumeClaim:
-            claimName: transmission-config-final
+            claimName: transmission-config-triple
