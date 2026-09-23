@@ -47,13 +47,13 @@ spec:
   # --- Storage ---
   storage:
     size: 10Gi
-    storageClass: linstor-final
+    storageClass: linstor-final-triple
     # Permit controlled PVC recreation when moving instances between storage classes.
     resizeInUseVolumes: false
 
   walStorage:
     size: 5Gi
-    storageClass: linstor-final
+    storageClass: linstor-final-triple
     resizeInUseVolumes: false
 
   # --- Resources ---
