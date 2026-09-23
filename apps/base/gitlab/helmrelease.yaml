@@ -33,9 +33,41 @@ spec:
 
     global:
       appConfig:
+        artifacts:
+          enabled: true
+          bucket: gitlab-artifacts
+          connection:
+            secret: gitlab-object-storage
+            key: connection
+        lfs:
+          enabled: true
+          bucket: gitlab-lfs
+          connection:
+            secret: gitlab-object-storage
+            key: connection
+        uploads:
+          enabled: true
+          bucket: gitlab-uploads
+          connection:
+            secret: gitlab-object-storage
+            key: connection
+        packages:
+          enabled: true
+          bucket: gitlab-packages
+          connection:
+            secret: gitlab-object-storage
+            key: connection
         terraformState:
           enabled: true
           bucket: gitlab-terraform-state
+          connection:
+            secret: gitlab-object-storage
+            key: connection
+        backups:
+          bucket: gitlab-backups
+          tmpBucket: gitlab-backups-tmp
+          objectStorage:
+            backend: s3
       hosts:
         domain: ${DOMAIN_INTERNAL}
         https: true
@@ -43,7 +75,7 @@ spec:
           enabled: false
 
       minio:
-        enabled: true
+        enabled: false
 
       initialRootPassword:
         secret: gitlab-initial-root-password
@@ -179,19 +211,15 @@ spec:
         enabled: false
 
     minio:
-      install: true
-      replicas: 1
-      persistence:
-        enabled: true
-        storageClass: linstor-final-triple
-        size: 30Gi
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi
-        limits:
-          cpu: 500m
-          memory: 512Mi
+      install: false
+
+    toolbox:
+      backups:
+        objectStorage:
+          backend: s3
+          config:
+            secret: gitlab-backup-object-storage
+            key: config
 
     registry:
       enabled: true

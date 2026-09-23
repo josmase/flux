@@ -9,9 +9,9 @@ checksums, and rollback decisions.
 
 ## Current status
 
-- Overall: `[~] Pilot complete; batch migration ready`
-- Current phase: `Phase 3 - bound PVC migration`
-- Last updated: `2026-09-22 Europe/Stockholm`
+- Overall: `[!] Bulk cutover blocked by LINSTOR CSI snapshot/clone recovery`
+- Current phase: `Phase 3 - bound PVC migration (guarded pause)`
+- Last updated: `2026-09-23 Europe/Stockholm`
 - Operator: `Codex`
 - Flux revision: `main@sha1:2940f690cb849e1c59e2a318bdf52ad6aaf8d257`
 
@@ -178,3 +178,19 @@ checksums, and rollback decisions.
 - The shared CNPG cluster was rotated instance-by-instance onto
   `linstor-final-triple`; it is healthy at 3/3 with active PVCs
   `shared-postgres-9/10/11` and WAL companions.
+- GitLab external object-storage configuration now points at the RustFS S3
+  endpoint, disables the bundled MinIO chart, and separates application and
+  toolbox backup credentials. The corresponding `gitlab` namespace secrets
+  were bootstrapped live from the existing SOPS-managed RustFS credential;
+  they still need to be persisted as SOPS-encrypted GitOps data before this
+  gate is complete.
+- The Jellyfin pilot to canonical `linstor` was aborted before cutover:
+  `VolumeSnapshot/media/jellyfin-config-to-canonical` never became ready and
+  the clone PVC remained Pending. A stale GPU-node `VolumeAttachment` then
+  blocked reattach until CSI controller/node/affinity components and the
+  stale attachment finalizer were recovered. The original
+  `jellyfin-config-pvc-jellyfin-0-linstor` PVC remains authoritative and
+  Jellyfin is healthy on the GPU node; no target PVC or snapshot was retained.
+  Do not start the bulk class cutover until a non-disruptive snapshot/restore
+  test succeeds for this source class or an equivalent backup-restore path is
+  proven.
