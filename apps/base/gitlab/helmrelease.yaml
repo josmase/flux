@@ -174,7 +174,7 @@ spec:
         enabled: false
 
       minio:
-        install: true
+        install: false
         replicas: 1
         persistence:
           storageClass: linstor-final-triple
