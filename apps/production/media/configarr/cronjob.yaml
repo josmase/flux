@@ -4,7 +4,7 @@ metadata:
   name: configarr
 spec:
   suspend: false
-  schedule: "17 * * * *"
+  schedule: "* * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 5
