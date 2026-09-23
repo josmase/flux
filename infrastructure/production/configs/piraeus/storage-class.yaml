@@ -12,8 +12,8 @@ allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 parameters:
   csi.storage.k8s.io/fstype: ext4
-  linstor.csi.linbit.com/storagePool: pool1
-  linstor.csi.linbit.com/placementCount: "2"
+  linstor.csi.linbit.com/storagePool: linstor-thin
+  linstor.csi.linbit.com/placementCount: "3"
   # FILE_THIN otherwise inherits the loop device's 4 KiB discard granularity.
   # A 1 MiB resync chunk avoids hundreds of thousands of tiny hole-punch
   # operations while retaining sparse-file-aware initial synchronization.
