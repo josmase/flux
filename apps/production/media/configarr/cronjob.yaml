@@ -4,7 +4,7 @@ metadata:
   name: configarr
 spec:
   suspend: false
-  schedule: "17 * * * *"
+  schedule: "* * * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 5
@@ -19,11 +19,11 @@ spec:
           restartPolicy: Never
           containers:
             - name: configarr
-              image: ghcr.io/raydak-labs/configarr:1.30.2-alpine3.22@sha256:14eb335a4feeea84f5c1e3ac185b0932b192cfeef89b920b7e2df11bebf3bbe0
+              image: ghcr.io/raydak-labs/configarr:1.32.0-alpine3.22@sha256:ad4e9ac27d659fc30f69d1c9bab719019c70fd0d5ceda85367a8f723d7c99c91
               imagePullPolicy: IfNotPresent
               env:
                 - name: DRY_RUN
-                  value: "false"
+                  value: "true"
               envFrom:
                 - secretRef:
                     name: configarr-env
