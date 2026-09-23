@@ -45,25 +45,25 @@ spec:
                     create_snapshot() {
                       retention="$1"
                       suffix="$2"
-                      name="snapshot-${safe}-${suffix}"
+                      name="snapshot-$${safe}-$${suffix}"
                       printf '%s\n' \
                         'apiVersion: snapshot.storage.k8s.io/v1' \
                         'kind: VolumeSnapshot' \
                         'metadata:' \
-                        "  name: ${name}" \
-                        "  namespace: ${namespace}" \
+                        "  name: $${name}" \
+                        "  namespace: $${namespace}" \
                         '  labels:' \
                         '    protection.josmase.dev/managed: "true"' \
-                        "    protection.josmase.dev/tier: ${tier}" \
-                        "    protection.josmase.dev/retention: ${retention}" \
-                        "    protection.josmase.dev/created: ${stamp}" \
+                        "    protection.josmase.dev/tier: $${tier}" \
+                        "    protection.josmase.dev/retention: $${retention}" \
+                        "    protection.josmase.dev/created: $${stamp}" \
                         'spec:' \
-                        "  volumeSnapshotClassName: ${snapshot_class}" \
+                        "  volumeSnapshotClassName: $${snapshot_class}" \
                         '  source:' \
-                        "    persistentVolumeClaimName: ${pvc}" |
+                        "    persistentVolumeClaimName: $${pvc}" |
                         kubectl apply -f -
                     }
-                    create_snapshot hourly "h-${stamp}"
+                    create_snapshot hourly "h-$${stamp}"
                     [ "$hour" = "03" ] && create_snapshot daily "d-$(date -u +%Y%m%d)"
                     [ "$hour" = "04" ] && [ "$weekday" = "7" ] && create_snapshot weekly "w-$(date -u +%G%V)"
                     for retention in hourly daily weekly; do
