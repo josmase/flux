@@ -5,6 +5,7 @@ resources:
   - service.yaml
   - deployment.yaml
   - persistence-linstor.yaml
+  - persistence-canonical.yaml
 
 labels:
   - includeSelectors: true

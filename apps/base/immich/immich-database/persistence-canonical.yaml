@@ -1,0 +1,28 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: immich-db-to-canonical-v2
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: immich-db-triple
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-db-linstor
+  labels:
+    app.kubernetes.io/part-of: immich
+    migration.josmase.dev/source: immich-db-triple
+    migration.josmase.dev/phase: canonical
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: linstor
+  resources:
+    requests:
+      storage: 9Gi
+  dataSource:
+    name: immich-db-to-canonical-v2
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io

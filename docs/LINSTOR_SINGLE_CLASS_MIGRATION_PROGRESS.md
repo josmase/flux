@@ -258,6 +258,12 @@ checksums, and rollback decisions.
   `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
   The deployment is Ready 1/1 on node 206. Source claims and snapshots remain
   retained for rollback.
+- Immich PostgreSQL final canonical cutover (2026-09-23): the Deployment was
+  gracefully stopped, snapshot `immich-db-to-canonical-v2` restored to
+  `immich-db-linstor` on StorageClass `linstor`, and the normalized data
+  directory checksum matched (`bcce885f541b0978eddb46a27ce571e8f8a774e351ae573e0cc130ac4a85ed43`).
+  PostgreSQL is Ready 1/1; the `immich` database opens successfully and reports
+  51 public tables. The source PVC and snapshot remain retained.
 - Transmission retry v2 (2026-09-23) was rolled back after a fresh
   quiesced snapshot restored a matching manifest (`def4d9ce5d9aa6b4607ce23e78893c94f37128bd39ecefc928513d2e7f8d3737`) but the
   canonical target again failed attach-time fsck with `Resize inode not valid`.
