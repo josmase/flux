@@ -251,3 +251,10 @@ checksums, and rollback decisions.
   remains authoritative; the target and CSI snapshot are retained. Future
   claim replacement must quiesce the writer before taking the source
   snapshot, then verify checksums before cutover.
+- Immich machine-learning cache final canonical cutover (2026-09-23):
+  `immich-model-cache-ml-{0,1,2}-linstor` and `immich-model-cache-ml-linstor`
+  are Bound on StorageClass `linstor`; all four source/target manifests were
+  the empty-cache checksum
+  `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+  The deployment is Ready 1/1 on node 206. Source claims and snapshots remain
+  retained for rollback.

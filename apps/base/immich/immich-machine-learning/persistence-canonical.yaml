@@ -1,0 +1,95 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: immich-model-cache-ml-0-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: immich-model-cache-ml-0-triple
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: immich-model-cache-ml-1-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: immich-model-cache-ml-1-triple
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: immich-model-cache-ml-2-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: immich-model-cache-ml-2-triple
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: immich-model-cache-ml-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: immich-model-cache-ml-triple
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-0-linstor
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor
+  resources:
+    requests:
+      storage: 10Gi
+  dataSource:
+    name: immich-model-cache-ml-0-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-1-linstor
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor
+  resources:
+    requests:
+      storage: 10Gi
+  dataSource:
+    name: immich-model-cache-ml-1-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-2-linstor
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor
+  resources:
+    requests:
+      storage: 30Gi
+  dataSource:
+    name: immich-model-cache-ml-2-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-model-cache-ml-linstor
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: linstor
+  resources:
+    requests:
+      storage: 1Gi
+  dataSource:
+    name: immich-model-cache-ml-to-canonical
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io

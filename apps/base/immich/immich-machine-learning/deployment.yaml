@@ -41,13 +41,13 @@ spec:
       volumes:
         - name: immich-model-cache-0
           persistentVolumeClaim:
-            claimName: immich-model-cache-ml-0-triple
+            claimName: immich-model-cache-ml-0-linstor
         - name: immich-model-cache-1
           persistentVolumeClaim:
-            claimName: immich-model-cache-ml-1-triple
+            claimName: immich-model-cache-ml-1-linstor
         - name: immich-model-cache-2
           persistentVolumeClaim:
-            claimName: immich-model-cache-ml-2-triple
+            claimName: immich-model-cache-ml-2-linstor
         - name: immich-model-cache-resized
           persistentVolumeClaim:
-            claimName: immich-model-cache-ml-triple
+            claimName: immich-model-cache-ml-linstor
