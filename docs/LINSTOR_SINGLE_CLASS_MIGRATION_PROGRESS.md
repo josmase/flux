@@ -148,6 +148,7 @@ checksums, and rollback decisions.
 | `llm-switchboard/llm-switchboard-data-linstor` | `linstor-final/linstor-thin` | `llm-switchboard/llm-switchboard-data-triple` | CSI snapshot `llm-switchboard-data-linstor-snapshot` / ready | target attached; workload remains intentionally unavailable due known image-pull failure | storage cutover complete | pending | Deployment is on the new target; Flux health exclusion remains active |
 | `artifactory/artifactory-data-final` | `linstor-final/linstor-thin` | `artifactory/artifactory-data-triple` | CSI snapshot `artifactory-data-final-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Artifactory StatefulSet restored to 8/8 Running on node 206; source retained |
 | `artifactory/artifactory-pg17-recovered` | `linstor-final-bootstrap/linstor-thin` | `artifactory/artifactory-pg17-triple` | CSI snapshot `artifactory-pg17-recovered-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | Artifactory PostgreSQL StatefulSet running on node 204 from `linstor-final-triple`; source retained |
+| `gitlab/gitlab-postgresql-linstor` | `linstor-final/linstor-thin` | `gitlab/gitlab-postgresql-triple` | CSI snapshot `gitlab-postgresql-linstor-snapshot` / ready | target mounted; workload healthy | live cutover complete | pending | GitLab PostgreSQL StatefulSet running on node 206 from `linstor-final-triple`; source retained |
 
 ## Unbound-resource ledger
 
