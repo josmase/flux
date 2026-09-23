@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - persistence-resized.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
   - ingress.yaml
   - service.yaml
 
