@@ -178,7 +178,7 @@ spec:
         replicas: 1
         persistence:
           storageClass: linstor-final-triple
-          size: 30Gi
+          size: 50Gi
           existingClaim: gitlab-minio
       resources:
         requests:
