@@ -20,8 +20,8 @@ domains:
     count: 97
     sha256: 4ad723572e8150f785754cb73d58c41972a0ed1173ef6191e3f70b242b609b9c
   apps-media-sonarr-pilot:
-    count: 17
-    sha256: d526ab4acb697391be444dd6c4b735fe5955e26748fe0c80f8e4c2ef3d7947f3
+    count: 18
+    sha256: 0c75ec84ebdebbca392efd0f82232134bc698ae66dc6ae67f60650e28e1c299a
   apps-media-playback:
     count: 13
     sha256: 2b466305e954ec4c1332a72e296e077f174ec59a8e67002266f03f146b9f3adc

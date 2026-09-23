@@ -1,0 +1,101 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: prowlarr-key-repair
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: prowlarr-key-repair
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: repair
+          image: python:3.13-alpine
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PROWLARR_URL
+              value: http://prowlarr.media.svc.cluster.local:9696
+            - name: PROWLARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: configarr-env
+                  key: PROWLARR_API_KEY
+            - name: SONARR_2_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: configarr-env
+                  key: SONARR_2_API_KEY
+            - name: SONARR_6_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: configarr-env
+                  key: SONARR_6_API_KEY
+          command:
+            - python3
+            - -c
+            - |
+              import json
+              import os
+              import sys
+              import urllib.request
+
+              base = os.environ["PROWLARR_URL"].rstrip("/")
+              headers = {
+                  "X-Api-Key": os.environ["PROWLARR_API_KEY"],
+                  "Accept": "application/json",
+              }
+
+              def request(method, path, payload=None):
+                  data = None
+                  request_headers = dict(headers)
+                  if payload is not None:
+                      data = json.dumps(payload).encode()
+                      request_headers["Content-Type"] = "application/json"
+                  req = urllib.request.Request(
+                      base + path,
+                      data=data,
+                      headers=request_headers,
+                      method=method,
+                  )
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      body = response.read()
+                      return response.status, json.loads(body) if body else None
+
+              _, applications = request("GET", "/api/v1/applications")
+              desired = {
+                  "Sonarr 2": os.environ["SONARR_2_API_KEY"],
+                  "Sonarr 6": os.environ["SONARR_6_API_KEY"],
+              }
+              found = set()
+              for application in applications:
+                  name = application.get("name")
+                  if name not in desired:
+                      continue
+                  found.add(name)
+                  fields = application.get("fields") or []
+                  api_field = next((field for field in fields if field.get("name") == "apiKey"), None)
+                  if api_field is None:
+                      raise RuntimeError(f"{name} has no apiKey field")
+                  api_field["value"] = desired[name]
+                  status, _ = request("PUT", f"/api/v1/applications/{application['id']}", application)
+                  if status < 200 or status >= 300:
+                      raise RuntimeError(f"{name} update returned HTTP {status}")
+                  print(f"updated {name}")
+
+              missing = set(desired) - found
+              if missing:
+                  raise RuntimeError("missing applications: " + ", ".join(sorted(missing)))
+
+              status, _ = request(
+                  "POST",
+                  "/api/v1/command",
+                  {"name": "ApplicationIndexerSync"},
+              )
+              if status < 200 or status >= 300:
+                  raise RuntimeError(f"indexer sync returned HTTP {status}")
+              print("triggered ApplicationIndexerSync")
