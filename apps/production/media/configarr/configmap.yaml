@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configarr
+data:
+  config.yml: |
+    telemetry: false
+
+    sonarr:
+      sonarr-2:
+        base_url: http://sonarr-2-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_2_API_KEY
+        root_folders:
+          - /mnt/storage/files/series/2
+        download_clients:
+          data:
+            - name: Transmission
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: sonarrtwo
+                tv_directory: ""
+          delete_unmanaged:
+            enabled: false
+
+      sonarr-6:
+        base_url: http://sonarr-6-sonarr.media.svc.cluster.local:8989
+        api_key: !env SONARR_6_API_KEY
+        root_folders:
+          - /mnt/storage/files/series/6
+        download_clients:
+          data:
+            - name: Transmission
+              type: Transmission
+              enable: true
+              priority: 1
+              remove_completed_downloads: true
+              remove_failed_downloads: true
+              fields:
+                host: transmission.media.svc.cluster.local
+                port: 9091
+                use_ssl: false
+                url_base: /transmission/
+                tv_category: seriessix
+                tv_directory: ""
+          delete_unmanaged:
+            enabled: false
+
+    radarr: {}
+
+    prowlarr:
+      main:
+        base_url: http://prowlarr.media.svc.cluster.local:9696
+        api_key: !env PROWLARR_API_KEY
+        applications:
+          data:
+            - name: Sonarr 2
+              type: Sonarr
+              sync_level: fullSync
+              fields:
+                prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696
+                baseUrl: http://sonarr-2-sonarr.media.svc.cluster.local:8989
+                apiKey: !env SONARR_2_API_KEY
+                syncCategories: [5000, 5010, 5020, 5030, 5040, 5045, 5050, 5090]
+                animeSyncCategories: [5070]
+                syncAnimeStandardFormatSearch: true
+              tags: []
+            - name: Sonarr 6
+              type: Sonarr
+              sync_level: fullSync
+              fields:
+                prowlarrUrl: http://prowlarr.media.svc.cluster.local:9696
+                baseUrl: http://sonarr-6-sonarr.media.svc.cluster.local:8989
+                apiKey: !env SONARR_6_API_KEY
+                syncCategories: [5000, 5010, 5020, 5030, 5040, 5045, 5050, 5090]
+                animeSyncCategories: [5070]
+                syncAnimeStandardFormatSearch: true
+              tags: []
+          delete_unmanaged:
+            enabled: false
+          sync_indexers: true

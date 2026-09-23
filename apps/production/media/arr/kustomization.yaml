@@ -5,6 +5,7 @@ namespace: media
 resources:
   - ../sonarr
   - ../radarr
+  - ../configarr
 
 components:
   - ../../components/prune-protection

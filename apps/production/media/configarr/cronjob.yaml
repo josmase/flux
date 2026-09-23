@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: configarr
+spec:
+  suspend: true
+  schedule: "17 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        metadata:
+          labels:
+            app: configarr
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: configarr
+              image: ghcr.io/raydak-labs/configarr:1.30.2-alpine3.22@sha256:62fc7b1879a43628087a1d7ed03441466fc196db60a2775b0df88f3437c6a1b5
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: DRY_RUN
+                  value: "true"
+              envFrom:
+                - secretRef:
+                    name: configarr-env
+              volumeMounts:
+                - name: config
+                  mountPath: /app/config/config.yml
+                  subPath: config.yml
+          volumes:
+            - name: config
+              configMap:
+                name: configarr
