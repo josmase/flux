@@ -5,6 +5,7 @@ resources:
   - ../../../../base/media/sonarr-template
   - persistence-linstor.yaml
   - snapshot-canonical.yaml
+  - snapshot-recovery-20260923.yaml
   - persistence-canonical.yaml
 
 namePrefix: sonarr-2-

@@ -10,6 +10,6 @@ spec:
       storage: 4Gi
   storageClassName: linstor
   dataSource:
-    name: sonarr-2-config-to-canonical
+    name: sonarr-2-config-recovery-20260923
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io

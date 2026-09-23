@@ -10,7 +10,7 @@ spec:
   accessModes: [ReadWriteOnce]
   storageClassName: linstor
   dataSource:
-    name: radarr-4-data-to-canonical
+    name: radarr-4-config-recovery-20260923
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:
