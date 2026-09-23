@@ -1,0 +1,11 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: data-to-canonical
+  labels:
+    app: radarr-12
+    storage-migration: radarr-12-linstor-canonical-2026-09
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: radarr-12-config-triple
