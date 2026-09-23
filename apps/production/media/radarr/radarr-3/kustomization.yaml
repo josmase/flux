@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - ../../../../base/media/radarr-template
   - persistence-linstor.yaml
+  - snapshot-canonical.yaml
+  - persistence-canonical.yaml
 
 namePrefix: radarr-3-
 
@@ -23,7 +25,7 @@ patches:
         value: 1
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
-        value: config-triple
+        value: config-linstor
       - op: add
         path: /spec/template/spec/nodeSelector
         value:
