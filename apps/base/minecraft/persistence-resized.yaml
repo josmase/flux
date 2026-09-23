@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minecraft-data-linstor
+  name: minecraft-data-triple
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-data-pvc
     storage-migration.phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi
@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minecraft-modpacks-linstor
+  name: minecraft-modpacks-triple
   namespace: minecraft
   annotations:
     storage-migration.source-pvc: minecraft-modpacks-pvc
@@ -25,7 +25,7 @@ metadata:
     app: minecraft
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

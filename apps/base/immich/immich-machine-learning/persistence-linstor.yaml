@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-model-cache-ml-0-linstor
+  name: immich-model-cache-ml-0-triple
   annotations:
     storage-migration.source-pvc: immich-model-cache-immich-machine-learning-0
     storage-migration.phase: copy-target
@@ -10,7 +10,7 @@ metadata:
     storage-migration: immich-ml-linstor-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 10Gi
@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-model-cache-ml-1-linstor
+  name: immich-model-cache-ml-1-triple
   annotations:
     storage-migration.source-pvc: immich-model-cache-immich-machine-learning-1
     storage-migration.phase: copy-target
@@ -27,7 +27,7 @@ metadata:
     storage-migration: immich-ml-linstor-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 10Gi
@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-model-cache-ml-2-linstor
+  name: immich-model-cache-ml-2-triple
   annotations:
     storage-migration.source-pvc: immich-model-cache-immich-machine-learning-2
     storage-migration.phase: copy-target
@@ -44,7 +44,7 @@ metadata:
     storage-migration: immich-ml-linstor-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 30Gi
@@ -52,7 +52,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-model-cache-resized-linstor
+  name: immich-model-cache-ml-triple
   annotations:
     storage-migration.source-pvc: immich-model-cache-resized
     storage-migration.phase: copy-target
@@ -61,7 +61,7 @@ metadata:
     storage-migration: immich-ml-linstor-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: ${STORAGE_CLASS}
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: transmission-config-final
+  name: transmission-config-triple
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

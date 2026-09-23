@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gitlab-postgresql-linstor
+  name: gitlab-postgresql-triple
   namespace: gitlab
   labels:
     app.kubernetes.io/part-of: gitlab
@@ -9,7 +9,7 @@ metadata:
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 20Gi
@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gitlab-redis-linstor
+  name: gitlab-redis-triple
   namespace: gitlab
   labels:
     app.kubernetes.io/part-of: gitlab
@@ -25,7 +25,7 @@ metadata:
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 10Gi
@@ -33,7 +33,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gitlab-minio
+  name: gitlab-minio-triple
   namespace: gitlab
   labels:
     app.kubernetes.io/part-of: gitlab
@@ -41,7 +41,7 @@ metadata:
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   volumeName: pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a
   resources:
     requests:

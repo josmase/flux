@@ -59,4 +59,4 @@ spec:
       volumes:
         - name: gotify-data
           persistentVolumeClaim:
-            claimName: gotify-data-pvc-resized
+            claimName: gotify-data-triple

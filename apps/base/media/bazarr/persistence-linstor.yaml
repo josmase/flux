@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bazarr-config-linstor
+  name: bazarr-config-triple
   annotations:
     storage-migration.source-pvc: bazarr-config-pvc-bazarr-0-resized
     storage-migration.phase: copy-target
@@ -11,7 +11,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

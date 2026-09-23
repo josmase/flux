@@ -8,8 +8,8 @@ artifactory:
     joinKeySecretName: my-joinkey-secret
 
     persistence:
-      existingClaim: artifactory-data-final
-      storageClassName: linstor-final
+      existingClaim: artifactory-data-triple
+      storageClassName: linstor-final-triple
       size: 12Gi
   nginx:
     enabled: true
@@ -30,6 +30,6 @@ artifactory:
         kubernetes.io/hostname: kubernetes-node-204
       persistence:
         enabled: true
-        existingClaim: artifactory-pg17-recovered
+        existingClaim: artifactory-pg17-triple
         storageClass: linstor-final-bootstrap
         size: 5Gi

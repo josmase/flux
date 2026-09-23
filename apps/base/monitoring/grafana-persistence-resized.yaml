@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: grafana-data-final
+  name: grafana-data-triple
   labels:
     app.kubernetes.io/instance: kube-prometheus-stack
     app.kubernetes.io/name: grafana
@@ -12,7 +12,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 10Gi

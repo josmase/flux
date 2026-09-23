@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prowlarr-config-linstor
+  name: prowlarr-config-triple
   annotations:
     storage-migration.source-pvc: prowlarr-config-pvc-prowlarr-0-resized
     storage-migration.phase: copy-target
@@ -10,7 +10,7 @@ metadata:
     storage-migration: prowlarr-linstor-final-2026-09
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 1Gi

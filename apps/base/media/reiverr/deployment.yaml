@@ -78,7 +78,7 @@ spec:
       volumes:
         - name: reiverr-config-pvc
           persistentVolumeClaim:
-            claimName: reiverr-config-final
+            claimName: reiverr-config-triple
         - name: reiverr-plugins-pvc
           persistentVolumeClaim:
-            claimName: reiverr-plugins-final
+            claimName: reiverr-plugins-triple

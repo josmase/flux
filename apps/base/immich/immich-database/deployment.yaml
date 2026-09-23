@@ -68,4 +68,4 @@ spec:
       volumes:
         - name: immich-db-pvc
           persistentVolumeClaim:
-            claimName: immich-db-pvc-final-linstor
+            claimName: immich-db-triple

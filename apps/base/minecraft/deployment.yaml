@@ -77,7 +77,7 @@ spec:
       volumes:
         - name: minecraft-data
           persistentVolumeClaim:
-            claimName: minecraft-data-linstor
+            claimName: minecraft-data-triple
         - name: minecraft-modpacks
           persistentVolumeClaim:
-            claimName: minecraft-modpacks-linstor
+            claimName: minecraft-modpacks-triple

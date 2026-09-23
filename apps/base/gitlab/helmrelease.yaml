@@ -82,6 +82,7 @@ spec:
         replicaCount: 1
         persistence:
           storageClass: ${STORAGE_CLASS}
+          existingClaim: repo-data-gitlab-gitaly-triple
           size: 50Gi
         resources:
           requests:
@@ -122,7 +123,7 @@ spec:
         persistence:
           storageClass: ${STORAGE_CLASS}
           size: 20Gi
-          existingClaim: gitlab-postgresql-linstor
+          existingClaim: gitlab-postgresql-triple
         resources:
           requests:
             cpu: 250m
@@ -160,7 +161,7 @@ spec:
         persistence:
           storageClass: ${STORAGE_CLASS}
           size: 10Gi
-          existingClaim: gitlab-redis-linstor
+          existingClaim: gitlab-redis-triple
         resources:
           requests:
             cpu: 100m
@@ -179,7 +180,7 @@ spec:
       persistence:
         storageClass: ${STORAGE_CLASS}
         size: 30Gi
-        existingClaim: gitlab-minio-linstor
+        existingClaim: gitlab-minio-triple
       resources:
         requests:
           cpu: 100m

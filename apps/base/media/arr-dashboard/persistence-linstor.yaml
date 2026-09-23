@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: arr-dashboard-config-linstor
+  name: arr-dashboard-config-triple
   annotations:
     storage-migration.source-pvc: arr-dashboard-config-v2
     storage-migration.phase: copy-target
@@ -11,7 +11,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final
+  storageClassName: linstor-final-triple
   resources:
     requests:
       storage: 3Gi
