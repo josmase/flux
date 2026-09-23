@@ -19,7 +19,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: configarr
-              image: ghcr.io/raydak-labs/configarr:1.30.2-alpine3.22@sha256:62fc7b1879a43628087a1d7ed03441466fc196db60a2775b0df88f3437c6a1b5
+              image: ghcr.io/raydak-labs/configarr:1.30.2-alpine3.22@sha256:14eb335a4feeea84f5c1e3ac185b0932b192cfeef89b920b7e2df11bebf3bbe0
               imagePullPolicy: IfNotPresent
               env:
                 - name: DRY_RUN
