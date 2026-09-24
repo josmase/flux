@@ -180,9 +180,17 @@ restore result is recorded.
   18 database migrations, optimized the database, reached `Healthy`, served
   `/System/Info/Public` with HTTP 200, loaded the existing plugins, and
   completed startup in approximately 4 minutes 32 seconds.
-- Production was not upgraded during this rehearsal and remains on the
-  10.11.11 image. The required full library scan, playback, and hardware
-  transcoding checks remain for the production rollout window.
+- Production was upgraded through Flux commit `43ce8acd` to the pinned
+  `12.1.0` image. The pod reached `2/2 Running` with zero restarts, the
+  `/health` endpoint returned HTTP 200, and `/System/Info/Public` reported
+  Jellyfin `12.1.0`.
+- The production migration applied successfully, optimized `jellyfin.db`,
+  and removed 6,757 stale items after verifying the NFS media mount and its
+  `movies` and `series` directories.
+- The required post-upgrade full library scan, playback check, NVIDIA
+  transcoding check, and seven-day confidence window remain operational
+  follow-up work. The backup and rollback artifacts are retained for that
+  window.
 
 ## References
 
