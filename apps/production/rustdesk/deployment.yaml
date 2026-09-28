@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rustdesk
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rustdesk
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: hbbs
+          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.15
+          command: ["hbbs"]
+          workingDir: /root
+          ports:
+            - name: nat-test
+              containerPort: 21115
+              protocol: TCP
+            - name: rendezvous-tcp
+              containerPort: 21116
+              protocol: TCP
+            - name: rendezvous-udp
+              containerPort: 21116
+              protocol: UDP
+            - name: websocket-id
+              containerPort: 21118
+              protocol: TCP
+          env:
+            - name: RUST_LOG
+              value: info
+          readinessProbe:
+            tcpSocket:
+              port: rendezvous-tcp
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: rendezvous-tcp
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: rustdesk-data
+              mountPath: /root
+        - name: hbbr
+          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.15
+          command: ["hbbr"]
+          workingDir: /root
+          ports:
+            - name: relay
+              containerPort: 21117
+              protocol: TCP
+            - name: websocket-relay
+              containerPort: 21119
+              protocol: TCP
+          env:
+            - name: RUST_LOG
+              value: info
+          readinessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: rustdesk-data
+              mountPath: /root
+      volumes:
+        - name: rustdesk-data
+          persistentVolumeClaim:
+            claimName: rustdesk-data

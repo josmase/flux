@@ -4,6 +4,9 @@ domains:
   apps-storage:
     count: 1
     sha256: 27153620110ce68e5281b87246254944507249a4301e854e25922fed75c2afdc
+  apps-rustdesk:
+    count: 9
+    sha256: 2c93b7790d64ebad70f52500d3413245c8ec1244434ab940cd86839ed89bf9a3
   apps-ops:
     count: 9
     sha256: 864fc1fe05eb7f1ed743c86a35656d9a61df6698e863548aeaf1babe2948a218

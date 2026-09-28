@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rustdesk-native
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${RUSTDESK_LB_IP}
+  selector:
+    app.kubernetes.io/name: rustdesk
+  ports:
+    - name: nat-test
+      port: 21115
+      targetPort: nat-test
+      protocol: TCP
+    - name: rendezvous-tcp
+      port: 21116
+      targetPort: rendezvous-tcp
+      protocol: TCP
+    - name: rendezvous-udp
+      port: 21116
+      targetPort: rendezvous-udp
+      protocol: UDP
+    - name: relay
+      port: 21117
+      targetPort: relay
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rustdesk-hbbs-websocket
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: rustdesk
+  ports:
+    - name: websocket-id
+      port: 21118
+      targetPort: websocket-id
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rustdesk-hbbr-websocket
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: rustdesk
+  ports:
+    - name: websocket-relay
+      port: 21119
+      targetPort: websocket-relay
+      protocol: TCP

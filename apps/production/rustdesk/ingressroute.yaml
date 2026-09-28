@@ -1,0 +1,43 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rustdesk-websocket-cors
+spec:
+  headers:
+    accessControlAllowOriginList:
+      - https://rustdesk.com
+      - https://www.rustdesk.com
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+    accessControlAllowHeaders:
+      - Origin
+      - Content-Type
+      - Accept
+      - Authorization
+    accessControlAllowCredentials: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rustdesk-websocket
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`rustdesk.${DOMAIN_INTERNAL}`) && PathPrefix(`/ws/id`)
+      kind: Rule
+      middlewares:
+        - name: rustdesk-websocket-cors
+      services:
+        - name: rustdesk-hbbs-websocket
+          port: websocket-id
+    - match: Host(`rustdesk.${DOMAIN_INTERNAL}`) && PathPrefix(`/ws/relay`)
+      kind: Rule
+      middlewares:
+        - name: rustdesk-websocket-cors
+      services:
+        - name: rustdesk-hbbr-websocket
+          port: websocket-relay
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}
