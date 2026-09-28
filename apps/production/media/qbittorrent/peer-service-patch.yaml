@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-peer
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${QBITTORRENT_PEER_IP}

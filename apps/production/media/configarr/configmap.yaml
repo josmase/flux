@@ -13,17 +13,19 @@ data:
         root_folders: [/mnt/storage/files/series/1]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: sonarrone
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -33,17 +35,19 @@ data:
         root_folders: [/mnt/storage/files/series/2]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: sonarrtwo
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -53,17 +57,19 @@ data:
         root_folders: [/mnt/storage/files/series/3]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: sonarrthree
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -73,17 +79,19 @@ data:
         root_folders: [/mnt/storage/files/series/4]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: sonarrfour
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -93,17 +101,19 @@ data:
         root_folders: [/mnt/storage/files/series/5]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: sonarrfive
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -113,21 +123,22 @@ data:
         root_folders: [/mnt/storage/files/series/6]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 tv_category: seriessix
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
-
     radarr:
       radarr-1:
         base_url: http://radarr-1-radarr.media.svc.cluster.local:7878
@@ -135,18 +146,21 @@ data:
         root_folders: [/mnt/storage/files/movies/1]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
-                movie_category: ""
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
+                movie_category: radarrone
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-2:
         base_url: http://radarr-2-radarr.media.svc.cluster.local:7878
@@ -154,18 +168,21 @@ data:
         root_folders: [/mnt/storage/files/movies/2]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
-                movie_category: ""
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
+                movie_category: radarrtwo
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-3:
         base_url: http://radarr-3-radarr.media.svc.cluster.local:7878
@@ -173,18 +190,21 @@ data:
         root_folders: [/mnt/storage/files/movies/3]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
-                movie_category: ""
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
+                movie_category: radarrthree
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-4:
         base_url: http://radarr-4-radarr.media.svc.cluster.local:7878
@@ -192,18 +212,21 @@ data:
         root_folders: [/mnt/storage/files/movies/4]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrfour
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-5:
         base_url: http://radarr-5-radarr.media.svc.cluster.local:7878
@@ -211,18 +234,21 @@ data:
         root_folders: [/mnt/storage/files/movies/5]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrfive
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-6:
         base_url: http://radarr-6-radarr.media.svc.cluster.local:7878
@@ -230,18 +256,21 @@ data:
         root_folders: [/mnt/storage/files/movies/6]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrsix
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-7:
         base_url: http://radarr-7-radarr.media.svc.cluster.local:7878
@@ -249,18 +278,21 @@ data:
         root_folders: [/mnt/storage/files/movies/7]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrseven
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-8:
         base_url: http://radarr-8-radarr.media.svc.cluster.local:7878
@@ -268,18 +300,21 @@ data:
         root_folders: [/mnt/storage/files/movies/8]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarreight
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-9:
         base_url: http://radarr-9-radarr.media.svc.cluster.local:7878
@@ -287,18 +322,21 @@ data:
         root_folders: [/mnt/storage/files/movies/9]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrnine
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-10:
         base_url: http://radarr-10-radarr.media.svc.cluster.local:7878
@@ -306,18 +344,21 @@ data:
         root_folders: [/mnt/storage/files/movies/10]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrten
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-11:
         base_url: http://radarr-11-radarr.media.svc.cluster.local:7878
@@ -325,18 +366,21 @@ data:
         root_folders: [/mnt/storage/files/movies/11]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarreleven
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
       radarr-12:
         base_url: http://radarr-12-radarr.media.svc.cluster.local:7878
@@ -344,18 +388,21 @@ data:
         root_folders: [/mnt/storage/files/movies/12]
         download_clients:
           data:
-            - name: Transmission - Media
-              type: Transmission
+            - name: qBittorrent via Qui
+              type: qbittorrent
               enable: true
               priority: 1
               remove_completed_downloads: true
               remove_failed_downloads: true
               fields:
-                host: transmission.media.svc.cluster.local
-                port: 9091
+                host: qui.media.svc.cluster.local
+                port: 7476
                 use_ssl: false
-                url_base: /transmission/
+                url_base: !env QUI_PROXY_URL_BASE
+                username: ""
+                password: !env QUI_PROXY_KEY
                 movie_category: radarrtwelve
+                movie_imported_category: ""
           delete_unmanaged: {enabled: false}
 
     prowlarr:

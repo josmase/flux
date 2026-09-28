@@ -157,7 +157,11 @@ spec:
       namespace: media
     - apiVersion: apps/v1
       kind: Deployment
-      name: transmission
+      name: qbittorrent
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: qui
       namespace: media
   decryption:
     provider: sops
@@ -165,7 +169,7 @@ spec:
       name: sops-age
   postBuild:
     substitute:
-      TRANSMISSION_PEER_IP: "192.168.1.184"
+      QBITTORRENT_PEER_IP: "192.168.1.184"
     substituteFrom:
       - kind: ConfigMap
         name: cluster-vars

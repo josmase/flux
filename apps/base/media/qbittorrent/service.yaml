@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+spec:
+  type: ClusterIP
+  selector:
+    app: qbittorrent
+  ports:
+    - name: http
+      targetPort: 8080
+      port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-peer
+spec:
+  type: LoadBalancer
+  selector:
+    app: qbittorrent
+  ports:
+    - name: peer-tcp
+      targetPort: 51413
+      port: 51413
+      protocol: TCP
+    - name: peer-udp
+      targetPort: 51413
+      port: 51413
+      protocol: UDP

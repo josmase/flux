@@ -3,7 +3,8 @@ kind: Kustomization
 namespace: media
 
 resources:
-  - transmission/
+  - qbittorrent/
+  - qui/
   - checkrr/
   - reiverr/
   # Multi-instance Sonarr/Radarr (using templates from base)

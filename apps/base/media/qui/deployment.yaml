@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qui
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: qui
+  template:
+    metadata:
+      labels:
+        app: qui
+    spec:
+      initContainers:
+        - name: nfs-stale-check
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:latest
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+          env:
+            - name: CHECK_PATH
+              value: "/mnt/storage"
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage
+      containers:
+        - name: qui
+          image: ghcr.io/autobrr/qui:v1.29.0
+          ports:
+            - containerPort: 7476
+              name: http
+          env:
+            - name: QUI__DATA_DIR
+              value: /config
+            - name: QUI__QBITTORRENT_TIMEOUT
+              value: "30000"
+            - name: PUID
+              valueFrom:
+                configMapKeyRef:
+                  name: default-app-config
+                  key: PUID
+            - name: PGID
+              valueFrom:
+                configMapKeyRef:
+                  name: default-app-config
+                  key: PGID
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 7476
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 7476
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 6
+          volumeMounts:
+            - name: qui-config
+              mountPath: /config
+            - name: shared-storage
+              mountPath: /mnt/storage
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 250m
+            requests:
+              memory: 64Mi
+              cpu: 50m
+      volumes:
+        - name: qui-config
+          persistentVolumeClaim:
+            claimName: qui-config
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: media-media-shared-nfs-pvc
