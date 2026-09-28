@@ -19,7 +19,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: hbbs
-          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.15
+          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.16
           command:
             - hbbs
             - -r
@@ -62,7 +62,7 @@ spec:
             - name: rustdesk-data
               mountPath: /root
         - name: hbbr
-          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.15
+          image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.16
           command: ["hbbr"]
           workingDir: /root
           ports:
