@@ -20,7 +20,10 @@ spec:
       containers:
         - name: hbbs
           image: artifactory.local.hejsan.xyz/docker/rustdesk/rustdesk-server:1.1.15
-          command: ["hbbs"]
+          command:
+            - hbbs
+            - -r
+            - rustdesk.hejsan.xyz
           workingDir: /root
           ports:
             - name: nat-test
