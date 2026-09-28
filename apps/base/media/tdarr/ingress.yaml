@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tdarr
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`tdarr.${DOMAIN_INTERNAL}`)
+      kind: Rule
+      services:
+        - name: tdarr
+          port: web
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}

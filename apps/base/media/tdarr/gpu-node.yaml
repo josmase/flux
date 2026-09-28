@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tdarr-gpu-node
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tdarr
+      app.kubernetes.io/component: gpu-node
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tdarr
+        app.kubernetes.io/component: gpu-node
+    spec:
+      nodeSelector:
+        gpu: "true"
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: gpu-only
+          effect: NoSchedule
+      containers:
+        - name: tdarr-node
+          image: artifactory.local.hejsan.xyz/docker/haveagitgat/tdarr_node:2.81.01
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Europe/Stockholm
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: nodeName
+              value: kubernetes-gpu-cpu-node
+            - name: serverURL
+              value: http://tdarr.media.svc.cluster.local:8266
+            - name: apiKey
+              valueFrom:
+                secretKeyRef:
+                  name: tdarr-auth
+                  key: apiKey
+            - name: inContainer
+              value: "true"
+            - name: ffmpegVersion
+              value: "7"
+            - name: transcodegpuWorkers
+              value: "0"
+            - name: transcodecpuWorkers
+              value: "1"
+            - name: healthcheckgpuWorkers
+              value: "0"
+            - name: healthcheckcpuWorkers
+              value: "1"
+          volumeMounts:
+            - name: node-config
+              mountPath: /app/configs
+            - name: node-logs
+              mountPath: /app/logs
+            - name: media
+              mountPath: /media
+            - name: temp
+              mountPath: /temp
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 4000m
+              memory: 4Gi
+      volumes:
+        - name: node-config
+          emptyDir: {}
+        - name: node-logs
+          emptyDir: {}
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-media-shared-nfs-pvc
+        - name: temp
+          emptyDir: {}
