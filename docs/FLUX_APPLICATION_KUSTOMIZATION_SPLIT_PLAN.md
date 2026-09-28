@@ -196,7 +196,6 @@ Create one non-secret `ConfigMap/cluster-vars` in `flux-system`, managed from `c
 - `CERT_SECRET_EXTERNAL`
 - `ENVIRONMENT`
 - `LETSENCRYPT_SERVER`
-- `LIVE_ENDPOINT`
 
 Each application Kustomization consumes it with `postBuild.substituteFrom`. Domain-specific variables, such as `TRANSMISSION_PEER_IP`, may be declared directly on the appropriate Flux Kustomization or in a domain-specific ConfigMap.
 

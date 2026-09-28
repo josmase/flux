@@ -15,6 +15,5 @@ data:
   DOMAIN_INTERNAL: local.hejsan.xyz
   ENVIRONMENT: production
   LETSENCRYPT_SERVER: https://acme-v02.api.letsencrypt.org/directory
-  LIVE_ENDPOINT: http://netboot-assets.local.hejsan.xyz
   RUSTDESK_LB_IP: 192.168.1.183
   STORAGE_CLASS: linstor-final
