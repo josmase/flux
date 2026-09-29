@@ -8,5 +8,11 @@ resources:
   - ../sonarr/sonarr-6
   - configmap.yaml
   - cronjob.yaml
+  - compact-sync-cronjob.yaml
   - prowlarr-key-repair-job.yaml
   - secret.yaml
+
+configMapGenerator:
+  - name: radarr-compact-sync
+    files:
+      - compact-sync.py

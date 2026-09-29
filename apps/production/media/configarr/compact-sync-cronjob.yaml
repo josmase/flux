@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: radarr-compact-sync
+spec:
+  suspend: false
+  schedule: "23 */12 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: radarr-compact-sync
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: compact-sync
+              image: python:3.13-alpine
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: COMPACT_TAG
+                  value: compact-candidate
+                - name: COMPACT_PROFILE_NAME
+                  value: Compact
+                - name: COMPACT_MAX_BYTES
+                  value: "4294967296"
+                - name: STORAGE_ROOT
+                  value: /mnt/storage
+                - name: RADARR_COUNT
+                  value: "12"
+                - name: DRY_RUN
+                  value: "false"
+              envFrom:
+                - secretRef:
+                    name: configarr-env
+              command: ["python3", "/opt/compact-sync/compact-sync.py"]
+              volumeMounts:
+                - name: script
+                  mountPath: /opt/compact-sync
+                  readOnly: true
+                - name: shared-storage
+                  mountPath: /mnt/storage
+          volumes:
+            - name: script
+              configMap:
+                name: radarr-compact-sync
+                defaultMode: 0555
+            - name: shared-storage
+              persistentVolumeClaim:
+                claimName: media-media-shared-nfs-pvc
