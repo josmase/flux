@@ -76,3 +76,95 @@ The temporary Jellyfin pilot library should point at `after/`, never at
 `before/`, `work/`, or the production movie and series roots. Audio, subtitles,
 attachments, and metadata should be stream-copied; only the video stream is
 transcoded.
+
+## Manually queue selected files
+
+For a small validation batch, use the existing controller's `queue-paths`
+command. This is separate from inventory grouping: it queues only the exact
+files supplied by the operator. Do not commit a live path list to Git; keep
+temporary selections under `/tmp` or another operator-controlled directory.
+
+Run the command from a host with the media NFS share mounted and access to the
+Tdarr API. The host path is `/mnt/storage/files`; Tdarr sees the same files as
+`/media/files` inside its containers.
+
+The command is read-only by default. Review the candidates first:
+
+```sh
+python3 utility-scripts/tdarr-pilot/tdarr-group-rollout.py queue-paths \
+  --file "/mnt/storage/files/movies/example/movie.mkv"
+```
+
+Multiple files can be supplied by repeating `--file`, or with a temporary
+paths file containing one absolute path per line. Blank lines and lines
+starting with `#` are ignored:
+
+```sh
+python3 utility-scripts/tdarr-pilot/tdarr-group-rollout.py queue-paths \
+  --paths-file /tmp/tdarr-selected-files.txt
+```
+
+After confirming that every path is present in Tdarr and has the expected
+status, queue the batch explicitly:
+
+```sh
+TDARR_API_KEY="$TDARR_API_KEY" \
+python3 utility-scripts/tdarr-pilot/tdarr-group-rollout.py queue-paths \
+  --paths-file /tmp/tdarr-selected-files.txt \
+  --execute
+```
+
+The command reports files that are missing from Tdarr and skips files already
+marked `Transcode success`. Use `--force` only when deliberately retrying a
+successful file. The queued files use the configured production flow
+`tdarr-av1-in-place`; no library-wide requeue is performed.
+
+After queueing, confirm the selected paths in the Tdarr queue and verify the
+worker logs before selecting another batch. The in-place flow replaces an
+original only when the validated output is smaller; audio, subtitles, and
+attachments remain stream-copied.
+
+## Grouped production rollout
+
+The production rollout is intentionally grouped by expected storage saved per
+CPU-hour. The current inventory is approximately 79 TiB of movies and 16–17
+TiB of series. Existing AV1, HDR, and Dolby Vision files are deferred.
+
+The grouped controller is read-only unless `--execute` is supplied:
+
+The inventory host must have `ffprobe` from the FFmpeg package and read access
+to the NFS mount. The queue command needs `TDARR_API_KEY`, but inventory does
+not need Tdarr credentials.
+
+```sh
+python3 utility-scripts/tdarr-pilot/tdarr-group-rollout.py inventory \
+  --output /tmp/tdarr-inventory.json
+
+python3 utility-scripts/tdarr-pilot/tdarr-group-rollout.py queue \
+  --output /tmp/tdarr-inventory.json \
+  --group legacy-1080p \
+  --batch-size 6
+```
+
+Set `TDARR_API_KEY` only in the shell environment used for the queue command.
+Add `--execute` only after reviewing the dry-run candidates. Run one group at a
+time; repeat the bounded queue command after the previous batch drains.
+
+The intended order is:
+
+1. `legacy-1080p` — H.264, VC-1, and VP9 SDR.
+2. `legacy-720p` and `legacy-sd` — fast, lower absolute savings.
+3. `legacy-2160p` — large savings, but high CPU cost.
+4. `hevc-1080p` and `hevc-2160p` — only where the pilot confirms a reduction.
+
+`deferred-hdr`, `skip-av1`, and `deferred-unsupported` are never queued by the
+controller. The inventory priority is an estimate of expected bytes saved per
+runtime and must be recalibrated from completed group results.
+
+For production in-place replacement, import
+`utility-scripts/tdarr-pilot/flows/av1-in-place.json` as the flow template.
+The flow replaces the original only on the smaller-output branch and restores
+the original working-file reference for equal or larger outputs. Both current
+nodes are mapped to the shared NFS path, which is required for Tdarr file
+operations such as Replace Original File. Validate the flow against a small
+production-like batch before enabling it for a complete group.

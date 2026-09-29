@@ -169,6 +169,15 @@ kind delete cluster --name flux-dev
 
 See [Local Development Guide](../docs/LOCAL_DEVELOPMENT.md) for detailed workflows.
 
+#### `tdarr-pilot/tdarr-group-rollout.py`
+
+Inventories movie and series files with `ffprobe`, assigns them to SDR codec /
+resolution groups, and queues a bounded batch through the Tdarr API. It also
+supports manually selecting exact paths with `queue-paths`. Inventory and
+queue commands are dry-run by default; `--execute` is required to change Tdarr
+file statuses. See [Tdarr pilot](../docs/TDARR_PILOT.md) for the manual queue
+workflow, rollout order, and in-place flow template.
+
 #### `setup/check-prerequisites.sh`
 Comprehensive prerequisite checker that validates your environment before setup.
 

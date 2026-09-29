@@ -1,0 +1,82 @@
+{
+  "_id": "tdarr-av1-in-place",
+  "name": "AV1 In-Place - SDR Size Reject",
+  "description": "Video-only AV1 transcode. The controller queues SDR groups; HDR/DV and AV1 are deferred. Replace the original only after a successful smaller output.",
+  "tags": "production,av1,in-place,size-reject",
+  "flowPlugins": [
+    {
+      "name": "Input File",
+      "sourceRepo": "Community",
+      "pluginName": "inputFile",
+      "version": "1.0.0",
+      "inputsDB": {},
+      "id": "av1-input",
+      "position": {"x": 0, "y": 0},
+      "fpEnabled": true
+    },
+    {
+      "name": "AV1 Video-Only Transcode",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "1.0.0",
+      "inputsDB": {
+        "pluginSourceId": "Community:Tdarr_Plugin_075a_Transcode_Customisable",
+        "codecs_to_exclude": "av1",
+        "cli": "ffmpeg",
+        "transcode_arguments": ",-map 0:v:0 -map 0:a? -map 0:s? -map 0:t? -map_metadata 0 -c:v libsvtav1 -crf 30 -preset 6 -c:a copy -c:s copy -c:t copy",
+        "output_container": ".mkv"
+      },
+      "id": "av1-transcode",
+      "position": {"x": 0, "y": 180},
+      "fpEnabled": true
+    },
+    {
+      "name": "Compare File Size",
+      "sourceRepo": "Community",
+      "pluginName": "compareFileSize",
+      "version": "1.0.0",
+      "inputsDB": {},
+      "id": "av1-compare",
+      "position": {"x": 0, "y": 360},
+      "fpEnabled": true
+    },
+    {
+      "name": "Thorough Output Health Check",
+      "sourceRepo": "Community",
+      "pluginName": "runHealthCheck",
+      "version": "1.0.0",
+      "inputsDB": {"type": "thorough", "gpuAcceleration": "none"},
+      "id": "av1-health-check",
+      "position": {"x": 0, "y": 450},
+      "fpEnabled": true
+    },
+    {
+      "name": "Replace Original File",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "inputsDB": {},
+      "id": "av1-replace",
+      "position": {"x": -240, "y": 540},
+      "fpEnabled": true
+    },
+    {
+      "name": "Reject Same Or Larger",
+      "sourceRepo": "Community",
+      "pluginName": "setWorkingFile",
+      "version": "1.0.0",
+      "inputsDB": {"source": "originalFile", "customPath": ""},
+      "id": "av1-reject",
+      "position": {"x": 240, "y": 540},
+      "fpEnabled": true
+    }
+  ],
+  "flowEdges": [
+    {"source": "av1-input", "sourceHandle": "1", "target": "av1-transcode", "targetHandle": null, "id": "av1-edge-1"},
+    {"source": "av1-transcode", "sourceHandle": "1", "target": "av1-health-check", "targetHandle": null, "id": "av1-edge-2"},
+    {"source": "av1-health-check", "sourceHandle": "1", "target": "av1-compare", "targetHandle": null, "id": "av1-edge-3"},
+    {"source": "av1-compare", "sourceHandle": "1", "target": "av1-replace", "targetHandle": null, "id": "av1-edge-4"},
+    {"source": "av1-compare", "sourceHandle": "2", "target": "av1-reject", "targetHandle": null, "id": "av1-edge-5"},
+    {"source": "av1-compare", "sourceHandle": "3", "target": "av1-reject", "targetHandle": null, "id": "av1-edge-6"}
+  ]
+}
