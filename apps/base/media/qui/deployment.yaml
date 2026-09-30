@@ -76,6 +76,36 @@ spec:
             requests:
               memory: 64Mi
               cpu: 50m
+        - name: category-reconciler
+          image: python:3.13-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["python", "/etc/qui-reconciler/category_reconciler.py"]
+          env:
+            - name: QUI_PROXY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: configarr-env
+                  key: QUI_PROXY_KEY
+            - name: QUI_PROXY_URL_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: configarr-env
+                  key: QUI_PROXY_URL_BASE
+            - name: RECONCILE_INTERVAL_SECONDS
+              value: "300"
+            - name: CATEGORIES_FILE
+              value: /etc/qui-reconciler/categories.txt
+          volumeMounts:
+            - name: category-reconciler
+              mountPath: /etc/qui-reconciler
+              readOnly: true
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: 50m
+            requests:
+              memory: 16Mi
+              cpu: 5m
       volumes:
         - name: qui-config
           persistentVolumeClaim:
@@ -83,3 +113,6 @@ spec:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc
+        - name: category-reconciler
+          configMap:
+            name: qui-category-reconciler

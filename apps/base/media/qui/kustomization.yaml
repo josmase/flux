@@ -7,6 +7,12 @@ resources:
   - ingress.yaml
   - service.yaml
 
+configMapGenerator:
+  - name: qui-category-reconciler
+    files:
+      - category_reconciler.py
+      - categories.txt
+
 labels:
   - includeSelectors: true
     pairs:
