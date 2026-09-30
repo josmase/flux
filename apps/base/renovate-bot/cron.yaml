@@ -18,12 +18,15 @@ spec:
               envFrom:
                 - secretRef:
                     name: renovate-env-secrets
+              env:
+                - name: NODE_OPTIONS
+                  value: "--max-old-space-size=1536"
               resources:
                 limits:
-                  memory: 1000Mi
+                  memory: 2Gi
                   cpu: "1"
                 requests:
-                  memory: 700Mi
+                  memory: 1Gi
                   cpu: "0.4"
           restartPolicy: Never
           volumes:
