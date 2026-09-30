@@ -20,7 +20,7 @@ spec:
         # postgres runs as uid 26/gid 999 in the CNPG image; the data dir on a
         # fresh LINSTOR volume is root-owned, so chown it before initdb.
         - name: chown-data-dir
-          image: ghcr.io/cloudnative-pg/postgresql:17.2
+          image: ghcr.io/cloudnative-pg/postgresql:17.11@sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e
           securityContext:
             runAsUser: 0
           command:
@@ -33,7 +33,7 @@ spec:
               mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
-          image: ghcr.io/cloudnative-pg/postgresql:17.2
+          image: ghcr.io/cloudnative-pg/postgresql:17.11@sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
