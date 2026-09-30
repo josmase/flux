@@ -35,7 +35,7 @@ spec:
               memory: 64Mi
       containers:
         - name: bazarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/bazarr:1.6.0@sha256:84b6f05a7a4194fafe5a0bec062d32f6ae9ea74db33d43d678cb9a3191f31c24
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/bazarr:1.6.2@sha256:8b30e81c4aec2991f469e78fae8afaa89ecc9b21a80e3897f50427216b55470c
           ports:
             - containerPort: 6767
               name: http
