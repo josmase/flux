@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: initialize-settings
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.1.3@sha256:fc3b07f2f571c0392edd4dd386067138a0fe157d2158a976769409a292e43936
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.1.3@sha256:4813745e2c721997d8849f5718786fd4406b3c656fbef479f87a161e51383cbd
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -63,7 +63,7 @@ spec:
               memory: 64Mi
       containers:
         - name: transmission
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.1.3@sha256:fc3b07f2f571c0392edd4dd386067138a0fe157d2158a976769409a292e43936
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/transmission:4.1.3@sha256:4813745e2c721997d8849f5718786fd4406b3c656fbef479f87a161e51383cbd
           ports:
             - containerPort: 9091
               name: http
