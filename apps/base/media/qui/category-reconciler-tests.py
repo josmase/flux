@@ -31,6 +31,13 @@ class FakeClient:
     def edit_category(self, category, save_path):
         self.updated.append((category, save_path))
 
+    def preferences(self):
+        return getattr(self, "_preferences", {})
+
+    def set_preferences(self, preferences):
+        self.set_preferences_calls = getattr(self, "set_preferences_calls", [])
+        self.set_preferences_calls.append(preferences)
+
 
 class CategoryReconcilerTests(unittest.TestCase):
     def test_load_categories_ignores_comments_and_blank_lines(self):
@@ -61,6 +68,21 @@ class CategoryReconcilerTests(unittest.TestCase):
     def test_reconcile_is_idempotent(self):
         client = FakeClient({"seriessix": {"savePath": "/mnt/storage/downloads/complete/seriessix"}})
         self.assertEqual(MODULE.reconcile(client, {"seriessix": "/mnt/storage/downloads/complete/seriessix"}), (0, 0))
+
+    def test_preferences_enable_automatic_category_management(self):
+        client = FakeClient({})
+        client._preferences = {"auto_tmm_enabled": False, "category_changed_tmm_enabled": False}
+        self.assertEqual(MODULE.reconcile_preferences(client), 2)
+        self.assertEqual(
+            client.set_preferences_calls,
+            [{"auto_tmm_enabled": True, "category_changed_tmm_enabled": True}],
+        )
+
+    def test_preferences_are_idempotent(self):
+        client = FakeClient({})
+        client._preferences = dict(MODULE.DESIRED_PREFERENCES)
+        self.assertEqual(MODULE.reconcile_preferences(client), 0)
+        self.assertFalse(hasattr(client, "set_preferences_calls"))
 
     def test_proxy_base_supports_path_and_absolute_url(self):
         self.assertEqual(MODULE.proxy_base("/proxy/key"), "http://127.0.0.1:7476/proxy/key")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep qBittorrent arr categories mapped to per-category download paths."""
+"""Keep qBittorrent arr categories and AutoTMM settings reconciled."""
 
 from __future__ import annotations
 
@@ -16,6 +16,10 @@ from collections.abc import Iterable, Mapping
 LOG = logging.getLogger("qui-category-reconciler")
 DEFAULT_INTERVAL_SECONDS = 300
 DEFAULT_DOWNLOAD_ROOT = "/mnt/storage/downloads/complete"
+DESIRED_PREFERENCES = {
+    "auto_tmm_enabled": True,
+    "category_changed_tmm_enabled": True,
+}
 
 
 def load_categories(path: str) -> list[str]:
@@ -62,6 +66,27 @@ class QbitClient:
             data={"category": category, "savePath": save_path},
         )
 
+    def preferences(self) -> dict[str, object]:
+        return json.loads(self._request("api/v2/app/preferences"))
+
+    def set_preferences(self, preferences: Mapping[str, object]) -> None:
+        self._request(
+            "api/v2/app/setPreferences",
+            data={"json": json.dumps(preferences, separators=(",", ":"))},
+        )
+
+
+def reconcile_preferences(client: QbitClient) -> int:
+    current = client.preferences()
+    changes = {
+        name: desired
+        for name, desired in DESIRED_PREFERENCES.items()
+        if current.get(name) is not desired
+    }
+    if changes:
+        client.set_preferences(changes)
+    return len(changes)
+
 
 def reconcile(client: QbitClient, paths: Mapping[str, str]) -> tuple[int, int]:
     client.login()
@@ -90,8 +115,16 @@ def reconcile_once() -> None:
     categories_file = os.environ.get("CATEGORIES_FILE", "/etc/qui-reconciler/categories.txt")
     paths = desired_paths(load_categories(categories_file))
     client = QbitClient(proxy_base(os.environ["QUI_PROXY_URL_BASE"]), os.environ["QUI_PROXY_KEY"])
+    client.login()
+    preference_changes = reconcile_preferences(client)
     created, updated = reconcile(client, paths)
-    LOG.info("Reconciled %d categories: created=%d updated=%d", len(paths), created, updated)
+    LOG.info(
+        "Reconciled %d categories: created=%d updated=%d preference_changes=%d",
+        len(paths),
+        created,
+        updated,
+        preference_changes,
+    )
 
 
 def wait_for_qui() -> None:
