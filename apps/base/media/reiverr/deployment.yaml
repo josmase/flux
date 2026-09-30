@@ -18,7 +18,7 @@ spec:
         kubernetes.io/hostname: kubernetes-node-204
       containers:
         - name: reiverr
-          image: artifactory.local.hejsan.xyz/docker/aleksilassila/reiverr:v2.2.0
+          image: ghcr.io/aleksilassila/reiverr:v2.2.0
           ports:
             - containerPort: 9494
               name: http
