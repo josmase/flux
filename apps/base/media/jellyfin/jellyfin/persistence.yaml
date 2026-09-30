@@ -1,5 +1,4 @@
 # LINSTOR migration target volume (40Gi x 2 replicas via linstor-final SC).
-# Migration plan: docs/JELLYFIN_LINSTOR_MIGRATION_PLAN.md
 # This volume will have 2 diskful replicas on workers 204/205/206 and a
 # diskless attachment on the GPU node (ubuntu-ms-7977).
 apiVersion: v1

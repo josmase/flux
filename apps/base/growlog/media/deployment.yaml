@@ -41,7 +41,7 @@ spec:
                   key: BETTER_AUTH_SECRET
             - name: BASE_URL
               value: https://growlog.local.hejsan.xyz
-            # Disk-backed blob store (Longhorn PVC), keyed users/{uid}/plants/{pid}/…
+            # Disk-backed blob store, keyed users/{uid}/plants/{pid}/…
             - name: STORAGE_DIR
               value: /data
           ports:

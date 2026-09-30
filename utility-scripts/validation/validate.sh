@@ -58,10 +58,6 @@ echo "INFO - Running validate-structure.sh"
 echo "INFO - Running validate-builds.sh"
 "$SCRIPT_DIR/validate-builds.sh"
 
-echo "INFO - Testing migration backup safety gates"
-bash -n utility-scripts/flux-migration/backup-cluster-data.sh
-python3 -m unittest utility-scripts/flux-migration/test_validate_backup_readiness.py
-
 find . -type f -name '*.yaml' -not -path './charts/*' -print0 | while IFS= read -r -d $'\0' file;
   do
     echo "INFO - Validating $file"

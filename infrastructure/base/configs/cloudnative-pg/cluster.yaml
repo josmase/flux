@@ -84,7 +84,7 @@ spec:
           CREATE EXTENSION IF NOT EXISTS pgcrypto;
           CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
-  # --- Backup (volume snapshots via Longhorn) ---
+  # --- Backup (volume snapshots via LINSTOR) ---
   backup:
     target: prefer-standby
     volumeSnapshot:

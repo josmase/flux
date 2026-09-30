@@ -4,15 +4,15 @@
 Ensure that PersistentVolumeClaim (PVC) storage requests align with actual usage to optimize resource utilization and prevent over‑ or under‑provisioning.
 
 ## Policy
-- For all Longhorn‑backed PVCs:
-  * Determine the actual used space from the Longhorn Volume CR (`status.actualSize`).
+- For all LINSTOR‑backed PVCs:
+  * Determine actual usage from the LINSTOR/PVC and filesystem metrics.
   * Apply a safety buffer:
     - **artifactory-volume-artifactory-0** (namespace `artifactory`): 100 % buffer (multiply actual size by 2.0).
-    - All other Longhorn PVCs: 30 % buffer (multiply actual size by 1.03).
+    - All other LINSTOR PVCs: 30 % buffer (multiply actual size by 1.03).
   * Round the result up to the nearest whole GiB.
   * Set the PVC’s `spec.resources.requests.storage` to this value (expressed as `<size>Gi`).
 
-- For NFS‑backed or manually provisioned volumes, this policy does not apply; monitor usage via the NFS server.
+- For NFS‑backed or manually provisioned volumes, monitor usage via the NFS server.
 
 ## Procedure
 1. **Generate report** – Run the provided script (or equivalent) to collect:

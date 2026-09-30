@@ -19,7 +19,6 @@
      │   └── controllers/
      │       ├── cert-manager/
      │       ├── ingress-traefik/
-     │       └── longhorn/
      ├── apps/
      │   └── kustomization.yaml
      └── clusters/
@@ -29,7 +28,7 @@
      ```yaml
      # values.yaml
      domain: ${ENV_DOMAIN}
-     storageClass: ${STORAGE_CLASS:longhorn}
+     storageClass: ${STORAGE_CLASS:linstor}
      replicaCount: ${REPLICA_COUNT:1}
      ```
 

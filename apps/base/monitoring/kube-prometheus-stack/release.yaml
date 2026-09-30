@@ -28,15 +28,14 @@ spec:
             metadata:
               # The target PVC was copied while Prometheus was stopped.  The
               # explicit name prevents the operator from trying to mutate the
-              # immutable Longhorn claim during the cutover.
+              # immutable storage claim during the cutover.
               name: prometheus-kube-prometheus-stack-prometheus-db-triple
             spec:
               storageClassName: linstor-final-triple
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  # Longhorn currently allocates ~126.7Gi for the 30-day TSDB.
-                  # This must grow (PVCs cannot shrink) to retain 20% headroom.
+                  # The 30-day TSDB requires this capacity to retain headroom.
                   storage: 153Gi
         # Enable alerting rules
         ruleNamespaceSelector: {}

@@ -13,7 +13,7 @@
 | Secrets | SOPS + Age | Encrypted overlays, decrypted only in-cluster |
 | Runtime | K3s | Kubernetes runtime |
 | Ingress | Traefik, cert-manager, reflector | Routing, wildcard certificates, and cross-namespace certificate copies |
-| Storage | LINSTOR/DRBD pilot, Longhorn, NFS CSI, RustFS | Replicated block storage, migration compatibility, shared mounts, and S3-compatible recovery backups |
+| Storage | LINSTOR/DRBD, NFS CSI, RustFS | Replicated block storage, shared mounts, and S3-compatible recovery backups |
 | Databases | CloudNativePG, application databases | Managed PostgreSQL and application persistence |
 | Packaging | HelmRelease | Third-party application releases |
 | CI | GitLab CI | Manifest, render, schema, and ownership validation |
@@ -60,12 +60,10 @@ Never apply a raw production Kustomize render with `kubectl`. Direct mutations a
 
 ## Storage architecture
 
-The cluster is migrating from Longhorn to Piraeus-managed LINSTOR. LINSTOR
-uses two synchronous DRBD replicas on dedicated LVM-thin worker disks, while
+The cluster uses Piraeus-managed LINSTOR. LINSTOR uses two synchronous DRBD
+replicas on dedicated LVM-thin worker disks, while
 RustFS on the independent storage server's mergerfs mount stores native full
-and incremental backups. Only Radarr-10 is on the LINSTOR pilot; all other
-Longhorn workloads remain in place until they are individually migrated and
-their rollback windows pass. Read `storage-architecture.md` before making any
+and incremental backups. Read `storage-architecture.md` before making any
 storage change.
 
 ## Naming and references
@@ -87,5 +85,4 @@ storage change.
 - `.sops.yaml` — encrypted-secret creation rules
 - `utility-scripts/validation/validate.sh` — validation entry point
 - `utility-scripts/validation/production-domain-inventory.yaml` — domain resource inventories
-- `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` — historical architecture decision
 - `gitops-application-ownership.md` — mandatory future-workload placement and ownership rules

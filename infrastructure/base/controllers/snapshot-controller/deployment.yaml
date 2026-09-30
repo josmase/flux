@@ -4,9 +4,6 @@ metadata:
   name: snapshot-controller
   namespace: kube-system
 spec:
-  # Disabled until the existing CNPG backlog referencing the missing
-  # longhorn-snapshot class is resolved. Enabling the controller causes the
-  # pending backups to retry and continuously create failed VolumeSnapshots.
   replicas: 1
   minReadySeconds: 35
   strategy:

@@ -167,7 +167,6 @@ flux reconcile kustomization flux-system --with-source
 kind delete cluster --name flux-dev
 ```
 
-See [Local Development Guide](../docs/LOCAL_DEVELOPMENT.md) for detailed workflows.
 
 #### `tdarr-pilot/tdarr-group-rollout.py`
 

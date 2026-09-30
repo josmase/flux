@@ -10,7 +10,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: kube-prometheus-stack-prometheus
     app.kubernetes.io/part-of: monitoring
-    storage-migration: prometheus-longhorn-to-linstor-2026-09
+    storage-migration: prometheus-to-linstor-2026-09
     storage-migration-phase: copy-target
 spec:
   accessModes: [ReadWriteOnce]

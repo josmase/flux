@@ -94,5 +94,3 @@ The active cross-domain media PVC contract is `media-media-shared-nfs-pvc`. Pres
 - `apps/production/` — independently buildable production domain roots
 - `utility-scripts/validation/validate-builds.sh` — rendered domain and Flux validation
 - `utility-scripts/validation/production-domain-inventory.yaml` — reviewed resource identity inventories
-- `docs/FLUX_APPLICATION_KUSTOMIZATION_SPLIT_PLAN.md` — historical split rationale and design record
-- `docs/FLUX_MIGRATION_BACKUP_AND_RECOVERY.md` — reusable recovery procedure

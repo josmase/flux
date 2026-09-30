@@ -3,16 +3,13 @@
 # Storage Architecture
 
 **Purpose:** Explain how persistent application storage, high availability,
-snapshots, backups, and recovery fit together during the Longhorn-to-LINSTOR
-migration. Read this before changing a PVC, Piraeus, LINSTOR, RustFS, worker
+snapshots, backups, and recovery fit together with LINSTOR. Read this before changing a PVC, Piraeus, LINSTOR, RustFS, worker
 storage, or a storage-related Ansible role.
 
 ## Current state and migration boundary
 
-The cluster is migrating from Longhorn to LINSTOR one workload at a time.
-Longhorn remains in service for workloads that have not been migrated and must
-not be removed or made non-functional during the pilot. `media/radarr-10` is
-the only production workload currently on the new `linstor-pilot` class.
+The cluster uses LINSTOR for replicated block storage and NFS CSI for shared
+media. Production workloads use the final LINSTOR StorageClasses.
 
 The new design has three distinct layers:
 
@@ -33,7 +30,7 @@ considered for MinIO; MinIO is not installed in the implemented pilot.
 
 | Data | Storage path | Reason |
 | --- | --- | --- |
-| Application configuration and local databases | LINSTOR PVCs, or Longhorn PVCs until migrated | Low-latency Kubernetes block storage with per-volume lifecycle and replication |
+| Application configuration and local databases | LINSTOR PVCs | Low-latency Kubernetes block storage with per-volume lifecycle and replication |
 | Shared media and downloads | Existing NFS-backed mounts served from the storage server/mergerfs | Large shared data accessed by multiple media workloads; it is not copied into each LINSTOR replica |
 | LINSTOR recovery backups | RustFS bucket stored below `/mnt/storage/kubernetes/rustfs/data` on mergerfs | S3-compatible destination outside the Kubernetes worker disks |
 
@@ -115,8 +112,6 @@ The current Radarr pilot uses:
 - PVC `media/radarr-10-config-linstor`, requested size 2 GiB;
 - PV/LINSTOR resource `pvc-c0ce6c36-a41b-4fb3-bff3-92ea9013bb6b`;
 - diskful `UpToDate` copies on workers 205 and 206; and
-- the old Longhorn PVC `media/radarr-10-config-resized` retained, detached,
-  as the rollback source through 2026-09-20 11:01 Europe/Stockholm.
 
 ## Snapshots
 
@@ -252,8 +247,5 @@ Stop a storage change if any of the following is true:
 
 ## Operational references
 
-- `docs/LINSTOR_RADARR_PILOT_AND_MIGRATION_PLAN.md` — full migration design
-- `docs/LINSTOR_MIGRATION_CHECKLIST.md` — current execution state and evidence
-- `docs/LINSTOR_MIGRATION.md` — earlier migration notes; defer to the pilot
   plan and checklist where details conflict
 - `.opencode/context/core/standards/storage-policy.md` — PVC sizing policy

@@ -7,7 +7,6 @@ resources:
   - ../../base/renovate-bot
   - ../cloudflare-ddns
   - ../renovate-bot
-  # - ../longhorn # Enable together with the Longhorn maintenance CronJob.
 
 components:
   - ../components/prune-protection

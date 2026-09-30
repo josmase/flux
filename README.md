@@ -32,11 +32,11 @@ This repository contains configurations for deploying applications to a Kubernet
 
 ## Setup and Execution
 
-This repository supports multiple environments (production and development) with environment-specific configurations. See [docs/REFACTORING_PLAN.md](./docs/REFACTORING_PLAN.md) for the complete architecture.
+This repository supports multiple environments (production and development) with environment-specific configurations.
 
 ### Environment Overview
 
-- **Production**: Full infrastructure stack with Longhorn storage, all applications, and Let's Encrypt production certificates
+- **Production**: Full infrastructure stack with LINSTOR/NFS storage, all applications, and Let's Encrypt production certificates
 - **Development**: Minimal infrastructure (cert-manager, traefik, reflector), reduced resources, and Let's Encrypt staging certificates
 
 ### Image Pull Convention (MANDATORY)
@@ -164,12 +164,11 @@ kind delete cluster --name flux-dev
 ```
 
 The development environment automatically:
-- Uses minimal infrastructure (no Longhorn, MongoDB, etc.)
+- Uses minimal infrastructure (no MongoDB, etc.)
 - Reduces resource requests/limits
 - Uses Let's Encrypt staging certificates
 - Disables resource-intensive applications
 
-See [Local Development Guide](./docs/LOCAL_DEVELOPMENT.md) for comprehensive workflows and best practices.
 
 ## Repository Structure
 
@@ -233,40 +232,12 @@ For detailed configurations, see:
 - [Traefik configuration](./infrastructure/controllers/traefik)
 - [Cert configuration](./infrastructure/configs/certificate.yaml)
 
-## Storage Management with Longhorn
+## Storage
 
-This setup uses Longhorn as the distributed block storage system for Kubernetes:
-
-1. **Longhorn**: Provides persistent storage for applications running in the cluster.
-
-### Key Features
-
-- Distributed block storage with data replication
-- Snapshot and backup support
-- Thin provisioning
-- Non-disruptive volume expansion
-
-### Usage
-
-Longhorn is configured as the default StorageClass in the cluster. Applications can request persistent storage using PersistentVolumeClaims (PVCs) with the Longhorn StorageClass.
-
-Example PVC:
-
-```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: example-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 1Gi
-```
-
-For detailed configuration, see [Longhorn setup](./infrastructure/controllers/longhorn)
+Production block storage is provided by Piraeus-managed LINSTOR with DRBD
+replication. Shared media and downloads use the NFS CSI StorageClasses.
+Applications must select an existing StorageClass explicitly in their PVC
+manifests and should use LINSTOR snapshots and RustFS backups for recovery.
 
 ## Encrypting Configurations and Secrets
 

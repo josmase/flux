@@ -6,7 +6,7 @@ This repository manages Kubernetes deployments using Flux CD, following GitOps p
 
 - **GitOps-based deployment**: All cluster changes are made through Git commits, never direct cluster modifications
 - **Three-tier structure**:
-  1. Infrastructure controllers (`infrastructure/controllers/`): Core components like cert-manager, traefik, longhorn
+  1. Infrastructure controllers (`infrastructure/controllers/`): Core components like cert-manager, traefik, and Piraeus
   2. Infrastructure configs (`infrastructure/configs/`): Global configurations and certificates
   3. Applications (`apps/production/`): Individual application deployments
 
@@ -37,7 +37,7 @@ This repository manages Kubernetes deployments using Flux CD, following GitOps p
 - Reference example: `apps/production/blog/ingress.yaml`
 
 ### Storage Pattern
-- Longhorn is the default storage provider
+- LINSTOR is the replicated block-storage provider; NFS CSI serves shared media
 - Use ReadWriteOnce access mode for persistent volumes
 - See example: `apps/production/immich/immich-database/`
 
@@ -80,11 +80,10 @@ This repository manages Kubernetes deployments using Flux CD, following GitOps p
    - Per-app runners defined in `github-runner.yaml` files
 
 2. **Storage Integration**:
-   - Longhorn provides the storage backend
-   - PVCs should specify `storageClassName: longhorn`
+   - LINSTOR and NFS CSI provide the storage backends
+   - PVCs should specify an intentional StorageClass such as `linstor` or an NFS CSI class
 
 ## Known Limitations
 
 - GitOps model requires all changes through Git
 - Single wildcard certificate per domain
-- Longhorn requires minimum 3 replicas for high availability
