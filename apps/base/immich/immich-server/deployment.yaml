@@ -48,7 +48,7 @@ spec:
               memory: 32Mi
       containers:
         - name: immich-server
-          image: ghcr.io/immich-app/immich-server:v1.140.0
+          image: ghcr.io/immich-app/immich-server:v1.144.1@sha256:f34203f6c2db130c26480ff21c412c6f0c37c24ee5261f6a6e4fe1eecaa921c0
           envFrom:
             - secretRef:
                 name: immich-secrets
