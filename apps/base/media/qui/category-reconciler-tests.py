@@ -59,7 +59,7 @@ class CategoryReconcilerTests(unittest.TestCase):
         self.assertEqual(client.updated, [("seriessix", "/mnt/storage/downloads/complete/seriessix")])
 
     def test_reconcile_is_idempotent(self):
-        client = FakeClient({"seriessix": {"save_path": "/mnt/storage/downloads/complete/seriessix"}})
+        client = FakeClient({"seriessix": {"savePath": "/mnt/storage/downloads/complete/seriessix"}})
         self.assertEqual(MODULE.reconcile(client, {"seriessix": "/mnt/storage/downloads/complete/seriessix"}), (0, 0))
 
     def test_proxy_base_supports_path_and_absolute_url(self):

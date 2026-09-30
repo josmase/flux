@@ -73,7 +73,7 @@ def reconcile(client: QbitClient, paths: Mapping[str, str]) -> tuple[int, int]:
         if current is None:
             client.create_category(category, save_path)
             created += 1
-        elif current.get("save_path") != save_path:
+        elif current.get("savePath", current.get("save_path")) != save_path:
             client.edit_category(category, save_path)
             updated += 1
     return created, updated
