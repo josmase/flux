@@ -35,7 +35,7 @@ spec:
               memory: 64Mi
       containers:
         - name: qbittorrent
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/qbittorrent:5.2.3_v2.0.13-ls469
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/qbittorrent:5.2.4@sha256:b522f9f4b769f8f36d49d22d5eb6a92e9aa18904c6a1830b1439df511ec21983_v2.0.13-ls469
           ports:
             - containerPort: 8080
               name: http
