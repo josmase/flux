@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ollama-local-hejsan-xyz
+spec:
+  secretName: ollama-local-hejsan-xyz-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: ollama.local.hejsan.xyz
+  dnsNames:
+    - ollama.local.hejsan.xyz

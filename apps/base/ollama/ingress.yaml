@@ -14,4 +14,4 @@ spec:
         - name: ollama
           port: http
   tls:
-    secretName: ${CERT_SECRET_INTERNAL}
+    secretName: ollama-local-hejsan-xyz-tls
