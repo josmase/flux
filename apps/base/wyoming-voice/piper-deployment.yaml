@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: piper
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/piper:2026-10-10-7d72d192
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/piper:2026-10-10-e7b3fd0c
           imagePullPolicy: Always
           command:
             - /usr/src/.venv/bin/python3
