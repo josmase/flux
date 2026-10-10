@@ -80,5 +80,5 @@ spec:
             timeoutSeconds: 5
       volumes:
         - name: models
-          persistentVolumeClaim:
-            claimName: ollama-models
+          emptyDir:
+            sizeLimit: 12Gi

@@ -13,6 +13,10 @@ https://ollama.local.hejsan.xyz
 
 Traefik routes the hostname to Ollama's normal service port `11434`.
 
+The initial deployment uses node-local `emptyDir` storage for the model cache
+because the current LINSTOR storage pool cannot place another replica. Models
+are downloaded again if the pod is recreated.
+
 ## Migration prerequisite
 
 The GPU node currently has a host-level Ollama systemd service listening on
