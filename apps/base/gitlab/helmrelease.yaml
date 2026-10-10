@@ -225,9 +225,11 @@ spec:
 
     registry:
       enabled: true
+      replicas: 1
       ingress:
         enabled: false
       persistence:
+        enabled: true
         storageClass: ${STORAGE_CLASS}
         size: 50Gi
       database:
