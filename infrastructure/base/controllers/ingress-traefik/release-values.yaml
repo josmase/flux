@@ -27,10 +27,14 @@ ports:
     port: 10300
     exposedPort: 10300
     protocol: TCP
+    expose:
+      default: true
   wyoming-piper:
     port: 10200
     exposedPort: 10200
     protocol: TCP
+    expose:
+      default: true
 
 service:
   enabled: true
