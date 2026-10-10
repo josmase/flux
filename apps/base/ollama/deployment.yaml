@@ -53,6 +53,7 @@ spec:
               until ollama list >/dev/null 2>&1; do sleep 2; done
               ollama pull qwen3:8b
               ollama pull qwen3:1.7b
+              ollama pull qwen3:4b
               wait "$server_pid"
           volumeMounts:
             - name: models
