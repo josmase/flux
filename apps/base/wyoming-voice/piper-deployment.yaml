@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wyoming-piper
+  labels:
+    app: wyoming-piper
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wyoming-piper
+  template:
+    metadata:
+      labels:
+        app: wyoming-piper
+    spec:
+      nodeSelector:
+        gpu: "true"
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: gpu-only
+          effect: NoSchedule
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: piper
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/piper:latest
+          imagePullPolicy: Always
+          args:
+            - --uri
+            - tcp://0.0.0.0:10200
+            - --voice
+            - sv_SE-lisa-medium
+          ports:
+            - name: wyoming
+              containerPort: 10200
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          startupProbe:
+            tcpSocket:
+              port: wyoming
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: wyoming
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: wyoming
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: piper-data
+              mountPath: /data
+      volumes:
+        - name: piper-data
+          emptyDir:
+            sizeLimit: 4Gi

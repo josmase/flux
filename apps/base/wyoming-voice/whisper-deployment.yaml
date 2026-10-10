@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wyoming-whisper
+  labels:
+    app: wyoming-whisper
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wyoming-whisper
+  template:
+    metadata:
+      labels:
+        app: wyoming-whisper
+    spec:
+      nodeSelector:
+        gpu: "true"
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: gpu-only
+          effect: NoSchedule
+      runtimeClassName: nvidia
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: whisper
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper:latest
+          imagePullPolicy: Always
+          args:
+            - --uri
+            - tcp://0.0.0.0:10300
+            - --model
+            - small
+            - --language
+            - sv_SE
+            - --device
+            - cuda
+          ports:
+            - name: wyoming
+              containerPort: 10300
+              protocol: TCP
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+              nvidia.com/gpu.shared: 1
+            limits:
+              cpu: "4"
+              memory: 6Gi
+              nvidia.com/gpu.shared: 1
+          startupProbe:
+            tcpSocket:
+              port: wyoming
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: wyoming
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: wyoming
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: whisper-data
+              mountPath: /data
+      volumes:
+        - name: whisper-data
+          emptyDir:
+            sizeLimit: 8Gi

@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: wyoming-whisper
+  labels:
+    app: wyoming-whisper
+spec:
+  entryPoints:
+    - wyoming-whisper
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: wyoming-whisper
+          port: wyoming

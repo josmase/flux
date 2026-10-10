@@ -23,6 +23,14 @@ ports:
   websecure:
     tls:
       enabled: true
+  wyoming-whisper:
+    port: 10300
+    exposedPort: 10300
+    protocol: TCP
+  wyoming-piper:
+    port: 10200
+    exposedPort: 10200
+    protocol: TCP
 
 service:
   enabled: true

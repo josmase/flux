@@ -10,6 +10,7 @@ resources:
   - ../../base/growlog
   - ../../base/llm-switchboard
   - ../../base/ollama
+  - ../../base/wyoming-voice
   - ../../base/persistence/default
   - ../growlog
   - ../llm-switchboard
