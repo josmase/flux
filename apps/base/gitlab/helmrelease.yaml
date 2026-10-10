@@ -225,13 +225,16 @@ spec:
 
     registry:
       enabled: true
-      replicas: 1
       ingress:
         enabled: false
-      persistence:
-        enabled: true
-        storageClass: ${STORAGE_CLASS}
-        size: 50Gi
+      hpa:
+        minReplicas: 1
+        maxReplicas: 1
+      storage:
+        secret: gitlab-registry-storage
+        key: config
+        redirect:
+          disable: true
       database:
         enabled: true
         host: gitlab-postgresql
