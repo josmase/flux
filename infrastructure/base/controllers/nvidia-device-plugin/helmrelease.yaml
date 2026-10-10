@@ -46,13 +46,20 @@ spec:
             deviceDiscoveryStrategy: "nvml"
             migStrategy: "none"
             failOnInitError: true
+          sharing:
+            timeSlicing:
+              # Expose two schedulable slots backed by the single physical GPU.
+              renameByDefault: true
+              failRequestsGreaterThanOne: true
+              resources:
+                - name: nvidia.com/gpu
+                  replicas: 2
 
     # Use nvidia runtime to access NVML libraries in the container
     # This is critical - the Device Plugin binary needs nvidia runtime to detect GPUs
     runtimeClassName: nvidia
 
-    # Use nvidia as the device plugin naming
-    # This exposes GPUs as nvidia.com/gpu
+    # Shared GPU consumers request nvidia.com/gpu.shared.
     resources:
       limits:
         memory: 128Mi

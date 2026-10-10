@@ -38,8 +38,8 @@ domains:
     count: 10
     sha256: 53a1fb38ece244c0767b902270843e78ddaef8d9f8bb11c75dbb8e9858d97930
   apps-services:
-    count: 58
-    sha256: d627952065a97711716feadb3d4fec059fa871ced9e70df0c9eea4af5e269c78
+    count: 63
+    sha256: 1db9a73cc3032dcb92dd369ea385d549249d394a10020ee4a86b3a9b5411e24a
   apps-home:
     count: 13
     sha256: 61ffcbcb5d6e1ca4b51a29acc1ac67417f8e9fbd4be3854130c0240eb113419c

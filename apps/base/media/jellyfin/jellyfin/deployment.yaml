@@ -131,11 +131,11 @@ spec:
             requests:
               cpu: 1500m
               memory: 5Gi
-              nvidia.com/gpu: 1
+              nvidia.com/gpu.shared: 1
             limits:
               cpu: 4000m
               memory: 6Gi
-              nvidia.com/gpu: 1
+              nvidia.com/gpu.shared: 1
           env:
             # Enable hardware acceleration in Jellyfin
             - name: JELLYFIN_ENABLE_HARDWARE_ACCELERATION
