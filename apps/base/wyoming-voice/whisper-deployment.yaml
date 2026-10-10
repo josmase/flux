@@ -43,6 +43,10 @@ spec:
             - --beam-size
             - "5"
             - --vad-filter
+            - --vad-endpointing
+            - "0.8"
+            - --vad-clip
+            - faster-whisper
           ports:
             - name: wyoming
               containerPort: 10300
