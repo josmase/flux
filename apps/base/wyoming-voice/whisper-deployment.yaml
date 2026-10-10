@@ -38,6 +38,8 @@ spec:
             - sv_SE
             - --device
             - cuda
+            - --compute-type
+            - int8
           ports:
             - name: wyoming
               containerPort: 10300
