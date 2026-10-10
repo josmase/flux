@@ -16,8 +16,6 @@ spec:
       labels:
         app: wyoming-whisper
     spec:
-      imagePullSecrets:
-        - name: gitlab-registry-pull
       nodeSelector:
         gpu: "true"
       tolerations:
@@ -29,7 +27,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: whisper
-          image: registry.local.hejsan.xyz/josmase/infrastructure/wyoming-voice/whisper:2026-10-10-7d72d192
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper:2026-10-10-7d72d192
           imagePullPolicy: Always
           args:
             - --uri
