@@ -58,11 +58,11 @@ spec:
               mountPath: /root/.ollama
           resources:
             requests:
-              cpu: 2
-              memory: 8Gi
+              cpu: 500m
+              memory: 6Gi
             limits:
-              cpu: 6
-              memory: 12Gi
+              cpu: 4
+              memory: 10Gi
               nvidia.com/gpu.shared: 1
           readinessProbe:
             httpGet:
