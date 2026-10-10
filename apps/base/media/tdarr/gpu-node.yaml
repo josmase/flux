@@ -25,7 +25,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: tdarr-node
-          image: artifactory.local.hejsan.xyz/docker/haveagitgat/tdarr_node:2.96.01@sha256:bd98a6a9f46c88147dd10948316a9659766da8374c5de07e7b4f6637a69217e5
+          image: docker.io/haveagitgat/tdarr_node:2.96.01@sha256:bd98a6a9f46c88147dd10948316a9659766da8374c5de07e7b4f6637a69217e5
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ

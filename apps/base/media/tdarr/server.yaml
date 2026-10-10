@@ -21,7 +21,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: tdarr
-          image: artifactory.local.hejsan.xyz/docker/haveagitgat/tdarr:2.96.01@sha256:8531c8261cb7a18f8ae5db5df2d2c93fc5b584472dcb4123bf69812cb429a305
+          image: docker.io/haveagitgat/tdarr:2.96.01@sha256:8531c8261cb7a18f8ae5db5df2d2c93fc5b584472dcb4123bf69812cb429a305
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
