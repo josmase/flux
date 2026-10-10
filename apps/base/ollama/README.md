@@ -28,5 +28,9 @@ free the GPU from competing workloads. The Kubernetes deployment requests one
 The model is pulled automatically on first start:
 
 ```text
-qwen3:8b
+qwen3:4b
 ```
+
+The deployment preloads only the active model so pod restarts do not block
+Home Assistant while downloading unused rollback models. Other Ollama models
+can be pulled on demand through the Ollama API.
