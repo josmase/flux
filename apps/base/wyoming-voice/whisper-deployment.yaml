@@ -35,11 +35,14 @@ spec:
             - --model
             - small
             - --language
-            - sv_SE
+            - sv
             - --device
             - cuda
             - --compute-type
             - int8
+            - --beam-size
+            - "5"
+            - --vad-filter
           ports:
             - name: wyoming
               containerPort: 10300
