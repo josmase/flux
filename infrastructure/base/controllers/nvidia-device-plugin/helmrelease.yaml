@@ -48,12 +48,13 @@ spec:
             failOnInitError: true
           sharing:
             timeSlicing:
-              # Expose two schedulable slots backed by the single physical GPU.
+              # Expose three schedulable slots backed by the single physical GPU:
+              # Jellyfin, Ollama, and the Home Assistant Whisper service.
               renameByDefault: true
               failRequestsGreaterThanOne: true
               resources:
                 - name: nvidia.com/gpu
-                  replicas: 2
+                  replicas: 3
 
     # Use nvidia runtime to access NVML libraries in the container
     # This is critical - the Device Plugin binary needs nvidia runtime to detect GPUs
