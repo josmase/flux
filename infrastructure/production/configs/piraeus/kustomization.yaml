@@ -15,6 +15,7 @@ resources:
   - radarr10-backup-schedule-reconcile.yaml
   - linstor-protection-policy.yaml
   - linstor-protection-validate.yaml
+  - linstor-csi-snapshot-watch-rbac.yaml
   - linstor-backup-policy-reconcile.yaml
   - linstor-snapshot-reconcile.yaml
   - snapshot-retention-policy.yaml

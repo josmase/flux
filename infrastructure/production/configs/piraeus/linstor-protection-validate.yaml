@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-protection-policy-validate-v2
+  name: linstor-protection-policy-validate-v3
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-protection-policy-validate
@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: validate
-          image: bitnami/kubectl:1.30.2
+          image: registry.k8s.io/kubectl:v1.30.2
           volumeMounts:
             - name: tmp
               mountPath: /tmp

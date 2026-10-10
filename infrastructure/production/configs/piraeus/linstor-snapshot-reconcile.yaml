@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: linstor-snapshot-reconcile
+  name: linstor-snapshot-reconcile-v2
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-snapshot-reconcile
@@ -23,7 +23,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: reconcile
-              image: bitnami/kubectl:1.30.2
+              image: registry.k8s.io/kubectl:v1.30.2
               command: ["/bin/sh", "-ec"]
               args:
                 - |

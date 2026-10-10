@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-policy-reconcile-v2
+  name: linstor-backup-policy-reconcile-v3
   namespace: piraeus-datastore
 spec:
   backoffLimit: 3
@@ -15,7 +15,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: inventory
-          image: bitnami/kubectl:1.30.2
+          image: registry.k8s.io/kubectl:v1.30.2
           volumeMounts:
             - name: work
               mountPath: /work
