@@ -28,19 +28,15 @@ spec:
         - name: piper
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/piper:2026-10-10-b87b2f15
           imagePullPolicy: Always
-          command:
-            - /usr/src/.venv/bin/python3
-            - -m
-            - wyoming_piper
-            - --uri
-            - tcp://0.0.0.0:10200
-            - --data-dir
-            - /data
           args:
-            - --uri
-            - tcp://0.0.0.0:10200
             - --voice
-            - sv_SE-lisa-medium
+            - sv_SE-alma-medium
+            - --noise-scale
+            - "0.8"
+            - --noise-w
+            - "0.6"
+            - --length-scale
+            - "0.9"
           ports:
             - name: wyoming
               containerPort: 10200
