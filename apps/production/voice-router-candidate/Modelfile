@@ -1,0 +1,4 @@
+FROM /root/.ollama/inputs/Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+PARAMETER num_ctx 8192
+PARAMETER num_predict 320
+PARAMETER temperature 0.1

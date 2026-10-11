@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ollama
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: prepare-pinned-qwen
+          image: python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
+          command: [python, /preparation/prepare-models.py]
+          args: [--manifest, /preparation/models.lock.json, --model, qwen, --directory, /models/inputs]
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: '1', memory: 512Mi}
+          volumeMounts:
+            - {name: models, mountPath: /models}
+            - {name: preparation, mountPath: /preparation}
+      containers:
+        - name: ollama
+          image: ollama/ollama@sha256:b86366bb528bbf7f1424435d165028497a5b69bf6ddb4fa5a87102e2b79f44fb
+          args:
+            - |
+              set -eu
+              ollama serve &
+              server_pid=$!
+              trap 'kill "$server_pid"' TERM INT
+              until ollama list >/dev/null 2>&1; do sleep 2; done
+              ollama create ha-qwen3-4b-instruct:2507-q4km -f /preparation/Modelfile
+              # Preserve the current Swedish agent and configuration-only rollback.
+              ollama pull qwen2.5:3b
+              kill "$server_pid"
+              wait "$server_pid" || true
+              exec ollama serve
+          volumeMounts:
+            - {name: models, mountPath: /root/.ollama}
+            - {name: preparation, mountPath: /preparation}
+          readinessProbe:
+            $patch: replace
+            exec:
+              command: [ollama, show, 'ha-qwen3-4b-instruct:2507-q4km']
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: models
+          emptyDir: null
+          persistentVolumeClaim: {claimName: voice-models}
+        - name: preparation
+          configMap: {name: voice-model-preparation}

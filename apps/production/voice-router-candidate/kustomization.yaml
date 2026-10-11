@@ -1,0 +1,19 @@
+# Deliberately not referenced by apps-services until acceptance/preparation.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/ollama
+  - ../../base/wyoming-voice
+  - ../../base/kokoro-tts
+  - ../../base/searxng
+  - model-storage.yaml
+configMapGenerator:
+  - name: voice-model-preparation
+    namespace: ollama
+    files: [prepare-models.py, models.lock.json, Modelfile]
+  - name: voice-model-preparation
+    namespace: wyoming-voice
+    files: [prepare-models.py, models.lock.json]
+patches:
+  - path: ollama-patch.yaml
+  - path: whisper-patch.yaml

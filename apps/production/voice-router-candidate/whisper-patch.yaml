@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wyoming-whisper
+  namespace: wyoming-voice
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: prepare-pinned-medium
+          image: python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
+          command: [python, /preparation/prepare-models.py]
+          args: [--manifest, /preparation/models.lock.json, --model, whisper, --directory, /data/medium-pinned]
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: '1', memory: 512Mi}
+          volumeMounts:
+            - {name: whisper-data, mountPath: /data}
+            - {name: preparation, mountPath: /preparation}
+      containers:
+        - name: whisper
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper@sha256:2338b3144a58b2d1c22001669a1d07dac4ab39e084d2983895f463a4b38b1bba
+          args:
+            - --uri
+            - tcp://0.0.0.0:10300
+            - --model
+            - /data/medium-pinned
+            - --language
+            - sv
+            - --device
+            - cuda
+            - --compute-type
+            - int8
+            - --beam-size
+            - '5'
+            - --local-files-only
+            - --vad-filter
+            - --vad-endpointing
+            - '0.8'
+            - --vad-clip
+            - faster-whisper
+      volumes:
+        - name: whisper-data
+          emptyDir: null
+          persistentVolumeClaim: {claimName: whisper-models}
+        - name: preparation
+          configMap: {name: voice-model-preparation}
