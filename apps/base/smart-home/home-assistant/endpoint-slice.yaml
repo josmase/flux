@@ -11,3 +11,7 @@ ports:
 endpoints:
   - addresses:
       - 192.168.1.45
+    conditions:
+      ready: true
+      serving: true
+      terminating: false

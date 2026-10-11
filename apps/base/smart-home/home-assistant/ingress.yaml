@@ -4,7 +4,8 @@ kind: Service
 metadata:
   name: home-assistant
 spec:
-  clusterIP: None
+  type: ExternalName
+  externalName: homeassistant.local.hejsan.xyz
   ports:
     - name: http
       port: 8123

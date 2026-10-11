@@ -4,4 +4,3 @@ namespace: smart-home
 
 resources:
   - ingress.yaml
-  - endpoint-slice.yaml
