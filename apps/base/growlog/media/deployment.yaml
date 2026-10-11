@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: media
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/media:2026-08-24-c7ff345d
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/media:recovery-20261012-c7ff345d@sha256:babb6bf8ee95a782df5fadd183da4d50c1c1a81834e4a7de18dc27cb85281ed9
           imagePullPolicy: IfNotPresent
           env:
             - name: PORT
