@@ -51,7 +51,7 @@ spec:
               server_pid=$!
               trap 'kill "$server_pid"' TERM INT
               until ollama list >/dev/null 2>&1; do sleep 2; done
-              ollama pull qwen2.5:1.5b
+              ollama pull qwen2.5:3b
               kill "$server_pid"
               wait "$server_pid" || true
               exec ollama serve

@@ -28,7 +28,7 @@ free the GPU from competing workloads. The Kubernetes deployment requests one
 The active model is pulled automatically on first start:
 
 ```text
-qwen2.5:1.5b
+qwen2.5:3b
 ```
 
 The deployment preloads only the active model so pod restarts do not block
