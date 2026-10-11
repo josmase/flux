@@ -45,7 +45,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 12Gi
+      storage: 24Gi
   storageClassName: linstor
   dataSource:
     name: artifactory-data-to-canonical
