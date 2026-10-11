@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: new-new-boplats-web
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/web:2026-08-13-b0ac39c3
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/web:recovery-20261011-b0ac39c3@sha256:aedd62a856afb2541cf741db650672db2b72eacfb33ee10192f106945c6a6b76
           env:
             - name: API_URL
               value: http://new-new-boplats-api:3000

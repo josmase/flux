@@ -26,13 +26,28 @@ spec:
           command:
             - /bin/sh
             - -c
-            - chown -R 26:999 /var/lib/postgresql/data
+            - |
+              chown -R 26:999 /var/lib/postgresql/data
+              chmod 0700 /var/lib/postgresql/data
           volumeMounts:
             - name: immich-db-pvc
               subPath: var/lib/postgresql/data
               mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
+          command: ["postgres"]
+          args: ["-D", "/var/lib/postgresql/data"]
+          startupProbe:
+            exec:
+              command: ["/bin/sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+            periodSeconds: 5
+            timeoutSeconds: 3
           image: ghcr.io/cloudnative-pg/postgresql:17.11@sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e
           env:
             - name: POSTGRES_PASSWORD
