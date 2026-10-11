@@ -25,10 +25,10 @@ Before deploying this workload, migrate or stop the host-level service and
 free the GPU from competing workloads. The Kubernetes deployment requests one
 `nvidia.com/gpu.shared` time-sliced slot after the device plugin is configured.
 
-The model is pulled automatically on first start:
+The active model is pulled automatically on first start:
 
 ```text
-qwen3:4b
+qwen2.5:1.5b
 ```
 
 The deployment preloads only the active model so pod restarts do not block
