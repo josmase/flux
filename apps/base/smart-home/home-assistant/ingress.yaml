@@ -5,7 +5,7 @@ metadata:
   name: home-assistant
 spec:
   type: ExternalName
-  externalName: homeassistant.local.hejsan.xyz
+  externalName: homeassistant.local
   ports:
     - name: http
       port: 8123
@@ -20,7 +20,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`assistant.${DOMAIN_EXTERNAL}`) || Host(`homeassistant.local.${DOMAIN_EXTERNAL}`)
+    - match: Host(`assistant.${DOMAIN_EXTERNAL}`)
       kind: Rule
       services:
         - name: home-assistant

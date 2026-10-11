@@ -4,14 +4,10 @@ metadata:
   name: home-assistant
   labels:
     kubernetes.io/service-name: home-assistant
-addressType: IPv4
+addressType: FQDN
 ports:
   - name: http
     port: 8123
 endpoints:
   - addresses:
-      - 192.168.1.45
-    conditions:
-      ready: true
-      serving: true
-      terminating: false
+      - homeassistant.local
