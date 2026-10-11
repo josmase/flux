@@ -39,6 +39,8 @@ spec:
               containerPort: 10201
               protocol: TCP
           env:
+            - name: ONNX_PROVIDER
+              value: CUDAExecutionProvider
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
             - name: NVIDIA_DRIVER_CAPABILITIES
