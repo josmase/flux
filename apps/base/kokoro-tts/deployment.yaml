@@ -27,7 +27,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: kokoro
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/kokoro-tts:2026-10-11-a83887cc
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/kokoro-tts:2026-10-11-e3eb2331
           imagePullPolicy: Always
           args:
             - --uri
