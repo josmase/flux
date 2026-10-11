@@ -52,7 +52,9 @@ spec:
               trap 'kill "$server_pid"' TERM INT
               until ollama list >/dev/null 2>&1; do sleep 2; done
               ollama pull qwen2.5:3b
-              wait "$server_pid"
+              kill "$server_pid"
+              wait "$server_pid" || true
+              exec ollama serve
           volumeMounts:
             - name: models
               mountPath: /root/.ollama
