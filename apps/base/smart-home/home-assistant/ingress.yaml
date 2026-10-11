@@ -4,8 +4,7 @@ kind: Service
 metadata:
   name: home-assistant
 spec:
-  type: ExternalName
-  externalName: homeassistant.local
+  clusterIP: None
   ports:
     - name: http
       port: 8123
