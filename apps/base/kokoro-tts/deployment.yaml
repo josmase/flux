@@ -27,7 +27,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: kokoro
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/kokoro-tts:latest
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/kokoro-tts:2026-10-11-a83887cc
           imagePullPolicy: Always
           args:
             - --uri
@@ -68,4 +68,3 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 5
-
