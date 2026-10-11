@@ -35,6 +35,12 @@ ports:
     protocol: TCP
     expose:
       default: true
+  wyoming-kokoro:
+    port: 10201
+    exposedPort: 10201
+    protocol: TCP
+    expose:
+      default: true
 
 service:
   enabled: true

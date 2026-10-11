@@ -11,6 +11,7 @@ resources:
   - ../../base/llm-switchboard
   - ../../base/ollama
   - ../../base/wyoming-voice
+  - ../../base/kokoro-tts
   - ../../base/persistence/default
   - ../growlog
   - ../llm-switchboard
