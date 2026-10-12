@@ -35,7 +35,7 @@ spec:
               memory: 64Mi
       containers:
         - name: prowlarr
-          image: artifactory.local.hejsan.xyz/docker/linuxserver/prowlarr:2.6.5-nightly@sha256:5e930807ae86f35677089d0a63f6215d946eed0a2ea99e15da8b48769e5360d6
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/prowlarr:2.6.5-nightly@sha256:985761d7a69f93fa1505e7da87d9852eb1fff502b5571174941812f4dd9b40d2
           ports:
             - containerPort: 9696
               name: http
