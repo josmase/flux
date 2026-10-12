@@ -25,12 +25,14 @@ Before deploying this workload, migrate or stop the host-level service and
 free the GPU from competing workloads. The Kubernetes deployment requests one
 `nvidia.com/gpu.shared` time-sliced slot after the device plugin is configured.
 
-The active model is pulled automatically on first start:
+The base deployment pulls this model automatically on first start:
 
 ```text
 qwen2.5:3b
 ```
 
-The deployment preloads only the active model so pod restarts do not block
-Home Assistant while downloading unused rollback models. Other Ollama models
-can be pulled on demand through the Ollama API.
+The production `voice-router-candidate` overlay replaces that base startup with
+the pinned `ha-qwen3-4b-instruct:2507-q4km` model. It preloads only that model
+and checks that it remains loaded before marking the service Ready. The
+Home Assistant router uses the same model directly; do not configure another
+conversation agent to load a different model on this single-model endpoint.
