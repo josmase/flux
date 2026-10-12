@@ -31,9 +31,8 @@ spec:
               trap 'kill "$server_pid"' TERM INT
               until ollama list >/dev/null 2>&1; do sleep 2; done
               ollama create ha-qwen3-4b-instruct:2507-q4km -f /preparation/Modelfile
-              # Preserve the current Swedish agent and configuration-only rollback.
-              ollama pull qwen2.5:3b
-              # Load the candidate into GPU memory before readiness admits HA traffic.
+              # Keep only the pipeline's configured model active. A second model
+              # can evict it from this single-slot GPU server and fail readiness.
               ollama run ha-qwen3-4b-instruct:2507-q4km 'Reply only OK.' >/dev/null
               wait "$server_pid"
           volumeMounts:
