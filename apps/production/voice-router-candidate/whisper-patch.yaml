@@ -4,13 +4,23 @@ metadata:
   name: wyoming-whisper
   namespace: wyoming-voice
 spec:
+  strategy:
+    type: Recreate
   template:
     spec:
       initContainers:
-        - name: prepare-pinned-medium
+        - name: prepare-pinned-large-v3-turbo
           image: python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
           command: [python, /preparation/prepare-models.py]
-          args: [--manifest, /preparation/models.lock.json, --model, whisper, --directory, /data/medium-pinned]
+          args:
+            - --manifest
+            - /preparation/models.lock.json
+            - --model
+            - whisper
+            - --directory
+            - /data/large-v3-turbo-pinned
+            - --remove-after-verify
+            - /data/medium-pinned
           resources:
             requests: {cpu: 100m, memory: 128Mi}
             limits: {cpu: '1', memory: 512Mi}
@@ -24,7 +34,7 @@ spec:
             - --uri
             - tcp://0.0.0.0:10300
             - --model
-            - /data/medium-pinned
+            - /data/large-v3-turbo-pinned
             - --language
             - sv
             - --device
