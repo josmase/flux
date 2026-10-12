@@ -1,14 +1,14 @@
 # Gated bilingual voice candidate
 
-This overlay is deliberately outside `apps-services`. Build/validate it before
-promotion; do not simply add it alongside the existing voice bases (duplicate
-objects). Deployment replaces the base voice references with this overlay once
-prepared secrets and the rollout gates are satisfied. Rollback restores those
-base references; retain PVCs and old model data for seven days after acceptance.
+This overlay replaces the Ollama, Wyoming Whisper, and Kokoro base references in
+`apps/production/services`; never add it alongside them (duplicate objects).
+The existing Home Assistant pipelines remain selected while the model PVCs and
+router candidate are validated. Rollback restores the three base references;
+retain PVCs and old model data for seven days after hardware acceptance.
 
-Prepare SOPS-encrypted Secrets in namespace `searxng`: `searxng-private` with
-`secret-key`, and `searxng-auth` with htpasswd `users`. Store the corresponding
-`assist` password in Ansible Vault. Never deploy an unauthenticated search route.
+Online search stays disabled in the router until SOPS-encrypted secrets are
+prepared for an authenticated SearXNG deployment. Do not deploy an unauthenticated
+search route.
 
 The checksummed model manifest and downloader are copies from the router repo;
 CI/review must keep them identical. Normal restarts load verified PVC contents.

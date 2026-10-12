@@ -5,7 +5,6 @@ resources:
   - ../../base/ollama
   - ../../base/wyoming-voice
   - ../../base/kokoro-tts
-  - ../../base/searxng
   - model-storage.yaml
 configMapGenerator:
   - name: voice-model-preparation
