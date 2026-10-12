@@ -1,4 +1,3 @@
-# Deliberately not referenced by apps-services until acceptance/preparation.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -6,6 +5,7 @@ resources:
   - ../../base/wyoming-voice
   - ../../base/kokoro-tts
   - model-storage.yaml
+  - whisper-homeassistant-context-secret.yaml
 configMapGenerator:
   - name: voice-model-preparation
     namespace: ollama

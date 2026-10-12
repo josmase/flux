@@ -30,11 +30,20 @@ spec:
       containers:
         - name: whisper
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper@sha256:2338b3144a58b2d1c22001669a1d07dac4ab39e084d2983895f463a4b38b1bba
+          env:
+            - name: WYO_WHISPER_HASS_TOKEN_FILE
+              value: /run/secrets/homeassistant/token
+          volumeMounts:
+            - name: homeassistant-context-token
+              mountPath: /run/secrets/homeassistant
+              readOnly: true
           args:
             - --uri
             - tcp://0.0.0.0:10300
             - --model
             - /data/large-v3-turbo-pinned
+            - --hass-api
+            - http://homeassistant.local.hejsan.xyz:8123/api
             - --language
             - sv
             - --device
@@ -55,3 +64,9 @@ spec:
           persistentVolumeClaim: {claimName: whisper-models}
         - name: preparation
           configMap: {name: voice-model-preparation}
+        - name: homeassistant-context-token
+          secret:
+            secretName: whisper-homeassistant-context
+            items:
+              - key: token
+                path: token
