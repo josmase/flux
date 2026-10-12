@@ -20,6 +20,9 @@ spec:
       containers:
         - name: ollama
           image: ollama/ollama@sha256:b86366bb528bbf7f1424435d165028497a5b69bf6ddb4fa5a87102e2b79f44fb
+          env:
+            - name: OLLAMA_KEEP_ALIVE
+              value: "-1"
           args:
             - |
               set -eu
@@ -30,18 +33,23 @@ spec:
               ollama create ha-qwen3-4b-instruct:2507-q4km -f /preparation/Modelfile
               # Preserve the current Swedish agent and configuration-only rollback.
               ollama pull qwen2.5:3b
-              kill "$server_pid"
-              wait "$server_pid" || true
-              exec ollama serve
+              # Load the candidate into GPU memory before readiness admits HA traffic.
+              curl --fail --silent --show-error --max-time 180 \
+                http://127.0.0.1:11434/api/generate \
+                -H 'Content-Type: application/json' \
+                --data-binary '{"model":"ha-qwen3-4b-instruct:2507-q4km","prompt":"Reply only OK.","stream":false,"keep_alive":-1,"options":{"num_predict":1}}' \
+                >/dev/null
+              wait "$server_pid"
           volumeMounts:
             - {name: models, mountPath: /root/.ollama}
             - {name: preparation, mountPath: /preparation}
           readinessProbe:
             $patch: replace
             exec:
-              command: [ollama, show, 'ha-qwen3-4b-instruct:2507-q4km']
-            periodSeconds: 10
-            timeoutSeconds: 5
+              command: [sh, -c, "ollama ps | grep -Fq 'ha-qwen3-4b-instruct:2507-q4km'"]
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 72
       volumes:
         - name: models
           emptyDir: null
