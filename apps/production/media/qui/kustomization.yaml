@@ -3,6 +3,13 @@ kind: Kustomization
 
 resources:
   - ../../../../apps/base/media/qui
+  - qbittorrent-instance-sync.yaml
+  - management-api-key-secret.yaml
 
 patches:
   - path: persistence-linstor.yaml
+
+configMapGenerator:
+  - name: qui-qbittorrent-instance-sync
+    files:
+      - sync.py=sync-qbittorrent-instance.py

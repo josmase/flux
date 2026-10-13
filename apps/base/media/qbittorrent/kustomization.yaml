@@ -6,6 +6,11 @@ resources:
   - persistence.yaml
   - service.yaml
 
+configMapGenerator:
+  - name: qbittorrent-auth-config
+    files:
+      - configure.py=configure-auth.py
+
 labels:
   - includeSelectors: true
     pairs:

@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: qui-qbittorrent-instance-sync
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 360
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: sync
+              image: python:3.13-alpine
+              imagePullPolicy: IfNotPresent
+              command: ["python3", "/opt/qui-sync/sync.py"]
+              env:
+                - name: QUI_URL
+                  value: http://qui:7476
+                - name: QBITTORRENT_INSTANCE_NAME
+                  value: qBittorrent
+                - name: QBITTORRENT_URL
+                  value: http://qbittorrent:8080
+              volumeMounts:
+                - name: script
+                  mountPath: /opt/qui-sync
+                  readOnly: true
+                - name: qbittorrent-auth
+                  mountPath: /run/qbittorrent-auth
+                  readOnly: true
+                - name: qui-api-key
+                  mountPath: /run/qui-api-key
+                  readOnly: true
+          volumes:
+            - name: script
+              configMap:
+                name: qui-qbittorrent-instance-sync
+                defaultMode: 0555
+            - name: qbittorrent-auth
+              secret:
+                secretName: qbittorrent-auth
+                defaultMode: 0400
+            - name: qui-api-key
+              secret:
+                secretName: qui-management-api-key
+                defaultMode: 0400

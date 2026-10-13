@@ -33,6 +33,45 @@ spec:
               memory: 32Mi
             limits:
               memory: 64Mi
+        - name: configure-webui-auth
+          image: python:3.13-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["python3", "/opt/qbittorrent-auth/configure.py"]
+          env:
+            - name: QBITTORRENT_CONFIG
+              value: /config/qBittorrent/qBittorrent.conf
+            - name: QBITTORRENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-auth
+                  key: username
+            - name: QBITTORRENT_PASSWORD_FILE
+              value: /run/qbittorrent-auth/password
+            - name: PUID
+              valueFrom:
+                configMapKeyRef:
+                  name: default-app-config
+                  key: PUID
+            - name: PGID
+              valueFrom:
+                configMapKeyRef:
+                  name: default-app-config
+                  key: PGID
+          volumeMounts:
+            - name: qbittorrent-config
+              mountPath: /config
+            - name: qbittorrent-auth
+              mountPath: /run/qbittorrent-auth
+              readOnly: true
+            - name: qbittorrent-auth-script
+              mountPath: /opt/qbittorrent-auth
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: qbittorrent
           image: artifactory.local.hejsan.xyz/docker/linuxserver/qbittorrent:5.2.4@sha256:97333cc1ccf903e0bbcd8eb67e3332e4970e9c1ecabe145e499e9c0847ebcaed
@@ -88,3 +127,11 @@ spec:
         - name: shared-storage
           persistentVolumeClaim:
             claimName: media-media-shared-nfs-pvc
+        - name: qbittorrent-auth
+          secret:
+            secretName: qbittorrent-auth
+            defaultMode: 0400
+        - name: qbittorrent-auth-script
+          configMap:
+            name: qbittorrent-auth-config
+            defaultMode: 0555

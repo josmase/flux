@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../../../apps/base/media/qbittorrent
+  - auth-secret.yaml
 
 patches:
   - path: persistence-linstor.yaml
