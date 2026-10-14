@@ -32,7 +32,12 @@ def main() -> None:
     for key, value in (("WebUI\\Username", username), ("WebUI\\Password_PBKDF2", encoded)):
         pattern = re.compile(rf"(?m)^{re.escape(key)}=.*$")
         line = f"{key}={value}"
-        section = pattern.sub(line, section) if pattern.search(section) else section.rstrip("\n") + "\n" + line + "\n"
+        # Config keys contain a literal backslash (for example, WebUI\\Username).
+        # A callable keeps re.sub from parsing backslashes in the replacement text.
+        if pattern.search(section):
+            section = pattern.sub(lambda _match: line, section)
+        else:
+            section = section.rstrip("\n") + "\n" + line + "\n"
     updated = content[:start] + section + content[end:]
     temp = config.with_suffix(".conf.tmp")
     temp.write_text(updated)
