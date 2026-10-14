@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-remote-reconcile-v4
+  name: linstor-rustfs-remote-reconcile-v5
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-remote-reconcile
@@ -29,15 +29,8 @@ spec:
               remotes="$(linstor --controllers "$controller" -m remote list)"
               if ! printf '%s\n' "$remotes" | jq -e \
                 --arg remote "$remote" \
-                '.s3_remotes[] | select(.remote_name == $remote and .use_path_style == true)' \
+                '.s3_remotes[] | select(.remote_name == $remote)' \
                 >/dev/null; then
-                if printf '%s\n' "$remotes" | jq -e \
-                  --arg remote "$remote" \
-                  '.s3_remotes[] | select(.remote_name == $remote)' \
-                  >/dev/null; then
-                  linstor --controllers "$controller" remote delete "$remote"
-                fi
-
                 if ! output="$(linstor --controllers "$controller" remote create s3 \
                   --use-path-style \
                   "$remote" \
@@ -55,7 +48,7 @@ spec:
 
               linstor --controllers "$controller" -m remote list |
                 jq -e --arg remote "$remote" \
-                  '.s3_remotes[] | select(.remote_name == $remote and .use_path_style == true)' \
+                  '.s3_remotes[] | select(.remote_name == $remote)' \
                   >/dev/null
           env:
             - name: RUSTFS_ACCESS_KEY
