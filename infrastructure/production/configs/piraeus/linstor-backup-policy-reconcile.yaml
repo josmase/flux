@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-policy-reconcile-v6
+  name: linstor-backup-policy-reconcile-v7
   namespace: piraeus-datastore
 spec:
   backoffLimit: 3
@@ -24,7 +24,7 @@ spec:
             - |
               : > /work/pvcs.tsv
               kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
-              awk '$3 == "linstor" {print $1 "\t" $2}' |
+              awk 'index($3, "linstor") == 1 {print $1 "\t" $2}' |
               while IFS="$(printf '\t')" read -r namespace name; do
                 pv="$(kubectl get pvc -n "$namespace" "$name" -o jsonpath='{.spec.volumeName}')"
                 handle="$(kubectl get pv "$pv" -o jsonpath='{.spec.csi.volumeHandle}' 2>/dev/null || true)"
