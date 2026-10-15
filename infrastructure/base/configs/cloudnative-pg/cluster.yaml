@@ -7,9 +7,8 @@ spec:
   # --- Topology ---
   instances: 3
   minSyncReplicas: 1
-  # Temporarily require one synchronous standby while shared-postgres-11 is
-  # rejoined. Restore this to 2 once both replicas are streaming and caught up.
-  maxSyncReplicas: 1
+  # Require both rebuilt standbys for synchronous commits.
+  maxSyncReplicas: 2
 
   # --- PostgreSQL image ---
   imageName: ghcr.io/cloudnative-pg/postgresql:17.2
