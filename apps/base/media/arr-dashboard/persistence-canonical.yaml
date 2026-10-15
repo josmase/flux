@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: arr-dashboard-config-linstor
+  namespace: media
   labels:
     app: arr-dashboard
     storage-migration: arr-dashboard-linstor-canonical-2026-09

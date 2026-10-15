@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: arr-dashboard
+  namespace: media
   labels:
     app: arr-dashboard
 spec:
