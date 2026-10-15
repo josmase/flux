@@ -19,6 +19,43 @@ def request(url, key, method="GET", payload=None):
         return json.loads(data) if data else None
 
 
+def sync_instances(qui, key, username, password, desired_instances, instances):
+    if not isinstance(desired_instances, list) or not desired_instances:
+        raise SystemExit("QBITTORRENT_INSTANCES must be a non-empty JSON array")
+    if not isinstance(instances, list):
+        raise SystemExit("Qui returned an unexpected instance list")
+
+    for desired in desired_instances:
+        desired_name = desired.get("name")
+        desired_host = desired.get("host")
+        if not desired_name or not desired_host:
+            raise SystemExit("Each QBITTORRENT_INSTANCES entry needs name and host")
+        match = next((item for item in instances if item.get("name") == desired_name), None)
+        if match is None:
+            request(
+                f"{qui}/api/instances",
+                key,
+                method="POST",
+                payload={
+                    "name": desired_name,
+                    "host": desired_host,
+                    "username": username,
+                    "password": password,
+                },
+            )
+            print(f"Created Qui instance {desired_name}")
+            continue
+        instance_id = match.get("id")
+        if instance_id is None:
+            raise SystemExit(f"Qui instance {desired_name!r} has no id")
+        update = {k: v for k, v in match.items() if k not in ("id", "password")}
+        update.update(
+            {"name": desired_name, "host": desired_host, "username": username, "password": password}
+        )
+        request(f"{qui}/api/instances/{instance_id}", key, method="PUT", payload=update)
+        print(f"Updated Qui instance {desired_name} ({instance_id})")
+
+
 def main():
     qui = os.environ.get("QUI_URL", "http://qui:7476").rstrip("/")
     key = open("/run/qui-api-key/key", encoding="utf-8").read().strip()
@@ -27,9 +64,12 @@ def main():
         return
     username = open("/run/qbittorrent-auth/username", encoding="utf-8").read().strip()
     password = open("/run/qbittorrent-auth/password", encoding="utf-8").read().rstrip("\r\n")
-    desired_name = os.environ.get("QBITTORRENT_INSTANCE_NAME", "qBittorrent")
-    desired_host = os.environ.get("QBITTORRENT_URL", "http://qbittorrent:8080")
-
+    desired_instances = json.loads(
+        os.environ.get(
+            "QBITTORRENT_INSTANCES",
+            '[{"name":"qBittorrent","host":"http://qbittorrent:8080"}]',
+        )
+    )
     instances = None
     for attempt in range(30):
         try:
@@ -41,18 +81,7 @@ def main():
             time.sleep(10)
     if isinstance(instances, dict):
         instances = instances.get("instances", [])
-    if not isinstance(instances, list):
-        raise SystemExit("Qui returned an unexpected instance list")
-    match = next((item for item in instances if item.get("name") == desired_name), None)
-    if match is None:
-        raise SystemExit(f"Qui instance {desired_name!r} was not found; refusing to create a duplicate")
-    instance_id = match.get("id")
-    if instance_id is None:
-        raise SystemExit("Qui instance has no id")
-    update = {k: v for k, v in match.items() if k not in ("id", "password")}
-    update.update({"name": desired_name, "host": desired_host, "username": username, "password": password})
-    request(f"{qui}/api/instances/{instance_id}", key, method="PUT", payload=update)
-    print(f"Updated Qui instance {desired_name} ({instance_id})")
+    sync_instances(qui, key, username, password, desired_instances, instances)
 
 
 if __name__ == "__main__":

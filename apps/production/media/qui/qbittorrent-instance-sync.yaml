@@ -22,10 +22,13 @@ spec:
               env:
                 - name: QUI_URL
                   value: http://qui:7476
-                - name: QBITTORRENT_INSTANCE_NAME
-                  value: qBittorrent
-                - name: QBITTORRENT_URL
-                  value: http://qbittorrent:8080
+                - name: QBITTORRENT_INSTANCES
+                  value: >-
+                    [{"name":"qBittorrent","host":"http://qbittorrent:8080"},
+                    {"name":"qBittorrent-2","host":"http://qbittorrent-2-qbittorrent:8080"},
+                    {"name":"qBittorrent-3","host":"http://qbittorrent-3-qbittorrent:8080"},
+                    {"name":"qBittorrent-4","host":"http://qbittorrent-4-qbittorrent:8080"},
+                    {"name":"qBittorrent-5","host":"http://qbittorrent-5-qbittorrent:8080"}]
               volumeMounts:
                 - name: script
                   mountPath: /opt/qui-sync

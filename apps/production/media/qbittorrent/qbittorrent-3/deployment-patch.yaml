@@ -1,0 +1,9 @@
+- op: replace
+  path: /spec/template/spec/containers/0/ports/1/containerPort
+  value: 51415
+- op: replace
+  path: /spec/template/spec/containers/0/ports/2/containerPort
+  value: 51415
+- op: replace
+  path: /spec/template/spec/containers/0/env/1/value
+  value: "51415"

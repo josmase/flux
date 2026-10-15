@@ -189,6 +189,22 @@ spec:
       namespace: media
     - apiVersion: apps/v1
       kind: Deployment
+      name: qbittorrent-2-qbittorrent
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: qbittorrent-3-qbittorrent
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: qbittorrent-4-qbittorrent
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: qbittorrent-5-qbittorrent
+      namespace: media
+    - apiVersion: apps/v1
+      kind: Deployment
       name: qui
       namespace: media
   decryption:

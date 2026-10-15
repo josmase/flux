@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-peer
+  annotations:
+    metallb.io/allow-shared-ip: qbittorrent-peers
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${QBITTORRENT_PEER_IP}
+  ports:
+    - $patch: replace
+    - name: peer-tcp
+      targetPort: 51417
+      port: 51417
+      protocol: TCP
+    - name: peer-udp
+      targetPort: 51417
+      port: 51417
+      protocol: UDP
