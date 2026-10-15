@@ -45,9 +45,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_2
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_2
                 tv_category: sonarrtwo
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -67,9 +67,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_3
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_3
                 tv_category: sonarrthree
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -89,9 +89,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_4
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_4
                 tv_category: sonarrfour
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -111,9 +111,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_5
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_5
                 tv_category: sonarrfive
                 tv_directory: ""
           delete_unmanaged: {enabled: false}
@@ -156,9 +156,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_2
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_2
                 movie_category: radarrone
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -178,9 +178,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_3
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_3
                 movie_category: radarrtwo
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -200,9 +200,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_4
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_4
                 movie_category: radarrthree
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -222,9 +222,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_5
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_5
                 movie_category: radarrfour
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -266,9 +266,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_2
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_2
                 movie_category: radarrsix
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -288,9 +288,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_3
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_3
                 movie_category: radarrseven
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -310,9 +310,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_4
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_4
                 movie_category: radarreight
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -332,9 +332,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_5
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_5
                 movie_category: radarrnine
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -376,9 +376,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_2
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_2
                 movie_category: radarreleven
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}
@@ -398,9 +398,9 @@ data:
                 host: qui.media.svc.cluster.local
                 port: 7476
                 use_ssl: false
-                url_base: !env QUI_PROXY_URL_BASE
+                url_base: !env QUI_PROXY_URL_BASE_3
                 username: ""
-                password: !env QUI_PROXY_KEY
+                password: !env QUI_PROXY_KEY_3
                 movie_category: radarrtwelve
                 movie_imported_category: ""
           delete_unmanaged: {enabled: false}

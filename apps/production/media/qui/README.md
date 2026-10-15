@@ -10,12 +10,12 @@ The job creates Qui entries named `qBittorrent` and `qBittorrent-2` through
 `qBittorrent-5` when they are missing, then keeps their service URLs and shared
 credentials aligned every five minutes.
 
-Arr routing still uses the existing Qui client proxy key until five
-instance-specific proxy URLs are available. Qui creates these under
-Settings → Client Proxy, and each key is bound to exactly one instance. Once
-created, store their encrypted values in Configarr before applying the balanced
-Sonarr/Radarr assignment. Keep each generated URL with its corresponding
-instance; one proxy key cannot route to multiple qBittorrent instances.
+Qui now has one client proxy key bound to each qBittorrent instance. The
+existing key remains assigned to `qBittorrent`; the keys for instances 2–5 are
+stored as `QUI_PROXY_KEY_2` through `QUI_PROXY_KEY_5` with their matching
+`QUI_PROXY_URL_BASE_2` through `QUI_PROXY_URL_BASE_5` values in the encrypted
+Configarr secret. Each Arr client uses the key and URL for its assigned
+instance. Do not swap or reuse a key across instances.
 
 The balanced assignment follows the existing Configarr order (Sonarr 1–6,
 then Radarr 1–12):
