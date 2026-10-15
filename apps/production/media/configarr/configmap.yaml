@@ -27,7 +27,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY
                 tv_category: sonarrone
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
       sonarr-2:
         base_url: http://sonarr-2-sonarr.media.svc.cluster.local:8989
@@ -49,7 +48,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY_2
                 tv_category: sonarrtwo
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
       sonarr-3:
         base_url: http://sonarr-3-sonarr.media.svc.cluster.local:8989
@@ -71,7 +69,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY_3
                 tv_category: sonarrthree
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
       sonarr-4:
         base_url: http://sonarr-4-sonarr.media.svc.cluster.local:8989
@@ -93,7 +90,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY_4
                 tv_category: sonarrfour
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
       sonarr-5:
         base_url: http://sonarr-5-sonarr.media.svc.cluster.local:8989
@@ -115,7 +111,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY_5
                 tv_category: sonarrfive
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
       sonarr-6:
         base_url: http://sonarr-6-sonarr.media.svc.cluster.local:8989
@@ -137,7 +132,6 @@ data:
                 username: ""
                 password: !env QUI_PROXY_KEY
                 tv_category: seriessix
-                tv_directory: ""
           delete_unmanaged: {enabled: false}
     radarr:
       radarr-1:
