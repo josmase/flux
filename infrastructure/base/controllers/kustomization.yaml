@@ -10,6 +10,7 @@ resources:
   - nvidia-device-plugin
   - csi-nfs
   - snapshot-controller
+  - metallb
 
 configurations:
   - kustomizeconfig.yaml
