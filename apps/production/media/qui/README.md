@@ -10,6 +10,11 @@ The job creates Qui entries named `qBittorrent` and `qBittorrent-2` through
 `qBittorrent-5` when they are missing, then keeps their service URLs and shared
 credentials aligned every five minutes.
 
+Each instance uses its own MetalLB address (`192.168.1.184` through
+`192.168.1.188`) and peer port (`51413` through `51417`). MetalLB in the
+production cluster did not allocate the shared-IP configuration, so the peer
+services use dedicated addresses.
+
 Qui now has one client proxy key bound to each qBittorrent instance. The
 existing key remains assigned to `qBittorrent`; the keys for instances 2–5 are
 stored as `QUI_PROXY_KEY_2` through `QUI_PROXY_KEY_5` with their matching

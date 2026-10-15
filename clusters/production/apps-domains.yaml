@@ -213,7 +213,11 @@ spec:
       name: sops-age
   postBuild:
     substitute:
-      QBITTORRENT_PEER_IP: "192.168.1.184"
+      QBITTORRENT_1_PEER_IP: "192.168.1.184"
+      QBITTORRENT_2_PEER_IP: "192.168.1.185"
+      QBITTORRENT_3_PEER_IP: "192.168.1.186"
+      QBITTORRENT_4_PEER_IP: "192.168.1.187"
+      QBITTORRENT_5_PEER_IP: "192.168.1.188"
     substituteFrom:
       - kind: ConfigMap
         name: cluster-vars
