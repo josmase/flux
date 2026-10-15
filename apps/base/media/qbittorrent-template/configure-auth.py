@@ -16,6 +16,8 @@ def main() -> None:
     if not password or "\n" in username or "\r" in username:
         raise SystemExit("qBittorrent username/password is empty or invalid")
 
+    config.parent.mkdir(parents=True, exist_ok=True)
+
     salt = secrets.token_bytes(16)
     derived = hashlib.pbkdf2_hmac("sha512", password.encode(), salt, 100_000)
     encoded = "@ByteArray({}:{})".format(
