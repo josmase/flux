@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - sonarr-1
+  - sonarr-2
   - sonarr-3
   - sonarr-4
   - sonarr-5
+  - sonarr-6
