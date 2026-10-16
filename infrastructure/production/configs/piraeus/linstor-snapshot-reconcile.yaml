@@ -46,6 +46,9 @@ spec:
                       retention="$1"
                       suffix="$2"
                       name="snapshot-$${safe}-$${suffix}"
+                      if kubectl get volumesnapshot -n "$${namespace}" "$${name}" >/dev/null 2>&1; then
+                        return
+                      fi
                       printf '%s\n' \
                         'apiVersion: snapshot.storage.k8s.io/v1' \
                         'kind: VolumeSnapshot' \
@@ -62,7 +65,7 @@ spec:
                         "  volumeSnapshotClassName: $${snapshot_class}" \
                         '  source:' \
                         "    persistentVolumeClaimName: $${pvc}" |
-                        kubectl apply -f -
+                        kubectl create -f -
                     }
                     create_snapshot hourly "h-$${stamp}"
                     [ "$hour" = "03" ] && create_snapshot daily "d-$(date -u +%Y%m%d)"
