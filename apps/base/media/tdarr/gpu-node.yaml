@@ -16,13 +16,6 @@ spec:
         app.kubernetes.io/name: tdarr
         app.kubernetes.io/component: gpu-node
     spec:
-      nodeSelector:
-        gpu: "true"
-      tolerations:
-        - key: workload
-          operator: Equal
-          value: gpu-only
-          effect: NoSchedule
       containers:
         - name: tdarr-node
           image: docker.io/haveagitgat/tdarr_node:2.96.01@sha256:a24f19274a9862df73033997c15f69e7c473252bc8aeed789b2c09aa24a81414

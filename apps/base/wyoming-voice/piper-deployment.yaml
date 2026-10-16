@@ -16,13 +16,6 @@ spec:
       labels:
         app: wyoming-piper
     spec:
-      nodeSelector:
-        gpu: "true"
-      tolerations:
-        - key: workload
-          operator: Equal
-          value: gpu-only
-          effect: NoSchedule
       terminationGracePeriodSeconds: 30
       containers:
         - name: piper

@@ -26,8 +26,6 @@ artifactory:
       password: somepassword
       database: artifactory
     primary:
-      nodeSelector:
-        kubernetes.io/hostname: kubernetes-node-204
       persistence:
         enabled: true
         existingClaim: artifactory-pg17-linstor

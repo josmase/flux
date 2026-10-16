@@ -51,8 +51,6 @@ spec:
       # The original is explicitly retained with Helm's resource-policy: keep
       # annotation until the migration rollback window has elapsed.
       enabled: true
-      nodeSelector:
-        kubernetes.io/hostname: kubernetes-node-204
       persistence:
         enabled: true
         existingClaim: grafana-data-linstor
