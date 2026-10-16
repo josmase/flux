@@ -72,6 +72,6 @@ spec:
                       count="$(printf '%s\n' "$snapshots" | sed '/^$/d' | wc -l)"
                       remove=$((count - keep))
                       [ "$remove" -gt 0 ] || continue
-                      printf '%s\n' "$snapshots" | sed '/^$/d' | head -n "$remove" | xargs -r -n1 kubectl delete volumesnapshot -n "$namespace"
+                      printf '%s\n' "$snapshots" | sed '/^$/d' | head -n "$remove" | xargs -r -n1 kubectl delete volumesnapshot -n "$namespace" --wait=false
                     done
                   done
