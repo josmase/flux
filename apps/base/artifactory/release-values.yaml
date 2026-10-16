@@ -74,6 +74,17 @@ artifactory:
       limits:
         cpu: 240m
         memory: 1536Mi
+    startupProbe:
+      config: |
+        httpGet:
+          path: /{{ .Values.jfbus.apiContext }}/system/health/readiness
+          port: {{ .Values.jfbus.internalRestPort }}
+          scheme: HTTP
+        timeoutSeconds: {{ .Values.probes.timeoutSeconds }}
+        initialDelaySeconds: 0
+        periodSeconds: 5
+        failureThreshold: 90
+        successThreshold: 1
     javaOpts: >-
       -XX:InitialRAMPercentage=20
       -XX:MaxRAMPercentage=50
