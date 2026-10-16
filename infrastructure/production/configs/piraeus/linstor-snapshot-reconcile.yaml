@@ -56,7 +56,7 @@ spec:
                         '    protection.josmase.dev/managed: "true"' \
                         "    protection.josmase.dev/tier: $${tier}" \
                         "    protection.josmase.dev/retention: $${retention}" \
-                        "    protection.josmase.dev/created: $${stamp}" \
+                        "    protection.josmase.dev/created: \"$${stamp}\"" \
                         'spec:' \
                         "  volumeSnapshotClassName: $${snapshot_class}" \
                         '  source:' \
