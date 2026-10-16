@@ -45,3 +45,12 @@ patches:
       - op: replace
         path: /spec/routes/0/services/0/name
         value: radarr-5-radarr
+
+  - target: {kind: Deployment, name: radarr}
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 224Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 256Mi
