@@ -12,7 +12,7 @@ artifactory:
     resources:
       requests:
         cpu: 410m
-        memory: 1200Mi
+        memory: 900Mi
       limits:
         cpu: 620m
         memory: 2304Mi
@@ -31,7 +31,7 @@ artifactory:
     resources:
       requests:
         cpu: 300m
-        memory: 1500Mi
+        memory: 1150Mi
       limits:
         cpu: 450m
         memory: 2816Mi
@@ -44,7 +44,7 @@ artifactory:
     resources:
       requests:
         cpu: 140m
-        memory: 1400Mi
+        memory: 1050Mi
       limits:
         cpu: 210m
         memory: 2560Mi
@@ -57,7 +57,7 @@ artifactory:
     resources:
       requests:
         cpu: 130m
-        memory: 1400Mi
+        memory: 1050Mi
       limits:
         cpu: 200m
         memory: 2560Mi
