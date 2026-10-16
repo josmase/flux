@@ -39,6 +39,12 @@ spec:
                 secretKeyRef:
                   name: arr-dashboard-db-connection
                   key: uri
+          startupProbe:
+            tcpSocket:
+              port: 3000
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
           livenessProbe:
             tcpSocket:
               port: 3000
