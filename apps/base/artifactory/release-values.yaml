@@ -7,131 +7,12 @@ artifactory:
     masterKeySecretName: my-masterkey-secret
     joinKeySecretName: my-joinkey-secret
 
-    # Preserve at least 1 GiB for non-heap JVM memory, direct buffers, thread
-    # stacks, and file cache below the cgroup limit.
-    resources:
-      requests:
-        cpu: 410m
-        memory: 1600Mi
-      limits:
-        cpu: 620m
-        memory: 2304Mi
-    javaOpts:
-      xms: 512m
-      xmx: 1g
-
     persistence:
       existingClaim: artifactory-data-linstor
       storageClassName: linstor
       size: 12Gi
-
-  # These services share Artifactory's system.yaml. Their heaps are capped at
-  # half of each cgroup limit to leave room for non-heap JVM memory.
-  access:
-    resources:
-      requests:
-        cpu: 300m
-        memory: 2304Mi
-      limits:
-        cpu: 450m
-        memory: 2816Mi
-    javaOpts:
-      other: >-
-        -XX:InitialRAMPercentage=20
-        -XX:MaxRAMPercentage=50
-
-  topology:
-    resources:
-      requests:
-        cpu: 140m
-        memory: 1792Mi
-      limits:
-        cpu: 210m
-        memory: 2560Mi
-    javaOpts:
-      other: >-
-        -XX:InitialRAMPercentage=20
-        -XX:MaxRAMPercentage=50
-
-  jfconfig:
-    resources:
-      requests:
-        cpu: 130m
-        memory: 1792Mi
-      limits:
-        cpu: 200m
-        memory: 2560Mi
-    javaOpts:
-      other: >-
-        -XX:InitialRAMPercentage=20
-        -XX:MaxRAMPercentage=50
-
-  jfbus:
-    resources:
-      requests:
-        cpu: 160m
-        memory: 768Mi
-      limits:
-        cpu: 240m
-        memory: 1536Mi
-    javaOpts: >-
-      -XX:InitialRAMPercentage=20
-      -XX:MaxRAMPercentage=50
-
-  metadata:
-    resources:
-      requests:
-        cpu: 80m
-        memory: 96Mi
-      limits:
-        cpu: 120m
-        memory: 128Mi
-
-  event:
-    resources:
-      requests:
-        cpu: 30m
-        memory: 64Mi
-      limits:
-        cpu: 50m
-        memory: 96Mi
-
-  # router and observability values apply to every instance of each sidecar.
-  router:
-    resources:
-      requests:
-        cpu: 150m
-        memory: 176Mi
-      limits:
-        cpu: 230m
-        memory: 224Mi
-
-  observability:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 80Mi
-      limits:
-        cpu: 80m
-        memory: 112Mi
-
-  frontend:
-    resources:
-      requests:
-        cpu: 10m
-        memory: 208Mi
-      limits:
-        cpu: 20m
-        memory: 288Mi
   nginx:
     enabled: true
-    resources:
-      requests:
-        cpu: 10m
-        memory: 48Mi
-      limits:
-        cpu: 20m
-        memory: 64Mi
   ingress:
     enabled: true
     className: traefik
@@ -145,13 +26,6 @@ artifactory:
       password: somepassword
       database: artifactory
     primary:
-      resources:
-        requests:
-          cpu: 250m
-          memory: 256Mi
-        limits:
-          cpu: 500m
-          memory: 384Mi
       persistence:
         enabled: true
         existingClaim: artifactory-pg17-linstor
