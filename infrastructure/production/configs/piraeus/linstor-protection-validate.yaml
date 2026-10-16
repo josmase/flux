@@ -32,7 +32,7 @@ spec:
               found=0
               kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
               awk '$3 == "linstor" {print $1 "\t" $2}' > /tmp/canonical-pvcs.tsv
-              while IFS="$(printf '\t')" read -r namespace name; do
+              while read -r namespace name; do
                 [ -n "$namespace" ] || continue
                 found=$((found + 1))
                 case "$namespace/$name" in

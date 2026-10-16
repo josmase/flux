@@ -25,7 +25,7 @@ spec:
               : > /work/pvcs.tsv
               kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
               awk 'index($3, "linstor") == 1 {print $1 "\t" $2}' |
-              while IFS="$(printf '\t')" read -r namespace name; do
+              while read -r namespace name; do
                 pv="$(kubectl get pvc -n "$namespace" "$name" -o jsonpath='{.spec.volumeName}')"
                 handle="$(kubectl get pv "$pv" -o jsonpath='{.spec.csi.volumeHandle}' 2>/dev/null || true)"
                 [ -n "$handle" ] && printf '%s\t%s\t%s\n' "$namespace" "$name" "$handle" >> /work/pvcs.tsv
@@ -42,7 +42,7 @@ spec:
             - |
               controller="linstor-controller.piraeus-datastore.svc:3370"
               remote="rustfs-linstor-backups"
-              while IFS="$(printf '\t')" read -r namespace name resource; do
+              while read -r namespace name resource; do
                 case "$namespace/$name" in
                   cnpg-system/*|gitlab/*) full="0 2 * * SUN"; incremental="0 */6 * * *"; local_keep=3; remote_keep=14 ;;
                   immich/*model*|growlog/*cache*) echo "skip cache $namespace/$name"; continue ;;

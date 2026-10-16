@@ -157,6 +157,19 @@ spec:
             config:
               secret: gitlab-backup-object-storage
               key: config
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+
+      kas:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
 
     postgresql:
       install: true

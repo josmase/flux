@@ -34,7 +34,7 @@ spec:
                   stamp="$(date -u +%Y%m%d%H)"
                   kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
                   awk '$3 == "linstor" {print $1 "\t" $2}' |
-                  while IFS="$(printf '\t')" read -r namespace pvc; do
+                  while read -r namespace pvc; do
                     [ -n "$namespace" ] || continue
                     case "$namespace/$pvc" in
                       immich/*model*|growlog/*cache*) tier=cache; continue ;;

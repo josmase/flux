@@ -23,6 +23,15 @@ spec:
       prometheusSpec:
         replicas: 1
         retention: 30d
+        # Seven-day usage: 2.35 GiB p95 and 3.0 GiB peak.  Explicit sizing
+        # prevents Prometheus from consuming unaccounted node memory.
+        resources:
+          requests:
+            cpu: 150m
+            memory: 2704Mi
+          limits:
+            cpu: 580m
+            memory: 4Gi
         storageSpec:
           volumeClaimTemplate:
             metadata:
@@ -147,6 +156,11 @@ spec:
               - url: 'http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook'
                 send_resolved: true
       alertmanagerSpec:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            memory: 64Mi
         storage:
           volumeClaimTemplate:
             metadata:
