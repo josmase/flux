@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base/smart-home
-  - ../minecraft
+  - ../minecraft-retained
 
 components:
   - ../components/prune-protection

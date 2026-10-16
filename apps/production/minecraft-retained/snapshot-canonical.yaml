@@ -1,0 +1,17 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: minecraft-data-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: minecraft-data-triple
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: minecraft-modpacks-to-canonical
+spec:
+  volumeSnapshotClassName: linstor-snapshot
+  source:
+    persistentVolumeClaimName: minecraft-modpacks-triple
