@@ -53,7 +53,7 @@ spec:
     resizeInUseVolumes: false
 
   walStorage:
-    size: 5Gi
+    size: 10Gi
     storageClass: linstor-final-triple
     resizeInUseVolumes: false
 
