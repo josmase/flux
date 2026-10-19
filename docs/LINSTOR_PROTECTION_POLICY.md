@@ -12,8 +12,25 @@ new backups.
 | `standard` | other canonical LINSTOR PVCs | hourly 12, daily 7, weekly 4 | weekly full; daily incremental; local 2; remote 7 daily / 4 weekly |
 | `cache` | regenerable cache PVCs | optional | disabled unless explicitly promoted |
 
-The hourly snapshot CronJob creates labeled snapshots and enforces the
-hourly/daily/weekly retention windows. The backup reconciliation Job inventories
+The hourly snapshot CronJob creates labeled snapshots for canonical PVCs used by
+running, Ready pods and enforces the hourly/daily/weekly retention windows.
+Stopped workloads keep their existing recovery copies and remote backups.
+Scheduled snapshots use the `linstor-snapshot-prunable` Delete class; retention
+counts and deletes only managed snapshots in that class. The Retain class is for
+explicit recovery snapshots.
+
+Creation requires three connected diskful satellites, at least 20% free in each
+LINSTOR thin pool, three UpToDate source replicas, and no pending managed create
+or delete. The job starts at 15 minutes past the hour and waits for each new
+snapshot to become Ready before submitting another. A 120-second timeout stops
+the run; it does not retry the Job or add more requests on subsequent runs while
+the pending snapshot remains. The pool check does not measure VG configuration
+metadata: verify that metadata has capacity for the intended retention window
+before enabling scheduled creation. The reset leaves both the hourly CronJob
+and CloudNativePG's daily snapshot ScheduledBackup suspended pending recovery
+and capacity checks.
+
+The backup reconciliation Job inventories
 only canonical PVCs, creates or modifies the expected LINSTOR schedules, and
 enables each schedule for its resource on `rustfs-linstor-backups`.
 

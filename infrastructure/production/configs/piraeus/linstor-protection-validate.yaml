@@ -66,9 +66,12 @@ rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
     verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshots"]
-    verbs: ["get", "list", "create", "delete"]
+    verbs: ["get", "list", "watch", "create", "delete"]
   - apiGroups: ["piraeus.io"]
     resources: ["linstorsatellites"]
     verbs: ["get", "list"]
@@ -81,6 +84,31 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: linstor-protection-policy
+subjects:
+  - kind: ServiceAccount
+    name: linstor-protection-policy
+    namespace: piraeus-datastore
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: linstor-protection-controller-read
+  namespace: piraeus-datastore
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["http:linstor-controller:3370"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: linstor-protection-controller-read
+  namespace: piraeus-datastore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: linstor-protection-controller-read
 subjects:
   - kind: ServiceAccount
     name: linstor-protection-policy

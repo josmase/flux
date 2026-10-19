@@ -23,8 +23,8 @@ spec:
       effect: NoSchedule
   # Avoid draining multiple replica nodes concurrently during maintenance.
   maxConcurrentEvacuations: 1
-  # Pause snapshot work during the controlled reset, including retries of
-  # existing incomplete contents. Restore two workers after recovery and cleanup.
+  # One worker finalizes retained contents during the controlled reset.
+  # Producers remain suspended; restore two workers after recovery and cleanup.
   # The test operation makes a generated-container order change
   # fail closed instead of silently tuning a different sidecar.
   patches:
@@ -40,7 +40,7 @@ spec:
           value: --worker-threads=$(WORKER_THREADS)
         - op: replace
           path: /spec/template/spec/containers/4/args/5
-          value: --worker-threads=0
+          value: --worker-threads=1
         - op: add
           path: /spec/template/spec/containers/4/args/-
           value: --kube-api-qps=2
