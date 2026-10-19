@@ -31,6 +31,31 @@ spec:
               args:
                 - |
                   set -eu
+                  work_dir="$(mktemp -d)"
+                  trap 'rm -rf "$work_dir"' EXIT
+                  # This kubectl image needs an explicit in-cluster config for
+                  # --raw requests. Reference the projected token without copying it.
+                  cat > "$work_dir/kubeconfig" <<'KUBECONFIG_EOF'
+                  apiVersion: v1
+                  kind: Config
+                  clusters:
+                    - name: cluster
+                      cluster:
+                        server: https://kubernetes.default.svc
+                        certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                  users:
+                    - name: service-account
+                      user:
+                        tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  contexts:
+                    - name: cluster
+                      context:
+                        cluster: cluster
+                        user: service-account
+                        namespace: piraeus-datastore
+                  current-context: cluster
+                  KUBECONFIG_EOF
+                  export KUBECONFIG="$work_dir/kubeconfig"
                   # Do not add to the retry backlog while no diskful storage
                   # satellite is available. Kubernetes node readiness alone
                   # does not prove LINSTOR has connected storage capacity.
@@ -58,8 +83,6 @@ spec:
                     echo "A LINSTOR thin pool has less than 20% headroom; skipping new snapshots."
                     exit 0
                   fi
-                  work_dir="$(mktemp -d)"
-                  trap 'rm -rf "$work_dir"' EXIT
                   # Unchanged volumes in stopped workloads do not need hourly copies.
                   kubectl get pods -A -o json | jq -r '
                     .items[] | select(.status.phase == "Running" and .metadata.deletionTimestamp == null) |
@@ -84,7 +107,7 @@ spec:
                     [ -n "$volume" ] || continue
                     volume_handle="$(kubectl get pv "$volume" -o jsonpath='{.spec.csi.volumeHandle}')"
                     case "$volume_handle" in ''|*[!a-zA-Z0-9._-]*) echo "Unsupported volume handle for $namespace/$pvc; skipping."; continue ;; esac
-                    resources="$(kubectl get --raw "$linstor_proxy/v1/resource-definitions/$volume_handle/resources" --request-timeout=15s)"
+                    resources="$(kubectl get --raw "$linstor_proxy/v1/view/resources?resources=$volume_handle" --request-timeout=15s)"
                     if ! printf '%s' "$resources" | jq -e '
                       [.[] | select(any(.volumes[]?; .state.disk_state == "UpToDate"))] as $diskful |
                       ($diskful | length) >= 3 and all($diskful[];
