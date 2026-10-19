@@ -28,7 +28,18 @@ spec:
               args:
                 - |
                   set -eu
-                  snapshot_class=linstor-snapshot
+                  # Do not add to the retry backlog while no diskful storage
+                  # satellite is available. Kubernetes node readiness alone
+                  # does not prove LINSTOR has connected storage capacity.
+                  if ! kubectl get linstorsatellites.piraeus.io -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.conditions[?(@.type=="Available")].status}{" "}{.status.freeCapacityBytes}{"\n"}{end}' |
+                    awk '$2 == "True" && $3 > 0 { available=1 } END { exit !available }'; then
+                    echo "No available diskful LINSTOR worker satellite; skipping new snapshots."
+                    exit 0
+                  fi
+                  # These snapshots are deleted by this job's retention loop;
+                  # use a class that also removes the corresponding LINSTOR
+                  # snapshot when a VolumeSnapshot is pruned.
+                  snapshot_class=linstor-snapshot-prunable
                   hour="$(date -u +%H)"
                   weekday="$(date -u +%u)"
                   stamp="$(date -u +%Y%m%d%H)"
@@ -72,7 +83,9 @@ spec:
                     [ "$hour" = "04" ] && [ "$weekday" = "7" ] && create_snapshot weekly "w-$(date -u +%G%V)"
                     for retention in hourly daily weekly; do
                       case "$retention" in hourly) keep=12 ;; daily) keep=7 ;; weekly) keep=4 ;; esac
-                      snapshots="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name --no-headers --sort-by=.metadata.creationTimestamp)"
+                      # Legacy managed snapshots used the Retain class. Leave
+                      # them out of both the count and pruning decision.
+                      snapshots="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName --no-headers --sort-by=.metadata.creationTimestamp | awk '$2 == "linstor-snapshot-prunable" {print $1}')"
                       count="$(printf '%s\n' "$snapshots" | sed '/^$/d' | wc -l)"
                       remove=$((count - keep))
                       [ "$remove" -gt 0 ] || continue

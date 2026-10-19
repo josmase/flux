@@ -20,4 +20,5 @@ resources:
   - linstor-snapshot-reconcile.yaml
   - snapshot-retention-policy.yaml
   - snapshot-class.yaml
+  - snapshot-prunable-class.yaml
   - node-prerequisites.yaml
