@@ -14,6 +14,16 @@ resources:
   - secret-shared-postgres-superuser.yaml
 
 patches:
+  # CloudNativePG also creates CSI snapshots; pause this producer during reset.
+  - target:
+      group: postgresql.cnpg.io
+      kind: ScheduledBackup
+      name: shared-postgres-daily-backup
+      namespace: cnpg-system
+    patch: |-
+      - op: replace
+        path: /spec/suspend
+        value: true
   - target:
       version: v1
       kind: Secret
