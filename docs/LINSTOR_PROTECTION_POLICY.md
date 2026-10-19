@@ -50,3 +50,7 @@ When the emergency threshold is reached, suspend standard/cache schedules while
 preserving critical schedules. RustFS remains the sole remote target; loss of
 the storage server therefore also loses the remote backup target until an
 off-site copy is added.
+
+## Backend backup schedule recovery hold (2026-10-19)
+
+The Kubernetes backup-policy Job is suspended as well as the snapshot CronJob and CloudNativePG ScheduledBackup. LINSTOR also had 101 active S3 schedule bindings, independent of these Jobs, including schedules on dormant and legacy resources. Their exact settings are saved in protected incident evidence and are being disabled through `backup schedule disable --rd`, preserving schedules and backup data. Re-enable only reviewed resources after capacity and restore gates pass; resuming the existing policy Job would enable bindings for every matching Bound PVC. Existing `back_*` chains are held during CSI cleanup.

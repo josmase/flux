@@ -1,6 +1,6 @@
 # Snapshot recovery execution — 2026-10-19
 
-This records execution of [the recovery plan](LINSTOR_SNAPSHOT_RESET_RECOVERY_PLAN_2026-10-19.md). Recovery is in progress; snapshot batch cleanup has not started.
+This records execution of [the recovery plan](LINSTOR_SNAPSHOT_RESET_RECOVERY_PLAN_2026-10-19.md). Recovery and the canary succeeded; reviewed snapshot batch cleanup is in progress.
 
 ## Evidence and backups
 
@@ -50,9 +50,9 @@ The refreshed manifest accounts for all 2,419 VolumeSnapshotContents: 2,240 remo
 
 CloudNativePG's daily ScheduledBackup is an independent CSI snapshot producer. A production overlay pauses it during reset. Its six pending snapshots belong to Backup objects already marked failed; the failed Backup history is preserved.
 
-The original Artifactory PostgreSQL canary snapshot disappeared from LINSTOR after node 206 recovered, and its LVs were absent on all workers. Its VolumeSnapshot was deleted normally. The retained content is waiting for its owning CSI sidecar to finalize it.
+The original Artifactory PostgreSQL canary snapshot disappeared from LINSTOR after node 206 recovered, and its LVs were absent on all workers. Its VolumeSnapshot was deleted normally. Its content subsequently disappeared through the owning CSI sidecar's ordinary finalization.
 
-Before any bulk backend deletion, the reviewed Kubernetes records are being retired using Retain semantics so their backend data remains available in LINSTOR and in the durable mapping. CSI workers remain at zero throughout staging. Approved content policies are changed to Retain, parent snapshots are deleted with UID preconditions, and their contents are marked for ordinary retained deletion. The 68 stale creation annotations are cleared only on these approved records after the old sidecar and controller requests were stopped; deletion intent is recorded. No finalizer is edited manually. After staging verifies that every unselected surviving content is ready, one CSI worker can remove its own finalizers without issuing new snapshot creation calls. Backend copies are then removed independently in audited batches of five through LINSTOR's supported REST deletion API.
+Before any bulk backend deletion, the reviewed Kubernetes records are being retired using Retain semantics so their backend data remains available in LINSTOR and in the durable mapping. CSI workers remain at zero throughout staging. Approved content policies are changed to Retain, parent snapshots are deleted with UID preconditions, and their contents are marked for ordinary retained deletion. The 68 stale creation annotations are cleared only on these approved records after the old sidecar and controller requests were stopped; deletion intent is recorded. No finalizer is edited manually. After staging verifies that every unselected surviving content is ready, one CSI worker can remove its own finalizers without issuing new snapshot creation calls. Backend copies are then removed independently through LINSTOR's supported REST deletion API. Batches started at five and increased to 20 after 175 targets passed. Deletions remain sequential, with the same before/after batch checks.
 
 Staging completed with all 2,240 selected contents awaiting ordinary retained finalization and all 179 holds ready. One CSI worker was then enabled; its logs showed no new snapshot creation calls. The original canary content disappeared through the sidecar's ordinary finalizer path. No finalizer was edited manually.
 
@@ -62,6 +62,10 @@ The revised scheduled controls were checked in the exact deployed kubectl image.
 
 ## Required continuation
 
-1. Finish retained metadata staging and allow the CSI sidecar to complete its ordinary finalization; confirm the canary content disappears.
+1. Confirm all selected contents finish ordinary retained finalization; the original canary is already complete.
 2. Execute and audit backend batches, preserving backup chains, migration artifacts, and unmatched records. Record final inventories, VG/pool readings and master memory/watch metrics.
 3. Verify one bounded create/ready/delete lifecycle, then restore the normal sidecar worker limit. Scheduled protection remains suspended until storage headroom and all recovery gates pass.
+
+The updated safeguards were pushed in `4078e529` (including `ca1bee8f`), and `infra-configs` was resumed and reconciled successfully to that revision. Both the hourly CronJob and CloudNativePG ScheduledBackup are suspended in deployed state. The sidecar has one worker, QPS 2, burst 4, and retries from 30 seconds to 10 minutes. Required applications stayed ready during the first batches; other application suspensions were preserved.
+
+A producer audit additionally found 101 active LINSTOR S3 schedule bindings (17 next due at 00:00 UTC, 84 at 03:00 UTC). These bypass Kubernetes CronJob suspension. Their resource/remote/schedule settings were exported and the bindings are being disabled using supported per-resource schedule commands. The backup queue was empty. The policy reconciliation Job is suspended in Git and live state so it cannot re-enable them; no backup snapshots or S3 objects are removed.
