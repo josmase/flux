@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-remote-reconcile-v8
+  name: linstor-rustfs-remote-reconcile-v9
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-remote-reconcile
@@ -25,25 +25,31 @@ spec:
             - |
               controller="linstor-controller.piraeus-datastore.svc:3370"
               remote="rustfs-linstor-backups"
+              endpoint="http://192.168.1.102:9000"
+              bucket="linstor-backups"
+              region="us-east-1"
 
               remotes="$(linstor --controllers "$controller" -m remote list)"
-              if ! printf '%s\n' "$remotes" | jq -e \
+              existing="$(printf '%s\n' "$remotes" | jq -ce \
                 --arg remote "$remote" \
-                '.s3_remotes[]? | select(.remote_name == $remote and .use_path_style == true)' \
-                >/dev/null; then
-                if printf '%s\n' "$remotes" | jq -e \
-                  --arg remote "$remote" \
-                  '.s3_remotes[]? | select(.remote_name == $remote)' \
-                  >/dev/null; then
-                  linstor --controllers "$controller" remote delete "$remote"
-                fi
-
+                '.s3_remotes[]? | select(.remote_name == $remote)' || true)"
+              if [ -n "$existing" ]; then
+                printf '%s\n' "$existing" | jq -e \
+                  --arg endpoint "$endpoint" \
+                  --arg bucket "$bucket" \
+                  --arg region "$region" \
+                  'select(.endpoint == $endpoint and .bucket == $bucket and .region == $region)' \
+                  >/dev/null || {
+                    echo "LINSTOR remote exists but targets a different endpoint, bucket, or region; refusing to replace it." >&2
+                    exit 1
+                  }
+              else
                 if ! output="$(linstor --controllers "$controller" remote create s3 \
                   --use-path-style \
                   "$remote" \
-                  "http://192.168.1.102:9000" \
-                  "linstor-backups" \
-                  "us-east-1" \
+                  "$endpoint" \
+                  "$bucket" \
+                  "$region" \
                   "$RUSTFS_ACCESS_KEY" \
                   "$RUSTFS_SECRET_KEY" 2>&1)"; then
                   printf '%s\n' "$output" |
@@ -53,10 +59,8 @@ spec:
                 fi
               fi
 
-              linstor --controllers "$controller" -m remote list |
-                jq -e --arg remote "$remote" \
-                  '.s3_remotes[]? | select(.remote_name == $remote and .use_path_style == true)' \
-                  >/dev/null
+              linstor --controllers "$controller" -m backup list "$remote" |
+                jq -e '.linstor | type == "object"' >/dev/null
           env:
             - name: RUSTFS_ACCESS_KEY
               valueFrom:
