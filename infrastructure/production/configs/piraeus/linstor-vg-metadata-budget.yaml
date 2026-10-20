@@ -13,4 +13,4 @@ data:
   bytesPerSnapshotLv: "1024"
   snapshotsPerPvcPerRun: "2"
   safetyMultiplier: "2"
-  floorBytes: "65536"
+  floorBytes: "16777216"

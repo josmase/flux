@@ -133,7 +133,6 @@ spec:
                   policy_ready="$(cat /work/backup-ready)"
                   schedule_data="$(linstor --controllers "$controller" -m schedule list | jq -c '.data')"
                   if [ "$policy_ready" != "true" ]; then
-                    linstor --controllers "$controller" node set-property controller BackupShipping/MaxConcurrentBackupsPerNode 1
                     # Retire the pre-gate Radarr schedule as well as the
                     # generated policy schedules below. The legacy Job that
                     # created it is no longer reconciled by Flux.

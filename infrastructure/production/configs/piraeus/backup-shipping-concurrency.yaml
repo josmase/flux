@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-backup-shipping-concurrency-v1
+  namespace: piraeus-datastore
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: configure
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+          command: [/bin/sh, -ec]
+          args:
+            - |
+              controller=linstor-controller.piraeus-datastore.svc:3370
+              linstor --controllers "$controller" controller set-property BackupShipping/MaxConcurrentBackupsPerNode 1
+              # A per-node limit of one on three nodes permits three shipments.
+              # Only worker 204 may ship; fail closed if that worker is unavailable.
+              nodes="$(linstor --controllers "$controller" -m node list)"
+              printf '%s' "$nodes" | jq -r '.[0][].name' | while read -r node; do
+                case "$node" in kubernetes-node-204) limit=1 ;; *) limit=0 ;; esac
+                linstor --controllers "$controller" node set-property "$node" BackupShipping/MaxConcurrentBackupsPerNode "$limit"
+              done

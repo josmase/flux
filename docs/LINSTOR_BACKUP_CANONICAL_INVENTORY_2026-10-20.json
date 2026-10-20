@@ -1,0 +1,2716 @@
+{
+  "reviewed_at": "2026-10-20",
+  "generation": "rustfs-linstor-backups-v2",
+  "discovery": "Bound PVC -> PV -> CSI driver linstor.csi.linbit.com, plus Pod and workload template references and migration ledger review",
+  "canonical_volume_count": 56,
+  "counts": {
+    "standard": 47,
+    "hold": 49,
+    "cnpg-coordinated": 6,
+    "critical": 3,
+    "cache-excluded": 4
+  },
+  "volumes": [
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-data-linstor",
+      "pv": "pvc-510570a7-ea65-489b-b50f-267e3ab99476",
+      "handle": "pvc-510570a7-ea65-489b-b50f-267e3ab99476",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Pod/artifactory-0",
+        "StatefulSet/artifactory"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-data-triple",
+      "pv": "pvc-0dab112d-00c8-4356-bf58-ff6549a274c2",
+      "handle": "pvc-0dab112d-00c8-4356-bf58-ff6549a274c2",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-pg17-linstor",
+      "pv": "pvc-be4ead27-e1a9-4516-9930-44e053eccd1c",
+      "handle": "pvc-be4ead27-e1a9-4516-9930-44e053eccd1c",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Pod/artifactory-postgresql-0",
+        "StatefulSet/artifactory-postgresql"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-pg17-triple",
+      "pv": "pvc-b98df677-2042-4876-8cb6-bf9097e2d18c",
+      "handle": "pvc-b98df677-2042-4876-8cb6-bf9097e2d18c",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "forensic-pg10-data-copy-20261015",
+      "pv": "pvc-46690e78-822a-43b8-82ec-07a82d2cc19c",
+      "handle": "pvc-46690e78-822a-43b8-82ec-07a82d2cc19c",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Forensic recovery evidence; do not schedule or delete.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "forensic-pg10-data-recovery-20261015",
+      "pv": "pvc-429dfaea-5686-42ef-acd4-0f114a06cdbb",
+      "handle": "pvc-429dfaea-5686-42ef-acd4-0f114a06cdbb",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Forensic recovery evidence; do not schedule or delete.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "forensic-pg10-wal-copy-20261015",
+      "pv": "pvc-33647236-dc07-4066-addf-5b1df6ee51dc",
+      "handle": "pvc-33647236-dc07-4066-addf-5b1df6ee51dc",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Forensic recovery evidence; do not schedule or delete.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "forensic-pg10-wal-recovery-20261015",
+      "pv": "pvc-9dc8a358-e75d-44c8-84f2-b68720049d6d",
+      "handle": "pvc-9dc8a358-e75d-44c8-84f2-b68720049d6d",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Forensic recovery evidence; do not schedule or delete.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-12",
+      "pv": "pvc-56e7c1b1-49eb-468b-b058-07bda1d7a15a",
+      "handle": "pvc-56e7c1b1-49eb-468b-b058-07bda1d7a15a",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-12"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-12-wal",
+      "pv": "pvc-8ccc81cb-b766-45f5-9260-0e2908e63069",
+      "handle": "pvc-8ccc81cb-b766-45f5-9260-0e2908e63069",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-12"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-13",
+      "pv": "pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7",
+      "handle": "pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-13"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-13-wal",
+      "pv": "pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa",
+      "handle": "pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-13"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-9",
+      "pv": "pvc-bf69ce4a-7fc5-48f6-9c94-24c183d228ce",
+      "handle": "pvc-bf69ce4a-7fc5-48f6-9c94-24c183d228ce",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-9"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "cnpg-system",
+      "pvc": "shared-postgres-9-wal",
+      "pv": "pvc-e9c20c49-6ae3-4537-95f9-fa8309b4487e",
+      "handle": "pvc-e9c20c49-6ae3-4537-95f9-fa8309b4487e",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/shared-postgres-9"
+      ],
+      "disposition": "cnpg-coordinated",
+      "reason": "Active CNPG instance data/WAL; one coordinated recovery set, no independent volume schedule.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "default",
+      "pvc": "growlog-media-data-linstor",
+      "pv": "pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf",
+      "handle": "pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/media",
+        "Pod/media-5fdfbc98cb-5h6vm"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "default",
+      "pvc": "zero-cache-data-linstor",
+      "pv": "pvc-499f5bb4-1d89-4bc8-b656-c8aff9750e27",
+      "handle": "pvc-499f5bb4-1d89-4bc8-b656-c8aff9750e27",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "default",
+      "pvc": "zero-cache-data-linstor-v2",
+      "pv": "pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3",
+      "handle": "pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/zero-cache",
+        "Pod/zero-cache-5b7f6bbbc7-fmlsh"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "default",
+      "pvc": "zero-cache-data-triple",
+      "pv": "pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e",
+      "handle": "pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-minio-triple",
+      "pv": "pvc-2145439b-14b7-4519-be95-7b4a82962558",
+      "handle": "pvc-2145439b-14b7-4519-be95-7b4a82962558",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-postgresql-linstor",
+      "pv": "pvc-04581dd8-b734-4955-9342-d92a61603215",
+      "handle": "pvc-04581dd8-b734-4955-9342-d92a61603215",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-postgresql-linstor-v2",
+      "pv": "pvc-586ff4f4-edab-45b1-ae75-03d708558396",
+      "handle": "pvc-586ff4f4-edab-45b1-ae75-03d708558396",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Pod/gitlab-postgresql-0",
+        "StatefulSet/gitlab-postgresql"
+      ],
+      "disposition": "critical",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-postgresql-triple",
+      "pv": "pvc-05847ca3-af79-40c8-bbe8-6ea6a44cf445",
+      "handle": "pvc-05847ca3-af79-40c8-bbe8-6ea6a44cf445",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-redis-linstor",
+      "pv": "pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909",
+      "handle": "pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Pod/gitlab-redis-master-0",
+        "StatefulSet/gitlab-redis-master"
+      ],
+      "disposition": "critical",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-redis-triple",
+      "pv": "pvc-262f5c7c-c60b-41d1-ad9f-3b1c11b71383",
+      "handle": "pvc-262f5c7c-c60b-41d1-ad9f-3b1c11b71383",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "repo-data-gitlab-gitaly-0",
+      "pv": "pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532",
+      "handle": "pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "Pod/gitlab-gitaly-0",
+        "StatefulSet/gitlab-gitaly"
+      ],
+      "disposition": "critical",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-db-linstor",
+      "pv": "pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27",
+      "handle": "pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/immich-postgres",
+        "Pod/immich-postgres-7fc7b95cbd-zzxnq"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-db-triple",
+      "pv": "pvc-1ef1053f-8e9a-4a45-8698-91a00eb2d3aa",
+      "handle": "pvc-1ef1053f-8e9a-4a45-8698-91a00eb2d3aa",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-0-linstor",
+      "pv": "pvc-0d9c0194-c69e-40d9-99c1-7d029c897a16",
+      "handle": "pvc-0d9c0194-c69e-40d9-99c1-7d029c897a16",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/immich-machine-learning",
+        "Pod/immich-machine-learning-7c6dcc765d-trwlj"
+      ],
+      "disposition": "cache-excluded",
+      "reason": "Reproducible Immich machine-learning model cache; policy exclusion.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-0-triple",
+      "pv": "pvc-f1dc06ef-404d-45b2-bf02-cf3acf6f0410",
+      "handle": "pvc-f1dc06ef-404d-45b2-bf02-cf3acf6f0410",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-1-linstor",
+      "pv": "pvc-dc659f8a-b108-4823-bda1-eede5976ad7d",
+      "handle": "pvc-dc659f8a-b108-4823-bda1-eede5976ad7d",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/immich-machine-learning",
+        "Pod/immich-machine-learning-7c6dcc765d-trwlj"
+      ],
+      "disposition": "cache-excluded",
+      "reason": "Reproducible Immich machine-learning model cache; policy exclusion.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-1-triple",
+      "pv": "pvc-bf8718bd-e483-44ce-854f-4320092d6c9d",
+      "handle": "pvc-bf8718bd-e483-44ce-854f-4320092d6c9d",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-2-linstor",
+      "pv": "pvc-db3e96b2-589b-45ea-a746-6c8138ffe3c6",
+      "handle": "pvc-db3e96b2-589b-45ea-a746-6c8138ffe3c6",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/immich-machine-learning",
+        "Pod/immich-machine-learning-7c6dcc765d-trwlj"
+      ],
+      "disposition": "cache-excluded",
+      "reason": "Reproducible Immich machine-learning model cache; policy exclusion.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-2-triple",
+      "pv": "pvc-b645fcd1-6a6c-40a9-baae-87e562623ed8",
+      "handle": "pvc-b645fcd1-6a6c-40a9-baae-87e562623ed8",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-linstor",
+      "pv": "pvc-986e2043-3a1e-4866-963c-5af236ee8c6e",
+      "handle": "pvc-986e2043-3a1e-4866-963c-5af236ee8c6e",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/immich-machine-learning",
+        "Pod/immich-machine-learning-7c6dcc765d-trwlj"
+      ],
+      "disposition": "cache-excluded",
+      "reason": "Reproducible Immich machine-learning model cache; policy exclusion.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-model-cache-ml-triple",
+      "pv": "pvc-5844000d-4eec-4a71-a334-809683eeb2ff",
+      "handle": "pvc-5844000d-4eec-4a71-a334-809683eeb2ff",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "llm-switchboard",
+      "pvc": "llm-switchboard-data-linstor",
+      "pv": "pvc-11012fbd-dd01-40e8-8ddd-72034e929686",
+      "handle": "pvc-11012fbd-dd01-40e8-8ddd-72034e929686",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/llm-switchboard",
+        "Pod/llm-switchboard-f7787db66-tslls"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "arr-dashboard-config-linstor",
+      "pv": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc",
+      "handle": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/arr-dashboard",
+        "Pod/arr-dashboard-64d578796d-vpms4"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "arr-dashboard-config-triple",
+      "pv": "pvc-dc745e25-68ee-4374-b3a4-afb9887dc919",
+      "handle": "pvc-dc745e25-68ee-4374-b3a4-afb9887dc919",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "bazarr-config-linstor-v2",
+      "pv": "pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0",
+      "handle": "pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/bazarr",
+        "Pod/bazarr-794c6c4d89-ml92l"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "bazarr-config-triple",
+      "pv": "pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79",
+      "handle": "pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "checkrr-config-linstor-v5",
+      "pv": "pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828",
+      "handle": "pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/checkrr",
+        "Pod/checkrr-f856f5768-s4qfg"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "checkrr-config-triple",
+      "pv": "pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776",
+      "handle": "pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "jellyfin-config-pvc-jellyfin-0-canonical",
+      "pv": "pvc-d38dff11-b9a0-422a-8776-78340c374653",
+      "handle": "pvc-d38dff11-b9a0-422a-8776-78340c374653",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/jellyfin",
+        "Pod/jellyfin-57ccf5f59c-4vjc4"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "jellyfin-config-pvc-jellyfin-0-linstor",
+      "pv": "pvc-ff20eeef-dbf4-4ab0-9b7f-ee2df2bc8b12",
+      "handle": "pvc-ff20eeef-dbf4-4ab0-9b7f-ee2df2bc8b12",
+      "class_name": "linstor-final",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "prowlarr-config-linstor",
+      "pv": "pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42",
+      "handle": "pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/prowlarr",
+        "Pod/prowlarr-84f66b997c-nx4s5"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "prowlarr-config-triple",
+      "pv": "pvc-1cc3571a-e5b3-4a5a-81c2-d510f2e61a26",
+      "handle": "pvc-1cc3571a-e5b3-4a5a-81c2-d510f2e61a26",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-2-qbittorrent-config",
+      "pv": "pvc-352cf73e-bee2-45c6-b315-4e299d5af31c",
+      "handle": "pvc-352cf73e-bee2-45c6-b315-4e299d5af31c",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qbittorrent-2-qbittorrent",
+        "Pod/qbittorrent-2-qbittorrent-5f77cb4b5f-6wsws"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-3-qbittorrent-config",
+      "pv": "pvc-06294ad5-85d7-4532-8182-d71dc8749c57",
+      "handle": "pvc-06294ad5-85d7-4532-8182-d71dc8749c57",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qbittorrent-3-qbittorrent",
+        "Pod/qbittorrent-3-qbittorrent-7cbdd595f5-zhv4s"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-4-qbittorrent-config",
+      "pv": "pvc-e9947608-8121-4e99-bc33-a3c4cf416f73",
+      "handle": "pvc-e9947608-8121-4e99-bc33-a3c4cf416f73",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qbittorrent-4-qbittorrent",
+        "Pod/qbittorrent-4-qbittorrent-7d774d7-ch2pn"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-5-qbittorrent-config",
+      "pv": "pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365",
+      "handle": "pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qbittorrent-5-qbittorrent",
+        "Pod/qbittorrent-5-qbittorrent-5f5cd6ddcf-njhv7"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-config",
+      "pv": "pvc-cb660507-8ea7-4a17-939e-216216c50bd0",
+      "handle": "pvc-cb660507-8ea7-4a17-939e-216216c50bd0",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qbittorrent",
+        "Pod/qbittorrent-7775c457f-sxngw"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "qui-config",
+      "pv": "pvc-4979eb5d-3ea8-4979-a18e-580851dbc352",
+      "handle": "pvc-4979eb5d-3ea8-4979-a18e-580851dbc352",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/qui",
+        "Pod/qui-f5bc56b6d-2klvv"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-1-config-linstor",
+      "pv": "pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5",
+      "handle": "pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-1-radarr",
+        "Pod/radarr-1-radarr-687ffdd58d-r96gx"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-1-config-triple",
+      "pv": "pvc-46dba0c3-27ff-4365-8283-c2949e7b9173",
+      "handle": "pvc-46dba0c3-27ff-4365-8283-c2949e7b9173",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-10-config-linstor",
+      "pv": "pvc-96c6ef03-805b-43ea-b109-26e6d4054776",
+      "handle": "pvc-96c6ef03-805b-43ea-b109-26e6d4054776",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-10-radarr",
+        "Pod/radarr-10-radarr-79c7667988-zlxnn"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-10-config-triple",
+      "pv": "pvc-3eea90ac-e3b3-49e3-9bec-95b6b93ffbef",
+      "handle": "pvc-3eea90ac-e3b3-49e3-9bec-95b6b93ffbef",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-11-config-linstor",
+      "pv": "pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6",
+      "handle": "pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-11-radarr",
+        "Pod/radarr-11-radarr-575b4444c4-789mh"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-11-config-triple",
+      "pv": "pvc-86cf1a0f-6be8-4d29-b51c-058395088f57",
+      "handle": "pvc-86cf1a0f-6be8-4d29-b51c-058395088f57",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-12-config-linstor",
+      "pv": "pvc-fcf79cc3-c197-44ad-9a38-5899281b843a",
+      "handle": "pvc-fcf79cc3-c197-44ad-9a38-5899281b843a",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-12-radarr",
+        "Pod/radarr-12-radarr-7b84b6474f-9j95q"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-12-config-triple",
+      "pv": "pvc-06936146-364d-4293-8a3d-b21e4bdd88dd",
+      "handle": "pvc-06936146-364d-4293-8a3d-b21e4bdd88dd",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-2-config-linstor",
+      "pv": "pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc",
+      "handle": "pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-2-radarr",
+        "Pod/radarr-2-radarr-79c48fd899-6w8x7"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-2-config-triple",
+      "pv": "pvc-495135ef-1a15-4904-be45-c3186cb702e3",
+      "handle": "pvc-495135ef-1a15-4904-be45-c3186cb702e3",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-3-config-linstor",
+      "pv": "pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c",
+      "handle": "pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-3-radarr",
+        "Pod/radarr-3-radarr-79cdb9894-vbskm"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-3-config-triple",
+      "pv": "pvc-44a2a316-68ea-4dae-92ad-b6ba1fa58279",
+      "handle": "pvc-44a2a316-68ea-4dae-92ad-b6ba1fa58279",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-4-config-linstor",
+      "pv": "pvc-793113ea-f798-461b-a1db-b9a316dda20c",
+      "handle": "pvc-793113ea-f798-461b-a1db-b9a316dda20c",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-4-radarr",
+        "Pod/radarr-4-radarr-6795fb5bc4-knrrv"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-4-config-triple",
+      "pv": "pvc-6da2dc12-dd5e-45f3-8931-25274cd74bdf",
+      "handle": "pvc-6da2dc12-dd5e-45f3-8931-25274cd74bdf",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-5-config-linstor",
+      "pv": "pvc-2f67069a-1589-4805-87ce-fa79a5287c1d",
+      "handle": "pvc-2f67069a-1589-4805-87ce-fa79a5287c1d",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-5-radarr",
+        "Pod/radarr-5-radarr-755f95f755-rhd9m"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-5-config-triple",
+      "pv": "pvc-ff6ce24d-dd91-42d1-9fa1-a98ca7aaeefe",
+      "handle": "pvc-ff6ce24d-dd91-42d1-9fa1-a98ca7aaeefe",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-6-config-linstor",
+      "pv": "pvc-785c85d1-44f0-48a5-805f-b1cc3857f3c7",
+      "handle": "pvc-785c85d1-44f0-48a5-805f-b1cc3857f3c7",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-6-config-linstor-v2",
+      "pv": "pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b",
+      "handle": "pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-6-radarr",
+        "Pod/radarr-6-radarr-7d894c549d-s5qjw"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-6-config-triple",
+      "pv": "pvc-d3420bb1-707f-4a62-b6e9-ac51e976526a",
+      "handle": "pvc-d3420bb1-707f-4a62-b6e9-ac51e976526a",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-7-config-linstor",
+      "pv": "pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229",
+      "handle": "pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-7-radarr",
+        "Pod/radarr-7-radarr-7889f46c5-g8wlh"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-7-config-triple",
+      "pv": "pvc-b62416a3-ddde-4a49-8794-815ef920cfe2",
+      "handle": "pvc-b62416a3-ddde-4a49-8794-815ef920cfe2",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-8-config-linstor",
+      "pv": "pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557",
+      "handle": "pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-8-radarr",
+        "Pod/radarr-8-radarr-cb8669b74-dj4tv"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-8-config-triple",
+      "pv": "pvc-b591bac4-5fd3-4586-b5be-9c64dca84c61",
+      "handle": "pvc-b591bac4-5fd3-4586-b5be-9c64dca84c61",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-9-config-linstor",
+      "pv": "pvc-ee507f76-28b0-4739-a1a1-40220db04521",
+      "handle": "pvc-ee507f76-28b0-4739-a1a1-40220db04521",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/radarr-9-radarr",
+        "Pod/radarr-9-radarr-9757b4c-pt4vz"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-9-config-triple",
+      "pv": "pvc-4b5063b6-fd33-4e73-83bd-026720c130a6",
+      "handle": "pvc-4b5063b6-fd33-4e73-83bd-026720c130a6",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-config-linstor",
+      "pv": "pvc-f9265e35-77a8-4720-bd7a-681effea820b",
+      "handle": "pvc-f9265e35-77a8-4720-bd7a-681effea820b",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/reiverr",
+        "Pod/reiverr-77dd748754-wppcv"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-config-triple",
+      "pv": "pvc-f403527c-04e6-4f9e-bd14-965a3c3fb036",
+      "handle": "pvc-f403527c-04e6-4f9e-bd14-965a3c3fb036",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-plugins-linstor",
+      "pv": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "handle": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/reiverr",
+        "Pod/reiverr-77dd748754-wppcv"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-plugins-triple",
+      "pv": "pvc-0b919c81-f8a9-4748-9c08-bd47b4a44e6a",
+      "handle": "pvc-0b919c81-f8a9-4748-9c08-bd47b4a44e6a",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "seerr-config-linstor",
+      "pv": "pvc-09272831-116c-4b7c-aa46-70a9860a75cb",
+      "handle": "pvc-09272831-116c-4b7c-aa46-70a9860a75cb",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/seerr",
+        "Pod/seerr-94c47ff8-dmrnp"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "seerr-config-triple",
+      "pv": "pvc-1962c393-903f-470b-bbf8-925a38b27236",
+      "handle": "pvc-1962c393-903f-470b-bbf8-925a38b27236",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-1-config-linstor",
+      "pv": "pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123",
+      "handle": "pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-1-sonarr",
+        "Pod/sonarr-1-sonarr-65f74f7c44-nff2d"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-1-config-triple",
+      "pv": "pvc-f847474b-e1c0-4813-9da3-ac1d2424f462",
+      "handle": "pvc-f847474b-e1c0-4813-9da3-ac1d2424f462",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-2-config-linstor",
+      "pv": "pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994",
+      "handle": "pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-2-sonarr",
+        "Pod/sonarr-2-sonarr-7b9c4b67b-5cw8x"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-2-config-triple",
+      "pv": "pvc-7f3e5813-86a4-4bdc-bc1e-7d7351f8f3fa",
+      "handle": "pvc-7f3e5813-86a4-4bdc-bc1e-7d7351f8f3fa",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-3-config-linstor",
+      "pv": "pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7",
+      "handle": "pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-3-sonarr",
+        "Pod/sonarr-3-sonarr-5fbb58c4d-q2v5s"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-3-config-triple",
+      "pv": "pvc-ad07dcb6-6231-441d-a119-f5cb84e74389",
+      "handle": "pvc-ad07dcb6-6231-441d-a119-f5cb84e74389",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-4-config-linstor",
+      "pv": "pvc-da849381-c518-46b5-b204-ceab53e758a9",
+      "handle": "pvc-da849381-c518-46b5-b204-ceab53e758a9",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-4-sonarr",
+        "Pod/sonarr-4-sonarr-6f48f4f98d-zq9gn"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-4-config-triple",
+      "pv": "pvc-7190330d-86c6-4f8a-aded-b498c7165e59",
+      "handle": "pvc-7190330d-86c6-4f8a-aded-b498c7165e59",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-5-config-linstor",
+      "pv": "pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1",
+      "handle": "pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-5-sonarr",
+        "Pod/sonarr-5-sonarr-7d966bbcb-vkplr"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-5-config-triple",
+      "pv": "pvc-80a9a2be-cfce-4073-9044-b9536cb726cf",
+      "handle": "pvc-80a9a2be-cfce-4073-9044-b9536cb726cf",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-6-config-linstor",
+      "pv": "pvc-136dea81-494a-47d3-b6b7-2c62b8f05762",
+      "handle": "pvc-136dea81-494a-47d3-b6b7-2c62b8f05762",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/sonarr-6-sonarr",
+        "Pod/sonarr-6-sonarr-54797bdb4-sst8k"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-6-config-triple",
+      "pv": "pvc-f2475e6a-c674-4fbb-ad4a-05cc833e465a",
+      "handle": "pvc-f2475e6a-c674-4fbb-ad4a-05cc833e465a",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "tdarr-config-linstor",
+      "pv": "pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50",
+      "handle": "pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/tdarr",
+        "Pod/tdarr-595fb76d59-5kcgz"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "media",
+      "pvc": "transmission-config-linstor-v3",
+      "pv": "pvc-7d594705-fed7-460c-899a-0f2c6ad420c4",
+      "handle": "pvc-7d594705-fed7-460c-899a-0f2c6ad420c4",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/transmission"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "media",
+      "pvc": "transmission-config-triple",
+      "pv": "pvc-3ccda052-fe05-496c-bd58-a63f0776fa1d",
+      "handle": "pvc-3ccda052-fe05-496c-bd58-a63f0776fa1d",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "alertmanager-kube-prometheus-stack-alertmanager-db-linstor",
+      "pv": "pvc-4865313d-a2ca-4da1-bbdd-fa8e70193c4b",
+      "handle": "pvc-4865313d-a2ca-4da1-bbdd-fa8e70193c4b",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0",
+      "pv": "pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79",
+      "handle": "pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "StatefulSet/alertmanager-kube-prometheus-stack-alertmanager"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0",
+      "pv": "pvc-5a05cbe4-9a5b-4841-8a33-3fe28c7885f6",
+      "handle": "pvc-5a05cbe4-9a5b-4841-8a33-3fe28c7885f6",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "gotify-data-linstor",
+      "pv": "pvc-72b0df4b-a891-48f9-a476-91500b022ec8",
+      "handle": "pvc-72b0df4b-a891-48f9-a476-91500b022ec8",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/gotify",
+        "Pod/gotify-54df5d848-qpth8"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "gotify-data-triple",
+      "pv": "pvc-6989889e-3333-41a3-a450-efad3e1ae03f",
+      "handle": "pvc-6989889e-3333-41a3-a450-efad3e1ae03f",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "grafana-data-linstor",
+      "pv": "pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749",
+      "handle": "pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/kube-prometheus-stack-grafana"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "grafana-data-triple",
+      "pv": "pvc-8981ecf6-cf75-4904-93d0-f76dbd77751d",
+      "handle": "pvc-8981ecf6-cf75-4904-93d0-f76dbd77751d",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [],
+      "disposition": "hold",
+      "reason": "Retained migration source or prior target, no current workload reference; preserve for recovery/investigation.",
+      "mentioned_in_migration_ledger": true
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0",
+      "pv": "pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6",
+      "handle": "pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6",
+      "class_name": "linstor-final-triple",
+      "phase": "Bound",
+      "references": [
+        "StatefulSet/prometheus-kube-prometheus-stack-prometheus"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "ollama",
+      "pvc": "voice-models",
+      "pv": "pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9",
+      "handle": "pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/ollama",
+        "Pod/ollama-6479f46c6-kdm4h",
+        "Pod/ollama-6479f46c6-m46jq",
+        "Pod/ollama-6479f46c6-nvw47",
+        "Pod/ollama-7bdbd8f7f9-nnsf7"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "rustdesk",
+      "pvc": "rustdesk-data",
+      "pv": "pvc-f803f54c-013c-484d-b16a-69ae2ea168f4",
+      "handle": "pvc-f803f54c-013c-484d-b16a-69ae2ea168f4",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/rustdesk",
+        "Pod/rustdesk-67dd66f84-w95rx"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    },
+    {
+      "namespace": "wyoming-voice",
+      "pvc": "whisper-models",
+      "pv": "pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07",
+      "handle": "pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07",
+      "class_name": "linstor",
+      "phase": "Bound",
+      "references": [
+        "Deployment/wyoming-whisper",
+        "Pod/wyoming-whisper-7cd7cfcc86-hrfnt"
+      ],
+      "disposition": "standard",
+      "reason": "Referenced by current workload template or pod; template references include scaled-down workloads.",
+      "mentioned_in_migration_ledger": false
+    }
+  ],
+  "released_pv_holds": [
+    {
+      "pv": "pvc-025dcd91-90aa-4ff9-a354-7f92ff740710",
+      "handle": "pvc-025dcd91-90aa-4ff9-a354-7f92ff740710",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gitlab-redis-linstor",
+        "namespace": "gitlab",
+        "resourceVersion": "492224605",
+        "uid": "025dcd91-90aa-4ff9-a354-7f92ff740710"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-026dc0ab-d0ec-4cc3-b25f-5797e777cf27",
+      "handle": "pvc-026dc0ab-d0ec-4cc3-b25f-5797e777cf27",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-3-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491782307",
+        "uid": "026dc0ab-d0ec-4cc3-b25f-5797e777cf27"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+      "handle": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-10",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498353596",
+        "uid": "02eaaeb8-1294-4868-bc8b-fb51d1a44220"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-030fac5a-2014-4f1d-90a4-2aee14ea0256",
+      "handle": "pvc-030fac5a-2014-4f1d-90a4-2aee14ea0256",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-1-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "498885479",
+        "uid": "030fac5a-2014-4f1d-90a4-2aee14ea0256"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-0375d1e1-59a8-422f-b624-ac70a8524b09",
+      "handle": "pvc-0375d1e1-59a8-422f-b624-ac70a8524b09",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-10-config-final",
+        "namespace": "media",
+        "resourceVersion": "490685237",
+        "uid": "0375d1e1-59a8-422f-b624-ac70a8524b09"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-054c6965-69a1-48c1-885c-f6bf3644d8d8",
+      "handle": "pvc-054c6965-69a1-48c1-885c-f6bf3644d8d8",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-7",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492178711",
+        "uid": "054c6965-69a1-48c1-885c-f6bf3644d8d8"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-091343be-c6ff-4a99-b2cc-2958bf244bef",
+      "handle": "pvc-091343be-c6ff-4a99-b2cc-2958bf244bef",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-1-config-final",
+        "namespace": "media",
+        "resourceVersion": "491878757",
+        "uid": "091343be-c6ff-4a99-b2cc-2958bf244bef"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-0a51b511-3736-4da5-a317-6f0351f17670",
+      "handle": "pvc-0a51b511-3736-4da5-a317-6f0351f17670",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-7-config-final",
+        "namespace": "media",
+        "resourceVersion": "491889654",
+        "uid": "0a51b511-3736-4da5-a317-6f0351f17670"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-114856c2-0803-4030-97a5-2432634f0373",
+      "handle": "pvc-114856c2-0803-4030-97a5-2432634f0373",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-4-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490668491",
+        "uid": "114856c2-0803-4030-97a5-2432634f0373"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-12ccfb65-b8c5-4955-bef8-fa0bc6f71282",
+      "handle": "pvc-12ccfb65-b8c5-4955-bef8-fa0bc6f71282",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "zero-cache-data-linstor",
+        "namespace": "default",
+        "resourceVersion": "491607674",
+        "uid": "12ccfb65-b8c5-4955-bef8-fa0bc6f71282"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+      "handle": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-5",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492139221",
+        "uid": "136d880e-535e-4625-bff4-ab497086336d"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-2050a204-fb97-4b5e-a1e3-fca85bc2b95d",
+      "handle": "pvc-2050a204-fb97-4b5e-a1e3-fca85bc2b95d",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gitlab-minio",
+        "namespace": "gitlab",
+        "resourceVersion": "498559756",
+        "uid": "2050a204-fb97-4b5e-a1e3-fca85bc2b95d"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-23165ca8-1c17-4d5b-a52c-b9589f41c5da",
+      "handle": "pvc-23165ca8-1c17-4d5b-a52c-b9589f41c5da",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-4-config-final",
+        "namespace": "media",
+        "resourceVersion": "491887642",
+        "uid": "23165ca8-1c17-4d5b-a52c-b9589f41c5da"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-23c0756f-6509-49aa-b5dd-502991784b88",
+      "handle": "pvc-23c0756f-6509-49aa-b5dd-502991784b88",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "minecraft-modpacks-linstor",
+        "namespace": "minecraft",
+        "resourceVersion": "491618372",
+        "uid": "23c0756f-6509-49aa-b5dd-502991784b88"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-2496599f-0230-4952-be1e-3f412ff18497",
+      "handle": "pvc-2496599f-0230-4952-be1e-3f412ff18497",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-db-recovery-test",
+        "namespace": "immich",
+        "resourceVersion": "514510872",
+        "uid": "2496599f-0230-4952-be1e-3f412ff18497"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-2e5edc79-ae9b-4723-8956-7ab3a4e5682a",
+      "handle": "pvc-2e5edc79-ae9b-4723-8956-7ab3a4e5682a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "seerr-config-final",
+        "namespace": "media",
+        "resourceVersion": "491969584",
+        "uid": "2e5edc79-ae9b-4723-8956-7ab3a4e5682a"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-30f01a96-d169-4102-bb45-72df18830c44",
+      "handle": "pvc-30f01a96-d169-4102-bb45-72df18830c44",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "transmission-config-final",
+        "namespace": "media",
+        "resourceVersion": "491970060",
+        "uid": "30f01a96-d169-4102-bb45-72df18830c44"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-323e013d-aaa5-4842-ab25-fbef6e69c8b6",
+      "handle": "pvc-323e013d-aaa5-4842-ab25-fbef6e69c8b6",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-model-cache-ml-1-linstor",
+        "namespace": "immich",
+        "resourceVersion": "494904466",
+        "uid": "323e013d-aaa5-4842-ab25-fbef6e69c8b6"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-3243ac8d-f41c-4226-b1be-8e7fc7e3bdd7",
+      "handle": "pvc-3243ac8d-f41c-4226-b1be-8e7fc7e3bdd7",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-7-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490672317",
+        "uid": "3243ac8d-f41c-4226-b1be-8e7fc7e3bdd7"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-34149619-7bff-4143-a368-a3e45b5bdc4c",
+      "handle": "pvc-34149619-7bff-4143-a368-a3e45b5bdc4c",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-5-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490669459",
+        "uid": "34149619-7bff-4143-a368-a3e45b5bdc4c"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-3fa9e8f7-03dd-43ad-b770-211108de4516",
+      "handle": "pvc-3fa9e8f7-03dd-43ad-b770-211108de4516",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-5-config-final",
+        "namespace": "media",
+        "resourceVersion": "491887994",
+        "uid": "3fa9e8f7-03dd-43ad-b770-211108de4516"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-3fd504d3-d739-4a8e-be77-6a9fcd712de7",
+      "handle": "pvc-3fd504d3-d739-4a8e-be77-6a9fcd712de7",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-1-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491870986",
+        "uid": "3fd504d3-d739-4a8e-be77-6a9fcd712de7"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-40f69ace-432e-41ce-a9bc-a649383b5f8b",
+      "handle": "pvc-40f69ace-432e-41ce-a9bc-a649383b5f8b",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-12-config-final",
+        "namespace": "media",
+        "resourceVersion": "491897353",
+        "uid": "40f69ace-432e-41ce-a9bc-a649383b5f8b"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-422c5735-8b1a-4c76-83c2-29a157b36079",
+      "handle": "pvc-422c5735-8b1a-4c76-83c2-29a157b36079",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-9-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490674846",
+        "uid": "422c5735-8b1a-4c76-83c2-29a157b36079"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80",
+      "handle": "pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-8-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498350922",
+        "uid": "435ddd63-fdd1-40bd-84e2-fea3bc030f80"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-4803928f-1ea3-4b1d-893c-9843f3571745",
+      "handle": "pvc-4803928f-1ea3-4b1d-893c-9843f3571745",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "transmission-config-linstor-v2",
+        "namespace": "media",
+        "resourceVersion": "499071517",
+        "uid": "4803928f-1ea3-4b1d-893c-9843f3571745"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b",
+      "handle": "pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "llm-switchboard-data-triple",
+        "namespace": "llm-switchboard",
+        "resourceVersion": "498269952",
+        "uid": "4d62538a-2209-417b-ade0-68ecb0dbe71b"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-4e5cf546-3d8f-49c1-bcf1-a5c4196e2c4b",
+      "handle": "pvc-4e5cf546-3d8f-49c1-bcf1-a5c4196e2c4b",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "arr-dashboard-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491689200",
+        "uid": "4e5cf546-3d8f-49c1-bcf1-a5c4196e2c4b"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-4fe30ce1-71ca-4fa3-b842-ac0ca8e2fe72",
+      "handle": "pvc-4fe30ce1-71ca-4fa3-b842-ac0ca8e2fe72",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "artifactory-data-final",
+        "namespace": "artifactory",
+        "resourceVersion": "492017440",
+        "uid": "4fe30ce1-71ca-4fa3-b842-ac0ca8e2fe72"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a",
+      "handle": "pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gitlab-minio",
+        "namespace": "gitlab",
+        "resourceVersion": "492235307",
+        "uid": "bd73ce4c-ae47-4b08-91f1-8c1cad073c51"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-572c3295-202e-4af5-933d-5f95e2bf7269",
+      "handle": "pvc-572c3295-202e-4af5-933d-5f95e2bf7269",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-6-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490670328",
+        "uid": "572c3295-202e-4af5-933d-5f95e2bf7269"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-5a2b6451-2688-4955-9206-15a84554e9c4",
+      "handle": "pvc-5a2b6451-2688-4955-9206-15a84554e9c4",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-11-config-final",
+        "namespace": "media",
+        "resourceVersion": "491896604",
+        "uid": "5a2b6451-2688-4955-9206-15a84554e9c4"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-5b70587e-fe84-4388-825f-055dd26c15d9",
+      "handle": "pvc-5b70587e-fe84-4388-825f-055dd26c15d9",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "prowlarr-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491776595",
+        "uid": "5b70587e-fe84-4388-825f-055dd26c15d9"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+      "handle": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-10-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498353592",
+        "uid": "6554dac2-1524-4dc3-9562-54d6c8cebe06"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-65777281-9787-428d-be74-87c4676e7f48",
+      "handle": "pvc-65777281-9787-428d-be74-87c4676e7f48",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-6-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491864081",
+        "uid": "65777281-9787-428d-be74-87c4676e7f48"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-68bbacbc-dd8e-414a-aab2-de479a94acc1",
+      "handle": "pvc-68bbacbc-dd8e-414a-aab2-de479a94acc1",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-3-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490667994",
+        "uid": "68bbacbc-dd8e-414a-aab2-de479a94acc1"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-6b96712a-f11d-46ba-ad4d-8e03e51eaf04",
+      "handle": "pvc-6b96712a-f11d-46ba-ad4d-8e03e51eaf04",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-2-config-final",
+        "namespace": "media",
+        "resourceVersion": "491886744",
+        "uid": "6b96712a-f11d-46ba-ad4d-8e03e51eaf04"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-6c472dda-6006-4d15-aec3-146130562f50",
+      "handle": "pvc-6c472dda-6006-4d15-aec3-146130562f50",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-8-config-final",
+        "namespace": "media",
+        "resourceVersion": "491892952",
+        "uid": "6c472dda-6006-4d15-aec3-146130562f50"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8",
+      "handle": "pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "checkrr-config-linstor-v5",
+        "namespace": "media",
+        "resourceVersion": "499078360",
+        "uid": "72d128ec-eae7-4f47-b4fe-cd004703f4f8"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-72d13fe5-55cd-4e13-b3be-9651a095a810",
+      "handle": "pvc-72d13fe5-55cd-4e13-b3be-9651a095a810",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-2-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "499011418",
+        "uid": "72d13fe5-55cd-4e13-b3be-9651a095a810"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-7502d8fa-12e7-4934-b541-d30797d80333",
+      "handle": "pvc-7502d8fa-12e7-4934-b541-d30797d80333",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "alertmanager-kube-prometheus-stack-alertmanager-db-alertmanager-kube-prometheus-stack-alertmanager-0",
+        "namespace": "monitoring",
+        "resourceVersion": "492215643",
+        "uid": "7502d8fa-12e7-4934-b541-d30797d80333"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-769a31dd-016f-4369-9cad-ab557db7d695",
+      "handle": "pvc-769a31dd-016f-4369-9cad-ab557db7d695",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "data-artifactory-postgresql-final",
+        "namespace": "artifactory",
+        "resourceVersion": "492017447",
+        "uid": "769a31dd-016f-4369-9cad-ab557db7d695"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-77376661-cab7-4a8c-a9d4-6ffd3f111619",
+      "handle": "pvc-77376661-cab7-4a8c-a9d4-6ffd3f111619",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-model-cache-resized-linstor",
+        "namespace": "immich",
+        "resourceVersion": "494904456",
+        "uid": "77376661-cab7-4a8c-a9d4-6ffd3f111619"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-77a65034-7d8f-4c55-a67b-fd03046bc356",
+      "handle": "pvc-77a65034-7d8f-4c55-a67b-fd03046bc356",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-2-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490666972",
+        "uid": "77a65034-7d8f-4c55-a67b-fd03046bc356"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-785ded5b-e24f-4198-ac60-60969e736d1c",
+      "handle": "pvc-785ded5b-e24f-4198-ac60-60969e736d1c",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-2-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "499112471",
+        "uid": "785ded5b-e24f-4198-ac60-60969e736d1c"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-7945f448-5bf0-48c0-8312-96611276b20d",
+      "handle": "pvc-7945f448-5bf0-48c0-8312-96611276b20d",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-9-config-final",
+        "namespace": "media",
+        "resourceVersion": "491893615",
+        "uid": "7945f448-5bf0-48c0-8312-96611276b20d"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-825ea79a-abac-4e80-8de6-55052386cce1",
+      "handle": "pvc-825ea79a-abac-4e80-8de6-55052386cce1",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "checkrr-config-linstor-v4",
+        "namespace": "media",
+        "resourceVersion": "499073417",
+        "uid": "825ea79a-abac-4e80-8de6-55052386cce1"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-83b282e7-31d3-4c31-95c6-994b3d836a77",
+      "handle": "pvc-83b282e7-31d3-4c31-95c6-994b3d836a77",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "grafana-data-final",
+        "namespace": "monitoring",
+        "resourceVersion": "491977588",
+        "uid": "83b282e7-31d3-4c31-95c6-994b3d836a77"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-83c16d86-74a8-41c6-a07b-41cef210ecba",
+      "handle": "pvc-83c16d86-74a8-41c6-a07b-41cef210ecba",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-6-config-final",
+        "namespace": "media",
+        "resourceVersion": "491888401",
+        "uid": "83c16d86-74a8-41c6-a07b-41cef210ecba"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-85d1b371-986d-4f35-bece-0c35d6b7bf1f",
+      "handle": "pvc-85d1b371-986d-4f35-bece-0c35d6b7bf1f",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-7-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492178710",
+        "uid": "85d1b371-986d-4f35-bece-0c35d6b7bf1f"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a",
+      "handle": "pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "checkrr-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491760259",
+        "uid": "8a887b03-3b3a-489a-ae4d-67e70f2b9c8a"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-8bbd9a44-126c-47e5-98df-2429534b7c08",
+      "handle": "pvc-8bbd9a44-126c-47e5-98df-2429534b7c08",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-5-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491864077",
+        "uid": "8bbd9a44-126c-47e5-98df-2429534b7c08"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-8c63f0bc-109b-4998-b6b0-dd161c5f7819",
+      "handle": "pvc-8c63f0bc-109b-4998-b6b0-dd161c5f7819",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-11",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498354448",
+        "uid": "8c63f0bc-109b-4998-b6b0-dd161c5f7819"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-932d366c-304e-49e8-b1e3-f154e0335d6c",
+      "handle": "pvc-932d366c-304e-49e8-b1e3-f154e0335d6c",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "reiverr-config-final",
+        "namespace": "media",
+        "resourceVersion": "491968580",
+        "uid": "932d366c-304e-49e8-b1e3-f154e0335d6c"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-9799a120-b53e-424e-8eac-0ff5288a252d",
+      "handle": "pvc-9799a120-b53e-424e-8eac-0ff5288a252d",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "artifactory-pg17-recovered",
+        "namespace": "artifactory",
+        "resourceVersion": "492080963",
+        "uid": "9799a120-b53e-424e-8eac-0ff5288a252d"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+      "handle": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-5-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492139216",
+        "uid": "97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-9ae41b58-bde4-4e0d-90e3-bfda214a71a7",
+      "handle": "pvc-9ae41b58-bde4-4e0d-90e3-bfda214a71a7",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gotify-data-final",
+        "namespace": "monitoring",
+        "resourceVersion": "491977259",
+        "uid": "9ae41b58-bde4-4e0d-90e3-bfda214a71a7"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-9f5af8b0-6d34-4c61-b464-4911845c175f",
+      "handle": "pvc-9f5af8b0-6d34-4c61-b464-4911845c175f",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "bazarr-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491697335",
+        "uid": "9f5af8b0-6d34-4c61-b464-4911845c175f"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-a820704f-535b-495b-b2bf-193d7b14ab81",
+      "handle": "pvc-a820704f-535b-495b-b2bf-193d7b14ab81",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "transmission-config-linstor-v3",
+        "namespace": "media",
+        "resourceVersion": "499077174",
+        "uid": "a820704f-535b-495b-b2bf-193d7b14ab81"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-aef7def3-53c3-4b7f-afd1-da71fb1083c7",
+      "handle": "pvc-aef7def3-53c3-4b7f-afd1-da71fb1083c7",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-12-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490677289",
+        "uid": "aef7def3-53c3-4b7f-afd1-da71fb1083c7"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-b03417aa-d52e-4cde-b5ba-627670ab361c",
+      "handle": "pvc-b03417aa-d52e-4cde-b5ba-627670ab361c",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0",
+        "namespace": "monitoring",
+        "resourceVersion": "493494202",
+        "uid": "b03417aa-d52e-4cde-b5ba-627670ab361c"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-b113568f-6947-4b27-bc07-44b82ebc6816",
+      "handle": "pvc-b113568f-6947-4b27-bc07-44b82ebc6816",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-6-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "499026890",
+        "uid": "b113568f-6947-4b27-bc07-44b82ebc6816"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-baa44b24-7899-4f85-8894-0dcdc907eaa9",
+      "handle": "pvc-baa44b24-7899-4f85-8894-0dcdc907eaa9",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-8-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490673037",
+        "uid": "baa44b24-7899-4f85-8894-0dcdc907eaa9"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-be2045af-c3fb-47fe-b25e-4bc710fad531",
+      "handle": "pvc-be2045af-c3fb-47fe-b25e-4bc710fad531",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-8",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498350927",
+        "uid": "be2045af-c3fb-47fe-b25e-4bc710fad531"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-bf839966-ef46-4e8a-af65-a08e68bc928e",
+      "handle": "pvc-bf839966-ef46-4e8a-af65-a08e68bc928e",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-6-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492142553",
+        "uid": "bf839966-ef46-4e8a-af65-a08e68bc928e"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-bfb39334-1c44-4819-a33a-0219ca11c68a",
+      "handle": "pvc-bfb39334-1c44-4819-a33a-0219ca11c68a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-3-config-final",
+        "namespace": "media",
+        "resourceVersion": "491887247",
+        "uid": "bfb39334-1c44-4819-a33a-0219ca11c68a"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-c2a0173f-fd14-4664-9977-39f4013e2036",
+      "handle": "pvc-c2a0173f-fd14-4664-9977-39f4013e2036",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gitlab-minio",
+        "namespace": "gitlab",
+        "resourceVersion": "492234721",
+        "uid": "c2a0173f-fd14-4664-9977-39f4013e2036"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-c334b48c-a473-4e02-b88f-2af05afc7ca5",
+      "handle": "pvc-c334b48c-a473-4e02-b88f-2af05afc7ca5",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-11-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490676239",
+        "uid": "c334b48c-a473-4e02-b88f-2af05afc7ca5"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-c3c8b091-695f-45c8-bb7c-ac350db8d1f1",
+      "handle": "pvc-c3c8b091-695f-45c8-bb7c-ac350db8d1f1",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-db-pvc-final-linstor",
+        "namespace": "immich",
+        "resourceVersion": "494903393",
+        "uid": "c3c8b091-695f-45c8-bb7c-ac350db8d1f1"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f",
+      "handle": "pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "llm-switchboard-data-linstor",
+        "namespace": "llm-switchboard",
+        "resourceVersion": "491634936",
+        "uid": "ca10f411-61cd-4660-969e-aeddf8cbc29f"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-cd19b25d-6407-4e08-9ebb-79d40635ca2a",
+      "handle": "pvc-cd19b25d-6407-4e08-9ebb-79d40635ca2a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "transmission-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "498997728",
+        "uid": "cd19b25d-6407-4e08-9ebb-79d40635ca2a"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d0dba00a-7874-450d-9a31-475edf5249f9",
+      "handle": "pvc-d0dba00a-7874-450d-9a31-475edf5249f9",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-model-cache-final",
+        "namespace": "immich",
+        "resourceVersion": "491979739",
+        "uid": "d0dba00a-7874-450d-9a31-475edf5249f9"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d0f2bba3-c641-479a-8cf8-e08c3632cfd8",
+      "handle": "pvc-d0f2bba3-c641-479a-8cf8-e08c3632cfd8",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-1-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "490659793",
+        "uid": "d0f2bba3-c641-479a-8cf8-e08c3632cfd8"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d15b9453-43a8-4551-a2e9-f5c467aac4af",
+      "handle": "pvc-d15b9453-43a8-4551-a2e9-f5c467aac4af",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-model-cache-ml-0-linstor",
+        "namespace": "immich",
+        "resourceVersion": "494904461",
+        "uid": "d15b9453-43a8-4551-a2e9-f5c467aac4af"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d1962717-b0f9-4b22-b77c-b4be1d892554",
+      "handle": "pvc-d1962717-b0f9-4b22-b77c-b4be1d892554",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "checkrr-config-linstor-v3",
+        "namespace": "media",
+        "resourceVersion": "498958556",
+        "uid": "d1962717-b0f9-4b22-b77c-b4be1d892554"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d483fe6c-51e9-43da-adf2-41db960731fd",
+      "handle": "pvc-d483fe6c-51e9-43da-adf2-41db960731fd",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "zero-cache-snapshot-restore",
+        "namespace": "default",
+        "resourceVersion": "498127763",
+        "uid": "d483fe6c-51e9-43da-adf2-41db960731fd"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf",
+      "handle": "pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "radarr-10-config-final-new",
+        "namespace": "media",
+        "resourceVersion": "491895869",
+        "uid": "d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-d875231f-cb30-4daf-b2ac-ffb98ee0c472",
+      "handle": "pvc-d875231f-cb30-4daf-b2ac-ffb98ee0c472",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "immich-model-cache-ml-2-linstor",
+        "namespace": "immich",
+        "resourceVersion": "494904471",
+        "uid": "d875231f-cb30-4daf-b2ac-ffb98ee0c472"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-ddda5de4-2a4d-4c73-a930-b2f52601bb27",
+      "handle": "pvc-ddda5de4-2a4d-4c73-a930-b2f52601bb27",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-4-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491805371",
+        "uid": "ddda5de4-2a4d-4c73-a930-b2f52601bb27"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-e514156f-3e85-4981-9c31-1d06861ca38a",
+      "handle": "pvc-e514156f-3e85-4981-9c31-1d06861ca38a",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-6",
+        "namespace": "cnpg-system",
+        "resourceVersion": "492142556",
+        "uid": "e514156f-3e85-4981-9c31-1d06861ca38a"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-eb581cac-8c15-46c7-8df5-6057452be220",
+      "handle": "pvc-eb581cac-8c15-46c7-8df5-6057452be220",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "repo-data-gitlab-gitaly-0",
+        "namespace": "gitlab",
+        "resourceVersion": "492224615",
+        "uid": "eb581cac-8c15-46c7-8df5-6057452be220"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74",
+      "handle": "pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "sonarr-2-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "491870984",
+        "uid": "ed78f9e4-b592-40ea-bc0c-b8829e833f74"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-f1a1158d-4e46-4660-ada8-677c0f1655ea",
+      "handle": "pvc-f1a1158d-4e46-4660-ada8-677c0f1655ea",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "reiverr-plugins-final",
+        "namespace": "media",
+        "resourceVersion": "491969054",
+        "uid": "f1a1158d-4e46-4660-ada8-677c0f1655ea"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-f777df1a-90f6-4ff6-9c45-58861416ceb5",
+      "handle": "pvc-f777df1a-90f6-4ff6-9c45-58861416ceb5",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "shared-postgres-11-wal",
+        "namespace": "cnpg-system",
+        "resourceVersion": "498354445",
+        "uid": "f777df1a-90f6-4ff6-9c45-58861416ceb5"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-f873d3ec-8e80-4eb4-85c3-dc5323820b5d",
+      "handle": "pvc-f873d3ec-8e80-4eb4-85c3-dc5323820b5d",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "bazarr-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "498949687",
+        "uid": "f873d3ec-8e80-4eb4-85c3-dc5323820b5d"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2",
+      "handle": "pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "gitlab-postgresql-linstor",
+        "namespace": "gitlab",
+        "resourceVersion": "492224606",
+        "uid": "fc236f99-5ab9-436f-95f8-ed72cbe540e2"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    },
+    {
+      "pv": "pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc",
+      "handle": "pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc",
+      "claim": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "checkrr-config-linstor",
+        "namespace": "media",
+        "resourceVersion": "498954850",
+        "uid": "fc5a9155-eb8a-4794-909a-b9f2f29a1ffc"
+      },
+      "disposition": "hold",
+      "reason": "Released historical volume; no canonical workload mapping."
+    }
+  ]
+}
