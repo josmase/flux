@@ -1,10 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-v2-bootstrap
+  name: linstor-backup-v2-bootstrap-v2
   namespace: piraeus-datastore
   labels:
-    app.kubernetes.io/name: linstor-backup-v2-bootstrap
+    app.kubernetes.io/name: linstor-backup-v2-bootstrap-v2
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
   suspend: true
@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: linstor-backup-v2-bootstrap
+        app.kubernetes.io/name: linstor-backup-v2-bootstrap-v2
     spec:
       serviceAccountName: linstor-protection-policy
       restartPolicy: Never
@@ -67,12 +67,13 @@ spec:
               while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
                 [ -n "$resource" ] || continue
                 echo "creating one full v2 backup for $namespace/$name"
+                before="$(linstor --controllers "$controller" -m backup list "$remote" | jq -c '.linstor // {}')"
                 linstor --controllers "$controller" backup create --full "$remote" "$resource"
                 complete=false
                 attempt=0
                 while [ "$attempt" -lt 360 ]; do
                   backups="$(linstor --controllers "$controller" -m backup list "$remote")"
-                  if printf '%s' "$backups" | jq -e --arg prefix "$${resource}_back_" '.linstor | to_entries | any(.[]; (.key | startswith($prefix)) and (.value.restorable == true))' >/dev/null; then
+                  if printf '%s' "$backups" | jq -e --arg prefix "$${resource}_back_" --argjson before "$before" '(.linstor // {}) | to_entries | any(.[]; . as $entry | (.key | startswith($prefix)) and (.value.restorable == true) and ($before | has($entry.key) | not))' >/dev/null; then
                     complete=true
                     break
                   fi
@@ -92,10 +93,10 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: shared-postgres-v2-bootstrap-backup
+  name: shared-postgres-v2-bootstrap-backup-v2
   namespace: cnpg-system
   labels:
-    app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup
+    app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup-v2
     backupGeneration: rustfs-linstor-backups-v2
 spec:
   suspend: true
@@ -104,7 +105,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup
+        app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup-v2
     spec:
       serviceAccountName: shared-postgres-gated-backup
       restartPolicy: Never
@@ -120,10 +121,7 @@ spec:
                 exit 1
               }
               name=shared-postgres-v2-bootstrap
-              if kubectl get backup.postgresql.cnpg.io -n cnpg-system "$name" >/dev/null 2>&1; then
-                echo "The v2 CNPG bootstrap Backup object already exists; refusing to create another."
-                exit 0
-              fi
+              if ! kubectl get backup.postgresql.cnpg.io -n cnpg-system "$name" >/dev/null 2>&1; then
               kubectl create -f - <<EOF
               apiVersion: postgresql.cnpg.io/v1
               kind: Backup
@@ -133,9 +131,11 @@ spec:
                 labels:
                   backupGeneration: rustfs-linstor-backups-v2
               spec:
-                cluster: shared-postgres
+                cluster:
+                  name: shared-postgres
                 method: volumeSnapshot
               EOF
+              fi
               attempt=0
               while [ "$attempt" -lt 1440 ]; do
                 backup="$(kubectl get backup.postgresql.cnpg.io -n cnpg-system "$name" -o json)"

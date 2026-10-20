@@ -248,7 +248,8 @@ spec:
                     labels:
                       backupGeneration: rustfs-linstor-backups-v2
                   spec:
-                    cluster: shared-postgres
+                    cluster:
+                      name: shared-postgres
                     method: volumeSnapshot
                   EOF
                   kubectl create -f - <<EOF
@@ -260,7 +261,8 @@ spec:
                     labels:
                       backupGeneration: rustfs-linstor-backups-v2
                   spec:
-                    cluster: shared-postgres
+                    cluster:
+                      name: shared-postgres
                     method: volumeSnapshot
                   EOF
 ---
