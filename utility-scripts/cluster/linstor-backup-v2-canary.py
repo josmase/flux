@@ -125,7 +125,7 @@ def pod(name, claim, script, readonly=False):
 
 
 pvc('source')
-expected = pod('writer', 'source', 'dd if=/dev/urandom of=/data/payload bs=1M count=8; sync; sha256sum /data/payload')
+expected = pod('writer', 'source', 'dd if=/dev/urandom of=/data/payload bs=1M count=8 2>/dev/null; sync; sha256sum /data/payload')
 pv = get(k + ['-n', ns, 'get', 'pvc', 'source', '-o', 'json'])['spec']['volumeName']
 handle = get(k + ['get', 'pv', pv, '-o', 'json'])['spec']['csi']['volumeHandle']
 health()

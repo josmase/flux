@@ -28,4 +28,8 @@ Private jumphost evidence directory:
 
 `/home/ubuntu/incident-recovery-20261020-linstor-expand/backup-v2-20261020T194839Z`
 
-The first RustFS application created the v2 bucket and identity but stopped on a quota verification HTTP 503 (`authoritative bucket usage is not available yet`). A bounded readiness retry is being applied. No backup coverage or restore success has been asserted.
+The first RustFS application created the v2 bucket and identity but stopped on a quota verification HTTP 503 (`authoritative bucket usage is not available yet`). The committed bounded readiness retry passed on reapplication. Bucket creation and scoped-identity verification succeeded.
+
+The v2 remote was created and an empty bucket listing succeeded. The initial readiness predicate rejected LINSTOR's valid empty-bucket response (`{"other": {}}`); the corrected predicate accepts it without accepting API error arrays. Node properties confirm one upload slot on worker 204 and zero on 205, 206 and the diskless satellite. Local kind server-side dry run passed for the new Jobs and ConfigMaps.
+
+The committed disposable drill creates only a dedicated namespace, two 256 MiB PVCs and two temporary snapshots. It requires unchanged production replica states and exact LV inventory restoration, measures VG metadata growth on all three workers, checks a restored random payload checksum and verifies remote-list cleanup. Failures preserve evidence and do not enable producers. No backup coverage or restore success has been asserted.
