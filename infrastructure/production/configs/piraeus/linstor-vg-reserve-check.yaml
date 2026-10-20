@@ -43,7 +43,7 @@ spec:
                     required=$((pool_size / 20 + 1073741824))
                     checked=$((checked + 1))
                     if [ "$vg_free" -lt "$required" ]; then
-                      echo "VG reserve on $node is ${vg_free} bytes; another 5% pool extension plus 1 GiB safety requires ${required} bytes." >&2
+                      echo "VG reserve on $node is $${vg_free} bytes; another 5% pool extension plus 1 GiB safety requires $${required} bytes." >&2
                       exit 1
                     fi
                   done <<EOF
