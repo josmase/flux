@@ -1,5 +1,7 @@
 # LINSTOR storage usage audit — 2026-10-20
 
+Follow-up: four eligible historical volume families were subsequently retired. See the [cleanup results](LINSTOR_VOLUME_RETIREMENT_2026-10-20.md) for current capacity and the preserved PostgreSQL recovery dependencies. Figures below describe the pre-cleanup audit.
+
 Collected through the Ansible jumphost from 2026-10-20T18:00:12.743148+00:00 to 2026-10-20T18:09:20.585479+00:00. Figures are GiB (2^30 bytes). Measurements on different nodes are sequential; small differences from live writes are expected.
 
 ## Findings

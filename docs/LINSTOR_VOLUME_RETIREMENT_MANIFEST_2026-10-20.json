@@ -1,0 +1,945 @@
+{
+  "authorized_by": "User: Clean them up (2026-10-20), following the worker usage audit.",
+  "scope": "Four unreferenced historical test/recovery volume families and their local snapshots.",
+  "evidence_directory": "/home/ubuntu/incident-recovery-20261020-linstor-expand/retirement-20261020T182510Z",
+  "remote_backup_objects": "preserve",
+  "delete": [
+    {
+      "resource": "pvc-c34494c7-8fa5-4df9-8366-32b423694a67",
+      "pvs": [
+        {
+          "name": "pvc-c34494c7-8fa5-4df9-8366-32b423694a67",
+          "uid": "ab4df918-c2f8-4a7c-b29d-6b285f781f2c",
+          "phase": "Released",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "jellyfin-config-backup-test-20260924",
+            "namespace": "media",
+            "resourceVersion": "499975335",
+            "uid": "c34494c7-8fa5-4df9-8366-32b423694a67"
+          },
+          "reclaimPolicy": "Retain"
+        }
+      ],
+      "instances": [
+        {
+          "node": "kubernetes-node-204",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-205",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-206",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "name": "back_20261004_030014",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261004_060000",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261004_120003",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261004_180008",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261005_000005",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261005_060010",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261005_120028",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261005_180010",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261006_000012",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261006_060016",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261006_120017",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261006_180006",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261007_000024",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261007_060012",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261007_120009",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261007_180000",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261008_000014",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261008_060025",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261008_120031",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261008_180027",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261009_000024",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261009_060007",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261009_120014",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261009_180026",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261010_000016",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261010_060012",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261010_120033",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_000050",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_030556",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_060012",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_120055",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_180038",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261012_000030",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261012_060222",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_060119",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_060222",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_060326",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_120033",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_180035",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        }
+      ],
+      "contents": [],
+      "disposition": "APPROVED_LOCAL_RETIREMENT"
+    },
+    {
+      "resource": "pvc-10d08ec1-bd08-4cb7-b061-cef62fd29616",
+      "pvs": [
+        {
+          "name": "pvc-10d08ec1-bd08-4cb7-b061-cef62fd29616",
+          "uid": "40da8d70-8b8a-4389-8245-4ac6c6cd0b52",
+          "phase": "Released",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "jellyfin-config-12-upgrade-test-20260924",
+            "namespace": "media",
+            "resourceVersion": "499978460",
+            "uid": "10d08ec1-bd08-4cb7-b061-cef62fd29616"
+          },
+          "reclaimPolicy": "Retain"
+        }
+      ],
+      "instances": [
+        {
+          "node": "kubernetes-node-204",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-205",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-206",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "name": "back_20261010_180119",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_000027",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_030546",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_060034",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_120043",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261011_180018",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261012_000018",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261012_060104",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_000106",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_000208",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_060000",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_120024",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        },
+        {
+          "name": "back_20261014_180014",
+          "nodes": [
+            "kubernetes-node-204",
+            "kubernetes-node-205",
+            "kubernetes-node-206"
+          ],
+          "flags": [
+            "SUCCESSFUL"
+          ]
+        }
+      ],
+      "contents": [],
+      "disposition": "APPROVED_LOCAL_RETIREMENT"
+    },
+    {
+      "resource": "pvc-704d3fc4-c6f6-43c5-8a73-64bb77d5a58a",
+      "pvs": [
+        {
+          "name": "pvc-704d3fc4-c6f6-43c5-8a73-64bb77d5a58a",
+          "uid": "fcfdbd72-5ffc-46aa-a387-b405c8fb5fc1",
+          "phase": "Released",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "tofu-state-recovery-minio",
+            "namespace": "gitlab",
+            "resourceVersion": "514935971",
+            "uid": "704d3fc4-c6f6-43c5-8a73-64bb77d5a58a"
+          },
+          "reclaimPolicy": "Retain"
+        }
+      ],
+      "instances": [
+        {
+          "node": "kubernetes-node-204",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-205",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-206",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "snapshots": [],
+      "contents": [],
+      "disposition": "APPROVED_LOCAL_RETIREMENT"
+    },
+    {
+      "resource": "pvc-483438df-7588-4870-861b-9fc4d97833d3",
+      "pvs": [
+        {
+          "name": "pvc-483438df-7588-4870-861b-9fc4d97833d3",
+          "uid": "2f3ddbc9-020b-44cf-af97-f39b5189c00e",
+          "phase": "Released",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "gitlab-bucket-restore-minio",
+            "namespace": "gitlab",
+            "resourceVersion": "515059265",
+            "uid": "483438df-7588-4870-861b-9fc4d97833d3"
+          },
+          "reclaimPolicy": "Retain"
+        }
+      ],
+      "instances": [
+        {
+          "node": "kubernetes-node-204",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-205",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-206": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "node": "kubernetes-node-206",
+          "in_use": false,
+          "volumes": [
+            {
+              "provider": "LVM_THIN",
+              "state": {
+                "disk_state": "UpToDate",
+                "replication_states": {
+                  "kubernetes-node-205": {
+                    "replication_state": "Established"
+                  },
+                  "kubernetes-node-204": {
+                    "replication_state": "Established"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "snapshots": [],
+      "contents": [],
+      "disposition": "APPROVED_LOCAL_RETIREMENT"
+    }
+  ],
+  "hold": [
+    {
+      "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+      "claim": "shared-postgres-10-wal",
+      "reason": "WAL snapshots still belong to completed CNPG recovery sets and two existing forensic restore claims.",
+      "dependent_backup_names": [
+        "shared-postgres-daily-backup-20260923020000",
+        "shared-postgres-daily-backup-20260924020000",
+        "shared-postgres-daily-backup-20260925020000",
+        "shared-postgres-daily-backup-20260926020000",
+        "shared-postgres-daily-backup-20260927020000",
+        "shared-postgres-daily-backup-20260928020000",
+        "shared-postgres-daily-backup-20260929020000",
+        "shared-postgres-daily-backup-20260930020000",
+        "shared-postgres-daily-backup-20261001020000",
+        "shared-postgres-daily-backup-20261002020000",
+        "shared-postgres-daily-backup-20261003020000",
+        "shared-postgres-daily-backup-20261004020000",
+        "shared-postgres-primary-recovery-validation-20261014",
+        "shared-postgres-rustfs-access-validated-20261014"
+      ],
+      "dependent_forensic_claims": [
+        "forensic-pg10-wal-copy-20261015",
+        "forensic-pg10-wal-recovery-20261015"
+      ]
+    }
+  ]
+}

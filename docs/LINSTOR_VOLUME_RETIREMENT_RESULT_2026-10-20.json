@@ -1,0 +1,81 @@
+{
+  "completed_at": "2026-10-20T18:34:07.169795+00:00",
+  "evidence_directory": "/home/ubuntu/incident-recovery-20261020-linstor-expand/retirement-20261020T182510Z",
+  "deleted_resources": [
+    "pvc-10d08ec1-bd08-4cb7-b061-cef62fd29616",
+    "pvc-483438df-7588-4870-861b-9fc4d97833d3",
+    "pvc-704d3fc4-c6f6-43c5-8a73-64bb77d5a58a",
+    "pvc-c34494c7-8fa5-4df9-8366-32b423694a67"
+  ],
+  "deleted_snapshot_definitions": 52,
+  "deleted_worker_lvs": 168,
+  "pools": {
+    "kubernetes-node-204": {
+      "pool_bytes": 794568949760,
+      "before_used_percent": 64.94,
+      "after_used_percent": 61.33,
+      "after_used_bytes": 487342931968,
+      "after_free_bytes": 307226017792,
+      "estimated_reclaimed_bytes": 28650144006,
+      "vg_free_bytes": 83743473664,
+      "vg_metadata_free_bytes": 1073270272,
+      "deleted_lvs": 56,
+      "dm_status": "0 1551892480 thin-pool 2736 52912/1048576 7436263/12124160 - rw discard_passdown queue_if_no_space - 1024 \n"
+    },
+    "kubernetes-node-205": {
+      "pool_bytes": 794568949760,
+      "before_used_percent": 73.34,
+      "after_used_percent": 65.52,
+      "after_used_bytes": 520571781120,
+      "after_free_bytes": 273997168640,
+      "estimated_reclaimed_bytes": 62165086633,
+      "vg_free_bytes": 83743473664,
+      "vg_metadata_free_bytes": 1073270272,
+      "deleted_lvs": 56,
+      "dm_status": "0 1551892480 thin-pool 2722 54104/1048576 7943295/12124160 - rw discard_passdown queue_if_no_space - 1024 \n"
+    },
+    "kubernetes-node-206": {
+      "pool_bytes": 874025844736,
+      "before_used_percent": 74.96,
+      "after_used_percent": 64.84,
+      "after_used_bytes": 566735077376,
+      "after_free_bytes": 307290767360,
+      "estimated_reclaimed_bytes": 88434695838,
+      "vg_free_bytes": 4286578688,
+      "vg_metadata_free_bytes": 1073300480,
+      "deleted_lvs": 56,
+      "dm_status": "0 1707081728 thin-pool 4285 57096/1048576 8647691/13336576 - rw discard_passdown queue_if_no_space - 1024 \n"
+    }
+  },
+  "replica_states": {
+    "UpToDate": 529,
+    "Diskless": 74
+  },
+  "remote_backup_entries_before": 530,
+  "remote_backup_entries_after": 530,
+  "remote_stored_metadata_unchanged": true,
+  "remote_catalog_note": "Three derived local fields (shipping, success, origin_node) disappeared from one deleted local resource record; stored backup metadata and catalog identities are unchanged.",
+  "held_resource": {
+    "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+    "reason": "Completed CNPG recovery sets and two Bound forensic restore claims depend on this snapshot history."
+  },
+  "kubernetes_snapshot_objects_unchanged": true,
+  "cnpg_ready": true,
+  "jellyfin_ready": true,
+  "protection_gate": {
+    "backupGeneration": "rustfs-linstor-backups-v2",
+    "backupHealthySince": "",
+    "backupReady": "false",
+    "blockingReasons": "canonical-volume manifest has not been reviewed; VG metadata cost has not been validated by the disposable snapshot canary; RustFS v2 remote returned invalid backup metadata; current-generation canonical volume coverage has not been verified; disposable v2 S3 create, restore, checksum, and delete canary has not passed; measured retention forecast does not leave at least 1 TiB free on RustFS; cluster-wide single-backup shipping concurrency has not been verified",
+    "capacityForecastReady": "false",
+    "checkedAt": "1792521001",
+    "clusterShippingConcurrencyReady": "false",
+    "coverageReady": "false",
+    "remoteAccessReady": "false",
+    "s3CanaryReady": "false",
+    "snapshotHealthySince": "",
+    "snapshotReady": "false",
+    "state": "blocked",
+    "storageReady": "false"
+  }
+}
