@@ -32,20 +32,22 @@ spec:
         kind: DaemonSet
         labelSelector: app.kubernetes.io/component=linstor-satellite
       patch: |-
-        spec:
-          template:
-            spec:
-              containers:
-                - name: linstor-satellite
-                  volumeMounts:
-                    - name: host-lvm-profile
-                      mountPath: /etc/lvm/profile
-                      readOnly: true
-              volumes:
-                - name: host-lvm-profile
-                  hostPath:
-                    path: /etc/lvm/profile
-                    type: Directory
+        - op: test
+          path: /spec/template/spec/containers/0/name
+          value: linstor-satellite
+        - op: add
+          path: /spec/template/spec/containers/0/volumeMounts/-
+          value:
+            name: host-lvm-profile
+            mountPath: /etc/lvm/profile
+            readOnly: true
+        - op: add
+          path: /spec/template/spec/volumes/-
+          value:
+            name: host-lvm-profile
+            hostPath:
+              path: /etc/lvm/profile
+              type: Directory
     - target:
         kind: Deployment
         name: linstor-csi-controller
