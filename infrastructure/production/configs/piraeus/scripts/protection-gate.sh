@@ -104,7 +104,7 @@ if printf '%s' "$pending" | jq -e 'any(.items[]; .spec.volumeSnapshotClassName =
 fi
 
 remote_ok=false
-if backup_list="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m backup list "$remote" 2>/dev/null)"; then
+if backup_list="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m backup list "$remote" 2>"$work_dir/backup-error")"; then
   snapshots="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m snapshot list 2>/dev/null || true)"
   if printf '%s' "$backup_list" | jq -e '.linstor | type == "object"' >/dev/null &&
      printf '%s' "$snapshots" | jq -e 'type == "array"' >/dev/null &&
@@ -120,7 +120,8 @@ if backup_list="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor -
     block_backup "RustFS backup metadata or local-to-remote chain verification failed"
   fi
 else
-  block_backup "LINSTOR could not list the RustFS backup remote"
+  backup_error="$(tr '\n' ' ' < "$work_dir/backup-error" | cut -c1-300)"
+  block_backup "LINSTOR could not list the RustFS backup remote: $backup_error"
 fi
 
 previous="$(kubectl get configmap "$status_name" -n "$namespace" -o json 2>/dev/null || printf '{}')"
