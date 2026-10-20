@@ -115,7 +115,7 @@ fi
 
 remote_access_ok=false
 if backup_list="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m backup list "$remote" 2>"$work_dir/backup-error")"; then
-  if printf '%s' "$backup_list" | jq -e '.linstor | type == "object"' >/dev/null; then
+  if printf '%s' "$backup_list" | jq -e 'type == "object" and (.other | type == "object") and ((.linstor // {}) | type == "object")' >/dev/null; then
     remote_access_ok=true
   else
     block_backup "RustFS v2 remote returned invalid backup metadata"

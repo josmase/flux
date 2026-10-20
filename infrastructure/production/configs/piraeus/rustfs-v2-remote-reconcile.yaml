@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-v2-remote-reconcile-v1
+  name: linstor-rustfs-v2-remote-reconcile-v2
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-v2-remote-reconcile
@@ -42,7 +42,7 @@ spec:
                   exit 1
                 fi
               fi
-              linstor --controllers "$controller" -m backup list "$remote" | jq -e '.linstor | type == "object"' >/dev/null
+              linstor --controllers "$controller" -m backup list "$remote" | jq -e 'type == "object" and (.other | type == "object") and ((.linstor // {}) | type == "object")' >/dev/null
           env:
             - name: RUSTFS_ACCESS_KEY
               valueFrom:
