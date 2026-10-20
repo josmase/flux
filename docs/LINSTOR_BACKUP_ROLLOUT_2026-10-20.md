@@ -33,3 +33,11 @@ The first RustFS application created the v2 bucket and identity but stopped on a
 The v2 remote was created and an empty bucket listing succeeded. The initial readiness predicate rejected LINSTOR's valid empty-bucket response (`{"other": {}}`); the corrected predicate accepts it without accepting API error arrays. Node properties confirm one upload slot on worker 204 and zero on 205, 206 and the diskless satellite. Local kind server-side dry run passed for the new Jobs and ConfigMaps.
 
 The committed disposable drill creates only a dedicated namespace, two 256 MiB PVCs and two temporary snapshots. It requires unchanged production replica states and exact LV inventory restoration, measures VG metadata growth on all three workers, checks a restored random payload checksum and verifies remote-list cleanup. Failures preserve evidence and do not enable producers. No backup coverage or restore success has been asserted.
+
+## Disposable drill result
+
+The [canary result](LINSTOR_BACKUP_V2_CANARY_RESULT_2026-10-20.json) passed at 20:03:06 UTC. Snapshot metadata growth was 1,024 bytes on worker 204 and 512 bytes each on 205 and 206. Use the maximum (1,024 bytes), two snapshots per canonical volume and safety multiplier two, with a mandatory 16 MiB floor. For 56 canonical volumes the calculated budget is 229,376 bytes, so the 16 MiB floor applies; each worker has approximately 1 GiB free metadata.
+
+The restored random payload SHA-256 matched. Both temporary contents and remote entries were removed and exact worker LV inventories returned to baseline. The production StorageClass retains PVs; the two exact Released disposable PVs were returned to ordinary CSI deletion with UID guards. No finalizers were changed.
+
+Metadata calibration and disposable S3 verification are now recorded as successful. Production coverage, representative and CNPG restores, retained-capacity forecast, and the 24-hour window remain unverified. The bounded CNPG bootstrap is being enabled first. Non-CNPG bootstrap and all recurring producers remain gated.

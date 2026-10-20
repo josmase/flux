@@ -18,6 +18,7 @@ resources:
   - backup-shipping-concurrency.yaml
   - linstor-protection-policy.yaml
   - linstor-backup-generation-manifest.yaml
+  - linstor-backup-generation-status.yaml
   - linstor-backup-bootstrap.yaml
   - linstor-vg-reserve-check.yaml
   - linstor-protection-validate.yaml

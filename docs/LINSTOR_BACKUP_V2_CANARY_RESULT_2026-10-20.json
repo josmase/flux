@@ -1,0 +1,18 @@
+{
+  "completed_at": "2026-10-20T20:03:06.376557+00:00",
+  "source_handle": "pvc-742e2db5-2576-4fc0-aa59-97e0b07542ed",
+  "snapshot_handle": "S3://rustfs-linstor-backups-v2/pvc-742e2db5-2576-4fc0-aa59-97e0b07542ed/snapshot-2c914dd1-dabb-47e5-9aae-f4f03c695c92",
+  "expected_sha256": "781ba21c91b0dc6c21229e048a1fc47177f304db1b9337cb3cd4bd52706f978d",
+  "restored_sha256": "781ba21c91b0dc6c21229e048a1fc47177f304db1b9337cb3cd4bd52706f978d",
+  "metadata_growth_bytes_per_worker": {
+    "kubernetes-node-204": 1024,
+    "kubernetes-node-205": 512,
+    "kubernetes-node-206": 512
+  },
+  "bytes_per_snapshot_lv": 1024,
+  "kubernetes_content_cleanup_verified": true,
+  "worker_lv_cleanup_verified": true,
+  "remote_listing_cleanup_verified": true,
+  "production_replicas_unchanged": true,
+  "recurring_producers_enabled": false
+}

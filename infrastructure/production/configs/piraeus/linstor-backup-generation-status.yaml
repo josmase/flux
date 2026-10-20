@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-backup-generation-status
+  namespace: piraeus-datastore
+data:
+  backupGeneration: rustfs-linstor-backups-v2
+  manifestHash: 59fcda8d7efe42da5f6a7ebec4ca0d3fab62492820095514957f3d05c6f4b330
+  s3CanaryVerified: 'true'
+  clusterShippingConcurrencyVerified: 'true'
+  canonicalCoverageVerified: 'false'
+  representativeRestoresVerified: 'false'
+  cnpgRestoreVerified: 'false'
+  capacityForecastReady: 'false'
+  forecastFreeBytes: '0'
+  evidence: docs/LINSTOR_BACKUP_V2_CANARY_RESULT_2026-10-20.json

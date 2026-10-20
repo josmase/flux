@@ -60,6 +60,11 @@ else
   block_snapshot "LINSTOR storage-pool capacity query failed"
 fi
 
+if ! replicas="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m resource list 2>/dev/null)" ||
+   ! printf '%s' "$replicas" | jq -e '.[0] | length > 0 and all(.[]; all(.volumes[]; .state.disk_state == "UpToDate" or .state.disk_state == "Diskless"))' >/dev/null; then
+  block_snapshot "LINSTOR replica health query failed or a replica is degraded"
+fi
+
 generation_manifest="$(kubectl get configmap linstor-backup-generation-manifest -n "$namespace" -o json 2>/dev/null || printf '{}')"
 manifest_reviewed="$(printf '%s' "$generation_manifest" | jq -r '.data.reviewed // "false"')"
 if [ "$manifest_reviewed" = true ]; then

@@ -7,9 +7,10 @@ metadata:
     app.kubernetes.io/name: linstor-vg-metadata-budget
     app.kubernetes.io/part-of: piraeus-datastore
 data:
-  # Keep false until a disposable snapshot canary measures metadata growth on
-  # each current worker. The protection gate fails closed while uncalibrated.
-  calibrated: "false"
+  # 2026-10-20 disposable canary: 1024/512/512 bytes per snapshot LV.
+  # Restore checksum, remote/content cleanup and exact worker LV cleanup passed.
+  # Evidence: docs/LINSTOR_BACKUP_V2_CANARY_RESULT_2026-10-20.json
+  calibrated: "true"
   bytesPerSnapshotLv: "1024"
   snapshotsPerPvcPerRun: "2"
   safetyMultiplier: "2"
