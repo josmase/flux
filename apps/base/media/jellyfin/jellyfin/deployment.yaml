@@ -62,6 +62,28 @@ spec:
               memory: 32Mi
             limits:
               memory: 64Mi
+        # Keep the NFS sentinel present for startup and liveness probes. Run
+        # as the export's mapped UID because root is squashed by the server.
+        - name: nfs-health-marker
+          image: artifactory.local.hejsan.xyz/docker/linuxserver/jellyfin:12.1ubu2604-ls50@sha256:51252e7a416e703cdc3cd91e8a54673a2430cc80409be8a38abe511411577b95
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - touch /mnt/storage/files/.healthcheck && test -r /mnt/storage/files/.healthcheck
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /mnt/storage/files
+              subPath: files
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
         # Pre-create the extracted-subtitle cache dir on the NFS share with
         # correct ownership. kubelet auto-creates missing subPath dirs as
         # root; the export root-squashes to anonuid=1000 so this lands as
@@ -174,9 +196,16 @@ spec:
             - sh
             - -c
             - |
-              kubectl logs "$POD_NAME" -c jellyfin -n "$NAMESPACE" --tail=0 --follow 2>/dev/null \
-                | grep -q "Stale file handle" \
-                && kubectl delete pod "$POD_NAME" -n "$NAMESPACE" --wait=false
+              while true; do
+                if kubectl logs "$POD_NAME" -c jellyfin -n "$NAMESPACE" --tail=0 --follow 2>/dev/null \
+                  | grep -q "Stale file handle"; then
+                  kubectl delete pod "$POD_NAME" -n "$NAMESPACE" --wait=false
+                  exit 0
+                fi
+                # The log stream ends whenever the main container restarts.
+                # Reattach instead of letting this sidecar crash-loop.
+                sleep 1
+              done
           env:
             - name: NAMESPACE
               valueFrom:
