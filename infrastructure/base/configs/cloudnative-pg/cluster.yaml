@@ -53,7 +53,9 @@ spec:
     resizeInUseVolumes: false
 
   walStorage:
-    size: 10Gi
+    # Keep enough headroom for replicas to retain WAL while recovering from
+    # extended outages; 10Gi was exhausted on shared-postgres-13.
+    size: 20Gi
     storageClass: linstor-final-triple
     resizeInUseVolumes: true
 
