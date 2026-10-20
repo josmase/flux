@@ -35,8 +35,8 @@ export KUBECONFIG="$work_dir/kubeconfig"
 now="$(date -u +%s)"
 snapshot_reasons=""
 backup_reasons=""
-block_snapshot() { snapshot_reasons="${snapshot_reasons}${snapshot_reasons:+; }$1"; }
-block_backup() { backup_reasons="${backup_reasons}${backup_reasons:+; }$1"; }
+block_snapshot() { snapshot_reasons="$${snapshot_reasons}$${snapshot_reasons:+; }$1"; }
+block_backup() { backup_reasons="$${backup_reasons}$${backup_reasons:+; }$1"; }
 
 if ! kubectl get --raw /readyz >/dev/null 2>&1; then
   block_snapshot "Kubernetes API readiness or etcd readiness failed"
@@ -94,7 +94,7 @@ while read -r satellite; do
   fi
   if ! printf '%s' "$vg_report" | jq -e --argjson minimum "$mda_minimum" \
     'any(.report[].vg[]; .vg_name == "linstor_vg" and ((.vg_mda_free | tonumber) >= $minimum))' >/dev/null; then
-    block_snapshot "VG metadata headroom on $satellite is below ${mda_minimum} bytes"
+    block_snapshot "VG metadata headroom on $satellite is below $${mda_minimum} bytes"
   fi
 done < "$work_dir/diskful-satellites"
 
@@ -165,11 +165,11 @@ kubectl create configmap "$status_name" -n "$namespace" \
   --from-literal=backupHealthySince="$backup_since" \
   --from-literal=snapshotReady="$snapshot_ready" \
   --from-literal=backupReady="$backup_ready" \
-  --from-literal=blockingReasons="${snapshot_reasons}${snapshot_reasons:+; }${backup_reasons}" \
+  --from-literal=blockingReasons="$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons}" \
   --dry-run=client -o yaml | kubectl apply -f -
 
 if [ "$snapshot_ready" != true ] || [ "$backup_ready" != true ]; then
-  echo "Protection gate state=$state snapshotReady=$snapshot_ready backupReady=$backup_ready reasons=${snapshot_reasons}${snapshot_reasons:+; }${backup_reasons:-24-hour healthy window not yet complete}"
+  echo "Protection gate state=$state snapshotReady=$snapshot_ready backupReady=$backup_ready reasons=$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons:-24-hour healthy window not yet complete}"
   exit 1
 fi
 echo "Protection gates passed for at least 24 hours; snapshot and backup producers may run."

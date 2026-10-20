@@ -131,7 +131,7 @@ spec:
                     vg_report="$(kubectl exec -n piraeus-datastore "$pod" -c linstor-satellite -- vgs --reportformat json --units b --nosuffix -o vg_name,vg_mda_free)"
                     if ! printf '%s' "$vg_report" | jq -e --argjson minimum "$mda_minimum" \
                       'any(.report[].vg[]; .vg_name == "linstor_vg" and ((.vg_mda_free | tonumber) >= $minimum))' >/dev/null; then
-                      echo "VG metadata headroom on $satellite is below ${mda_minimum} bytes; skipping snapshots."
+                      echo "VG metadata headroom on $satellite is below $${mda_minimum} bytes; skipping snapshots."
                       exit 0
                     fi
                   done < "$work_dir/diskful-satellites"
