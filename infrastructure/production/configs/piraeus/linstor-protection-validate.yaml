@@ -30,9 +30,14 @@ spec:
             - |
               failures=0
               found=0
-              kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
-              awk '$3 == "linstor" {print $1 "\t" $2}' > /tmp/canonical-pvcs.tsv
-              while read -r namespace name; do
+              kubectl get pvc -A -o json > /tmp/pvcs.json
+              kubectl get pv -o json > /tmp/pvs.json
+              jq -nr --slurpfile pvcs /tmp/pvcs.json --slurpfile pvs /tmp/pvs.json '
+                ($pvs[0].items | map(select(.spec.csi.driver == "linstor.csi.linbit.com") | {key: .metadata.name, value: .spec.csi.volumeHandle}) | from_entries) as $handles |
+                $pvcs[0].items[] | select(.status.phase == "Bound") | select($handles[.spec.volumeName] != null) |
+                [.metadata.namespace, .metadata.name] | @tsv
+              ' > /tmp/canonical-pvcs.tsv
+              while IFS="$(printf '\t')" read -r namespace name; do
                 [ -n "$namespace" ] || continue
                 found=$((found + 1))
                 case "$namespace/$name" in
@@ -102,6 +107,10 @@ rules:
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: ["linstor-vg-metadata-budget"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["linstor-backup-generation-manifest", "linstor-backup-generation-status"]
     verbs: ["get"]
   - apiGroups: [""]
     resources: ["configmaps"]

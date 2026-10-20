@@ -3,7 +3,7 @@ set -eu
 
 namespace=piraeus-datastore
 status_name=linstor-protection-gate-status
-remote=rustfs-linstor-backups
+remote=rustfs-linstor-backups-v2
 controller_pod=deploy/linstor-controller
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
@@ -60,9 +60,19 @@ else
   block_snapshot "LINSTOR storage-pool capacity query failed"
 fi
 
-kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
-  awk '$3 == "linstor" {print $1 "\t" $2}' > "$work_dir/canonical-pvcs"
-active_count="$(wc -l < "$work_dir/canonical-pvcs" | tr -d ' ')"
+generation_manifest="$(kubectl get configmap linstor-backup-generation-manifest -n "$namespace" -o json 2>/dev/null || printf '{}')"
+manifest_reviewed="$(printf '%s' "$generation_manifest" | jq -r '.data.reviewed // "false"')"
+if [ "$manifest_reviewed" = true ]; then
+  active_count="$(printf '%s' "$generation_manifest" | jq -r '.data.canonicalVolumeCount // "0"')"
+  case "$active_count" in ''|*[!0-9]*|0)
+    active_count=0
+    block_snapshot "reviewed canonical manifest has no valid canonicalVolumeCount"
+    ;;
+  esac
+else
+  active_count=0
+  block_snapshot "canonical-volume manifest has not been reviewed"
+fi
 budget="$(kubectl get configmap linstor-vg-metadata-budget -n "$namespace" -o json 2>/dev/null || printf '{"data":{"calibrated":"false","bytesPerSnapshotLv":"1024","snapshotsPerPvcPerRun":"2","safetyMultiplier":"2","floorBytes":"65536"}}')"
 if [ "$(printf '%s' "$budget" | jq -r '.data.calibrated // "false"')" != true ]; then
   block_snapshot "VG metadata cost has not been validated by the disposable snapshot canary"
@@ -103,25 +113,43 @@ if printf '%s' "$pending" | jq -e 'any(.items[]; .spec.volumeSnapshotClassName =
   block_snapshot "a managed snapshot create or delete is still pending"
 fi
 
-remote_ok=false
+remote_access_ok=false
 if backup_list="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m backup list "$remote" 2>"$work_dir/backup-error")"; then
-  snapshots="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m snapshot list 2>/dev/null || true)"
-  if printf '%s' "$backup_list" | jq -e '.linstor | type == "object"' >/dev/null &&
-     printf '%s' "$snapshots" | jq -e 'type == "array"' >/dev/null &&
-     printf '%s\n%s' "$snapshots" "$backup_list" | jq -s -e '
-       (.[0] | flatten | map(select(.name | startswith("back_")) |
-         select((.props["BackupShipping/Source/rustfs-linstor-backups/ShippingStatus"] // "") == "Success") |
-         {id: (.resource_name + "_" + .name)})) as $shipped |
-       (.[1].linstor) as $remote |
-       ($shipped | length) > 0 and all($shipped[]; ($remote[.id].restorable // false) == true)
-     ' >/dev/null; then
-    remote_ok=true
+  if printf '%s' "$backup_list" | jq -e '.linstor | type == "object"' >/dev/null; then
+    remote_access_ok=true
   else
-    block_backup "RustFS backup metadata or local-to-remote chain verification failed"
+    block_backup "RustFS v2 remote returned invalid backup metadata"
   fi
 else
   backup_error="$(tr '\n' ' ' < "$work_dir/backup-error" | cut -c1-300)"
   block_backup "LINSTOR could not list the RustFS backup remote: $backup_error"
+fi
+
+generation_status="$(kubectl get configmap linstor-backup-generation-status -n "$namespace" -o json 2>/dev/null || printf '{}')"
+backup_generation="$(printf '%s' "$generation_manifest" | jq -r '.data.backupGeneration // "rustfs-linstor-backups-v2"')"
+manifest_hash="$(printf '%s\n%s' "$active_count" "$(printf '%s' "$generation_manifest" | jq -r '.data["resources.tsv"] // ""')" | sha256sum | cut -d' ' -f1)"
+s3_canary_ready="$(printf '%s' "$generation_status" | jq -r '.data.s3CanaryVerified // "false"')"
+coverage_verified="$(printf '%s' "$generation_status" | jq -r --arg hash "$manifest_hash" --arg generation "$backup_generation" 'if .data.canonicalCoverageVerified == "true" and .data.representativeRestoresVerified == "true" and .data.cnpgRestoreVerified == "true" and .data.manifestHash == $hash and .data.backupGeneration == $generation then "true" else "false" end')"
+coverage_ready=false
+if [ "$backup_generation" = "rustfs-linstor-backups-v2" ] && [ "$manifest_reviewed" = true ] && [ "$coverage_verified" = true ]; then
+  coverage_ready=true
+else
+  block_backup "current-generation canonical volume coverage has not been verified"
+fi
+if [ "$s3_canary_ready" != true ]; then
+  block_backup "disposable v2 S3 create, restore, checksum, and delete canary has not passed"
+fi
+forecast_free_bytes="$(printf '%s' "$generation_status" | jq -r '.data.forecastFreeBytes // "0"')"
+capacity_forecast_ready=false
+case "$forecast_free_bytes" in ''|*[!0-9]*) forecast_free_bytes=0 ;; esac
+if [ "$(printf '%s' "$generation_status" | jq -r '.data.capacityForecastReady // "false"')" = true ] && [ "$forecast_free_bytes" -ge 1099511627776 ]; then
+  capacity_forecast_ready=true
+else
+  block_backup "measured retention forecast does not leave at least 1 TiB free on RustFS"
+fi
+shipping_concurrency_ready="$(printf '%s' "$generation_status" | jq -r '.data.clusterShippingConcurrencyVerified // "false"')"
+if [ "$shipping_concurrency_ready" != true ]; then
+  block_backup "cluster-wide single-backup shipping concurrency has not been verified"
 fi
 
 previous="$(kubectl get configmap "$status_name" -n "$namespace" -o json 2>/dev/null || printf '{}')"
@@ -142,7 +170,7 @@ if [ -z "$snapshot_reasons" ]; then
   snapshot_ready=false
   backup_ready=false
   [ $((now - snapshot_since)) -ge 86400 ] && snapshot_ready=true
-  if [ "$remote_ok" = true ] && [ -z "$backup_reasons" ] && [ "$snapshot_ready" = true ] && [ $((now - backup_since)) -ge 86400 ]; then
+  if [ "$remote_access_ok" = true ] && [ "$coverage_ready" = true ] && [ "$capacity_forecast_ready" = true ] && [ "$shipping_concurrency_ready" = true ] && [ -z "$backup_reasons" ] && [ "$snapshot_ready" = true ] && [ $((now - backup_since)) -ge 86400 ]; then
     backup_ready=true
   fi
   [ "$backup_ready" = true ] && state=ready || state=waiting
@@ -153,7 +181,7 @@ else
   backup_ready=false
   state=blocked
 fi
-if [ -n "$backup_reasons" ] || [ "$remote_ok" != true ]; then
+if [ -n "$backup_reasons" ] || [ "$remote_access_ok" != true ] || [ "$coverage_ready" != true ] || [ "$capacity_forecast_ready" != true ] || [ "$shipping_concurrency_ready" != true ]; then
   backup_since=""
   backup_ready=false
 fi
@@ -166,6 +194,13 @@ kubectl create configmap "$status_name" -n "$namespace" \
   --from-literal=backupHealthySince="$backup_since" \
   --from-literal=snapshotReady="$snapshot_ready" \
   --from-literal=backupReady="$backup_ready" \
+  --from-literal=storageReady="$([ -z "$snapshot_reasons" ] && echo true || echo false)" \
+  --from-literal=remoteAccessReady="$remote_access_ok" \
+  --from-literal=coverageReady="$coverage_ready" \
+  --from-literal=s3CanaryReady="$s3_canary_ready" \
+  --from-literal=capacityForecastReady="$capacity_forecast_ready" \
+  --from-literal=clusterShippingConcurrencyReady="$shipping_concurrency_ready" \
+  --from-literal=backupGeneration="$backup_generation" \
   --from-literal=blockingReasons="$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons}" \
   --dry-run=client -o yaml | kubectl apply -f -
 

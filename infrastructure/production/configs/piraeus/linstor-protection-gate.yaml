@@ -89,14 +89,19 @@ spec:
               args:
                 - |
                   : > /work/pvcs.tsv
-                  kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
-                  awk '$3 == "linstor" {print $1 "\t" $2}' |
-                  while read -r namespace name; do
-                    pv="$(kubectl get pvc -n "$namespace" "$name" -o jsonpath='{.spec.volumeName}')"
-                    [ -n "$pv" ] || continue
-                    handle="$(kubectl get pv "$pv" -o jsonpath='{.spec.csi.volumeHandle}' 2>/dev/null || true)"
-                    [ -n "$handle" ] && printf '%s\t%s\t%s\n' "$namespace" "$name" "$handle" >> /work/pvcs.tsv
-                  done
+                  : > /work/legacy-pvcs.tsv
+                  kubectl get pvc -A -o json > /work/all-pvcs.json
+                  kubectl get pv -o json > /work/all-pvs.json
+                  jq -nr --slurpfile pvcs /work/all-pvcs.json --slurpfile pvs /work/all-pvs.json '
+                    ($pvs[0].items | map(select(.spec.csi.driver == "linstor.csi.linbit.com") | {key: .metadata.name, value: .spec.csi.volumeHandle}) | from_entries) as $handles |
+                    $pvcs[0].items[] | select(.status.phase == "Bound") |
+                    select($handles[.spec.volumeName] != null) |
+                    [.metadata.namespace, .metadata.name, $handles[.spec.volumeName]] | @tsv
+                  ' > /work/legacy-pvcs.tsv
+                  if kubectl get configmap linstor-backup-generation-manifest -n piraeus-datastore -o json > /work/manifest.json 2>/dev/null &&
+                     jq -e '.data.reviewed == "true" and .data.backupGeneration == "rustfs-linstor-backups-v2"' /work/manifest.json >/dev/null; then
+                    jq -r '.data["resources.tsv"] // ""' /work/manifest.json > /work/pvcs.tsv
+                  fi
             - name: gate-state
               image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
               volumeMounts:
@@ -123,32 +128,63 @@ spec:
               args:
                 - |
                   controller="linstor-controller.piraeus-datastore.svc:3370"
-                  remote="rustfs-linstor-backups"
+                  remote="rustfs-linstor-backups-v2"
+                  legacy_remote="rustfs-linstor-backups"
                   policy_ready="$(cat /work/backup-ready)"
                   schedule_data="$(linstor --controllers "$controller" -m schedule list | jq -c '.data')"
                   if [ "$policy_ready" != "true" ]; then
+                    linstor --controllers "$controller" node set-property controller BackupShipping/MaxConcurrentBackupsPerNode 1
                     # Retire the pre-gate Radarr schedule as well as the
                     # generated policy schedules below. The legacy Job that
                     # created it is no longer reconciled by Flux.
                     linstor --controllers "$controller" backup schedule disable \
                       --rd pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf "$remote" radarr10-config || true
+                    linstor --controllers "$controller" backup schedule disable \
+                      --rd pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf "$legacy_remote" radarr10-config || true
+                    while IFS="$(printf '\t')" read -r legacy_namespace legacy_name legacy_resource; do
+                      [ -n "$legacy_resource" ] || continue
+                      legacy_safe="$(printf '%s-%s' "$legacy_namespace" "$legacy_name" | tr -c '[:alnum:]' '-')"
+                      legacy_prefix="$(printf '%s' "$legacy_safe" | cut -c1-47)"
+                      legacy_hash="$(printf '%s/%s' "$legacy_namespace" "$legacy_name" | sha256sum | cut -c1-8)"
+                      linstor --controllers "$controller" backup schedule disable --rd "$legacy_resource" "$legacy_remote" "policy-$legacy_prefix-$legacy_hash" || true
+                      linstor --controllers "$controller" backup schedule disable --rd "$legacy_resource" "$remote" "policy-v2-$legacy_prefix-$legacy_hash" || true
+                    done < /work/legacy-pvcs.tsv
                   fi
-                  while IFS="$(printf '\t')" read -r namespace name resource; do
+                  while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
                     [ -n "$resource" ] || continue
-                    case "$namespace/$name" in
-                      cnpg-system/*|gitlab/*) full="0 2 * * SUN"; incremental="0 */6 * * *"; local_keep=3; remote_keep=14 ;;
-                      immich/*model*|growlog/*cache*) continue ;;
-                      *) full="0 3 * * SUN"; incremental="0 3 * * *"; local_keep=2; remote_keep=7 ;;
-                    esac
+                    [ "$retain" = "yes" ] || { echo "manifest row is not approved for retention: $namespace/$name" >&2; exit 1; }
                     safe="$(printf '%s-%s' "$namespace" "$name" | tr -c '[:alnum:]' '-')"
                     prefix="$(printf '%s' "$safe" | cut -c1-47)"
                     hash="$(printf '%s/%s' "$namespace" "$name" | sha256sum | cut -c1-8)"
-                    schedule="policy-$prefix-$hash"
+                    minute="$(printf '%s' "$hash" | cut -c1-2)"
+                    minute=$(( (0x$minute % 59) + 1 ))
+                    case "$namespace/$name" in
+                      cnpg-system/*) continue ;;
+                      immich/*model*|growlog/*cache*) continue ;;
+                    esac
+                    case "$tier" in
+                      critical) full="$minute 2 * * *"; incremental="$minute */6 * * *"; local_keep=1; remote_keep=14 ;;
+                      standard) full="$minute 3 * * *"; incremental=""; local_keep=1; remote_keep=7 ;;
+                      *) echo "unknown reviewed backup tier $tier for $namespace/$name" >&2; exit 1 ;;
+                    esac
+                    legacy_schedule="policy-$prefix-$hash"
+                    schedule="policy-v2-$prefix-$hash"
+                    if [ "$policy_ready" != "true" ]; then
+                      linstor --controllers "$controller" backup schedule disable --rd "$resource" "$legacy_remote" "$legacy_schedule" || true
+                    fi
                     if [ "$policy_ready" = "true" ]; then
                       if ! printf '%s' "$schedule_data" | jq -e --arg name "$schedule" 'any(.[]; .schedule_name == $name)' >/dev/null; then
-                        linstor --controllers "$controller" schedule create -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
+                        if [ -n "$incremental" ]; then
+                          linstor --controllers "$controller" schedule create -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
+                        else
+                          linstor --controllers "$controller" schedule create -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
+                        fi
                       else
-                        linstor --controllers "$controller" schedule modify -f "$full" -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule"
+                        if [ -n "$incremental" ]; then
+                          linstor --controllers "$controller" schedule modify -f "$full" -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule"
+                        else
+                          linstor --controllers "$controller" schedule modify -f "$full" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule"
+                        fi
                       fi
                       linstor --controllers "$controller" backup schedule enable --rd "$resource" "$remote" "$schedule"
                       echo "enabled reviewed canonical resource $namespace/$name"
@@ -172,7 +208,7 @@ metadata:
     app.kubernetes.io/name: shared-postgres-gated-backup
     app.kubernetes.io/part-of: cloudnative-pg
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 */6 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 3
@@ -203,13 +239,15 @@ spec:
                     echo "Storage and RustFS backup gates have not been healthy for 24 hours; skipping PostgreSQL backup."
                     exit 0
                   fi
-                  name="shared-postgres-gated-$(date -u +%Y%m%d)"
+                  name="shared-postgres-v2-$(date -u +%Y%m%d%H%M)"
                   cat <<EOF | kubectl create --dry-run=server -f - >/dev/null
                   apiVersion: postgresql.cnpg.io/v1
                   kind: Backup
                   metadata:
                     name: $name
                     namespace: cnpg-system
+                    labels:
+                      backupGeneration: rustfs-linstor-backups-v2
                   spec:
                     cluster: shared-postgres
                     method: volumeSnapshot
@@ -220,6 +258,8 @@ spec:
                   metadata:
                     name: $name
                     namespace: cnpg-system
+                    labels:
+                      backupGeneration: rustfs-linstor-backups-v2
                   spec:
                     cluster: shared-postgres
                     method: volumeSnapshot
@@ -239,7 +279,10 @@ metadata:
 rules:
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["backups"]
-    verbs: ["create"]
+    verbs: ["create", "get", "list", "delete"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -254,6 +297,113 @@ subjects:
   - kind: ServiceAccount
     name: shared-postgres-gated-backup
     namespace: cnpg-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: linstor-v2-backup-metadata-read
+  namespace: piraeus-datastore
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: linstor-v2-backup-metadata-read
+  namespace: piraeus-datastore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: linstor-v2-backup-metadata-read
+subjects:
+  - kind: ServiceAccount
+    name: shared-postgres-gated-backup
+    namespace: cnpg-system
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: shared-postgres-v2-backup-retention
+  namespace: cnpg-system
+spec:
+  suspend: false
+  schedule: "25 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: shared-postgres-gated-backup
+          restartPolicy: Never
+          containers:
+            - name: prune
+              image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json)"
+                  printf '%s' "$gate" | jq -e '
+                    .data.backupReady == "true" and
+                    .data.backupGeneration == "rustfs-linstor-backups-v2" and
+                    .data.coverageReady == "true" and
+                    ((now | floor) - ((.data.checkedAt // "0") | tonumber)) < 600 and
+                    ((now | floor) - ((.data.backupHealthySince // "0") | tonumber)) >= 86400
+                  ' >/dev/null || { echo "v2 backup gate is not ready; retention is paused."; exit 0; }
+                  backups="$(kubectl get backups.postgresql.cnpg.io -n cnpg-system -l backupGeneration=rustfs-linstor-backups-v2 -o json)"
+                  newest="$(printf '%s' "$backups" | jq -r '[.items[] | select(.status.phase == "completed")] | sort_by(.status.startedAt // .metadata.creationTimestamp) | last | .metadata.name // empty')"
+                  [ -n "$newest" ] || { echo "No successful v2 recovery set exists; nothing to prune."; exit 0; }
+                  printf '%s' "$backups" | jq -r --arg newest "$newest" '[.items[] | select(.status.phase == "completed") | select(.metadata.name != $newest) | select((.status.startedAt // .metadata.creationTimestamp) | fromdateiso8601 < (now - 1209600)) | [.metadata.name, ([.status.snapshotBackupStatus.elements[]?.name] | join(","))] | @tsv][]' |
+                  while IFS="$(printf '\t')" read -r name snapshot_csv; do
+                    [ -n "$name" ] || continue
+                    [ -n "$snapshot_csv" ] || { echo "Backup $name has no recorded snapshots; refusing deletion." >&2; exit 1; }
+                    remote_before="$(kubectl exec -q -n piraeus-datastore deploy/linstor-controller -- linstor --controllers localhost:3370 -m backup list rustfs-linstor-backups-v2)"
+                    old_ifs="$IFS"; IFS=','
+                    for snapshot in $snapshot_csv; do
+                      printf '%s' "$remote_before" | jq -e --arg snap "$snapshot" '.linstor | to_entries | any(.value.origin_snap == $snap and .value.restorable == true)' >/dev/null || {
+                        echo "Backup $name snapshot $snapshot has no matching restorable v2 remote artifact; refusing deletion." >&2
+                        exit 1
+                      }
+                    done
+                    IFS="$old_ifs"
+                    kubectl delete backup.postgresql.cnpg.io -n cnpg-system "$name" --cascade=foreground --wait=true
+                    old_ifs="$IFS"; IFS=','
+                    for snapshot in $snapshot_csv; do
+                      kubectl wait -n cnpg-system --for=delete "volumesnapshot/$snapshot" --timeout=1800s
+                      removed=false
+                      attempt=0
+                      while [ "$attempt" -lt 60 ]; do
+                        remote_after="$(kubectl exec -q -n piraeus-datastore deploy/linstor-controller -- linstor --controllers localhost:3370 -m backup list rustfs-linstor-backups-v2)"
+                        if ! printf '%s' "$remote_after" | jq -e --arg snap "$snapshot" '.linstor | to_entries | any(.value.origin_snap == $snap)' >/dev/null; then
+                          removed=true
+                          break
+                        fi
+                        attempt=$((attempt + 1))
+                        sleep 30
+                      done
+                      [ "$removed" = true ] || { echo "Remote artifact for deleted VolumeSnapshot $snapshot remains; stop retention." >&2; exit 1; }
+                    done
+                    IFS="$old_ifs"
+                    echo "deleted expired v2 Backup object $name and verified CSI removed its remote snapshots"
+                  done
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

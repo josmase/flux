@@ -1,0 +1,38 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: linstor-snapshot-s3-v2
+driver: linstor.csi.linbit.com
+deletionPolicy: Delete
+parameters:
+  snap.linstor.csi.linbit.com/type: S3
+  snap.linstor.csi.linbit.com/remote-name: rustfs-linstor-backups-v2
+  snap.linstor.csi.linbit.com/allow-incremental: "false"
+  snap.linstor.csi.linbit.com/delete-local: "true"
+  csi.storage.k8s.io/snapshotter-secret-name: linstor-rustfs-v2-credentials
+  csi.storage.k8s.io/snapshotter-secret-namespace: piraeus-datastore
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-linstor-rustfs-v2-credentials
+  namespace: piraeus-datastore
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["linstor-rustfs-v2-credentials"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-linstor-rustfs-v2-credentials
+  namespace: piraeus-datastore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: read-linstor-rustfs-v2-credentials
+subjects:
+  - kind: ServiceAccount
+    name: linstor-csi-controller
+    namespace: piraeus-datastore

@@ -6,11 +6,56 @@ default tier or an explicit critical/cache override. The backup schedule
 reconciler is deliberately kept separate from validation so a policy change
 cannot silently alter existing remote retention.
 
-Retention defaults:
+## Backup generation v2
 
-- Standard: weekly full, daily incremental, 2 local and 7 remote copies.
-- Critical: weekly full, six-hour incremental, 3 local and 14 remote copies.
-- Cache: no remote backup.
+The new generation writes only to RustFS bucket `linstor-backups-v2` through
+LINSTOR remote `rustfs-linstor-backups-v2`. Keep the existing remote, bucket,
+snapshots, and backup records for investigation and recovery.
+
+`linstor-backup-generation-manifest` is intentionally unreviewed and empty.
+Set `canonicalVolumeCount` from the full reviewed non-cache LINSTOR inventory,
+including CNPG volumes with their separate coordinated coverage. Populate the
+manifest only after reconciling bound PVC → PV → CSI handle mappings,
+workload references (including scaled-to-zero workloads), and
+`docs/LINSTOR_FINAL_CLASS_MIGRATION_LEDGER.md`. Include only approved
+non-cache LINSTOR resources in `resources.tsv`, with columns namespace, PVC,
+LINSTOR resource handle, tier (`critical` or `standard`), and `yes` for
+retention. Keep CNPG replicas out of this manifest; classify forensic,
+migration, and uncertain claims as holds in the review record. Discover LINSTOR
+volumes by the PV CSI driver `linstor.csi.linbit.com`, including active
+`linstor-final` and `linstor-final-triple` classes.
+
+Retention uses full chains. Standard resources receive daily full backups, one
+local full chain, and seven remote daily full chains. Critical resources
+receive daily full backups plus six-hour incrementals, one local full chain,
+and fourteen remote daily full chains. The v2 serial bootstrap Jobs are
+suspended until the reviewed inventory, S3 canary, storage health, and remote
+access pass. Do not set `coverageReady` until all initial backups have remote
+metadata verification and representative restore checks. Record the SHA-256
+of `canonicalVolumeCount`, a newline, and `resources.tsv` as `manifestHash` in
+the generation status. Set `s3CanaryVerified`,
+`canonicalCoverageVerified`, `representativeRestoresVerified`, and
+`cnpgRestoreVerified` only after their corresponding checks pass.
+Set `capacityForecastReady=true` and `forecastFreeBytes` only after measured v2
+sizes show at least 1 TiB free remains.
+
+CNPG uses coordinated volume snapshots every six hours through
+`linstor-snapshot-s3-v2`. The CSI secret `linstor-rustfs-v2-credentials` must be
+provisioned in `piraeus-datastore` as an immutable
+`linstor.csi.linbit.com/s3-credentials.v1` Secret with `access-key` and
+`secret-key` entries. The CSI controller has permission to read only that
+Secret. CNPG Backup retention is 14 days; its suspended-safe retention job
+preserves the newest successful v2 recovery set even if it is older and uses
+`deletionPolicy: Delete` for remote artifact cleanup.
+
+The protection gate keeps its existing fields and adds independent storage,
+remote-access, current-generation coverage, and generation status fields. The
+CNPG and LINSTOR bootstrap Jobs are bounded and run serially while recurring
+producers remain gated. The hourly local snapshot CronJob stays suspended.
+
+RustFS must retain at least 1 TiB of actual filesystem free space after the
+measured v2 retention forecast. The Ansible RustFS role enforces this absolute
+floor; do not replace it with a percentage threshold.
 
 The current RustFS target is a single failure domain. It protects against
 node and LINSTOR-volume failure, but not total loss of the storage server.

@@ -1,0 +1,157 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-backup-v2-bootstrap
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-backup-v2-bootstrap
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  suspend: true
+  backoffLimit: 0
+  activeDeadlineSeconds: 604800
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linstor-backup-v2-bootstrap
+    spec:
+      serviceAccountName: linstor-protection-policy
+      restartPolicy: Never
+      volumes:
+        - name: work
+          emptyDir: {}
+      initContainers:
+        - name: reviewed-inventory
+          image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+          volumeMounts:
+            - name: work
+              mountPath: /work
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              kubectl get configmap linstor-backup-generation-manifest -n piraeus-datastore -o json > /work/manifest.json
+              jq -e '.data.reviewed == "true" and .data.backupGeneration == "rustfs-linstor-backups-v2"' /work/manifest.json >/dev/null || {
+                echo "Reviewed v2 manifest is required; refusing bootstrap." >&2
+                exit 1
+              }
+              jq -r '.data["resources.tsv"] // ""' /work/manifest.json > /work/resources.tsv
+              count="$(awk 'NF {n++} END {print n+0}' /work/resources.tsv)"
+              [ "$count" -gt 0 ] && [ "$count" -le 200 ] || {
+                echo "Manifest must contain between 1 and 200 explicit non-CNPG resources." >&2
+                exit 1
+              }
+              gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json)"
+              printf '%s' "$gate" | jq -e '.data.storageReady == "true" and .data.remoteAccessReady == "true" and .data.s3CanaryReady == "true" and .data.backupGeneration == "rustfs-linstor-backups-v2"' >/dev/null || {
+                echo "Storage, v2 remote access, and disposable S3 canary must be ready before bootstrap." >&2
+                exit 1
+              }
+              while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
+                [ -n "$resource" ] || continue
+                [ "$retain" = "yes" ] || { echo "unapproved row $namespace/$name" >&2; exit 1; }
+                case "$namespace/$name" in cnpg-system/*|immich/*model*|growlog/*cache*) echo "excluded resource present in manifest: $namespace/$name" >&2; exit 1 ;; esac
+                case "$tier" in critical|standard) ;; *) echo "invalid tier for $namespace/$name" >&2; exit 1 ;; esac
+              done < /work/resources.tsv
+      containers:
+        - name: ship-full-chains
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: work
+              mountPath: /work
+              readOnly: true
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              controller="linstor-controller.piraeus-datastore.svc:3370"
+              remote="rustfs-linstor-backups-v2"
+              while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
+                [ -n "$resource" ] || continue
+                echo "creating one full v2 backup for $namespace/$name"
+                linstor --controllers "$controller" backup create --full "$remote" "$resource"
+                complete=false
+                attempt=0
+                while [ "$attempt" -lt 360 ]; do
+                  backups="$(linstor --controllers "$controller" -m backup list "$remote")"
+                  if printf '%s' "$backups" | jq -e --arg prefix "$${resource}_back_" '.linstor | to_entries | any(.[]; (.key | startswith($prefix)) and (.value.restorable == true))' >/dev/null; then
+                    complete=true
+                    break
+                  fi
+                  attempt=$((attempt + 1))
+                  sleep 60
+                done
+                [ "$complete" = true ] || { echo "v2 full backup for $namespace/$name did not become restorable within six hours." >&2; exit 1; }
+              done < /work/resources.tsv
+              echo "Serial v2 bootstrap completed. Independent restore verification is still required before coverageReady can be set."
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: shared-postgres-v2-bootstrap-backup
+  namespace: cnpg-system
+  labels:
+    app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup
+    backupGeneration: rustfs-linstor-backups-v2
+spec:
+  suspend: true
+  backoffLimit: 0
+  activeDeadlineSeconds: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: shared-postgres-v2-bootstrap-backup
+    spec:
+      serviceAccountName: shared-postgres-gated-backup
+      restartPolicy: Never
+      containers:
+        - name: create-coordinated-backup
+          image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json)"
+              printf '%s' "$gate" | jq -e '.data.storageReady == "true" and .data.remoteAccessReady == "true" and .data.s3CanaryReady == "true" and .data.backupGeneration == "rustfs-linstor-backups-v2"' >/dev/null || {
+                echo "Storage, v2 remote access, and disposable S3 canary must be ready before CNPG bootstrap." >&2
+                exit 1
+              }
+              name=shared-postgres-v2-bootstrap
+              if kubectl get backup.postgresql.cnpg.io -n cnpg-system "$name" >/dev/null 2>&1; then
+                echo "The v2 CNPG bootstrap Backup object already exists; refusing to create another."
+                exit 0
+              fi
+              kubectl create -f - <<EOF
+              apiVersion: postgresql.cnpg.io/v1
+              kind: Backup
+              metadata:
+                name: $name
+                namespace: cnpg-system
+                labels:
+                  backupGeneration: rustfs-linstor-backups-v2
+              spec:
+                cluster: shared-postgres
+                method: volumeSnapshot
+              EOF
+              attempt=0
+              while [ "$attempt" -lt 1440 ]; do
+                backup="$(kubectl get backup.postgresql.cnpg.io -n cnpg-system "$name" -o json)"
+                phase="$(printf '%s' "$backup" | jq -r '.status.phase // "pending"')"
+                case "$phase" in
+                  completed) echo "CNPG v2 bootstrap backup completed; restore validation remains required."; exit 0 ;;
+                  failed) echo "CNPG v2 bootstrap backup failed." >&2; exit 1 ;;
+                esac
+                attempt=$((attempt + 1))
+                sleep 60
+              done
+              echo "CNPG v2 bootstrap backup did not complete within 24 hours." >&2
+              exit 1
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 256Mi

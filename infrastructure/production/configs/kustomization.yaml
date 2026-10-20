@@ -14,6 +14,20 @@ resources:
   - secret-shared-postgres-superuser.yaml
 
 patches:
+  # CNPG backups use independent six-hour S3 recovery sets. CSI owns deletion
+  # with the Backup object so retention also removes the remote artifact.
+  - target:
+      group: postgresql.cnpg.io
+      kind: Cluster
+      name: shared-postgres
+      namespace: cnpg-system
+    patch: |-
+      - op: replace
+        path: /spec/backup/volumeSnapshot/className
+        value: linstor-snapshot-s3-v2
+      - op: replace
+        path: /spec/backup/volumeSnapshot/snapshotOwnerReference
+        value: backup
   # Keep the native scheduler off; a gate-aware CronJob creates Backup objects.
   - target:
       group: postgresql.cnpg.io

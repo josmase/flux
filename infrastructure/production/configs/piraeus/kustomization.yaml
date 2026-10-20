@@ -12,7 +12,11 @@ resources:
   - final-bootstrap-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
+  - rustfs-v2-remote-reconcile.yaml
   - linstor-protection-policy.yaml
+  - linstor-backup-generation-manifest.yaml
+  - linstor-backup-bootstrap.yaml
+  - linstor-vg-reserve-check.yaml
   - linstor-protection-validate.yaml
   - linstor-csi-snapshot-watch-rbac.yaml
   - linstor-backup-policy-reconcile.yaml
@@ -21,6 +25,7 @@ resources:
   - snapshot-retention-policy.yaml
   - snapshot-class.yaml
   - snapshot-prunable-class.yaml
+  - cnpg-s3-snapshot-class.yaml
   - linstor-vg-metadata-budget.yaml
   - node-prerequisites.yaml
 

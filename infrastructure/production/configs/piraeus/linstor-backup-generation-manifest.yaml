@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-backup-generation-manifest
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-backup-generation-manifest
+    app.kubernetes.io/part-of: piraeus-datastore
+data:
+  backupGeneration: rustfs-linstor-backups-v2
+  reviewed: "false"
+  canonicalVolumeCount: ""
+  # Populate only after PVC→PV→CSI-handle, workload, and migration-ledger
+  # review. TSV columns are namespace, PVC name, LINSTOR resource handle,
+  # tier (critical|standard), and retain (must be "yes"). CNPG and cache PVCs
+  # use separate coverage. Migration/forensic holds stay out of schedule rows
+  # and must be explained in the review record.
+  resources.tsv: ""

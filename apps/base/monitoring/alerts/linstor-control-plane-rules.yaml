@@ -11,6 +11,14 @@ spec:
     - name: linstor-control-plane-protection
       interval: 30s
       rules:
+        - alert: LinstorVgReserveLow
+          expr: kube_job_status_failed{job_name=~"linstor-vg-reserve-check.*"} > 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "LINSTOR VG reserve cannot cover another pool extension"
+            description: "A worker has less VG free space than one 5% thin-pool extension plus 1 GiB safety. Read the linstor-vg-reserve-check Job logs and suspend new producers before the next extension."
         - alert: LinstorProtectionGateBlocked
           expr: kube_job_status_failed{job_name=~"linstor-protection-gate-v1.*"} > 0
           for: 2m

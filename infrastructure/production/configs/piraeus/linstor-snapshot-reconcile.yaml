@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: linstor-snapshot-reconcile
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
-  suspend: false
+  suspend: true
   # Offset from the backup schedules that start on the hour.
   schedule: "15 * * * *"
   concurrencyPolicy: Forbid
@@ -105,8 +105,14 @@ spec:
                   hour="$(date -u +%H)"
                   weekday="$(date -u +%u)"
                   stamp="$(date -u +%Y%m%d%H)"
-                  kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
-                  awk '$3 == "linstor" {print $1 "\t" $2}' > "$work_dir/canonical-pvcs"
+                  kubectl get pvc -A -o json > "$work_dir/pvcs.json"
+                  kubectl get pv -o json > "$work_dir/pvs.json"
+                  jq -nr --slurpfile pvcs "$work_dir/pvcs.json" --slurpfile pvs "$work_dir/pvs.json" '
+                    ($pvs[0].items | map(select(.spec.csi.driver == "linstor.csi.linbit.com") | {key: .metadata.name, value: .spec.csi.driver}) | from_entries) as $drivers |
+                    $pvcs[0].items[] | select(.status.phase == "Bound") |
+                    select($drivers[.spec.volumeName] == "linstor.csi.linbit.com") |
+                    [.metadata.namespace, .metadata.name] | @tsv
+                  ' > "$work_dir/canonical-pvcs"
                   awk 'NR == FNR { active[$1 SUBSEP $2]=1; next } ($1 SUBSEP $2) in active' "$work_dir/active-pvcs" "$work_dir/canonical-pvcs" > "$work_dir/active-canonical-pvcs"
                   active_count="$(wc -l < "$work_dir/active-canonical-pvcs" | tr -d ' ')"
                   budget="$(kubectl get configmap linstor-vg-metadata-budget -n piraeus-datastore -o json)"
