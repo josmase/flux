@@ -12,13 +12,22 @@ resources:
   - final-bootstrap-storage-class.yaml
   - rustfs-credentials.yaml
   - rustfs-remote-reconcile.yaml
-  - radarr10-backup-schedule-reconcile.yaml
   - linstor-protection-policy.yaml
   - linstor-protection-validate.yaml
   - linstor-csi-snapshot-watch-rbac.yaml
   - linstor-backup-policy-reconcile.yaml
   - linstor-snapshot-reconcile.yaml
+  - linstor-protection-gate.yaml
   - snapshot-retention-policy.yaml
   - snapshot-class.yaml
   - snapshot-prunable-class.yaml
+  - linstor-vg-metadata-budget.yaml
   - node-prerequisites.yaml
+
+configMapGenerator:
+  - name: linstor-protection-gate-script
+    namespace: piraeus-datastore
+    files:
+      - protection-gate.sh=scripts/protection-gate.sh
+generatorOptions:
+  disableNameSuffixHash: true

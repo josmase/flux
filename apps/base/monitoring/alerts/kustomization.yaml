@@ -5,6 +5,7 @@ resources:
   - jellyfin-rules.yaml
   - node-storage-rules.yaml
   - linstor-rules.yaml
+  - linstor-control-plane-rules.yaml
 
 labels:
   - pairs:

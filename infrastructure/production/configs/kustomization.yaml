@@ -14,7 +14,7 @@ resources:
   - secret-shared-postgres-superuser.yaml
 
 patches:
-  # CloudNativePG also creates CSI snapshots; pause this producer during reset.
+  # Keep the native scheduler off; a gate-aware CronJob creates Backup objects.
   - target:
       group: postgresql.cnpg.io
       kind: ScheduledBackup

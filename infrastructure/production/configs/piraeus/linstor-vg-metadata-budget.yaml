@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-vg-metadata-budget
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-vg-metadata-budget
+    app.kubernetes.io/part-of: piraeus-datastore
+data:
+  # Keep false until a disposable snapshot canary measures metadata growth on
+  # each current worker. The protection gate fails closed while uncalibrated.
+  calibrated: "false"
+  bytesPerSnapshotLv: "1024"
+  snapshotsPerPvcPerRun: "2"
+  safetyMultiplier: "2"
+  floorBytes: "65536"

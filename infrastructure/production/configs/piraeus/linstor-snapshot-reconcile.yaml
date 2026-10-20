@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: linstor-snapshot-reconcile
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
-  suspend: true
+  suspend: false
   # Offset from the backup schedules that start on the hour.
   schedule: "15 * * * *"
   concurrencyPolicy: Forbid
@@ -56,6 +56,15 @@ spec:
                   current-context: cluster
                   KUBECONFIG_EOF
                   export KUBECONFIG="$work_dir/kubeconfig"
+                  gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json 2>/dev/null || true)"
+                  if ! printf '%s' "$gate" | jq -e '
+                    .data.snapshotReady == "true" and
+                    ((now | floor) - ((.data.checkedAt // "0") | tonumber)) < 600 and
+                    ((now | floor) - ((.data.snapshotHealthySince // "0") | tonumber)) >= 86400
+                  ' >/dev/null; then
+                    echo "Protection gate is not ready for 24 hours; skipping snapshots."
+                    exit 0
+                  fi
                   # Do not add to the retry backlog while no diskful storage
                   # satellite is available. Kubernetes node readiness alone
                   # does not prove LINSTOR has connected storage capacity.
@@ -90,11 +99,42 @@ spec:
                     .metadata.namespace as $ns | .spec.volumes[]? | select(.persistentVolumeClaim != null) |
                     [$ns, .persistentVolumeClaim.claimName] | @tsv
                   ' | sort -u > "$work_dir/active-pvcs"
+                  # Keep the first awk input non-empty: if it is empty, awk's
+                  # NR==FNR idiom would mistake the canonical PVC list for it.
+                  printf '%s\t%s\n' '__none__' '__none__' >> "$work_dir/active-pvcs"
                   hour="$(date -u +%H)"
                   weekday="$(date -u +%u)"
                   stamp="$(date -u +%Y%m%d%H)"
                   kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
                   awk '$3 == "linstor" {print $1 "\t" $2}' > "$work_dir/canonical-pvcs"
+                  awk 'NR == FNR { active[$1 SUBSEP $2]=1; next } ($1 SUBSEP $2) in active' "$work_dir/active-pvcs" "$work_dir/canonical-pvcs" > "$work_dir/active-canonical-pvcs"
+                  active_count="$(wc -l < "$work_dir/active-canonical-pvcs" | tr -d ' ')"
+                  budget="$(kubectl get configmap linstor-vg-metadata-budget -n piraeus-datastore -o json)"
+                  if [ "$(printf '%s' "$budget" | jq -r '.data.calibrated // "false"')" != true ]; then
+                    echo "VG metadata cost has not been calibrated; skipping snapshots."
+                    exit 0
+                  fi
+                  bytes_per_lv="$(printf '%s' "$budget" | jq -r '.data.bytesPerSnapshotLv // "0"')"
+                  snapshots_per_pvc="$(printf '%s' "$budget" | jq -r '.data.snapshotsPerPvcPerRun // "0"')"
+                  safety_multiplier="$(printf '%s' "$budget" | jq -r '.data.safetyMultiplier // "0"')"
+                  mda_floor="$(printf '%s' "$budget" | jq -r '.data.floorBytes // "0"')"
+                  mda_minimum=$((active_count * bytes_per_lv * snapshots_per_pvc * safety_multiplier))
+                  [ "$mda_minimum" -ge "$mda_floor" ] || mda_minimum="$mda_floor"
+                  satellites="$(kubectl get linstorsatellites.piraeus.io -o json)"
+                  diskful_count="$(printf '%s' "$satellites" | jq '[.items[] | select(any(.status.conditions[]?; .type == "Available" and .status == "True")) | select(.status.freeCapacityBytes > 0)] | length')"
+                  [ "$diskful_count" -ge 3 ] || { echo "Fewer than three diskful satellites; skipping snapshots."; exit 0; }
+                  printf '%s' "$satellites" | jq -r '.items[] | select(any(.status.conditions[]?; .type == "Available" and .status == "True")) | select(.status.freeCapacityBytes > 0) | .metadata.name' > "$work_dir/diskful-satellites"
+                  while read -r satellite; do
+                    pod="$(kubectl get pods -n piraeus-datastore -l app.kubernetes.io/component=linstor-satellite -o json |
+                      jq -r --arg node "$satellite" '.items[] | select(.spec.nodeName == $node and .status.phase == "Running") | .metadata.name' | head -n1)"
+                    [ -n "$pod" ] || { echo "No running satellite pod for $satellite; skipping snapshots."; exit 0; }
+                    vg_report="$(kubectl exec -n piraeus-datastore "$pod" -c linstor-satellite -- vgs --reportformat json --units b --nosuffix -o vg_name,vg_mda_free)"
+                    if ! printf '%s' "$vg_report" | jq -e --argjson minimum "$mda_minimum" \
+                      'any(.report[].vg[]; .vg_name == "linstor_vg" and ((.vg_mda_free | tonumber) >= $minimum))' >/dev/null; then
+                      echo "VG metadata headroom on $satellite is below ${mda_minimum} bytes; skipping snapshots."
+                      exit 0
+                    fi
+                  done < "$work_dir/diskful-satellites"
                   awk 'NR == FNR { active[$1 SUBSEP $2]=1; next } ($1 SUBSEP $2) in active' "$work_dir/active-pvcs" "$work_dir/canonical-pvcs" |
                   while read -r namespace pvc; do
                     [ -n "$namespace" ] || continue
@@ -121,6 +161,15 @@ spec:
                     create_snapshot() {
                       retention="$1"
                       suffix="$2"
+                      case "$retention" in hourly) keep=12 ;; daily) keep=7 ;; weekly) keep=4 ;; esac
+                      # Free one slot before creating to avoid a transient
+                      # retention-window overrun in the VG metadata area.
+                      old="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName --no-headers --sort-by=.metadata.creationTimestamp | awk '$2 == "linstor-snapshot-prunable" {print $1}')"
+                      count="$(printf '%s\n' "$old" | sed '/^$/d' | wc -l)"
+                      if [ "$count" -ge "$keep" ]; then
+                        oldest="$(printf '%s\n' "$old" | sed '/^$/d' | head -n1)"
+                        kubectl delete volumesnapshot -n "$namespace" "$oldest" --wait=true --timeout=120s
+                      fi
                       name="snapshot-$${safe}-$${suffix}"
                       if ! kubectl get volumesnapshot -n "$${namespace}" "$${name}" >/dev/null 2>&1; then
                         printf '%s\n' \
@@ -151,14 +200,4 @@ spec:
                     create_snapshot hourly "h-$${stamp}"
                     [ "$hour" = "03" ] && create_snapshot daily "d-$(date -u +%Y%m%d)"
                     [ "$hour" = "04" ] && [ "$weekday" = "7" ] && create_snapshot weekly "w-$(date -u +%G%V)"
-                    for retention in hourly daily weekly; do
-                      case "$retention" in hourly) keep=12 ;; daily) keep=7 ;; weekly) keep=4 ;; esac
-                      # Legacy managed snapshots used the Retain class. Leave
-                      # them out of both the count and pruning decision.
-                      snapshots="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName --no-headers --sort-by=.metadata.creationTimestamp | awk '$2 == "linstor-snapshot-prunable" {print $1}')"
-                      count="$(printf '%s\n' "$snapshots" | sed '/^$/d' | wc -l)"
-                      remove=$((count - keep))
-                      [ "$remove" -gt 0 ] || continue
-                      printf '%s\n' "$snapshots" | sed '/^$/d' | head -n "$remove" | xargs -r -n1 kubectl delete volumesnapshot -n "$namespace" --ignore-not-found --wait=false
-                    done
                   done

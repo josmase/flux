@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: linstor-control-plane-protection-rules
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: linstor-control-plane-protection
+      interval: 30s
+      rules:
+        - alert: LinstorProtectionGateBlocked
+          expr: kube_job_status_failed{job_name=~"linstor-protection-gate-v1.*"} > 0
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "LINSTOR protection producers are held by a failed safety gate"
+            description: "Read the latest linstor-protection-gate-v1 Job logs and its blockingReasons ConfigMap before changing capacity or resuming producers."
+        - alert: K3sEtcdHasNoLeader
+          expr: etcd_server_has_leader == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "K3s embedded etcd has no leader"
+            description: "Check all three K3s masters, peer connectivity, disk latency, and /readyz before storage operations continue."
+        - alert: K3sEtcdLeaderChanges
+          expr: increase(etcd_server_leader_changes_seen_total[15m]) > 3
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "K3s embedded etcd leadership is unstable"
+            description: "Investigate peer health and shared Proxmox storage latency before maintenance or storage changes."
+        - alert: K3sMasterMemoryLow
+          expr: |
+            node_memory_MemAvailable_bytes{instance=~"192\\.168\\.1\\.20[1-3].*"}
+              / node_memory_MemTotal_bytes{instance=~"192\\.168\\.1\\.20[1-3].*"} < 0.20
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "K3s master has less than 20% memory available"
+            description: "Capture K3s heap/pprof and leader/watch counts before changing GOMEMLIMIT or VM RAM."
+        - alert: NodeDiskBusy
+          expr: |
+            rate(node_disk_io_time_seconds_total{device!~"(loop|ram|dm-).*"}[5m]) > 0.90
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node disk {{ $labels.device }} is saturated"
+            description: "Correlate node disk utilization with etcd latency and Proxmox host I/O before restarting or rescheduling storage workloads."

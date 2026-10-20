@@ -1,0 +1,277 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linstor-protection-gate-v1
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-protection-gate
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 240
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: linstor-protection-gate
+        spec:
+          serviceAccountName: linstor-protection-policy
+          restartPolicy: Never
+          containers:
+            - name: gate
+              image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+              command: ["/bin/sh", "/scripts/protection-gate.sh"]
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+          volumes:
+            - name: script
+              configMap:
+                name: linstor-protection-gate-script
+                defaultMode: 0555
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linstor-backup-policy-gate-v1
+  namespace: piraeus-datastore
+  labels:
+    app.kubernetes.io/name: linstor-backup-policy-gate
+    app.kubernetes.io/part-of: piraeus-datastore
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 600
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: linstor-backup-policy-gate
+        spec:
+          serviceAccountName: linstor-protection-policy
+          restartPolicy: Never
+          volumes:
+            - name: work
+              emptyDir: {}
+          initContainers:
+            - name: inventory
+              image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+              volumeMounts:
+                - name: work
+                  mountPath: /work
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  : > /work/pvcs.tsv
+                  kubectl get pvc -A --no-headers -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,STORAGECLASS:.spec.storageClassName' |
+                  awk '$3 == "linstor" {print $1 "\t" $2}' |
+                  while read -r namespace name; do
+                    pv="$(kubectl get pvc -n "$namespace" "$name" -o jsonpath='{.spec.volumeName}')"
+                    [ -n "$pv" ] || continue
+                    handle="$(kubectl get pv "$pv" -o jsonpath='{.spec.csi.volumeHandle}' 2>/dev/null || true)"
+                    [ -n "$handle" ] && printf '%s\t%s\t%s\n' "$namespace" "$name" "$handle" >> /work/pvcs.tsv
+                  done
+            - name: gate-state
+              image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+              volumeMounts:
+                - name: work
+                  mountPath: /work
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json > /work/gate.json 2>/dev/null || printf '{"data":{}}' > /work/gate.json
+                  jq -r '
+                    if .data.backupReady == "true" and
+                       ((now | floor) - ((.data.checkedAt // "0") | tonumber)) < 600 and
+                       ((now | floor) - ((.data.backupHealthySince // "0") | tonumber)) >= 86400
+                    then "true" else "false" end
+                  ' /work/gate.json > /work/backup-ready
+          containers:
+            - name: reconcile
+              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+              volumeMounts:
+                - name: work
+                  mountPath: /work
+                  readOnly: true
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  controller="linstor-controller.piraeus-datastore.svc:3370"
+                  remote="rustfs-linstor-backups"
+                  policy_ready="$(cat /work/backup-ready)"
+                  schedule_data="$(linstor --controllers "$controller" -m schedule list | jq -c '.data')"
+                  if [ "$policy_ready" != "true" ]; then
+                    # Retire the pre-gate Radarr schedule as well as the
+                    # generated policy schedules below. The legacy Job that
+                    # created it is no longer reconciled by Flux.
+                    linstor --controllers "$controller" backup schedule disable \
+                      --rd pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf "$remote" radarr10-config || true
+                  fi
+                  while IFS="$(printf '\t')" read -r namespace name resource; do
+                    [ -n "$resource" ] || continue
+                    case "$namespace/$name" in
+                      cnpg-system/*|gitlab/*) full="0 2 * * SUN"; incremental="0 */6 * * *"; local_keep=3; remote_keep=14 ;;
+                      immich/*model*|growlog/*cache*) continue ;;
+                      *) full="0 3 * * SUN"; incremental="0 3 * * *"; local_keep=2; remote_keep=7 ;;
+                    esac
+                    safe="$(printf '%s-%s' "$namespace" "$name" | tr -c '[:alnum:]' '-')"
+                    prefix="$(printf '%s' "$safe" | cut -c1-47)"
+                    hash="$(printf '%s/%s' "$namespace" "$name" | sha256sum | cut -c1-8)"
+                    schedule="policy-$prefix-$hash"
+                    if [ "$policy_ready" = "true" ]; then
+                      if ! printf '%s' "$schedule_data" | jq -e --arg name "$schedule" 'any(.[]; .schedule_name == $name)' >/dev/null; then
+                        linstor --controllers "$controller" schedule create -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule" "$full"
+                      else
+                        linstor --controllers "$controller" schedule modify -f "$full" -i "$incremental" -l "$local_keep" -r "$remote_keep" --on-failure RETRY --max-retries 3 "$schedule"
+                      fi
+                      linstor --controllers "$controller" backup schedule enable --rd "$resource" "$remote" "$schedule"
+                      echo "enabled reviewed canonical resource $namespace/$name"
+                    else
+                      linstor --controllers "$controller" backup schedule disable --rd "$resource" "$remote" "$schedule" || true
+                    fi
+                  done < /work/pvcs.tsv
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: shared-postgres-gated-backup
+  namespace: cnpg-system
+  labels:
+    app.kubernetes.io/name: shared-postgres-gated-backup
+    app.kubernetes.io/part-of: cloudnative-pg
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: shared-postgres-gated-backup
+        spec:
+          serviceAccountName: shared-postgres-gated-backup
+          restartPolicy: Never
+          containers:
+            - name: create-backup
+              image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json)"
+                  if ! printf '%s' "$gate" | jq -e '
+                    .data.backupReady == "true" and
+                    ((now | floor) - ((.data.checkedAt // "0") | tonumber)) < 600 and
+                    ((now | floor) - ((.data.backupHealthySince // "0") | tonumber)) >= 86400
+                  ' >/dev/null; then
+                    echo "Storage and RustFS backup gates have not been healthy for 24 hours; skipping PostgreSQL backup."
+                    exit 0
+                  fi
+                  name="shared-postgres-gated-$(date -u +%Y%m%d)"
+                  cat <<EOF | kubectl create --dry-run=server -f - >/dev/null
+                  apiVersion: postgresql.cnpg.io/v1
+                  kind: Backup
+                  metadata:
+                    name: $name
+                    namespace: cnpg-system
+                  spec:
+                    cluster: shared-postgres
+                    method: volumeSnapshot
+                  EOF
+                  kubectl create -f - <<EOF
+                  apiVersion: postgresql.cnpg.io/v1
+                  kind: Backup
+                  metadata:
+                    name: $name
+                    namespace: cnpg-system
+                  spec:
+                    cluster: shared-postgres
+                    method: volumeSnapshot
+                  EOF
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shared-postgres-gated-backup
+  namespace: cnpg-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: shared-postgres-gated-backup
+  namespace: cnpg-system
+rules:
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["backups"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: shared-postgres-gated-backup
+  namespace: cnpg-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: shared-postgres-gated-backup
+subjects:
+  - kind: ServiceAccount
+    name: shared-postgres-gated-backup
+    namespace: cnpg-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: shared-postgres-gated-backup-read-gate
+  namespace: piraeus-datastore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: linstor-protection-gate-status-reader
+subjects:
+  - kind: ServiceAccount
+    name: shared-postgres-gated-backup
+    namespace: cnpg-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: linstor-protection-gate-status-reader
+  namespace: piraeus-datastore
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["linstor-protection-gate-status"]
+    verbs: ["get"]
