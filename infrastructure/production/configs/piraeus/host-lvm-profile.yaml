@@ -1,0 +1,23 @@
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: host-lvm-profile
+spec:
+  # Ansible adds the ready label one worker at a time after installing the
+  # profile, then waits for this mount and healthy replicas before continuing.
+  nodeSelector:
+    storage.josmase.io/linstor-final: "true"
+    storage.josmase.io/lvm-profile-ready: "true"
+  podTemplate:
+    spec:
+      containers:
+        - name: linstor-satellite
+          volumeMounts:
+            - name: host-lvm-profile
+              mountPath: /etc/lvm/profile
+              readOnly: true
+      volumes:
+        - name: host-lvm-profile
+          hostPath:
+            path: /etc/lvm/profile
+            type: Directory

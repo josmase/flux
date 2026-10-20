@@ -6,6 +6,7 @@ resources:
   - satellite-network.yaml
   - storage-pool.yaml
   - final-storage-pool.yaml
+  - host-lvm-profile.yaml
   - storage-class.yaml
   - final-storage-class.yaml
   - triple-storage-class.yaml

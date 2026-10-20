@@ -25,29 +25,10 @@ spec:
   maxConcurrentEvacuations: 1
   # Two workers are restored after controlled snapshot cleanup.
   # Producers remain suspended pending capacity and backup-chain review.
+  # Satellite mounts are configured through LinstorSatelliteConfiguration.
   # The test operation makes a generated-container order change
   # fail closed instead of silently tuning a different sidecar.
   patches:
-    - target:
-        kind: DaemonSet
-        labelSelector: app.kubernetes.io/component=linstor-satellite
-      patch: |-
-        - op: test
-          path: /spec/template/spec/containers/0/name
-          value: linstor-satellite
-        - op: add
-          path: /spec/template/spec/containers/0/volumeMounts/-
-          value:
-            name: host-lvm-profile
-            mountPath: /etc/lvm/profile
-            readOnly: true
-        - op: add
-          path: /spec/template/spec/volumes/-
-          value:
-            name: host-lvm-profile
-            hostPath:
-              path: /etc/lvm/profile
-              type: Directory
     - target:
         kind: Deployment
         name: linstor-csi-controller
