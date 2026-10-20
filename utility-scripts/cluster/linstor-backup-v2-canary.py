@@ -106,6 +106,19 @@ def pvc(name, snapshot=None):
     create({'apiVersion': 'v1', 'kind': 'PersistentVolumeClaim', 'metadata': {'name': name, 'namespace': ns}, 'spec': spec})
 
 
+def disposable_reclaim_delete(claim):
+    pvc_object = get(k + ['-n', ns, 'get', 'pvc', claim, '-o', 'json'])
+    pv_name = pvc_object['spec']['volumeName']
+    pv_object = get(k + ['get', 'pv', pv_name, '-o', 'json'])
+    ref = pv_object['spec']['claimRef']
+    assert ref['namespace'] == ns and ref['name'] == claim
+    assert ref['uid'] == pvc_object['metadata']['uid']
+    patch = [{'op': 'test', 'path': '/metadata/uid', 'value': pv_object['metadata']['uid']},
+             {'op': 'test', 'path': '/spec/claimRef/uid', 'value': ref['uid']},
+             {'op': 'replace', 'path': '/spec/persistentVolumeReclaimPolicy', 'value': 'Delete'}]
+    command(k + ['patch', 'pv', pv_name, '--type=json', '-p', json.dumps(patch)])
+
+
 def pod(name, claim, script, readonly=False):
     create({'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': name, 'namespace': ns}, 'spec': {
         'restartPolicy': 'Never', 'activeDeadlineSeconds': 600,
@@ -170,10 +183,12 @@ actual = pod('reader', 'restored', 'sha256sum /data/payload', True)
 assert expected == actual, 'Restore checksum mismatch: stopped'
 health()
 # Remove only disposable objects after checksum agreement. Never clear finalizers.
+disposable_reclaim_delete('restored')
 command(k + ['-n', ns, 'delete', 'pvc', 'restored', '--wait=true', '--timeout=90s'])
 command(k + ['-n', ns, 'delete', 'volumesnapshot', 's3-canary', '--wait=true', '--timeout=90s'])
 wait('S3 content removed', lambda: not any(x['metadata']['name'] == content for x in get(k + ['get', 'volumesnapshotcontents', '-o', 'json'])['items']))
 wait('S3 remote backup removed', lambda: not any(key.startswith(handle + '_') for key in get(l + ['backup', 'list', remote]).get('linstor', {})))
+disposable_reclaim_delete('source')
 command(k + ['-n', ns, 'delete', 'pvc', 'source', '--wait=true', '--timeout=90s'])
 wait('Disposable resources removed', lambda: not any(r['name'] == handle for r in get(l + ['resource', 'list'])[0]))
 health()
