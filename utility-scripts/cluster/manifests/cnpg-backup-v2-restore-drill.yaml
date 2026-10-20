@@ -1,0 +1,63 @@
+# Apply only after shared-postgres-v2-bootstrap completed successfully.
+# Temporary recovery validation; not a Flux Kustomization resource.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: shared-postgres-v2-restore-drill
+  namespace: cnpg-system
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/cluster: shared-postgres-v2-restore-drill
+  policyTypes: [Ingress]
+  ingress:
+    # Permit instance-manager/metrics traffic. Application SQL ingress stays denied.
+    - ports:
+        - port: 8000
+          protocol: TCP
+        - port: 9187
+          protocol: TCP
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared-postgres-v2-restore-drill
+  namespace: cnpg-system
+  labels:
+    backupGeneration: rustfs-linstor-backups-v2
+    protection.josmase.dev/restore-drill: "true"
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  enableSuperuserAccess: false
+  inheritedMetadata:
+    labels:
+      protection.josmase.dev/restore-drill: "true"
+  storage:
+    storageClass: linstor
+    size: 10Gi
+  walStorage:
+    storageClass: linstor
+    size: 20Gi
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 2Gi
+  bootstrap:
+    recovery:
+      database: postgres
+      owner: postgres
+      volumeSnapshots:
+        storage:
+          name: shared-postgres-v2-bootstrap
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+        walStorage:
+          name: shared-postgres-v2-bootstrap-wal
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+      recoveryTarget:
+        targetImmediate: true
