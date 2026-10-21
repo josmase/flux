@@ -9,7 +9,7 @@ data:
   s3CanaryVerified: 'true'
   clusterShippingConcurrencyVerified: 'true'
   canonicalCoverageVerified: 'true'
-  representativeRestoresVerified: 'false'
+  representativeRestoresVerified: 'true'
   cnpgRestoreVerified: 'true'
   capacityForecastReady: 'true'
   forecastFreeBytes: '4249699440384'
@@ -20,3 +20,5 @@ data:
   capacityEvidence: docs/LINSTOR_BACKUP_BASELINE_RESULT_2026-10-21.json
   cnpgDeletionVerified: 'false'
   workerRestartsVerified: 'false'
+  criticalRestoreEvidence: docs/LINSTOR_GITLAB_POSTGRESQL_V2_RESTORE_RESULT_2026-10-21.json
+  standardRestoreEvidence: docs/LINSTOR_GRAFANA_V2_RESTORE_RESULT_2026-10-21.json

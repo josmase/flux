@@ -1,0 +1,20 @@
+{
+  "completed_at": "2026-10-21T07:59:33.545543+00:00",
+  "workload": "grafana",
+  "tier": "standard",
+  "source": "monitoring/grafana-data-linstor",
+  "backup_id": "pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749_back_20261021_070334",
+  "independent_s3_download": true,
+  "download_size_kib": 708,
+  "verification": {
+    "application_health": {
+      "database": "ok",
+      "version": "11.2.1",
+      "commit": "6291d0d71414b7ad982a9a5f5e7f0e13a4a42cba"
+    }
+  },
+  "network_isolated": true,
+  "production_replica_inventory_unchanged": true,
+  "remote_backups_preserved": true,
+  "scratch_cleanup_verified": true
+}

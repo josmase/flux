@@ -69,3 +69,7 @@ The serial non-CNPG bootstrap completed at 07:28:41 UTC on 2026-10-21. All 50 re
 The retained forecast is **1,114,580,737,280 bytes**, using seven standard full chains, fourteen critical full chains with four full-sized incremental allowances per chain, 56 coordinated CNPG recovery sets, 1 GiB metadata allowance and 25% growth/transient allowance. The initial conservative projection leaves **4,249,699,440,384 bytes free**, above the 1 TiB floor. The previous 1T bucket quota is insufficient for this forecast; Ansible committed and successfully applied a **2T v2 quota** without adding hardware.
 
 The exact 50-chain bootstrap index is now reviewed. Capacity and initial remote metadata coverage are verified independently; representative workload restores, CNPG Backup-object deletion and serial OS restart persistence remain separate acceptance flags, so recurrence cannot start before those requirements and the full healthy window pass. Live node properties are rechecked on every gate run to ensure only worker 204 has one shipping slot.
+
+## Representative restores — 21 October
+
+Independent S3 downloads passed for critical GitLab PostgreSQL and standard Grafana. PostgreSQL enumerated the expected databases and returned 885 public tables in a read-only query of `gitlabhq_production`. Grafana 11.2.1 reported database health `ok`. Network-isolated scratch resources were reclaimed; production replica inventories and all 52 remote backup records were preserved. The CNPG deletion canary and worker OS restart checks remain required before the healthy window.
