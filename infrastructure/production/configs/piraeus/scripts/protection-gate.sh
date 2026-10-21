@@ -150,8 +150,21 @@ backup_generation="$(printf '%s' "$generation_manifest" | jq -r '.data.backupGen
 manifest_hash="$(printf '%s\n%s' "$active_count" "$(printf '%s' "$generation_manifest" | jq -r '.data["resources.tsv"] // ""')" | sha256sum | cut -d' ' -f1)"
 s3_canary_ready="$(printf '%s' "$generation_status" | jq -r '.data.s3CanaryVerified // "false"')"
 coverage_verified="$(printf '%s' "$generation_status" | jq -r --arg hash "$manifest_hash" --arg generation "$backup_generation" 'if .data.canonicalCoverageVerified == "true" and .data.representativeRestoresVerified == "true" and .data.cnpgRestoreVerified == "true" and .data.manifestHash == $hash and .data.backupGeneration == $generation then "true" else "false" end')"
+remote_coverage_verified=false
+if [ "$remote_access_ok" = true ] && [ "$manifest_reviewed" = true ]; then
+  printf '%s' "$backup_list" > "$work_dir/remote.json"
+  if kubectl get backups.postgresql.cnpg.io -n cnpg-system -l backupGeneration=rustfs-linstor-backups-v2 -o json > "$work_dir/cnpg.json" &&
+     kubectl get volumesnapshots -n cnpg-system -o json > "$work_dir/snapshots.json" &&
+     kubectl get volumesnapshotcontents -o json > "$work_dir/contents.json" &&
+     jq -n --slurpfile remote "$work_dir/remote.json" --slurpfile manifest "$work_dir/manifest.json" \
+       --slurpfile cnpg "$work_dir/cnpg.json" --slurpfile snapshots "$work_dir/snapshots.json" \
+       --slurpfile contents "$work_dir/contents.json" -f /scripts/remote-coverage.jq |
+       jq -e '.valid == true' >/dev/null; then
+    remote_coverage_verified=true
+  fi
+fi
 coverage_ready=false
-if [ "$backup_generation" = "rustfs-linstor-backups-v2" ] && [ "$manifest_reviewed" = true ] && [ "$coverage_verified" = true ]; then
+if [ "$backup_generation" = "rustfs-linstor-backups-v2" ] && [ "$manifest_reviewed" = true ] && [ "$coverage_verified" = true ] && [ "$remote_coverage_verified" = true ]; then
   coverage_ready=true
 else
   block_backup "current-generation canonical volume coverage has not been verified"
