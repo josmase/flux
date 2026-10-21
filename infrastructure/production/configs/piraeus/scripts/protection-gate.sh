@@ -209,6 +209,17 @@ if [ "$shipping_concurrency_ready" != true ]; then
   block_backup "cluster-wide single-backup shipping concurrency has not been verified"
 fi
 
+retention_ready=false
+retention_status="$(kubectl get configmap linstor-bootstrap-retention-status -n "$namespace" -o json 2>/dev/null || printf '{}')"
+if printf '%s' "$retention_status" | jq -e --argjson now "$now" '
+    .data.healthy == "true" and .data.backupGeneration == "rustfs-linstor-backups-v2" and
+    (($now - ((.data.checkedAt // "0") | tonumber)) < 7200)
+  ' >/dev/null; then
+  retention_ready=true
+else
+  block_backup "bootstrap full-chain retention checks are unhealthy or stale"
+fi
+
 previous="$(kubectl get configmap "$status_name" -n "$namespace" -o json 2>/dev/null || printf '{}')"
 previous_checked_at="$(printf '%s' "$previous" | jq -r '.data.checkedAt // "0"')"
 previous_snapshot_since="$(printf '%s' "$previous" | jq -r '.data.snapshotHealthySince // ""')"
@@ -259,6 +270,7 @@ kubectl create configmap "$status_name" -n "$namespace" \
   --from-literal=rustfsFilesystemFreeBytes="$live_free_bytes" \
   --from-literal=forecastFreeBytes="$live_forecast_free_bytes" \
   --from-literal=clusterShippingConcurrencyReady="$shipping_concurrency_ready" \
+  --from-literal=retentionReady="$retention_ready" \
   --from-literal=backupGeneration="$backup_generation" \
   --from-literal=blockingReasons="$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons}" \
   --dry-run=client -o yaml | kubectl apply -f -

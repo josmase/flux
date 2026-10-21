@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linstor-bootstrap-chain-index
+  namespace: piraeus-datastore
+data:
+  backupGeneration: rustfs-linstor-backups-v2
+  reviewed: "false"
+  chains.json: "[]"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linstor-bootstrap-chain-retention
+  namespace: piraeus-datastore
+spec:
+  schedule: "23 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 172800
+      template:
+        spec:
+          serviceAccountName: linstor-protection-policy
+          restartPolicy: Never
+          volumes:
+            - name: scripts
+              configMap:
+                name: linstor-protection-gate-script
+                defaultMode: 0555
+          containers:
+            - name: retention
+              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+              command: [python3, /scripts/bootstrap-retention.py]
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: linstor-bootstrap-retention-status
+  namespace: piraeus-datastore
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames:
+      - linstor-bootstrap-chain-index
+      - linstor-bootstrap-retention-status
+      - linstor-backup-generation-manifest
+      - linstor-protection-gate-status
+    verbs: [get]
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames: [linstor-bootstrap-retention-status]
+    verbs: [patch]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: linstor-bootstrap-retention-status
+  namespace: piraeus-datastore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: linstor-bootstrap-retention-status
+subjects:
+  - kind: ServiceAccount
+    name: linstor-protection-policy
+    namespace: piraeus-datastore
