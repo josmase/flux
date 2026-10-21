@@ -14,13 +14,15 @@ import time
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('workload', choices=['gitlab-postgresql', 'grafana'])
 p.add_argument('--evidence-dir', required=True, type=pathlib.Path)
+p.add_argument('--resume', action='store_true', help='Reuse the reviewed existing scratch resource and preserve its original journal')
 a = p.parse_args()
 a.evidence_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
 ns = 'linstor-workload-restore-validation'
 remote = 'rustfs-linstor-backups-v2'
 target = 'backup-v2-drill-' + a.workload
 l = ['kubectl', '-n', 'piraeus-datastore', 'exec', 'deploy/linstor-controller', '--', 'linstor', '-m']
-seq = 0
+prior_records = [json.loads(f.read_text()) for f in sorted(a.evidence_dir.glob('[0-9]*.json'))]
+seq = max((int(f.stem) for f in a.evidence_dir.glob('[0-9]*.json')), default=0)
 
 
 def run(argv, data=None):
@@ -51,7 +53,12 @@ def resource_states():
     return {(r['name'], r['node_name'], v['volume_number']): v['state']['disk_state'] for r in get(l + ['resource', 'list'])[0] for v in r.get('volumes', [])}
 
 
-baseline = resource_states()
+if a.resume:
+    record = next(r for r in prior_records if r['argv'][-2:] == ['resource', 'list'])
+    original = json.loads(record['stdout'])[0]
+    baseline = {(r['name'], r['node_name'], v['volume_number']): v['state']['disk_state'] for r in original for v in r.get('volumes', [])}
+else:
+    baseline = resource_states()
 assert set(baseline.values()) <= {'UpToDate', 'Diskless'}, 'Pre-existing replica degradation'
 
 
@@ -91,8 +98,19 @@ assert candidates, 'No restorable v2 backup for canonical workload'
 backup = max(candidates, key=lambda v: v['finished_timestamp'])
 info = get(l + ['backup', 'info', remote, '--id', backup['id']])
 assert info['count'] == 1, 'This drill requires the independent bootstrap full backup'
-assert not any(r['name'] == target for r in get(l + ['resource-definition', 'list'])[0]), 'Existing drill resource must be reviewed'
-assert not any(v['metadata']['name'] == ns for v in kube('get', 'namespaces', '-o', 'json')['items']), 'Existing drill namespace must be reviewed'
+target_exists = any(r['name'] == target for r in get(l + ['resource-definition', 'list'])[0])
+existing_namespace = next((v for v in kube('get', 'namespaces', '-o', 'json')['items'] if v['metadata']['name'] == ns), None)
+assert target_exists == a.resume and (existing_namespace is not None) == a.resume, 'Use --resume only for the existing reviewed drill'
+if a.resume:
+    assert existing_namespace['metadata']['labels'].get('purpose') == 'isolated-workload-restore'
+    scratch_pvc = kube('-n', ns, 'get', 'pvc', 'restored', '-o', 'json')
+    scratch_pv = kube('get', 'pv', scratch_pvc['spec']['volumeName'], '-o', 'json')
+    assert scratch_pv['spec']['csi']['volumeHandle'] == target and target.startswith('backup-v2-drill-')
+    assert scratch_pv['spec']['claimRef']['uid'] == scratch_pvc['metadata']['uid']
+    assert scratch_pv['spec']['claimRef']['namespace'] == ns
+    scratch_pod = kube('-n', ns, 'get', 'pod', 'restore-check', '-o', 'json')
+    assert any(v.get('persistentVolumeClaim', {}).get('claimName') == 'restored' for v in scratch_pod['spec']['volumes'])
+    run(['kubectl', '-n', ns, 'delete', 'pod', 'restore-check', '--wait=true', '--timeout=90s'])
 node = 'kubernetes-node-204'
 if a.workload == 'gitlab-postgresql':
     # Reuse a node with the exact production image cached; no credentials copied.
@@ -104,20 +122,22 @@ else:
     image = next(c['image'] for c in deployment['spec']['template']['spec']['containers'] if c['name'] == 'grafana')
 # This explicitly downloads to a NEW resource. CSI snapshot restores can reuse a
 # local cache; such a clone alone would not verify an independent S3 download.
-get(l + ['backup', 'restore', remote, node, target, '--id', backup['id']])
-wait('Independent S3 download complete', lambda: any(k[0] == target and v == 'UpToDate' for k, v in resource_states().items()))
-create({'apiVersion': 'v1', 'kind': 'Namespace', 'metadata': {'name': ns, 'labels': {'purpose': 'isolated-workload-restore'}}})
-create({'apiVersion': 'networking.k8s.io/v1', 'kind': 'NetworkPolicy', 'metadata': {'name': 'deny-all-network', 'namespace': ns}, 'spec': {'podSelector': {}, 'policyTypes': ['Ingress', 'Egress']}})
-create({'apiVersion': 'v1', 'kind': 'PersistentVolume', 'metadata': {'name': target}, 'spec': {
-    'capacity': pv['spec']['capacity'], 'accessModes': ['ReadWriteOnce'], 'storageClassName': 'linstor',
-    'persistentVolumeReclaimPolicy': 'Retain', 'claimRef': {'namespace': ns, 'name': 'restored'},
-    'csi': {'driver': 'linstor.csi.linbit.com', 'volumeHandle': target, 'fsType': 'ext4'}}})
-create({'apiVersion': 'v1', 'kind': 'PersistentVolumeClaim', 'metadata': {'name': 'restored', 'namespace': ns, 'labels': {'protection.josmase.dev/restore-drill': 'true'}}, 'spec': {
-    'accessModes': ['ReadWriteOnce'], 'volumeName': target, 'storageClassName': 'linstor', 'resources': {'requests': pv['spec']['capacity']}}})
+if not a.resume:
+    get(l + ['backup', 'restore', remote, node, target, '--id', backup['id']])
+    wait('Independent S3 download complete', lambda: any(k[0] == target and v == 'UpToDate' for k, v in resource_states().items()))
+    create({'apiVersion': 'v1', 'kind': 'Namespace', 'metadata': {'name': ns, 'labels': {'purpose': 'isolated-workload-restore'}}})
+    create({'apiVersion': 'networking.k8s.io/v1', 'kind': 'NetworkPolicy', 'metadata': {'name': 'deny-all-network', 'namespace': ns}, 'spec': {'podSelector': {}, 'policyTypes': ['Ingress', 'Egress']}})
+    create({'apiVersion': 'v1', 'kind': 'PersistentVolume', 'metadata': {'name': target}, 'spec': {
+        'capacity': pv['spec']['capacity'], 'accessModes': ['ReadWriteOnce'], 'storageClassName': 'linstor',
+        'persistentVolumeReclaimPolicy': 'Retain', 'claimRef': {'namespace': ns, 'name': 'restored'},
+        'csi': {'driver': 'linstor.csi.linbit.com', 'volumeHandle': target, 'fsType': 'ext4'}}})
+    create({'apiVersion': 'v1', 'kind': 'PersistentVolumeClaim', 'metadata': {'name': 'restored', 'namespace': ns, 'labels': {'protection.josmase.dev/restore-drill': 'true'}}, 'spec': {
+        'accessModes': ['ReadWriteOnce'], 'volumeName': target, 'storageClassName': 'linstor', 'resources': {'requests': pv['spec']['capacity']}}})
 if a.workload == 'gitlab-postgresql':
     uid = 1001
     script = r'''set -eu
     test "$(cat /restore/data/PG_VERSION)" = 14
+    chmod 0700 /restore/data
     printf "local all all trust\n" > /tmp/drill-pg-hba.conf
     printf "data_directory='/restore/data'\nhba_file='/tmp/drill-pg-hba.conf'\nlisten_addresses=''\nunix_socket_directories='/tmp'\nport=55432\nshared_buffers='128MB'\nssl=off\narchive_mode=off\n" > /tmp/drill-postgresql.conf
     rm -f /restore/data/postmaster.pid
