@@ -18,7 +18,8 @@ data:
   baselineEvidence: docs/LINSTOR_BACKUP_BASELINE_RESULT_2026-10-21.json
   retainedForecastBytes: '1114580737280'
   capacityEvidence: docs/LINSTOR_BACKUP_BASELINE_RESULT_2026-10-21.json
-  cnpgDeletionVerified: 'false'
+  cnpgDeletionVerified: 'true'
   workerRestartsVerified: 'false'
   criticalRestoreEvidence: docs/LINSTOR_GITLAB_POSTGRESQL_V2_RESTORE_RESULT_2026-10-21.json
   standardRestoreEvidence: docs/LINSTOR_GRAFANA_V2_RESTORE_RESULT_2026-10-21.json
+  cnpgDeletionEvidence: docs/LINSTOR_CNPG_V2_DELETION_RESULT_2026-10-21.json

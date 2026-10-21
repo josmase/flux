@@ -1,0 +1,17 @@
+{
+  "completed_at": "2026-10-21T08:05:23.921453+00:00",
+  "backup": "shared-postgres-v2-deletion-canary",
+  "canary_remote_records": [
+    "pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa_back_20261021_080323^snapshot-983d43a9-80f4-4fc5-bdff-94b1b5838a81",
+    "pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7_back_20261021_080323^snapshot-7970a081-e942-4271-81b1-20b57d4f6c90"
+  ],
+  "owner_reference_verified": true,
+  "backup_uid_precondition_used": true,
+  "snapshot_content_deletion_policy": "Delete",
+  "kubernetes_snapshot_cleanup_verified": true,
+  "local_snapshot_cleanup_verified": true,
+  "remote_records_and_orphan_objects_cleanup_verified": true,
+  "preexisting_remote_record_count": 52,
+  "preexisting_backups_preserved": true,
+  "production_replica_inventory_unchanged": true
+}

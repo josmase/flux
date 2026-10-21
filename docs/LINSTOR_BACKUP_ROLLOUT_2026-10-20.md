@@ -73,3 +73,7 @@ The exact 50-chain bootstrap index is now reviewed. Capacity and initial remote 
 ## Representative restores — 21 October
 
 Independent S3 downloads passed for critical GitLab PostgreSQL and standard Grafana. PostgreSQL enumerated the expected databases and returned 885 public tables in a read-only query of `gitlabhq_production`. Grafana 11.2.1 reported database health `ok`. Network-isolated scratch resources were reclaimed; production replica inventories and all 52 remote backup records were preserved. The CNPG deletion canary and worker OS restart checks remain required before the healthy window.
+
+## CNPG ownership deletion — 21 October
+
+The explicitly disposable `shared-postgres-v2-deletion-canary` completed a coordinated full data/WAL recovery set. Deleting that exact Backup UID reclaimed both Kubernetes snapshots and contents, both LINSTOR local snapshots, and its two remote records without orphan objects. All 52 pre-existing remote records and every pre-existing Backup object were preserved. CNPG deletion acceptance now passes.
