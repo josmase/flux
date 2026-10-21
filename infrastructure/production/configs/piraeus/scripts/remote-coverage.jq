@@ -6,7 +6,7 @@
   sort_by(.metadata.creationTimestamp) | last) as $latest |
 ([$snapshots[0].items[] | {key: .metadata.name, value: .}] | from_entries) as $snaps |
 ([$contents[0].items[] | {key: .metadata.name, value: .}] | from_entries) as $content |
-($latest != null and ($latest.status.snapshotBackupStatus.elements | map(.type) | sort) == ["PG_DATA", "PG_WAL"] and
+($latest != null and all($cnpg[0].items[]; .status.phase != "failed" or .metadata.creationTimestamp <= $latest.metadata.creationTimestamp) and ($latest.status.snapshotBackupStatus.elements | map(.type) | sort) == ["PG_DATA", "PG_WAL"] and
   all($latest.status.snapshotBackupStatus.elements[];
     $snaps[.name] as $snap |
     $content[$snap.status.boundVolumeSnapshotContentName // "missing"] as $c |

@@ -150,6 +150,24 @@ backup_generation="$(printf '%s' "$generation_manifest" | jq -r '.data.backupGen
 manifest_hash="$(printf '%s\n%s' "$active_count" "$(printf '%s' "$generation_manifest" | jq -r '.data["resources.tsv"] // ""')" | sha256sum | cut -d' ' -f1)"
 s3_canary_ready="$(printf '%s' "$generation_status" | jq -r '.data.s3CanaryVerified // "false"')"
 coverage_verified="$(printf '%s' "$generation_status" | jq -r --arg hash "$manifest_hash" --arg generation "$backup_generation" 'if .data.canonicalCoverageVerified == "true" and .data.representativeRestoresVerified == "true" and .data.cnpgRestoreVerified == "true" and .data.manifestHash == $hash and .data.backupGeneration == $generation then "true" else "false" end')"
+if [ "$remote_access_ok" = true ] && [ "$manifest_reviewed" = true ]; then
+  printf '%s' "$backup_list" > "$work_dir/shipping-remote.json"
+  if ! shipping_snaps="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m snapshot list 2>/dev/null)" ||
+     ! printf '%s' "$shipping_snaps" | jq -e --arg rows "$(printf '%s' "$generation_manifest" | jq -r '.data["resources.tsv"]')" \
+       --slurpfile remote "$work_dir/shipping-remote.json" '
+       ($rows | split("\n") | map(select(length > 0) | split("\t") | .[2])) as $required |
+       ($remote[0].linstor // {}) as $backups |
+       .[0] | type == "array" and all(.[];
+         . as $s | .props["BackupShipping/Source/rustfs-linstor-backups-v2/ShippingStatus"] as $state |
+         if ($required | index($s.resource_name)) != null and ($state == "Failed" or $state == "Aborted") then
+           ([ $backups[] | select(.origin_rsc == $s.resource_name and .restorable == true) | .start_timestamp ] | max // 0) >=
+           (($s.props["BackupShipping/Source/rustfs-linstor-backups-v2/BackupStartTimestamp"] // "0") | tonumber)
+         else true end)
+     ' >/dev/null; then
+    block_backup "a current-generation backup shipment failed or its health query failed"
+  fi
+fi
+
 remote_coverage_verified=false
 if [ "$remote_access_ok" = true ] && [ "$manifest_reviewed" = true ]; then
   printf '%s' "$backup_list" > "$work_dir/remote.json"
