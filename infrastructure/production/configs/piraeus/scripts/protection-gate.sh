@@ -322,6 +322,14 @@ kubectl create configmap "$status_name" -n "$namespace" \
 
 if [ "$snapshot_ready" != true ] || [ "$backup_ready" != true ]; then
   echo "Protection gate state=$state snapshotReady=$snapshot_ready backupReady=$backup_ready reasons=$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons:-24-hour healthy window not yet complete}"
+  # A successful observation during the required waiting period is healthy.
+  # Readiness remains false, so producer gates still refuse recurrence.
+  if [ -z "$snapshot_reasons" ] && [ -z "$backup_reasons" ] &&
+     [ "$remote_access_ok" = true ] && [ "$coverage_ready" = true ] &&
+     [ "$capacity_forecast_ready" = true ] && [ "$shipping_concurrency_ready" = true ] &&
+     [ "$retention_ready" = true ] && [ -n "$backup_since" ]; then
+    exit 0
+  fi
   exit 1
 fi
 echo "Protection gates passed for at least 24 hours; snapshot and backup producers may run."
