@@ -142,12 +142,12 @@ if a.workload == 'gitlab-postgresql':
     printf "data_directory='/restore/data'\nhba_file='/tmp/drill-pg-hba.conf'\nlisten_addresses=''\nunix_socket_directories='/tmp'\nport=55432\nshared_buffers='128MB'\nssl=off\narchive_mode=off\n" > /tmp/drill-postgresql.conf
     rm -f /restore/data/postmaster.pid
     /opt/bitnami/postgresql/bin/pg_ctl -D /restore/data -o '-c config_file=/tmp/drill-postgresql.conf' -w start
-    /opt/bitnami/postgresql/bin/psql -XqAt -v ON_ERROR_STOP=1 -h /tmp -p 55432 -U postgres -d postgres -c "BEGIN READ ONLY; SELECT 'DRILL_DATABASES=' || json_agg(datname ORDER BY datname)::text FROM pg_database WHERE datallowconn; COMMIT;"
-    /opt/bitnami/postgresql/bin/psql -XqAt -v ON_ERROR_STOP=1 -h /tmp -p 55432 -U postgres -d gitlabhq_production -c "BEGIN READ ONLY; SELECT 'DRILL_QUERY=' || json_build_object('database',current_database(),'read_only',current_setting('transaction_read_only'),'public_tables',(SELECT count(*) FROM pg_tables WHERE schemaname='public'))::text; COMMIT;"
+    /opt/bitnami/postgresql/bin/psql -XqAt -v ON_ERROR_STOP=1 -h /tmp -p 55432 -U postgres -d postgres -c "SELECT 'DRILL_DATABASES=' || json_agg(datname ORDER BY datname)::text FROM pg_database WHERE datallowconn;"
+    /opt/bitnami/postgresql/bin/psql -XqAt -v ON_ERROR_STOP=1 -h /tmp -p 55432 -U postgres -d gitlabhq_production -c "SELECT 'DRILL_QUERY=' || json_build_object('database',current_database(),'read_only',current_setting('transaction_read_only'),'public_tables',(SELECT count(*) FROM pg_tables WHERE schemaname='public'))::text;"
     /opt/bitnami/postgresql/bin/pg_ctl -D /restore/data -m fast -w stop
     '''
     mounts = [{'name': 'data', 'mountPath': '/restore'}]
-    env = []
+    env = [{'name': 'PGOPTIONS', 'value': '-c default_transaction_read_only=on'}]
 else:
     uid = 472
     script = r'''set -eu
