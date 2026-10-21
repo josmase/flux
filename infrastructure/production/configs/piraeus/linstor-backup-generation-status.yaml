@@ -8,10 +8,15 @@ data:
   manifestHash: 59fcda8d7efe42da5f6a7ebec4ca0d3fab62492820095514957f3d05c6f4b330
   s3CanaryVerified: 'true'
   clusterShippingConcurrencyVerified: 'true'
-  canonicalCoverageVerified: 'false'
+  canonicalCoverageVerified: 'true'
   representativeRestoresVerified: 'false'
   cnpgRestoreVerified: 'true'
-  capacityForecastReady: 'false'
-  forecastFreeBytes: '0'
+  capacityForecastReady: 'true'
+  forecastFreeBytes: '4249699440384'
   evidence: docs/LINSTOR_BACKUP_V2_CANARY_RESULT_2026-10-20.json
   cnpgRestoreEvidence: docs/LINSTOR_CNPG_V2_RESTORE_RESULT_2026-10-21.json
+  baselineEvidence: docs/LINSTOR_BACKUP_BASELINE_RESULT_2026-10-21.json
+  retainedForecastBytes: '1114580737280'
+  capacityEvidence: docs/LINSTOR_BACKUP_BASELINE_RESULT_2026-10-21.json
+  cnpgDeletionVerified: 'false'
+  workerRestartsVerified: 'false'

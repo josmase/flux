@@ -223,7 +223,20 @@ if [ -f /tmp/rustfs-capacity.json ] && jq -e --argjson now "$now" '
 else
   block_backup "fresh RustFS filesystem capacity report is unavailable"
 fi
+if [ "$(printf '%s' "$generation_status" | jq -r '.data.cnpgDeletionVerified // "false"')" != true ]; then
+  block_backup "CNPG Backup-object deletion has not been verified to remove its remote artifacts"
+fi
+if [ "$(printf '%s' "$generation_status" | jq -r '.data.workerRestartsVerified // "false"')" != true ]; then
+  block_backup "serial worker restart persistence checks have not completed"
+fi
 shipping_concurrency_ready="$(printf '%s' "$generation_status" | jq -r '.data.clusterShippingConcurrencyVerified // "false"')"
+if ! shipping_nodes="$(kubectl exec -q -n "$namespace" "$controller_pod" -- linstor --controllers localhost:3370 -m node list 2>/dev/null)" ||
+   ! printf '%s' "$shipping_nodes" | jq -e '.[0] | length >= 3 and
+     any(.[]; .name == "kubernetes-node-204" and .props["BackupShipping/MaxConcurrentBackupsPerNode"] == "1") and
+     all(.[]; if .name == "kubernetes-node-204" then .props["BackupShipping/MaxConcurrentBackupsPerNode"] == "1"
+       else .props["BackupShipping/MaxConcurrentBackupsPerNode"] == "0" end)' >/dev/null; then
+  shipping_concurrency_ready=false
+fi
 if [ "$shipping_concurrency_ready" != true ]; then
   block_backup "cluster-wide single-backup shipping concurrency has not been verified"
 fi

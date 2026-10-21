@@ -5,8 +5,8 @@ metadata:
   namespace: piraeus-datastore
 data:
   backupGeneration: rustfs-linstor-backups-v2
-  reviewed: "false"
-  chains.json: "[]"
+  reviewed: 'true'
+  chains.json: '[{"namespace":"artifactory","pvc":"artifactory-data-linstor","resource":"pvc-510570a7-ea65-489b-b50f-267e3ab99476","tier":"standard","id":"pvc-510570a7-ea65-489b-b50f-267e3ab99476_back_20261021_062903","snapshot":"back_20261021_062903","start_timestamp":1792564143407},{"namespace":"artifactory","pvc":"artifactory-pg17-linstor","resource":"pvc-be4ead27-e1a9-4516-9930-44e053eccd1c","tier":"standard","id":"pvc-be4ead27-e1a9-4516-9930-44e053eccd1c_back_20261021_063637","snapshot":"back_20261021_063637","start_timestamp":1792564597700},{"namespace":"default","pvc":"growlog-media-data-linstor","resource":"pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf","tier":"standard","id":"pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf_back_20261021_063703","snapshot":"back_20261021_063703","start_timestamp":1792564623398},{"namespace":"default","pvc":"zero-cache-data-linstor-v2","resource":"pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3","tier":"standard","id":"pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3_back_20261021_063706","snapshot":"back_20261021_063706","start_timestamp":1792564626781},{"namespace":"gitlab","pvc":"gitlab-postgresql-linstor-v2","resource":"pvc-586ff4f4-edab-45b1-ae75-03d708558396","tier":"critical","id":"pvc-586ff4f4-edab-45b1-ae75-03d708558396_back_20261021_063721","snapshot":"back_20261021_063721","start_timestamp":1792564641134},{"namespace":"gitlab","pvc":"gitlab-redis-linstor","resource":"pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909","tier":"critical","id":"pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909_back_20261021_063735","snapshot":"back_20261021_063735","start_timestamp":1792564655308},{"namespace":"gitlab","pvc":"repo-data-gitlab-gitaly-0","resource":"pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532","tier":"critical","id":"pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532_back_20261021_063749","snapshot":"back_20261021_063749","start_timestamp":1792564669783},{"namespace":"immich","pvc":"immich-db-linstor","resource":"pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27","tier":"standard","id":"pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27_back_20261021_063815","snapshot":"back_20261021_063815","start_timestamp":1792564695785},{"namespace":"llm-switchboard","pvc":"llm-switchboard-data-linstor","resource":"pvc-11012fbd-dd01-40e8-8ddd-72034e929686","tier":"standard","id":"pvc-11012fbd-dd01-40e8-8ddd-72034e929686_back_20261021_063841","snapshot":"back_20261021_063841","start_timestamp":1792564721697},{"namespace":"media","pvc":"arr-dashboard-config-linstor","resource":"pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc","tier":"standard","id":"pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261021_063856","snapshot":"back_20261021_063856","start_timestamp":1792564736199},{"namespace":"media","pvc":"bazarr-config-linstor-v2","resource":"pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0","tier":"standard","id":"pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0_back_20261021_063922","snapshot":"back_20261021_063922","start_timestamp":1792564762181},{"namespace":"media","pvc":"checkrr-config-linstor-v5","resource":"pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828","tier":"standard","id":"pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828_back_20261021_063936","snapshot":"back_20261021_063936","start_timestamp":1792564776630},{"namespace":"media","pvc":"jellyfin-config-pvc-jellyfin-0-canonical","resource":"pvc-d38dff11-b9a0-422a-8776-78340c374653","tier":"standard","id":"pvc-d38dff11-b9a0-422a-8776-78340c374653_back_20261021_063951","snapshot":"back_20261021_063951","start_timestamp":1792564791044},{"namespace":"media","pvc":"prowlarr-config-linstor","resource":"pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42","tier":"standard","id":"pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42_back_20261021_064936","snapshot":"back_20261021_064936","start_timestamp":1792565376829},{"namespace":"media","pvc":"qbittorrent-2-qbittorrent-config","resource":"pvc-352cf73e-bee2-45c6-b315-4e299d5af31c","tier":"standard","id":"pvc-352cf73e-bee2-45c6-b315-4e299d5af31c_back_20261021_064951","snapshot":"back_20261021_064951","start_timestamp":1792565391076},{"namespace":"media","pvc":"qbittorrent-3-qbittorrent-config","resource":"pvc-06294ad5-85d7-4532-8182-d71dc8749c57","tier":"standard","id":"pvc-06294ad5-85d7-4532-8182-d71dc8749c57_back_20261021_065028","snapshot":"back_20261021_065028","start_timestamp":1792565428612},{"namespace":"media","pvc":"qbittorrent-4-qbittorrent-config","resource":"pvc-e9947608-8121-4e99-bc33-a3c4cf416f73","tier":"standard","id":"pvc-e9947608-8121-4e99-bc33-a3c4cf416f73_back_20261021_065106","snapshot":"back_20261021_065106","start_timestamp":1792565466488},{"namespace":"media","pvc":"qbittorrent-5-qbittorrent-config","resource":"pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365","tier":"standard","id":"pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365_back_20261021_065144","snapshot":"back_20261021_065144","start_timestamp":1792565504344},{"namespace":"media","pvc":"qbittorrent-config","resource":"pvc-cb660507-8ea7-4a17-939e-216216c50bd0","tier":"standard","id":"pvc-cb660507-8ea7-4a17-939e-216216c50bd0_back_20261021_065222","snapshot":"back_20261021_065222","start_timestamp":1792565542198},{"namespace":"media","pvc":"qui-config","resource":"pvc-4979eb5d-3ea8-4979-a18e-580851dbc352","tier":"standard","id":"pvc-4979eb5d-3ea8-4979-a18e-580851dbc352_back_20261021_065236","snapshot":"back_20261021_065236","start_timestamp":1792565556803},{"namespace":"media","pvc":"radarr-1-config-linstor","resource":"pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5","tier":"standard","id":"pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5_back_20261021_065251","snapshot":"back_20261021_065251","start_timestamp":1792565571340},{"namespace":"media","pvc":"radarr-10-config-linstor","resource":"pvc-96c6ef03-805b-43ea-b109-26e6d4054776","tier":"standard","id":"pvc-96c6ef03-805b-43ea-b109-26e6d4054776_back_20261021_065306","snapshot":"back_20261021_065306","start_timestamp":1792565586001},{"namespace":"media","pvc":"radarr-11-config-linstor","resource":"pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6","tier":"standard","id":"pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6_back_20261021_065342","snapshot":"back_20261021_065342","start_timestamp":1792565622897},{"namespace":"media","pvc":"radarr-12-config-linstor","resource":"pvc-fcf79cc3-c197-44ad-9a38-5899281b843a","tier":"standard","id":"pvc-fcf79cc3-c197-44ad-9a38-5899281b843a_back_20261021_065419","snapshot":"back_20261021_065419","start_timestamp":1792565659880},{"namespace":"media","pvc":"radarr-2-config-linstor","resource":"pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc","tier":"standard","id":"pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc_back_20261021_065456","snapshot":"back_20261021_065456","start_timestamp":1792565696835},{"namespace":"media","pvc":"radarr-3-config-linstor","resource":"pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c","tier":"standard","id":"pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c_back_20261021_065545","snapshot":"back_20261021_065545","start_timestamp":1792565745779},{"namespace":"media","pvc":"radarr-4-config-linstor","resource":"pvc-793113ea-f798-461b-a1db-b9a316dda20c","tier":"standard","id":"pvc-793113ea-f798-461b-a1db-b9a316dda20c_back_20261021_065611","snapshot":"back_20261021_065611","start_timestamp":1792565771897},{"namespace":"media","pvc":"radarr-5-config-linstor","resource":"pvc-2f67069a-1589-4805-87ce-fa79a5287c1d","tier":"standard","id":"pvc-2f67069a-1589-4805-87ce-fa79a5287c1d_back_20261021_065701","snapshot":"back_20261021_065701","start_timestamp":1792565821136},{"namespace":"media","pvc":"radarr-6-config-linstor-v2","resource":"pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b","tier":"standard","id":"pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b_back_20261021_065738","snapshot":"back_20261021_065738","start_timestamp":1792565858916},{"namespace":"media","pvc":"radarr-7-config-linstor","resource":"pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229","tier":"standard","id":"pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229_back_20261021_065828","snapshot":"back_20261021_065828","start_timestamp":1792565908019},{"namespace":"media","pvc":"radarr-8-config-linstor","resource":"pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557","tier":"standard","id":"pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557_back_20261021_065917","snapshot":"back_20261021_065917","start_timestamp":1792565957511},{"namespace":"media","pvc":"radarr-9-config-linstor","resource":"pvc-ee507f76-28b0-4739-a1a1-40220db04521","tier":"standard","id":"pvc-ee507f76-28b0-4739-a1a1-40220db04521_back_20261021_070006","snapshot":"back_20261021_070006","start_timestamp":1792566006561},{"namespace":"media","pvc":"reiverr-config-linstor","resource":"pvc-f9265e35-77a8-4720-bd7a-681effea820b","tier":"standard","id":"pvc-f9265e35-77a8-4720-bd7a-681effea820b_back_20261021_070044","snapshot":"back_20261021_070044","start_timestamp":1792566044642},{"namespace":"media","pvc":"reiverr-plugins-linstor","resource":"pvc-3118762c-dbff-47bc-b3de-8851d331b9ca","tier":"standard","id":"pvc-3118762c-dbff-47bc-b3de-8851d331b9ca_back_20261021_070047","snapshot":"back_20261021_070047","start_timestamp":1792566047921},{"namespace":"media","pvc":"seerr-config-linstor","resource":"pvc-09272831-116c-4b7c-aa46-70a9860a75cb","tier":"standard","id":"pvc-09272831-116c-4b7c-aa46-70a9860a75cb_back_20261021_070051","snapshot":"back_20261021_070051","start_timestamp":1792566051096},{"namespace":"media","pvc":"sonarr-1-config-linstor","resource":"pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123","tier":"standard","id":"pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123_back_20261021_070105","snapshot":"back_20261021_070105","start_timestamp":1792566065878},{"namespace":"media","pvc":"sonarr-2-config-linstor","resource":"pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994","tier":"standard","id":"pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994_back_20261021_070120","snapshot":"back_20261021_070120","start_timestamp":1792566080315},{"namespace":"media","pvc":"sonarr-3-config-linstor","resource":"pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7","tier":"standard","id":"pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7_back_20261021_070135","snapshot":"back_20261021_070135","start_timestamp":1792566095344},{"namespace":"media","pvc":"sonarr-4-config-linstor","resource":"pvc-da849381-c518-46b5-b204-ceab53e758a9","tier":"standard","id":"pvc-da849381-c518-46b5-b204-ceab53e758a9_back_20261021_070150","snapshot":"back_20261021_070150","start_timestamp":1792566110304},{"namespace":"media","pvc":"sonarr-5-config-linstor","resource":"pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1","tier":"standard","id":"pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1_back_20261021_070204","snapshot":"back_20261021_070204","start_timestamp":1792566124974},{"namespace":"media","pvc":"sonarr-6-config-linstor","resource":"pvc-136dea81-494a-47d3-b6b7-2c62b8f05762","tier":"standard","id":"pvc-136dea81-494a-47d3-b6b7-2c62b8f05762_back_20261021_070219","snapshot":"back_20261021_070219","start_timestamp":1792566139599},{"namespace":"media","pvc":"tdarr-config-linstor","resource":"pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50","tier":"standard","id":"pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50_back_20261021_070234","snapshot":"back_20261021_070234","start_timestamp":1792566154968},{"namespace":"media","pvc":"transmission-config-linstor-v3","resource":"pvc-7d594705-fed7-460c-899a-0f2c6ad420c4","tier":"standard","id":"pvc-7d594705-fed7-460c-899a-0f2c6ad420c4_back_20261021_070249","snapshot":"back_20261021_070249","start_timestamp":1792566169472},{"namespace":"monitoring","pvc":"alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0","resource":"pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79","tier":"standard","id":"pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79_back_20261021_070304","snapshot":"back_20261021_070304","start_timestamp":1792566184161},{"namespace":"monitoring","pvc":"gotify-data-linstor","resource":"pvc-72b0df4b-a891-48f9-a476-91500b022ec8","tier":"standard","id":"pvc-72b0df4b-a891-48f9-a476-91500b022ec8_back_20261021_070319","snapshot":"back_20261021_070319","start_timestamp":1792566199000},{"namespace":"monitoring","pvc":"grafana-data-linstor","resource":"pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749","tier":"standard","id":"pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749_back_20261021_070334","snapshot":"back_20261021_070334","start_timestamp":1792566214144},{"namespace":"monitoring","pvc":"prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0","resource":"pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6","tier":"standard","id":"pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6_back_20261021_070349","snapshot":"back_20261021_070349","start_timestamp":1792566229200},{"namespace":"ollama","pvc":"voice-models","resource":"pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9","tier":"standard","id":"pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9_back_20261021_072435","snapshot":"back_20261021_072435","start_timestamp":1792567475129},{"namespace":"rustdesk","pvc":"rustdesk-data","resource":"pvc-f803f54c-013c-484d-b16a-69ae2ea168f4","tier":"standard","id":"pvc-f803f54c-013c-484d-b16a-69ae2ea168f4_back_20261021_072710","snapshot":"back_20261021_072710","start_timestamp":1792567630269},{"namespace":"wyoming-voice","pvc":"whisper-models","resource":"pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07","tier":"standard","id":"pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07_back_20261021_072725","snapshot":"back_20261021_072725","start_timestamp":1792567645292}]'
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -14,7 +14,7 @@ metadata:
   name: linstor-bootstrap-chain-retention
   namespace: piraeus-datastore
 spec:
-  schedule: "23 * * * *"
+  schedule: 23 * * * *
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 3
@@ -31,24 +31,26 @@ spec:
           serviceAccountName: linstor-protection-policy
           restartPolicy: Never
           volumes:
-            - name: scripts
-              configMap:
-                name: linstor-protection-gate-script
-                defaultMode: 0555
+          - name: scripts
+            configMap:
+              name: linstor-protection-gate-script
+              defaultMode: 365
           containers:
-            - name: retention
-              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
-              command: [python3, /scripts/bootstrap-retention.py]
-              volumeMounts:
-                - name: scripts
-                  mountPath: /scripts
-                  readOnly: true
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 128Mi
-                limits:
-                  memory: 512Mi
+          - name: retention
+            image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+            command:
+            - python3
+            - /scripts/bootstrap-retention.py
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -56,21 +58,31 @@ metadata:
   name: linstor-bootstrap-retention-status
   namespace: piraeus-datastore
 rules:
-  - apiGroups: [""]
-    resources: [configmaps]
-    resourceNames:
-      - linstor-bootstrap-chain-index
-      - linstor-bootstrap-retention-status
-      - linstor-backup-generation-manifest
-      - linstor-protection-gate-status
-    verbs: [get]
-  - apiGroups: [""]
-    resources: [configmaps]
-    resourceNames: [linstor-bootstrap-retention-status]
-    verbs: [patch]
-  - apiGroups: [""]
-    resources: [configmaps]
-    verbs: [create]
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  resourceNames:
+  - linstor-bootstrap-chain-index
+  - linstor-bootstrap-retention-status
+  - linstor-backup-generation-manifest
+  - linstor-protection-gate-status
+  verbs:
+  - get
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  resourceNames:
+  - linstor-bootstrap-retention-status
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -82,6 +94,6 @@ roleRef:
   kind: Role
   name: linstor-bootstrap-retention-status
 subjects:
-  - kind: ServiceAccount
-    name: linstor-protection-policy
-    namespace: piraeus-datastore
+- kind: ServiceAccount
+  name: linstor-protection-policy
+  namespace: piraeus-datastore

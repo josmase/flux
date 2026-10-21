@@ -1,0 +1,542 @@
+{
+  "measured_at": "2026-10-21T07:38:07.622653+00:00",
+  "backup_generation": "rustfs-linstor-backups-v2",
+  "canonical_non_cnpg_count": 50,
+  "coordinated_snapshot_count": 2,
+  "volumes": [
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-data-linstor",
+      "resource": "pvc-510570a7-ea65-489b-b50f-267e3ab99476",
+      "tier": "standard",
+      "backup_id": "pvc-510570a7-ea65-489b-b50f-267e3ab99476_back_20261021_062903",
+      "snapshot": "back_20261021_062903",
+      "download_bytes": 20895150080,
+      "allocated_bytes": 25595662336
+    },
+    {
+      "namespace": "artifactory",
+      "pvc": "artifactory-pg17-linstor",
+      "resource": "pvc-be4ead27-e1a9-4516-9930-44e053eccd1c",
+      "tier": "standard",
+      "backup_id": "pvc-be4ead27-e1a9-4516-9930-44e053eccd1c_back_20261021_063637",
+      "snapshot": "back_20261021_063637",
+      "download_bytes": 84501504,
+      "allocated_bytes": 1842905088
+    },
+    {
+      "namespace": "default",
+      "pvc": "growlog-media-data-linstor",
+      "resource": "pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf",
+      "tier": "standard",
+      "backup_id": "pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf_back_20261021_063703",
+      "snapshot": "back_20261021_063703",
+      "download_bytes": 31744,
+      "allocated_bytes": 16111616
+    },
+    {
+      "namespace": "default",
+      "pvc": "zero-cache-data-linstor-v2",
+      "resource": "pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3",
+      "tier": "standard",
+      "backup_id": "pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3_back_20261021_063706",
+      "snapshot": "back_20261021_063706",
+      "download_bytes": 243712,
+      "allocated_bytes": 40745984
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-postgresql-linstor-v2",
+      "resource": "pvc-586ff4f4-edab-45b1-ae75-03d708558396",
+      "tier": "critical",
+      "backup_id": "pvc-586ff4f4-edab-45b1-ae75-03d708558396_back_20261021_063721",
+      "snapshot": "back_20261021_063721",
+      "download_bytes": 77118464,
+      "allocated_bytes": 1213801472
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "gitlab-redis-linstor",
+      "resource": "pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909",
+      "tier": "critical",
+      "backup_id": "pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909_back_20261021_063735",
+      "snapshot": "back_20261021_063735",
+      "download_bytes": 25152512,
+      "allocated_bytes": 419996672
+    },
+    {
+      "namespace": "gitlab",
+      "pvc": "repo-data-gitlab-gitaly-0",
+      "resource": "pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532",
+      "tier": "critical",
+      "backup_id": "pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532_back_20261021_063749",
+      "snapshot": "back_20261021_063749",
+      "download_bytes": 361188352,
+      "allocated_bytes": 843084800
+    },
+    {
+      "namespace": "immich",
+      "pvc": "immich-db-linstor",
+      "resource": "pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27",
+      "tier": "standard",
+      "backup_id": "pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27_back_20261021_063815",
+      "snapshot": "back_20261021_063815",
+      "download_bytes": 642714624,
+      "allocated_bytes": 1159177216
+    },
+    {
+      "namespace": "llm-switchboard",
+      "pvc": "llm-switchboard-data-linstor",
+      "resource": "pvc-11012fbd-dd01-40e8-8ddd-72034e929686",
+      "tier": "standard",
+      "backup_id": "pvc-11012fbd-dd01-40e8-8ddd-72034e929686_back_20261021_063841",
+      "snapshot": "back_20261021_063841",
+      "download_bytes": 11264,
+      "allocated_bytes": 12611584
+    },
+    {
+      "namespace": "media",
+      "pvc": "arr-dashboard-config-linstor",
+      "resource": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc",
+      "tier": "standard",
+      "backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261021_063856",
+      "snapshot": "back_20261021_063856",
+      "download_bytes": 187695104,
+      "allocated_bytes": 2237795328
+    },
+    {
+      "namespace": "media",
+      "pvc": "bazarr-config-linstor-v2",
+      "resource": "pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0",
+      "tier": "standard",
+      "backup_id": "pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0_back_20261021_063922",
+      "snapshot": "back_20261021_063922",
+      "download_bytes": 12219392,
+      "allocated_bytes": 222269440
+    },
+    {
+      "namespace": "media",
+      "pvc": "checkrr-config-linstor-v5",
+      "resource": "pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828",
+      "tier": "standard",
+      "backup_id": "pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828_back_20261021_063936",
+      "snapshot": "back_20261021_063936",
+      "download_bytes": 803840,
+      "allocated_bytes": 61657088
+    },
+    {
+      "namespace": "media",
+      "pvc": "jellyfin-config-pvc-jellyfin-0-canonical",
+      "resource": "pvc-d38dff11-b9a0-422a-8776-78340c374653",
+      "tier": "standard",
+      "backup_id": "pvc-d38dff11-b9a0-422a-8776-78340c374653_back_20261021_063951",
+      "snapshot": "back_20261021_063951",
+      "download_bytes": 27301297152,
+      "allocated_bytes": 32500946944
+    },
+    {
+      "namespace": "media",
+      "pvc": "prowlarr-config-linstor",
+      "resource": "pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42",
+      "tier": "standard",
+      "backup_id": "pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42_back_20261021_064936",
+      "snapshot": "back_20261021_064936",
+      "download_bytes": 57925632,
+      "allocated_bytes": 1007222784
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-2-qbittorrent-config",
+      "resource": "pvc-352cf73e-bee2-45c6-b315-4e299d5af31c",
+      "tier": "standard",
+      "backup_id": "pvc-352cf73e-bee2-45c6-b315-4e299d5af31c_back_20261021_064951",
+      "snapshot": "back_20261021_064951",
+      "download_bytes": 940368896,
+      "allocated_bytes": 1028673536
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-3-qbittorrent-config",
+      "resource": "pvc-06294ad5-85d7-4532-8182-d71dc8749c57",
+      "tier": "standard",
+      "backup_id": "pvc-06294ad5-85d7-4532-8182-d71dc8749c57_back_20261021_065028",
+      "snapshot": "back_20261021_065028",
+      "download_bytes": 949441536,
+      "allocated_bytes": 1013044224
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-4-qbittorrent-config",
+      "resource": "pvc-e9947608-8121-4e99-bc33-a3c4cf416f73",
+      "tier": "standard",
+      "backup_id": "pvc-e9947608-8121-4e99-bc33-a3c4cf416f73_back_20261021_065106",
+      "snapshot": "back_20261021_065106",
+      "download_bytes": 948618240,
+      "allocated_bytes": 1013366784
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-5-qbittorrent-config",
+      "resource": "pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365",
+      "tier": "standard",
+      "backup_id": "pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365_back_20261021_065144",
+      "snapshot": "back_20261021_065144",
+      "download_bytes": 948450304,
+      "allocated_bytes": 994072576
+    },
+    {
+      "namespace": "media",
+      "pvc": "qbittorrent-config",
+      "resource": "pvc-cb660507-8ea7-4a17-939e-216216c50bd0",
+      "tier": "standard",
+      "backup_id": "pvc-cb660507-8ea7-4a17-939e-216216c50bd0_back_20261021_065222",
+      "snapshot": "back_20261021_065222",
+      "download_bytes": 12772352,
+      "allocated_bytes": 144874496
+    },
+    {
+      "namespace": "media",
+      "pvc": "qui-config",
+      "resource": "pvc-4979eb5d-3ea8-4979-a18e-580851dbc352",
+      "tier": "standard",
+      "backup_id": "pvc-4979eb5d-3ea8-4979-a18e-580851dbc352_back_20261021_065236",
+      "snapshot": "back_20261021_065236",
+      "download_bytes": 495616,
+      "allocated_bytes": 77503488
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-1-config-linstor",
+      "resource": "pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5",
+      "tier": "standard",
+      "backup_id": "pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5_back_20261021_065251",
+      "snapshot": "back_20261021_065251",
+      "download_bytes": 12835840,
+      "allocated_bytes": 413121536
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-10-config-linstor",
+      "resource": "pvc-96c6ef03-805b-43ea-b109-26e6d4054776",
+      "tier": "standard",
+      "backup_id": "pvc-96c6ef03-805b-43ea-b109-26e6d4054776_back_20261021_065306",
+      "snapshot": "back_20261021_065306",
+      "download_bytes": 932614144,
+      "allocated_bytes": 1666043904
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-11-config-linstor",
+      "resource": "pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6",
+      "tier": "standard",
+      "backup_id": "pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6_back_20261021_065342",
+      "snapshot": "back_20261021_065342",
+      "download_bytes": 972407808,
+      "allocated_bytes": 1605613568
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-12-config-linstor",
+      "resource": "pvc-fcf79cc3-c197-44ad-9a38-5899281b843a",
+      "tier": "standard",
+      "backup_id": "pvc-fcf79cc3-c197-44ad-9a38-5899281b843a_back_20261021_065419",
+      "snapshot": "back_20261021_065419",
+      "download_bytes": 706487296,
+      "allocated_bytes": 1415372800
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-2-config-linstor",
+      "resource": "pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc",
+      "tier": "standard",
+      "backup_id": "pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc_back_20261021_065456",
+      "snapshot": "back_20261021_065456",
+      "download_bytes": 1412842496,
+      "allocated_bytes": 2472786944
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-3-config-linstor",
+      "resource": "pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c",
+      "tier": "standard",
+      "backup_id": "pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c_back_20261021_065545",
+      "snapshot": "back_20261021_065545",
+      "download_bytes": 507304960,
+      "allocated_bytes": 996654080
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-4-config-linstor",
+      "resource": "pvc-793113ea-f798-461b-a1db-b9a316dda20c",
+      "tier": "standard",
+      "backup_id": "pvc-793113ea-f798-461b-a1db-b9a316dda20c_back_20261021_065611",
+      "snapshot": "back_20261021_065611",
+      "download_bytes": 990234624,
+      "allocated_bytes": 2163934208
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-5-config-linstor",
+      "resource": "pvc-2f67069a-1589-4805-87ce-fa79a5287c1d",
+      "tier": "standard",
+      "backup_id": "pvc-2f67069a-1589-4805-87ce-fa79a5287c1d_back_20261021_065701",
+      "snapshot": "back_20261021_065701",
+      "download_bytes": 908443648,
+      "allocated_bytes": 1392091136
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-6-config-linstor-v2",
+      "resource": "pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b",
+      "tier": "standard",
+      "backup_id": "pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b_back_20261021_065738",
+      "snapshot": "back_20261021_065738",
+      "download_bytes": 1250118656,
+      "allocated_bytes": 2041080832
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-7-config-linstor",
+      "resource": "pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229",
+      "tier": "standard",
+      "backup_id": "pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229_back_20261021_065828",
+      "snapshot": "back_20261021_065828",
+      "download_bytes": 1216227328,
+      "allocated_bytes": 1933927424
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-8-config-linstor",
+      "resource": "pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557",
+      "tier": "standard",
+      "backup_id": "pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557_back_20261021_065917",
+      "snapshot": "back_20261021_065917",
+      "download_bytes": 1198841856,
+      "allocated_bytes": 1879920640
+    },
+    {
+      "namespace": "media",
+      "pvc": "radarr-9-config-linstor",
+      "resource": "pvc-ee507f76-28b0-4739-a1a1-40220db04521",
+      "tier": "standard",
+      "backup_id": "pvc-ee507f76-28b0-4739-a1a1-40220db04521_back_20261021_070006",
+      "snapshot": "back_20261021_070006",
+      "download_bytes": 1011659776,
+      "allocated_bytes": 1713165312
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-config-linstor",
+      "resource": "pvc-f9265e35-77a8-4720-bd7a-681effea820b",
+      "tier": "standard",
+      "backup_id": "pvc-f9265e35-77a8-4720-bd7a-681effea820b_back_20261021_070044",
+      "snapshot": "back_20261021_070044",
+      "download_bytes": 1290240,
+      "allocated_bytes": 11102208
+    },
+    {
+      "namespace": "media",
+      "pvc": "reiverr-plugins-linstor",
+      "resource": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "tier": "standard",
+      "backup_id": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca_back_20261021_070047",
+      "snapshot": "back_20261021_070047",
+      "download_bytes": 150528,
+      "allocated_bytes": 15305728
+    },
+    {
+      "namespace": "media",
+      "pvc": "seerr-config-linstor",
+      "resource": "pvc-09272831-116c-4b7c-aa46-70a9860a75cb",
+      "tier": "standard",
+      "backup_id": "pvc-09272831-116c-4b7c-aa46-70a9860a75cb_back_20261021_070051",
+      "snapshot": "back_20261021_070051",
+      "download_bytes": 11565056,
+      "allocated_bytes": 104559616
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-1-config-linstor",
+      "resource": "pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123",
+      "tier": "standard",
+      "backup_id": "pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123_back_20261021_070105",
+      "snapshot": "back_20261021_070105",
+      "download_bytes": 59523072,
+      "allocated_bytes": 578236416
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-2-config-linstor",
+      "resource": "pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994",
+      "tier": "standard",
+      "backup_id": "pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994_back_20261021_070120",
+      "snapshot": "back_20261021_070120",
+      "download_bytes": 82714624,
+      "allocated_bytes": 1061032960
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-3-config-linstor",
+      "resource": "pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7",
+      "tier": "standard",
+      "backup_id": "pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7_back_20261021_070135",
+      "snapshot": "back_20261021_070135",
+      "download_bytes": 54689792,
+      "allocated_bytes": 563189760
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-4-config-linstor",
+      "resource": "pvc-da849381-c518-46b5-b204-ceab53e758a9",
+      "tier": "standard",
+      "backup_id": "pvc-da849381-c518-46b5-b204-ceab53e758a9_back_20261021_070150",
+      "snapshot": "back_20261021_070150",
+      "download_bytes": 56282112,
+      "allocated_bytes": 503431168
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-5-config-linstor",
+      "resource": "pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1",
+      "tier": "standard",
+      "backup_id": "pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1_back_20261021_070204",
+      "snapshot": "back_20261021_070204",
+      "download_bytes": 50533376,
+      "allocated_bytes": 462588928
+    },
+    {
+      "namespace": "media",
+      "pvc": "sonarr-6-config-linstor",
+      "resource": "pvc-136dea81-494a-47d3-b6b7-2c62b8f05762",
+      "tier": "standard",
+      "backup_id": "pvc-136dea81-494a-47d3-b6b7-2c62b8f05762_back_20261021_070219",
+      "snapshot": "back_20261021_070219",
+      "download_bytes": 66900992,
+      "allocated_bytes": 682705920
+    },
+    {
+      "namespace": "media",
+      "pvc": "tdarr-config-linstor",
+      "resource": "pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50",
+      "tier": "standard",
+      "backup_id": "pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50_back_20261021_070234",
+      "snapshot": "back_20261021_070234",
+      "download_bytes": 174775296,
+      "allocated_bytes": 812919808
+    },
+    {
+      "namespace": "media",
+      "pvc": "transmission-config-linstor-v3",
+      "resource": "pvc-7d594705-fed7-460c-899a-0f2c6ad420c4",
+      "tier": "standard",
+      "backup_id": "pvc-7d594705-fed7-460c-899a-0f2c6ad420c4_back_20261021_070249",
+      "snapshot": "back_20261021_070249",
+      "download_bytes": 2387968,
+      "allocated_bytes": 88390656
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0",
+      "resource": "pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79",
+      "tier": "standard",
+      "backup_id": "pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79_back_20261021_070304",
+      "snapshot": "back_20261021_070304",
+      "download_bytes": 362496,
+      "allocated_bytes": 53465088
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "gotify-data-linstor",
+      "resource": "pvc-72b0df4b-a891-48f9-a476-91500b022ec8",
+      "tier": "standard",
+      "backup_id": "pvc-72b0df4b-a891-48f9-a476-91500b022ec8_back_20261021_070319",
+      "snapshot": "back_20261021_070319",
+      "download_bytes": 10067968,
+      "allocated_bytes": 398404608
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "grafana-data-linstor",
+      "resource": "pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749",
+      "tier": "standard",
+      "backup_id": "pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749_back_20261021_070334",
+      "snapshot": "back_20261021_070334",
+      "download_bytes": 724992,
+      "allocated_bytes": 129973248
+    },
+    {
+      "namespace": "monitoring",
+      "pvc": "prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0",
+      "resource": "pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6",
+      "tier": "standard",
+      "backup_id": "pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6_back_20261021_070349",
+      "snapshot": "back_20261021_070349",
+      "download_bytes": 37105244160,
+      "allocated_bytes": 125869301760
+    },
+    {
+      "namespace": "ollama",
+      "pvc": "voice-models",
+      "resource": "pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9",
+      "tier": "standard",
+      "backup_id": "pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9_back_20261021_072435",
+      "snapshot": "back_20261021_072435",
+      "download_bytes": 6775158784,
+      "allocated_bytes": 7750011904
+    },
+    {
+      "namespace": "rustdesk",
+      "pvc": "rustdesk-data",
+      "resource": "pvc-f803f54c-013c-484d-b16a-69ae2ea168f4",
+      "tier": "standard",
+      "backup_id": "pvc-f803f54c-013c-484d-b16a-69ae2ea168f4_back_20261021_072710",
+      "snapshot": "back_20261021_072710",
+      "download_bytes": 12288,
+      "allocated_bytes": 12071936
+    },
+    {
+      "namespace": "wyoming-voice",
+      "pvc": "whisper-models",
+      "resource": "pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07",
+      "tier": "standard",
+      "backup_id": "pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07_back_20261021_072725",
+      "snapshot": "back_20261021_072725",
+      "download_bytes": 2894744576,
+      "allocated_bytes": 3567411200
+    }
+  ],
+  "cnpg": [
+    {
+      "resource": "pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa",
+      "backup_id": "pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa_back_20261020_200939^snapshot-dc07d7d5-3f7f-4eda-8b09-51e364a8d472",
+      "snapshot": "snapshot-dc07d7d5-3f7f-4eda-8b09-51e364a8d472",
+      "download_bytes": 1366217728
+    },
+    {
+      "resource": "pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7",
+      "backup_id": "pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7_back_20261020_200939^snapshot-7384f14a-b892-4b2c-84bf-46a0ec01879f",
+      "snapshot": "snapshot-7384f14a-b892-4b2c-84bf-46a0ec01879f",
+      "download_bytes": 26630144
+    }
+  ],
+  "measured_initial_download_bytes": 113306194944,
+  "standard_daily_full_bytes": 111449887744,
+  "critical_daily_full_bytes": 463459328,
+  "cnpg_recovery_set_bytes": 1392847872,
+  "retention_projection": {
+    "standard_full_chains": 7,
+    "critical_full_chains": 14,
+    "critical_increments_per_chain": 4,
+    "incremental_assumption": "each increment equals a measured full",
+    "cnpg_full_recovery_sets": 56,
+    "metadata_allowance_bytes": 1073741824,
+    "growth_and_transient_multiplier": "1.25",
+    "retained_forecast_bytes": 1114580737280,
+    "observed_filesystem_free_bytes": 5250975031296,
+    "initial_additional_forecast_bytes": 1001275590912,
+    "forecast_free_bytes": 4249699440384,
+    "minimum_free_bytes": 1099511627776,
+    "filesystem_capacity_passes": true
+  },
+  "recurring_producers_enabled": false
+}
