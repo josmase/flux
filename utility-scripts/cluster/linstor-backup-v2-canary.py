@@ -197,7 +197,12 @@ for node in initial_hosts:
     assert initial_hosts[node]['lvs'] == final_hosts[node]['lvs'], 'Disposable LV cleanup mismatch'
 final_remote = get(l + ['backup', 'list', remote])
 def backup_objects(listing):
-    return {'linstor': listing.get('linstor', {}), 'other': {key: value for key, value in listing.get('other', {}).items() if key != '__protection/capacity.json'}}
+    other = dict(listing.get('other', {}))
+    if isinstance(other.get('files'), list):
+        other['files'] = [key for key in other['files'] if key != '__protection/capacity.json']
+        if not other['files']:
+            del other['files']
+    return {'linstor': listing.get('linstor', {}), 'other': other}
 assert backup_objects(final_remote) == backup_objects(initial_remote), 'Remote listing differs after cleanup; retain evidence'
 result = {'completed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'source_handle': handle,
           'snapshot_handle': s3handle, 'expected_sha256': expected, 'restored_sha256': actual,
