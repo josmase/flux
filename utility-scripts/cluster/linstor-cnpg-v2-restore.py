@@ -10,10 +10,12 @@ import time
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--manifest', required=True, type=pathlib.Path)
 p.add_argument('--evidence-dir', required=True, type=pathlib.Path)
+p.add_argument('--resume', action='store_true', help='Resume validation of the existing drill using its original private journal')
 a = p.parse_args()
 a.evidence_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
 ns, drill, source = 'cnpg-system', 'shared-postgres-v2-restore-drill', 'shared-postgres'
-seq = 0
+prior_records = [json.loads(f.read_text()) for f in sorted(a.evidence_dir.glob('[0-9]*.json'))]
+seq = max((int(f.stem) for f in a.evidence_dir.glob('[0-9]*.json')), default=0)
 
 
 def run(argv, data=None):
@@ -64,15 +66,27 @@ for name in ('shared-postgres-v2-bootstrap', 'shared-postgres-v2-bootstrap-wal')
     assert content['status']['snapshotHandle'].startswith('S3://rustfs-linstor-backups-v2/')
     assert any(o['uid'] == backup['metadata']['uid'] and o['kind'] == 'Backup' for o in snap['metadata']['ownerReferences'])
 clusters = get(['-n', ns, 'get', 'clusters.postgresql.cnpg.io', '-o', 'json'])['items']
-assert not any(c['metadata']['name'] == drill for c in clusters), 'Existing drill must be reviewed first'
+existing_drill = next((c for c in clusters if c['metadata']['name'] == drill), None)
+assert (existing_drill is not None) == a.resume, 'Use --resume only for the existing reviewed drill'
+if existing_drill:
+    assert existing_drill['metadata']['labels'].get('protection.josmase.dev/restore-drill') == 'true'
+    assert existing_drill['spec']['bootstrap']['recovery']['volumeSnapshots']['storage']['name'] == backup['metadata']['name']
 original = next(c for c in clusters if c['metadata']['name'] == source)
 assert original['status']['readyInstances'] == original['spec']['instances']
 source_pod = original['status']['currentPrimary']
 listing = 'SELECT datname FROM pg_database WHERE datallowconn ORDER BY datname'
-source_databases = query(source_pod, 'postgres', listing).splitlines()
-baseline = health()
-run(['kubectl', 'apply', '--dry-run=server', '-f', str(a.manifest)])
-run(['kubectl', 'apply', '-f', str(a.manifest)])
+if a.resume:
+    original_query = next(r for r in prior_records if 'psql' in r['argv'] and listing in r['argv'][-1])
+    source_databases = original_query['stdout'].strip().splitlines()
+    original_resources = next(r for r in prior_records if r['argv'][-2:] == ['resource', 'list'])
+    rs = json.loads(original_resources['stdout'])[0]
+    baseline = {(r['name'], r['node_name'], v['volume_number']): v['state']['disk_state'] for r in rs for v in r.get('volumes', [])}
+    health()
+else:
+    source_databases = query(source_pod, 'postgres', listing).splitlines()
+    baseline = health()
+    run(['kubectl', 'apply', '--dry-run=server', '-f', str(a.manifest)])
+    run(['kubectl', 'apply', '-f', str(a.manifest)])
 
 
 def ready():
@@ -85,7 +99,7 @@ wait('Isolated CNPG restore ready', ready)
 c = get(['-n', ns, 'get', 'clusters.postgresql.cnpg.io', drill, '-o', 'json'])
 pod = c['status']['currentPrimary']
 for endpoint in get(['get', 'endpointslices.discovery.k8s.io', '-A', '-o', 'json'])['items']:
-    for entry in endpoint.get('endpoints', []):
+    for entry in endpoint.get('endpoints') or []:
         ref = entry.get('targetRef', {})
         if ref.get('namespace', endpoint['metadata']['namespace']) == ns and ref.get('name', '').startswith(drill + '-'):
             assert endpoint['metadata']['labels']['kubernetes.io/service-name'].startswith(drill + '-'), 'Unexpected production service routing'
