@@ -9,6 +9,27 @@ import secrets
 from pathlib import Path
 
 
+def update_section(content: str, section_name: str, values: dict[str, str]) -> str:
+    header = f"[{section_name}]"
+    if header not in content:
+        content = content.rstrip() + f"\n\n{header}\n"
+
+    start = content.index(header)
+    remainder_start = start + len(header)
+    next_section = re.search(r"(?m)^\[", content[remainder_start:])
+    end = remainder_start + next_section.start() if next_section else len(content)
+    section = content[start:end]
+
+    for key, value in values.items():
+        pattern = re.compile(rf"(?m)^{re.escape(key)}=.*$")
+        line = f"{key}={value}"
+        if pattern.search(section):
+            section = pattern.sub(lambda _match: line, section)
+        else:
+            section = section.rstrip("\n") + "\n" + line + "\n"
+    return content[:start] + section + content[end:]
+
+
 def main() -> None:
     config = Path(os.environ["QBITTORRENT_CONFIG"])
     username = os.environ["QBITTORRENT_USERNAME"]
@@ -25,22 +46,20 @@ def main() -> None:
     )
 
     content = config.read_text() if config.exists() else ""
-    if "[Preferences]" not in content:
-        content = content.rstrip() + "\n\n[Preferences]\n"
-    start = content.index("[Preferences]")
-    next_section = re.search(r"(?m)^\[", content[start + len("[Preferences]") :])
-    end = start + len("[Preferences]") + next_section.start() if next_section else len(content)
-    section = content[start:end]
-    for key, value in (("WebUI\\Username", username), ("WebUI\\Password_PBKDF2", encoded)):
-        pattern = re.compile(rf"(?m)^{re.escape(key)}=.*$")
-        line = f"{key}={value}"
-        # Config keys contain a literal backslash (for example, WebUI\\Username).
-        # A callable keeps re.sub from parsing backslashes in the replacement text.
-        if pattern.search(section):
-            section = pattern.sub(lambda _match: line, section)
-        else:
-            section = section.rstrip("\n") + "\n" + line + "\n"
-    updated = content[:start] + section + content[end:]
+    updated = update_section(
+        content,
+        "Preferences",
+        {"WebUI\\Username": username, "WebUI\\Password_PBKDF2": encoded},
+    )
+    updated = update_section(
+        updated,
+        "BitTorrent",
+        {
+            "Session\\DefaultSavePath": "/mnt/storage/downloads/complete",
+            "Session\\TempPath": "/mnt/storage/downloads/incomplete",
+            "Session\\TempPathEnabled": "true",
+        },
+    )
     temp = config.with_suffix(".conf.tmp")
     temp.write_text(updated)
     temp.chmod(0o600)

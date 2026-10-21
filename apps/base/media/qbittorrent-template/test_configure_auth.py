@@ -25,7 +25,7 @@ class ConfigureAuthTests(unittest.TestCase):
                 "WebUI\\Password_PBKDF2=old-hash\n"
                 "WebUI\\Address=*\n"
                 "\n[BitTorrent]\n"
-                "Session\\DefaultSavePath=/downloads\n"
+                "Session\\DefaultSavePath=/config/Downloads\n"
             )
             password_file.write_text("new-password\n")
             environment = {
@@ -47,7 +47,9 @@ class ConfigureAuthTests(unittest.TestCase):
             self.assertEqual(result.count("WebUI\\Password_PBKDF2="), 1)
             self.assertIn("WebUI\\Password_PBKDF2=@ByteArray(", result)
             self.assertIn("WebUI\\Address=*\n", result)
-            self.assertIn("\n[BitTorrent]\nSession\\DefaultSavePath=/downloads\n", result)
+            self.assertIn("\n[BitTorrent]\nSession\\DefaultSavePath=/mnt/storage/downloads/complete\n", result)
+            self.assertIn("Session\\TempPath=/mnt/storage/downloads/incomplete\n", result)
+            self.assertIn("Session\\TempPathEnabled=true\n", result)
 
 
 if __name__ == "__main__":
