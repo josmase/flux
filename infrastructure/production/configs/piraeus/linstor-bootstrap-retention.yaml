@@ -19,6 +19,9 @@ spec:
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 3
   jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linstor-bootstrap-chain-retention
     spec:
       backoffLimit: 0
       activeDeadlineSeconds: 900

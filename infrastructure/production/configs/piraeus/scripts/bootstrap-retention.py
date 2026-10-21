@@ -21,7 +21,7 @@ PREFIX = 'BackupShipping/Source/' + REMOTE + '/'
 LINSTOR = ['linstor', '--controllers', 'linstor-controller.piraeus-datastore.svc:3370', '-m']
 TLS = ssl.create_default_context(cafile='/var/run/secrets/kubernetes.io/serviceaccount/ca.crt')
 TOKEN = open('/var/run/secrets/kubernetes.io/serviceaccount/token').read().strip()
-API = 'https://' + os.environ['KUBERNETES_SERVICE_HOST'] + ':' + os.environ['KUBERNETES_SERVICE_PORT_HTTPS']
+API = 'https://' + os.environ['KUBERNETES_SERVICE_HOST'] + ':' + os.environ.get('KUBERNETES_SERVICE_PORT_HTTPS', os.environ['KUBERNETES_SERVICE_PORT'])
 CM = '/api/v1/namespaces/' + NAMESPACE + '/configmaps/'
 changes = []
 
@@ -61,6 +61,16 @@ def health():
     assert resources and all(v['state']['disk_state'] in ('UpToDate', 'Diskless') for r in resources for v in r.get('volumes', [])), 'Replica degradation'
     pools = [p for p in linstor('storage-pool', 'list')[0] if p['storage_pool_name'] == 'linstor-thin']
     assert len(pools) == 3 and all(p['free_capacity'] * 100 >= p['total_capacity'] * 20 for p in pools), 'Pool capacity violation'
+
+
+def wait_for(check, description):
+    deadline = time.monotonic() + 90
+    while time.monotonic() < deadline:
+        if check():
+            return
+        health()
+        time.sleep(3)
+    raise RuntimeError(description + " did not finish within 90 seconds")
 
 
 def objects(entry):
@@ -110,7 +120,7 @@ def main():
             assert snap['name'] != replacement['origin_snap'] and not any('SHIPPING' in flag for flag in snap.get('flags', []))
             health()
             linstor('snapshot', 'delete', resource, snap['name'])
-            assert not any(s['resource_name'] == resource and s['name'] == snap['name'] for s in linstor('snapshot', 'list')[0]), 'Local bootstrap snapshot deletion not complete'
+            wait_for(lambda: not any(s['resource_name'] == resource and s['name'] == snap['name'] for s in linstor('snapshot', 'list')[0]), 'Local bootstrap snapshot deletion')
             changes.append({'local_snapshot': snap['name'], 'resource': resource})
             deleted += 1
         keep = 14 if c['tier'] == 'critical' else 7
@@ -138,8 +148,9 @@ def main():
         assert actual == expected and not (actual & protected), 'Deletion plan exceeds the exact bootstrap chain'
         health()
         linstor('backup', 'delete', 'id', REMOTE, c['id'], '--cascade', '--keep-snaps')
+        wait_for(lambda: not (members & set(linstor('backup', 'list', REMOTE).get('linstor', {}))), 'Remote bootstrap chain deletion')
         after = linstor('backup', 'list', REMOTE).get('linstor', {})
-        assert not (members & set(after)) and after[replacement['id']]['restorable'], 'Remote prune verification failed'
+        assert after[replacement['id']]['restorable'], 'Replacement full is no longer restorable'
         changes.append({'remote_chain': c['id'], 'resource': resource, 'members': len(members)})
         deleted += 1
     health()

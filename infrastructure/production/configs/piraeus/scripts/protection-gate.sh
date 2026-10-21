@@ -219,6 +219,18 @@ if printf '%s' "$retention_status" | jq -e --argjson now "$now" '
 else
   block_backup "bootstrap full-chain retention checks are unhealthy or stale"
 fi
+if [ -f "$work_dir/workloads.json" ] && printf '%s' "$retention_status" | jq -e '.data.checkedAt != null' >/dev/null; then
+  retention_checked="$(printf '%s' "$retention_status" | jq -r '.data.checkedAt | tonumber')"
+  if jq -e --argjson since "$retention_checked" '
+      any(.items[]; .kind == "Job" and
+        .metadata.labels["app.kubernetes.io/name"] == "linstor-bootstrap-chain-retention" and
+        (.metadata.creationTimestamp | fromdateiso8601) > $since and
+        any(.status.conditions[]?; .type == "Failed" and .status == "True"))
+    ' "$work_dir/workloads.json" >/dev/null; then
+    retention_ready=false
+    block_backup "a bootstrap retention Job failed after the last successful status update"
+  fi
+fi
 
 previous="$(kubectl get configmap "$status_name" -n "$namespace" -o json 2>/dev/null || printf '{}')"
 previous_checked_at="$(printf '%s' "$previous" | jq -r '.data.checkedAt // "0"')"
