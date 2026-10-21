@@ -50,7 +50,7 @@ def create(obj):
 
 
 def resource_states():
-    return {(r['name'], r['node_name'], v['volume_number']): v['state']['disk_state'] for r in get(l + ['resource', 'list'])[0] for v in r.get('volumes', [])}
+    return {(r['name'], r['node_name'], v['volume_number']): v.get('state', {}).get('disk_state', 'Pending') for r in get(l + ['resource', 'list'])[0] for v in r.get('volumes', [])}
 
 
 if a.resume:
@@ -100,8 +100,13 @@ info = get(l + ['backup', 'info', remote, '--id', backup['id']])
 assert info['count'] == 1, 'This drill requires the independent bootstrap full backup'
 target_exists = any(r['name'] == target for r in get(l + ['resource-definition', 'list'])[0])
 existing_namespace = next((v for v in kube('get', 'namespaces', '-o', 'json')['items'] if v['metadata']['name'] == ns), None)
-assert target_exists == a.resume and (existing_namespace is not None) == a.resume, 'Use --resume only for the existing reviewed drill'
+assert target_exists == a.resume, 'Use --resume only for the existing reviewed drill'
 if a.resume:
+    expected_restore = l + ['backup', 'restore', remote, 'kubernetes-node-204' if a.workload == 'grafana' else 'kubernetes-node-206', target, '--id', backup['id']]
+    assert any(r['argv'] == expected_restore and r['rc'] == 0 for r in prior_records), 'Original journal must prove this exact scratch restore'
+else:
+    assert existing_namespace is None, 'Another isolated drill is present'
+if a.resume and existing_namespace is not None:
     assert existing_namespace['metadata']['labels'].get('purpose') == 'isolated-workload-restore'
     scratch_pvc = kube('-n', ns, 'get', 'pvc', 'restored', '-o', 'json')
     scratch_pv = kube('get', 'pv', scratch_pvc['spec']['volumeName'], '-o', 'json')
@@ -124,7 +129,8 @@ else:
 # local cache; such a clone alone would not verify an independent S3 download.
 if not a.resume:
     get(l + ['backup', 'restore', remote, node, target, '--id', backup['id']])
-    wait('Independent S3 download complete', lambda: any(k[0] == target and v == 'UpToDate' for k, v in resource_states().items()))
+wait('Independent S3 download complete', lambda: any(k[0] == target and v == 'UpToDate' for k, v in resource_states().items()))
+if existing_namespace is None:
     create({'apiVersion': 'v1', 'kind': 'Namespace', 'metadata': {'name': ns, 'labels': {'purpose': 'isolated-workload-restore'}}})
     create({'apiVersion': 'networking.k8s.io/v1', 'kind': 'NetworkPolicy', 'metadata': {'name': 'deny-all-network', 'namespace': ns}, 'spec': {'podSelector': {}, 'policyTypes': ['Ingress', 'Egress']}})
     create({'apiVersion': 'v1', 'kind': 'PersistentVolume', 'metadata': {'name': target}, 'spec': {
