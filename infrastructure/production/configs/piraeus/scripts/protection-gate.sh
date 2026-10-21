@@ -175,6 +175,7 @@ fi
 forecast_free_bytes="$(printf '%s' "$generation_status" | jq -r '.data.forecastFreeBytes // "0"')"
 capacity_forecast_ready=false
 live_free_bytes=0
+bucket_bytes=0
 live_forecast_free_bytes=0
 retained_bytes="$(printf '%s' "$generation_status" | jq -r '.data.retainedForecastBytes // "invalid"')"
 case "$forecast_free_bytes:$retained_bytes" in *[!0-9:]*|:*|*:)
@@ -280,6 +281,7 @@ kubectl create configmap "$status_name" -n "$namespace" \
   --from-literal=s3CanaryReady="$s3_canary_ready" \
   --from-literal=capacityForecastReady="$capacity_forecast_ready" \
   --from-literal=rustfsFilesystemFreeBytes="$live_free_bytes" \
+  --from-literal=rustfsBucketBytes="$bucket_bytes" \
   --from-literal=forecastFreeBytes="$live_forecast_free_bytes" \
   --from-literal=clusterShippingConcurrencyReady="$shipping_concurrency_ready" \
   --from-literal=retentionReady="$retention_ready" \
