@@ -1,0 +1,74 @@
+{
+  "completed_at": "2026-10-21T08:44:37.359679+00:00",
+  "backupGeneration": "rustfs-linstor-backups-v2",
+  "serial_worker_restart_order": [
+    "204",
+    "205",
+    "206"
+  ],
+  "workers": [
+    {
+      "node": "kubernetes-node-204",
+      "completed_at": "2026-10-21T08:23:27.964070+00:00",
+      "verified": true,
+      "os_boot_id_changed": true,
+      "pdb_respected": true,
+      "pv_identities_preserved": true,
+      "lv_inventory_preserved": true,
+      "metadata_areas_persisted": true,
+      "metadata_free_bytes": 1073248256,
+      "pool_size_bytes": 794568949760,
+      "pool_used_percent": 63.92,
+      "vg_reserve_bytes": 83743473664,
+      "all_replicas_healthy": true,
+      "cnpg_instances_ready": true,
+      "host_thin_pool_monitoring_verified": true
+    },
+    {
+      "node": "kubernetes-node-205",
+      "completed_at": "2026-10-21T08:33:15.618101+00:00",
+      "verified": true,
+      "os_boot_id_changed": true,
+      "pdb_respected": true,
+      "pv_identities_preserved": true,
+      "lv_inventory_preserved": true,
+      "metadata_areas_persisted": true,
+      "metadata_free_bytes": 1073247744,
+      "pool_size_bytes": 794568949760,
+      "pool_used_percent": 67.43,
+      "vg_reserve_bytes": 83743473664,
+      "all_replicas_healthy": true,
+      "cnpg_instances_ready": true,
+      "host_thin_pool_monitoring_verified": true
+    },
+    {
+      "node": "kubernetes-node-206",
+      "completed_at": "2026-10-21T08:43:17.711349+00:00",
+      "verified": true,
+      "os_boot_id_changed": true,
+      "pdb_respected": true,
+      "pv_identities_preserved": true,
+      "lv_inventory_preserved": true,
+      "metadata_areas_persisted": true,
+      "metadata_free_bytes": 1073277952,
+      "pool_size_bytes": 874025844736,
+      "pool_used_percent": 66.86,
+      "vg_reserve_bytes": 4286578688,
+      "all_replicas_healthy": true,
+      "cnpg_instances_ready": true,
+      "host_thin_pool_monitoring_verified": true
+    }
+  ],
+  "replica_states": {
+    "UpToDate": 529,
+    "Diskless": 74
+  },
+  "restorable_remote_records": 52,
+  "cnpg_ready_instances": 3,
+  "all_workers_ready_and_uncordoned": true,
+  "active_linstor_backup_schedules": 0,
+  "hourly_local_snapshots_suspended": true,
+  "required_healthy_window_seconds": 86400,
+  "healthy_window_complete": false,
+  "recurrence_requires_continuous_healthy_gates": true
+}

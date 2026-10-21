@@ -77,3 +77,19 @@ Independent S3 downloads passed for critical GitLab PostgreSQL and standard Graf
 ## CNPG ownership deletion — 21 October
 
 The explicitly disposable `shared-postgres-v2-deletion-canary` completed a coordinated full data/WAL recovery set. Deleting that exact Backup UID reclaimed both Kubernetes snapshots and contents, both LINSTOR local snapshots, and its two remote records without orphan objects. All 52 pre-existing remote records and every pre-existing Backup object were preserved. CNPG deletion acceptance now passes.
+
+## Serial OS restart acceptance — 21 October
+
+Workers restarted through Ansible on the jumphost in order 204 → 205 → 206, with normal PDB-respecting drains and controlled CNPG switchovers before draining a primary. All three are Ready and uncordoned. PV UUIDs, LV names/UUIDs/sizes, both large metadata areas, the ignored original metadata area, the unmanaged metadata-copy setting, and host thin-pool monitoring persisted. All 529 diskful replicas are UpToDate; all 74 diskless resources are healthy. CNPG has three ready instances.
+
+Worker 204's kernel disk letters swapped at boot. The first verifier correctly stopped continuation but used a fixed device-letter assumption. Read-only inspection proved the intended PV UUIDs and metadata state were intact. The verifier now identifies disks by serial, and explicit post-reboot resume validates the original successful reboot journal without rebooting again. No storage repair or stale metadata restoration was needed.
+
+| Worker | Pool GiB | Pool free | VG reserve GiB | Free VG metadata MiB |
+|---|---:|---:|---:|---:|
+| 204 | 740 | 36.08% | 78.0 | 1,023.5 |
+| 205 | 740 | 32.57% | 78.0 | 1,023.5 |
+| 206 | 814 | 33.14% | 4.0 | 1,023.6 |
+
+Worker 206 still cannot fund another 5% pool extension from its VG reserve; the reserve check continues to report that condition. Every pool is above the 20% free acceptance floor. No additional hardware was allocated.
+
+All 52 baseline remote records remain restorable, no LINSTOR backup schedule is active, and the separate hourly local-snapshot producer remains suspended. The worker-restart acceptance flag is now approved. After reconciliation, the five-minute gate can begin its full 86,400-second healthy window. Recurrence must remain blocked throughout that window and reset on any required gate failure or observation gap. The deployed policy automatically enables the bounded v2 schedules only after that continuous window passes. The elapsed window has not been certified by this execution report.
