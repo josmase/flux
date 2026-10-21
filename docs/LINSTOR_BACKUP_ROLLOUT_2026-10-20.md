@@ -41,3 +41,13 @@ The [canary result](LINSTOR_BACKUP_V2_CANARY_RESULT_2026-10-20.json) passed at 2
 The restored random payload SHA-256 matched. Both temporary contents and remote entries were removed and exact worker LV inventories returned to baseline. The production StorageClass retains PVs; the two exact Released disposable PVs were returned to ordinary CSI deletion with UID guards. No finalizers were changed.
 
 Metadata calibration and disposable S3 verification are now recorded as successful. Production coverage, representative and CNPG restores, retained-capacity forecast, and the 24-hour window remain unverified. The bounded CNPG bootstrap is being enabled first. Non-CNPG bootstrap and all recurring producers remain gated.
+
+## CNPG recovery validation — 2026-10-21
+
+The coordinated data/WAL backup completed and both independent S3 snapshots were ready. LINSTOR measured 1,334,197 KiB for WAL and 26,006 KiB for data (about 1.30 GiB combined). At the same size, 56 six-hour recovery sets would consume about 72.6 GiB before growth allowances and metadata. RustFS filesystem measurement at bootstrap was 5,340,603,817,984 free bytes (about 4.86 TiB). These measurements do not yet approve the full retained-generation forecast.
+
+The isolated restore became healthy. Its verifier stopped on a nullable EndpointSlice endpoint list, preserving the drill and its original journal. After the committed resume fix, routing checks, matching database enumeration and read-only catalog queries passed for all five databases. The isolated Cluster, NetworkPolicy and two drill PVs were reclaimed through ordinary deletion with UID guards. All original production replica identities and states matched the pre-restore baseline. See [restore result](LINSTOR_CNPG_V2_RESTORE_RESULT_2026-10-21.json).
+
+All 103 configured legacy schedule bindings remained disabled; 98 other resources had no schedule and none had a next execution. The non-CNPG bootstrap is now being enabled for the 50 explicit reviewed resources. It requires current PVC/PV/CSI mapping checks, stops on storage or remote-access errors, and waits for a new restorable full backup before advancing. Recurring coverage remains unapproved until representative non-CNPG restore and measured forecast checks pass.
+
+The protection gate now also compares the live CSI inventory and workload references (including StatefulSet templates and scaled-down workloads) against the reviewed manifest, so a new canonical volume or changed mapping resets readiness instead of retaining stale coverage approval.

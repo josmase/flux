@@ -78,6 +78,21 @@ else
   active_count=0
   block_snapshot "canonical-volume manifest has not been reviewed"
 fi
+if [ "$manifest_reviewed" = true ]; then
+  printf '%s' "$generation_manifest" > "$work_dir/manifest.json"
+  if kubectl get pvc -A -o json > "$work_dir/pvcs.json" &&
+     kubectl get pv -o json > "$work_dir/pvs.json" &&
+     kubectl get pods,deployments,statefulsets,daemonsets,jobs,cronjobs -A -o json > "$work_dir/workloads.json" &&
+     jq -n --slurpfile pvcs "$work_dir/pvcs.json" --slurpfile pvs "$work_dir/pvs.json" \
+       --slurpfile workloads "$work_dir/workloads.json" --slurpfile manifest "$work_dir/manifest.json" \
+       -f /scripts/canonical-coverage.jq > "$work_dir/coverage.json" &&
+     jq -e '.valid == true' "$work_dir/coverage.json" >/dev/null; then
+    :
+  else
+    block_snapshot "live canonical volume mappings or workload coverage differ from the reviewed manifest"
+  fi
+fi
+
 budget="$(kubectl get configmap linstor-vg-metadata-budget -n "$namespace" -o json 2>/dev/null || printf '{"data":{"calibrated":"false","bytesPerSnapshotLv":"1024","snapshotsPerPvcPerRun":"2","safetyMultiplier":"2","floorBytes":"65536"}}')"
 if [ "$(printf '%s' "$budget" | jq -r '.data.calibrated // "false"')" != true ]; then
   block_snapshot "VG metadata cost has not been validated by the disposable snapshot canary"

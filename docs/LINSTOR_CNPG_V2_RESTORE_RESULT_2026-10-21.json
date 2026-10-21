@@ -1,0 +1,23 @@
+{
+  "completed_at": "2026-10-21T06:26:05.171418+00:00",
+  "backup": "shared-postgres-v2-bootstrap",
+  "database_enumeration_matched": true,
+  "databases": [
+    "arr_dashboard",
+    "growlog",
+    "new_new_boplats",
+    "postgres",
+    "template1"
+  ],
+  "read_only_queries": {
+    "arr_dashboard": "arr_dashboard|on|63",
+    "growlog": "growlog|on|38",
+    "new_new_boplats": "new_new_boplats|on|3",
+    "postgres": "postgres|on|0",
+    "template1": "template1|on|0"
+  },
+  "production_routing_absent": true,
+  "drill_pv_cleanup_verified": true,
+  "production_replica_inventory_unchanged": true,
+  "recurring_producers_enabled": false
+}

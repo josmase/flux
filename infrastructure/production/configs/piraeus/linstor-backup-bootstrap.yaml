@@ -1,19 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-v2-bootstrap-v3
+  name: linstor-backup-v2-bootstrap-v4
   namespace: piraeus-datastore
   labels:
-    app.kubernetes.io/name: linstor-backup-v2-bootstrap-v3
+    app.kubernetes.io/name: linstor-backup-v2-bootstrap-v4
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
-  suspend: true
+  suspend: false
   backoffLimit: 0
   activeDeadlineSeconds: 604800
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: linstor-backup-v2-bootstrap-v3
+        app.kubernetes.io/name: linstor-backup-v2-bootstrap-v4
     spec:
       serviceAccountName: linstor-protection-policy
       restartPolicy: Never
@@ -45,11 +45,18 @@ spec:
                 echo "Storage, v2 remote access, and disposable S3 canary must be ready before bootstrap." >&2
                 exit 1
               }
+              kubectl get pvc -A -o json > /work/pvcs.json
+              kubectl get pv -o json > /work/pvs.json
               while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
                 [ -n "$resource" ] || continue
                 [ "$retain" = "yes" ] || { echo "unapproved row $namespace/$name" >&2; exit 1; }
                 case "$namespace/$name" in cnpg-system/*|immich/*model*|growlog/*cache*) echo "excluded resource present in manifest: $namespace/$name" >&2; exit 1 ;; esac
                 case "$tier" in critical|standard) ;; *) echo "invalid tier for $namespace/$name" >&2; exit 1 ;; esac
+                jq -ne --arg namespace "$namespace" --arg name "$name" --arg handle "$resource" \
+                  --slurpfile pvcs /work/pvcs.json --slurpfile pvs /work/pvs.json '
+                  any($pvcs[0].items[]; .metadata.namespace == $namespace and .metadata.name == $name and .status.phase == "Bound" and
+                    (.spec.volumeName as $pv | any($pvs[0].items[]; .metadata.name == $pv and .spec.csi.driver == "linstor.csi.linbit.com" and .spec.csi.volumeHandle == $handle)))
+                ' >/dev/null || { echo "Live PVC/PV/CSI mapping differs for $namespace/$name; stopping." >&2; exit 1; }
               done < /work/resources.tsv
       containers:
         - name: ship-full-chains
@@ -65,9 +72,9 @@ spec:
               controller="linstor-controller.piraeus-datastore.svc:3370"
               remote="rustfs-linstor-backups-v2"
               check_health() {
-                linstor --controllers "$controller" -m node list | jq -e '.[0] | length >= 3 and all(.[]; .connection_status == "ONLINE")' >/dev/null
-                linstor --controllers "$controller" -m resource list | jq -e '.[0] | length > 0 and all(.[]; all(.volumes[]; .state.disk_state == "UpToDate" or .state.disk_state == "Diskless"))' >/dev/null
-                linstor --controllers "$controller" -m storage-pool list | jq -e '.[0] | [.[] | select(.storage_pool_name == "linstor-thin" and .provider_kind == "LVM_THIN")] | length == 3 and all(.[]; .total_capacity > 0 and .free_capacity * 100 >= .total_capacity * 20)' >/dev/null
+                linstor --controllers "$controller" -m node list | jq -e '.[0] | length >= 3 and all(.[]; .connection_status == "ONLINE")' >/dev/null || return 1
+                linstor --controllers "$controller" -m resource list | jq -e '.[0] | length > 0 and all(.[]; all(.volumes[]; .state.disk_state == "UpToDate" or .state.disk_state == "Diskless"))' >/dev/null || return 1
+                linstor --controllers "$controller" -m storage-pool list | jq -e '.[0] | [.[] | select(.storage_pool_name == "linstor-thin" and .provider_kind == "LVM_THIN")] | length == 3 and all(.[]; .total_capacity > 0 and .free_capacity * 100 >= .total_capacity * 20)' >/dev/null || return 1
               }
               while IFS="$(printf '\t')" read -r namespace name resource tier retain; do
                 [ -n "$resource" ] || continue
@@ -77,15 +84,16 @@ spec:
                 linstor --controllers "$controller" backup create --full "$remote" "$resource"
                 complete=false
                 attempt=0
-                while [ "$attempt" -lt 360 ]; do
+                while [ "$attempt" -lt 2160 ]; do
                   check_health || { echo "Storage health failed during shipping; stopping bootstrap." >&2; exit 1; }
                   backups="$(linstor --controllers "$controller" -m backup list "$remote")"
+                  printf '%s' "$backups" | jq -e 'type == "object" and (.other | type == "object") and ((.linstor // {}) | type == "object")' >/dev/null || { echo "Remote access failed; stopping bootstrap." >&2; exit 1; }
                   if printf '%s' "$backups" | jq -e --arg prefix "$${resource}_back_" --argjson before "$before" '(.linstor // {}) | to_entries | any(.[]; . as $entry | (.key | startswith($prefix)) and (.value.restorable == true) and ($before | has($entry.key) | not))' >/dev/null; then
                     complete=true
                     break
                   fi
                   attempt=$((attempt + 1))
-                  sleep 60
+                  sleep 10
                 done
                 [ "$complete" = true ] || { echo "v2 full backup for $namespace/$name did not become restorable within six hours." >&2; exit 1; }
               done < /work/resources.tsv

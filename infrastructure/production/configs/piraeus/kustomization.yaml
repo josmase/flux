@@ -38,5 +38,6 @@ configMapGenerator:
     namespace: piraeus-datastore
     files:
       - protection-gate.sh=scripts/protection-gate.sh
+      - canonical-coverage.jq=scripts/canonical-coverage.jq
 generatorOptions:
   disableNameSuffixHash: true
