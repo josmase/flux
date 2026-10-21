@@ -30,6 +30,32 @@ spec:
               configMap:
                 name: linstor-protection-gate-script
                 defaultMode: 0555
+          initContainers:
+            - name: rustfs-capacity
+              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+              command: [python3, /scripts/rustfs-capacity-read.py]
+              env:
+                - name: RUSTFS_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: linstor-rustfs-v2-credentials
+                      key: access-key
+                - name: RUSTFS_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: linstor-rustfs-v2-credentials
+                      key: secret-key
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+              securityContext:
+                runAsUser: 1001
+                runAsNonRoot: true
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
           containers:
             - name: gate
               image: bitnamilegacy/kubectl:1.30.2-debian-12-r0@sha256:e704ebf9f6974d506d2dbff33dea28b6e996887e60c4ab298c78e10a3d81e249

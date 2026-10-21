@@ -161,11 +161,31 @@ if [ "$s3_canary_ready" != true ]; then
 fi
 forecast_free_bytes="$(printf '%s' "$generation_status" | jq -r '.data.forecastFreeBytes // "0"')"
 capacity_forecast_ready=false
-case "$forecast_free_bytes" in ''|*[!0-9]*) forecast_free_bytes=0 ;; esac
-if [ "$(printf '%s' "$generation_status" | jq -r '.data.capacityForecastReady // "false"')" = true ] && [ "$forecast_free_bytes" -ge 1099511627776 ]; then
-  capacity_forecast_ready=true
+live_free_bytes=0
+live_forecast_free_bytes=0
+additional_bytes="$(printf '%s' "$generation_status" | jq -r '.data.forecastAdditionalBytes // "invalid"')"
+case "$forecast_free_bytes:$additional_bytes" in *[!0-9:]*|:*|*:)
+  additional_bytes=0
+  forecast_free_bytes=0
+  ;;
+esac
+if [ -f /tmp/rustfs-capacity.json ] && jq -e --argjson now "$now" '
+    .generation == "rustfs-linstor-backups-v2" and .bucket == "linstor-backups-v2" and
+    .mountpoint == "/mnt/storage" and .fstype == "fuse.mergerfs" and
+    (.freeBytes | type == "number") and .freeBytes >= 0 and
+    (.checkedAt | type == "number") and .checkedAt <= $now + 60 and $now - .checkedAt < 600
+  ' /tmp/rustfs-capacity.json >/dev/null; then
+  live_free_bytes="$(jq -r '.freeBytes | floor' /tmp/rustfs-capacity.json)"
+  live_forecast_free_bytes=$((live_free_bytes - additional_bytes))
+  [ "$live_forecast_free_bytes" -ge 0 ] || live_forecast_free_bytes=0
+  if [ "$(printf '%s' "$generation_status" | jq -r '.data.capacityForecastReady // "false"')" = true ] &&
+     [ "$forecast_free_bytes" -ge 1099511627776 ] && [ "$live_forecast_free_bytes" -ge 1099511627776 ]; then
+    capacity_forecast_ready=true
+  else
+    block_backup "measured retention forecast does not leave at least 1 TiB free on RustFS"
+  fi
 else
-  block_backup "measured retention forecast does not leave at least 1 TiB free on RustFS"
+  block_backup "fresh RustFS filesystem capacity report is unavailable"
 fi
 shipping_concurrency_ready="$(printf '%s' "$generation_status" | jq -r '.data.clusterShippingConcurrencyVerified // "false"')"
 if [ "$shipping_concurrency_ready" != true ]; then
@@ -219,6 +239,8 @@ kubectl create configmap "$status_name" -n "$namespace" \
   --from-literal=coverageReady="$coverage_ready" \
   --from-literal=s3CanaryReady="$s3_canary_ready" \
   --from-literal=capacityForecastReady="$capacity_forecast_ready" \
+  --from-literal=rustfsFilesystemFreeBytes="$live_free_bytes" \
+  --from-literal=forecastFreeBytes="$live_forecast_free_bytes" \
   --from-literal=clusterShippingConcurrencyReady="$shipping_concurrency_ready" \
   --from-literal=backupGeneration="$backup_generation" \
   --from-literal=blockingReasons="$${snapshot_reasons}$${snapshot_reasons:+; }$${backup_reasons}" \

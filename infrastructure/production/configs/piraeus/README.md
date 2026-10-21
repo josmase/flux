@@ -96,3 +96,7 @@ Delete only individually verified obsolete snapshots through CSI or LINSTOR's
 supported snapshot operation, checking Kubernetes content, backend snapshot,
 LV count, and replica health after each small batch. Do not delete LINSTOR CRs
 or clear finalizers. Stop on any mapping mismatch or storage degradation.
+
+## Fresh RustFS capacity reports
+
+The Ansible-managed NAS timer writes `__protection/capacity.json` to the v2 bucket every five minutes using the bucket-scoped identity. The gate reads that one monitoring object with the same scoped identity and requires the expected mergerfs mount, generation and a timestamp less than ten minutes old. After bootstrap measurements, record `forecastAdditionalBytes` as the additional space required beyond objects already present, and `forecastFreeBytes` as the reviewed initial projection. The gate subtracts that additional forecast from fresh available bytes and requires at least 1 TiB remaining. Missing, stale or insufficient reports prevent recurring backups and reset the healthy window. The capacity object is outside LINSTOR snapshot retention.

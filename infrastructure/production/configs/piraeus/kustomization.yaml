@@ -39,5 +39,6 @@ configMapGenerator:
     files:
       - protection-gate.sh=scripts/protection-gate.sh
       - canonical-coverage.jq=scripts/canonical-coverage.jq
+      - rustfs-capacity-read.py=scripts/rustfs-capacity-read.py
 generatorOptions:
   disableNameSuffixHash: true
