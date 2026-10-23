@@ -9,6 +9,11 @@ spec:
     spec:
       template:
         spec:
+          tolerations:
+            - key: workload
+              operator: Equal
+              value: low-risk-only
+              effect: NoSchedule
           containers:
             - name: new-new-boplats-scraper
               image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/scraper:2026-08-13-b0ac39c3

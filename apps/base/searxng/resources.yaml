@@ -17,6 +17,11 @@ spec:
       labels:
         app.kubernetes.io/name: searxng
     spec:
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: low-risk-only
+          effect: NoSchedule
       containers:
         - name: searxng
           image: searxng/searxng@sha256:ddd642cae6eac75412938fd846ddbf440a2df029cfeae8a562b8b205f4e35e25

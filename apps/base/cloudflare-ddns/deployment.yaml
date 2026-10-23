@@ -14,6 +14,11 @@ spec:
       app: cloudflare-ddns
   template:
     spec:
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: low-risk-only
+          effect: NoSchedule
       containers:
         - name: cloudflare-ddns
           image: artifactory.local.hejsan.xyz/docker/oznu/cloudflare-ddns@sha256:19bd73d8aea9641dc329ec18ae693b2b9c33ff7cdc007f368266ce584446f995

@@ -10,12 +10,27 @@ spec:
   progressDeadlineSeconds: 600
   revisionHistoryLimit: 2
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: new-new-boplats-web
   template:
     spec:
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: low-risk-only
+          effect: NoSchedule
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: new-new-boplats-web
       containers:
         - name: new-new-boplats-web
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/boplats-map/web:recovery-20261011-b0ac39c3@sha256:aedd62a856afb2541cf741db650672db2b72eacfb33ee10192f106945c6a6b76
