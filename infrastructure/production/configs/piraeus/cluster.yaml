@@ -6,16 +6,17 @@ spec:
   # Persist the controller master passphrase so encrypted volume keys and S3
   # remote credentials remain usable after controller restarts and recovery.
   linstorPassphraseSecret: linstor-passphrase
-  # Keep storage data-plane components off the control-plane nodes. A LINSTOR
-  # Satellite is present on every worker so a volume can attach there even when
-  # that worker does not hold a diskful replica.
+  # Keep storage data-plane components off control-plane nodes and workers
+  # explicitly reserved for low-risk workloads.
   nodeAffinity:
     nodeSelectorTerms:
       - matchExpressions:
           - key: node-role.kubernetes.io/control-plane
             operator: DoesNotExist
-  # The GPU worker is intentionally diskless, but it still needs the CSI,
-  # HA-controller, and Satellite components to attach remote DRBD volumes.
+          - key: storage.josmase.io/linstor-disabled
+            operator: DoesNotExist
+  # The GPU worker is intentionally diskless, but it still needs storage
+  # components to attach remote DRBD volumes. The low-risk worker does not.
   tolerations:
     - key: workload
       operator: Equal

@@ -8,6 +8,8 @@ spec:
       - matchExpressions:
           - key: node-role.kubernetes.io/control-plane
             operator: DoesNotExist
+          - key: storage.josmase.io/linstor-disabled
+            operator: DoesNotExist
   # Host networking keeps DRBD replication paths independent of CNI pod IPs
   # and avoids a replication interruption when a Satellite pod is recreated.
   podTemplate:

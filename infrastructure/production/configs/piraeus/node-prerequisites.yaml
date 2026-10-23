@@ -26,6 +26,8 @@ spec:
               - matchExpressions:
                   - key: node-role.kubernetes.io/control-plane
                     operator: DoesNotExist
+                  - key: storage.josmase.io/linstor-disabled
+                    operator: DoesNotExist
       tolerations:
         - key: workload
           operator: Equal
