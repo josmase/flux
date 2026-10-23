@@ -1,0 +1,3978 @@
+{
+  "manifest_version": 1,
+  "generated_date": "2026-10-20",
+  "purpose": "Review remaining LINSTOR snapshot cleanup candidates after the completed reset.",
+  "evidence": {
+    "source": "docs/LINSTOR_SNAPSHOT_RESET_EXECUTION_2026-10-19.md, Reset completion and verification; Follow-up cleanup (2026-10-20)",
+    "inventory_source": "Protected off-repository inventory: /home/jonas/.local/state/linstor-recovery/2026-10-19-snapshot-reset/reset-manifest.json",
+    "fresh_live_query_performed_for_this_manifest": true,
+    "recorded_result": "All 2,240 remove targets had verified cleanup ledger entries; 104 targets were already absent and checked; 2,136 mapped backend targets were deleted. Post-cleanup state recorded 179 held VolumeSnapshotContents, 176 held parent VolumeSnapshots, and two backend-only holds.",
+    "refreshed_at": "2026-10-20 (local cluster query; timestamp stored in private inventory directory)",
+    "refresh_inventory_dir": "/home/jonas/.local/state/linstor-recovery/2026-10-19-snapshot-reset/refresh-20261020",
+    "refreshed_result": "176 VolumeSnapshots, 179 VolumeSnapshotContents; all three storage satellites connected; LINSTOR snapshot and backup inventories returned; 3 orphan VolumeSnapshotContents remain review-only."
+  },
+  "delete_candidates": [],
+  "already_removed": {
+    "kubernetes_content_targets": 2240,
+    "backend_targets_deleted_or_verified_absent": 2240,
+    "backend_targets_deleted": 2136,
+    "backend_targets_verified_absent_at_start": 104,
+    "verification": "All targets had batch_verified entries per execution report."
+  },
+  "holds": {
+    "volume_snapshot_contents": [
+      {
+        "content": "snapcontent-02846125-4072-4fbb-b128-c9781fd1533e",
+        "content_uid": "bcb4954d-a026-4049-bb28-633158c32fdc",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261012020000",
+        "parent_uid": "02846125-4072-4fbb-b128-c9781fd1533e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-02846125-4072-4fbb-b128-c9781fd1533e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-033d35e3-fac9-4ab3-b6a6-fabe38cfc9f7",
+        "content_uid": "d4ad33d1-3dd7-4680-8114-994a79b75dbc",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261006020000-wal",
+        "parent_uid": "033d35e3-fac9-4ab3-b6a6-fabe38cfc9f7",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-033d35e3-fac9-4ab3-b6a6-fabe38cfc9f7",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-03b10513-be9a-4389-8bbc-7203c1f68cb8",
+        "content_uid": "761ecfc8-517b-4e87-9e9c-c2cd0d5a8877",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261002020000",
+        "parent_uid": "03b10513-be9a-4389-8bbc-7203c1f68cb8",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-03b10513-be9a-4389-8bbc-7203c1f68cb8",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-03bf2943-3d8e-4d0f-91f5-93e11e99c1ec",
+        "content_uid": "4095d4b8-13e4-4a88-97b5-41510fec2ecb",
+        "parent_namespace": "default",
+        "parent_name": "zero-cache-data-to-canonical",
+        "parent_uid": "03bf2943-3d8e-4d0f-91f5-93e11e99c1ec",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e",
+        "snapshot": "snapshot-03bf2943-3d8e-4d0f-91f5-93e11e99c1ec",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-05726fd0-70df-45fc-93ac-8ccee68880a0",
+        "content_uid": "ba5a6824-20ea-498a-88d1-b176f170f422",
+        "parent_namespace": "monitoring",
+        "parent_name": "alertmanager-data-to-canonical",
+        "parent_uid": "05726fd0-70df-45fc-93ac-8ccee68880a0",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-5a05cbe4-9a5b-4841-8a33-3fe28c7885f6",
+        "snapshot": "snapshot-05726fd0-70df-45fc-93ac-8ccee68880a0",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-072ed79f-ad0c-4ca9-9dd4-3442f63595d9",
+        "content_uid": "7a6b1b01-7dac-4e9e-9982-4571a28d4644",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-5-wal-to-triple",
+        "parent_uid": "072ed79f-ad0c-4ca9-9dd4-3442f63595d9",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-072ed79f-ad0c-4ca9-9dd4-3442f63595d9",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-0812af49-4a17-46a7-b4df-7d17f81ab011",
+        "content_uid": "f71bafc9-6aab-49ae-a4c4-af4eaeaaf4ae",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261003020000",
+        "parent_uid": "0812af49-4a17-46a7-b4df-7d17f81ab011",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-0812af49-4a17-46a7-b4df-7d17f81ab011",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-09fb299e-6cb0-4cee-be51-69acb10b565d",
+        "content_uid": "463bed6f-d81a-4497-88a5-b0d5349cbbd2",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-11-wal-forensic-20261015",
+        "parent_uid": "09fb299e-6cb0-4cee-be51-69acb10b565d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f777df1a-90f6-4ff6-9c45-58861416ceb5",
+        "snapshot": "snapshot-09fb299e-6cb0-4cee-be51-69acb10b565d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-0a1649ab-da5e-4eb2-b650-04c546cf7698",
+        "content_uid": "2c0bf1e8-3c65-43c7-bbfe-5d26f305fc42",
+        "parent_namespace": "media",
+        "parent_name": "radarr-12-data-to-canonical",
+        "parent_uid": "0a1649ab-da5e-4eb2-b650-04c546cf7698",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-06936146-364d-4293-8a3d-b21e4bdd88dd",
+        "snapshot": "snapshot-0a1649ab-da5e-4eb2-b650-04c546cf7698",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-0f08a047-a38e-4946-934a-eefa62391c2d",
+        "content_uid": "78947a7e-88ae-4113-933b-1264c6fa46cc",
+        "parent_namespace": "media",
+        "parent_name": "radarr-8-data-to-canonical",
+        "parent_uid": "0f08a047-a38e-4946-934a-eefa62391c2d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b591bac4-5fd3-4586-b5be-9c64dca84c61",
+        "snapshot": "snapshot-0f08a047-a38e-4946-934a-eefa62391c2d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-109256f9-55c1-49b5-8a12-e3068df4180a",
+        "content_uid": "733226c5-4cff-4147-bfe6-cfdfd39d6cca",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260929020000-wal",
+        "parent_uid": "109256f9-55c1-49b5-8a12-e3068df4180a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-109256f9-55c1-49b5-8a12-e3068df4180a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-1179d732-1eff-4f15-a4b4-eb9fc7650023",
+        "content_uid": "475396cc-bf9c-4664-a730-47aa9f884fef",
+        "parent_namespace": "default",
+        "parent_name": "zero-cache-data-to-canonical-v2",
+        "parent_uid": "1179d732-1eff-4f15-a4b4-eb9fc7650023",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e",
+        "snapshot": "snapshot-1179d732-1eff-4f15-a4b4-eb9fc7650023",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-13f1f156-f911-4f5f-bfd8-e24e56689051",
+        "content_uid": "5beec68e-7fef-47a7-837e-0e7737e11a94",
+        "parent_namespace": "media",
+        "parent_name": "radarr-3-data-to-canonical",
+        "parent_uid": "13f1f156-f911-4f5f-bfd8-e24e56689051",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-44a2a316-68ea-4dae-92ad-b6ba1fa58279",
+        "snapshot": "snapshot-13f1f156-f911-4f5f-bfd8-e24e56689051",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-153c45aa-b753-4f73-aa15-503b1f0a6d82",
+        "content_uid": "7c28a878-31ae-4d18-b5eb-6b6fbda817df",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260930020000",
+        "parent_uid": "153c45aa-b753-4f73-aa15-503b1f0a6d82",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-153c45aa-b753-4f73-aa15-503b1f0a6d82",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-16053e67-9749-4d9b-b656-2bed5a8dea8b",
+        "content_uid": "0665436a-531f-4869-92a0-b89dbb91494f",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-recovery-validation-20261014-wal",
+        "parent_uid": "16053e67-9749-4d9b-b656-2bed5a8dea8b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f777df1a-90f6-4ff6-9c45-58861416ceb5",
+        "snapshot": "snapshot-16053e67-9749-4d9b-b656-2bed5a8dea8b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-16b2071a-870d-44e8-ae08-a7e46d1f915c",
+        "content_uid": "a7439fdf-a7c6-48cc-919d-63de2aea2fc3",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-linstor-standby-20260917",
+        "parent_uid": "16b2071a-870d-44e8-ae08-a7e46d1f915c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-16b2071a-870d-44e8-ae08-a7e46d1f915c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-18d28778-d0a2-4432-97c1-61323b5c2713",
+        "content_uid": "cc9c4ec3-78dc-4dd8-b939-62c77290b7e0",
+        "parent_namespace": "media",
+        "parent_name": "radarr-6-data-to-canonical",
+        "parent_uid": "18d28778-d0a2-4432-97c1-61323b5c2713",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-d3420bb1-707f-4a62-b6e9-ac51e976526a",
+        "snapshot": "snapshot-18d28778-d0a2-4432-97c1-61323b5c2713",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-18f8dc63-23d0-428a-a486-2c4fdc5cd77e",
+        "content_uid": "b846420a-ad2c-46cc-b37a-73afcccb5997",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261015020000",
+        "parent_uid": "18f8dc63-23d0-428a-a486-2c4fdc5cd77e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf69ce4a-7fc5-48f6-9c94-24c183d228ce",
+        "snapshot": "snapshot-18f8dc63-23d0-428a-a486-2c4fdc5cd77e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-19c26515-fbdc-4ec6-87e0-96857c5e00cb",
+        "content_uid": "73799ecc-d47e-4c0e-b77d-80dff9a0ca83",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-postgresql-to-canonical",
+        "parent_uid": "19c26515-fbdc-4ec6-87e0-96857c5e00cb",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-05847ca3-af79-40c8-bbe8-6ea6a44cf445",
+        "snapshot": "snapshot-19c26515-fbdc-4ec6-87e0-96857c5e00cb",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-1b3a23db-d342-466f-9553-154f912116ad",
+        "content_uid": "d7932945-783d-45ff-920b-60a325114dec",
+        "parent_namespace": "media",
+        "parent_name": "radarr-3-config-final-snapshot",
+        "parent_uid": "1b3a23db-d342-466f-9553-154f912116ad",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bfb39334-1c44-4819-a33a-0219ca11c68a",
+        "snapshot": "snapshot-1b3a23db-d342-466f-9553-154f912116ad",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-1cb30531-fbce-401f-829a-fe6d548c3dc7",
+        "content_uid": "c8fcb07a-02ee-4543-9367-26e8325cc6a1",
+        "parent_namespace": "media",
+        "parent_name": "radarr-10-config-final-snapshot",
+        "parent_uid": "1cb30531-fbce-401f-829a-fe6d548c3dc7",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf",
+        "snapshot": "snapshot-1cb30531-fbce-401f-829a-fe6d548c3dc7",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-1f8db767-8d45-41f3-8a5f-56a217dba939",
+        "content_uid": "433b0c1c-8d97-4788-8626-9c4fa8c6d7a6",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260920020000-wal",
+        "parent_uid": "1f8db767-8d45-41f3-8a5f-56a217dba939",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-1f8db767-8d45-41f3-8a5f-56a217dba939",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-1fb90de1-9fb8-44da-8c3e-cafc674e89cd",
+        "content_uid": "be967b99-f5a7-4e49-a372-b90b617cabf3",
+        "parent_namespace": "immich",
+        "parent_name": "immich-db-recovery-20261011",
+        "parent_uid": "1fb90de1-9fb8-44da-8c3e-cafc674e89cd",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27",
+        "snapshot": "snapshot-1fb90de1-9fb8-44da-8c3e-cafc674e89cd",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-2016264a-4d59-4741-ba24-a29e8d69a004",
+        "content_uid": "a8e7df57-da3c-451f-b36f-13edb8fb4ca2",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261011020000",
+        "parent_uid": "2016264a-4d59-4741-ba24-a29e8d69a004",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-2016264a-4d59-4741-ba24-a29e8d69a004",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-2036ee2e-e977-4823-bf25-d0043e084ab3",
+        "content_uid": "2ea73664-7f4e-476f-9f96-3d4d2e8cdaca",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-3-config-linstor-snapshot",
+        "parent_uid": "2036ee2e-e977-4823-bf25-d0043e084ab3",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-026dc0ab-d0ec-4cc3-b25f-5797e777cf27",
+        "snapshot": "snapshot-2036ee2e-e977-4823-bf25-d0043e084ab3",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-261bd18a-5fcb-4a24-b059-458b37fafebf",
+        "content_uid": "115ae777-5750-4c8f-a980-1e5e455a4b33",
+        "parent_namespace": "media",
+        "parent_name": "seerr-config-final-snapshot",
+        "parent_uid": "261bd18a-5fcb-4a24-b059-458b37fafebf",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-2e5edc79-ae9b-4723-8956-7ab3a4e5682a",
+        "snapshot": "snapshot-261bd18a-5fcb-4a24-b059-458b37fafebf",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2",
+        "content_uid": "0516c9fa-b7da-43e8-a58f-848a69af53fc",
+        "parent_namespace": "monitoring",
+        "parent_name": "prometheus-linstor-bootstrap-to-triple",
+        "parent_uid": "29dc032e-6f7f-4ad9-acf5-6ca5f51205d2",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b03417aa-d52e-4cde-b5ba-627670ab361c",
+        "snapshot": "snapshot-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-2c0ff04c-6c01-400d-af7e-5dcdede0038e",
+        "content_uid": "c42d3d12-9474-4187-9b23-1c812596ab95",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-5-to-triple",
+        "parent_uid": "2c0ff04c-6c01-400d-af7e-5dcdede0038e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-2c0ff04c-6c01-400d-af7e-5dcdede0038e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-2c789a3e-6b37-4e69-a5df-fd683f4fa73b",
+        "content_uid": "cafa8406-cdf4-4c89-98c9-e4dfbbfa3f4c",
+        "parent_namespace": "media",
+        "parent_name": "bazarr-config-linstor-snapshot",
+        "parent_uid": "2c789a3e-6b37-4e69-a5df-fd683f4fa73b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-9f5af8b0-6d34-4c61-b464-4911845c175f",
+        "snapshot": "snapshot-2c789a3e-6b37-4e69-a5df-fd683f4fa73b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-2f443945-66bf-4deb-b70b-219e3197095d",
+        "content_uid": "d4990bab-ecd9-4340-bdb1-28a72012aa1e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260926020000-wal",
+        "parent_uid": "2f443945-66bf-4deb-b70b-219e3197095d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-2f443945-66bf-4deb-b70b-219e3197095d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-34b3694c-8338-4b86-bdb9-795651858f36",
+        "content_uid": "1ec47367-f829-43b9-8ac3-91e7e971476e",
+        "parent_namespace": "media",
+        "parent_name": "bazarr-data-to-canonical-v2",
+        "parent_uid": "34b3694c-8338-4b86-bdb9-795651858f36",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79",
+        "snapshot": "snapshot-34b3694c-8338-4b86-bdb9-795651858f36",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-3753ab41-103f-4ae9-8dec-35a277dd54ce",
+        "content_uid": "e23bcc3c-d673-47e2-bcd2-82f756357a67",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261007020000",
+        "parent_uid": "3753ab41-103f-4ae9-8dec-35a277dd54ce",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-3753ab41-103f-4ae9-8dec-35a277dd54ce",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-3b6eb37c-7a49-4e33-b8b0-273379ceac83",
+        "content_uid": "e430c8ce-01c8-4b71-a8b5-0c4257abfe47",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-2-snapshot",
+        "parent_uid": "3b6eb37c-7a49-4e33-b8b0-273379ceac83",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-d875231f-cb30-4daf-b2ac-ffb98ee0c472",
+        "snapshot": "snapshot-3b6eb37c-7a49-4e33-b8b0-273379ceac83",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-3dd95f1e-3078-47d0-9160-33fdcf599eeb",
+        "content_uid": "fc0d764b-34a3-4a74-8876-1d56b106a9e4",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-postgresql-linstor-snapshot",
+        "parent_uid": "3dd95f1e-3078-47d0-9160-33fdcf599eeb",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2",
+        "snapshot": "snapshot-3dd95f1e-3078-47d0-9160-33fdcf599eeb",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-3fa85b4c-08f8-4b98-8745-ebe9206c7de4",
+        "content_uid": "f021d880-df80-47a6-8a27-e07815f71504",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-1-snapshot",
+        "parent_uid": "3fa85b4c-08f8-4b98-8745-ebe9206c7de4",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-323e013d-aaa5-4842-ab25-fbef6e69c8b6",
+        "snapshot": "snapshot-3fa85b4c-08f8-4b98-8745-ebe9206c7de4",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-402d5966-b0cd-40ec-9b19-5473e622f435",
+        "content_uid": "ae447a23-d1c4-4f8d-b93f-959097e60d91",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261010020000-wal",
+        "parent_uid": "402d5966-b0cd-40ec-9b19-5473e622f435",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-402d5966-b0cd-40ec-9b19-5473e622f435",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-40524d19-722e-4b1d-bd45-88ee940a593c",
+        "content_uid": "19114a77-6924-486a-808b-ba47e5a4533a",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-6-config-linstor-snapshot",
+        "parent_uid": "40524d19-722e-4b1d-bd45-88ee940a593c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-65777281-9787-428d-be74-87c4676e7f48",
+        "snapshot": "snapshot-40524d19-722e-4b1d-bd45-88ee940a593c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-43dc2674-7ae2-4c74-843f-1d5f28d7ca85",
+        "content_uid": "f345c8be-814f-4af7-bf3b-0c54e0d777a8",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260919020000",
+        "parent_uid": "43dc2674-7ae2-4c74-843f-1d5f28d7ca85",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e514156f-3e85-4981-9c31-1d06861ca38a",
+        "snapshot": "snapshot-43dc2674-7ae2-4c74-843f-1d5f28d7ca85",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4521b32a-ee14-44b6-9ee1-ec0daa217891",
+        "content_uid": "e0f22c9e-c662-4d2d-b83a-3f4725708b78",
+        "parent_namespace": "linstor-pilot-validation",
+        "parent_name": "scratch-snapshot",
+        "parent_uid": "4521b32a-ee14-44b6-9ee1-ec0daa217891",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-672c64a5-fa00-4be2-b3f4-7996e1e00585",
+        "snapshot": "snapshot-4521b32a-ee14-44b6-9ee1-ec0daa217891",
+        "backend_present": false,
+        "backend_nodes": [],
+        "backend_flags": [],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-455a1192-6a8b-4d48-9d36-277acacadee2",
+        "content_uid": "cd146d8a-91e4-474d-a8ec-a446875cc8df",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-recovery-validation-20261014",
+        "parent_uid": "455a1192-6a8b-4d48-9d36-277acacadee2",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8c63f0bc-109b-4998-b6b0-dd161c5f7819",
+        "snapshot": "snapshot-455a1192-6a8b-4d48-9d36-277acacadee2",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4c53a2c5-d287-4ed9-abed-47beee602c84",
+        "content_uid": "d0ec4f25-2822-483f-888a-f36c07dca861",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261011020000-wal",
+        "parent_uid": "4c53a2c5-d287-4ed9-abed-47beee602c84",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-4c53a2c5-d287-4ed9-abed-47beee602c84",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4cdd2e13-74b6-4a23-9dc9-993f5d051b80",
+        "content_uid": "a1124c03-d219-4f18-9cc2-f9f7bafeba2c",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260929020000",
+        "parent_uid": "4cdd2e13-74b6-4a23-9dc9-993f5d051b80",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-4cdd2e13-74b6-4a23-9dc9-993f5d051b80",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4d2d1c34-674a-4a16-8cc7-5ceada526205",
+        "content_uid": "ffc32d65-4d7a-47af-b589-2839563e6c8a",
+        "parent_namespace": "media",
+        "parent_name": "reiverr-config-final-snapshot",
+        "parent_uid": "4d2d1c34-674a-4a16-8cc7-5ceada526205",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-932d366c-304e-49e8-b1e3-f154e0335d6c",
+        "snapshot": "snapshot-4d2d1c34-674a-4a16-8cc7-5ceada526205",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-4dba5e79-9dfe-48e2-8724-8408ac12f8af",
+        "content_uid": "1dda3b70-fb58-4f5b-979b-a6ab5661dd41",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-gitaly-linstor-to-triple",
+        "parent_uid": "4dba5e79-9dfe-48e2-8724-8408ac12f8af",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-eb581cac-8c15-46c7-8df5-6057452be220",
+        "snapshot": "snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-4e0b6672-4658-4f4e-9ed9-11ea9e07737a",
+        "content_uid": "ef5f78cc-9d1e-47e9-bd52-0d2445a505b3",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261006020000",
+        "parent_uid": "4e0b6672-4658-4f4e-9ed9-11ea9e07737a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-4e0b6672-4658-4f4e-9ed9-11ea9e07737a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4e3af52f-add9-4f6e-887f-0208433dc6dc",
+        "content_uid": "f555b907-4748-417a-be56-8ac75d25ac0d",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-linstor-final-20260917-wal",
+        "parent_uid": "4e3af52f-add9-4f6e-887f-0208433dc6dc",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf839966-ef46-4e8a-af65-a08e68bc928e",
+        "snapshot": "snapshot-4e3af52f-add9-4f6e-887f-0208433dc6dc",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-4ea00ff8-0105-4db6-8b3c-47e2eabfcede",
+        "content_uid": "cf38c8bc-dd15-44c0-b436-253db3789371",
+        "parent_namespace": "media",
+        "parent_name": "radarr-1-config-final-snapshot",
+        "parent_uid": "4ea00ff8-0105-4db6-8b3c-47e2eabfcede",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-091343be-c6ff-4a99-b2cc-2958bf244bef",
+        "snapshot": "snapshot-4ea00ff8-0105-4db6-8b3c-47e2eabfcede",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-4eb52a0e-44be-4b3d-8ee4-c65878dd9906",
+        "content_uid": "c5e97417-ff36-45e6-a6f0-3eaf56cb373b",
+        "parent_namespace": "monitoring",
+        "parent_name": "gotify-data-to-canonical",
+        "parent_uid": "4eb52a0e-44be-4b3d-8ee4-c65878dd9906",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6989889e-3333-41a3-a450-efad3e1ae03f",
+        "snapshot": "snapshot-4eb52a0e-44be-4b3d-8ee4-c65878dd9906",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-5115a204-f863-47e5-a11b-b3ce2325f9cb",
+        "content_uid": "94823e85-09d5-49f6-b8b3-12993d9e6cc6",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261001020000-wal",
+        "parent_uid": "5115a204-f863-47e5-a11b-b3ce2325f9cb",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-5115a204-f863-47e5-a11b-b3ce2325f9cb",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-555d0e88-acb9-43a5-a377-21aeca973c44",
+        "content_uid": "2d928a1e-6a95-4037-9cf6-ddd24a5df5b7",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261003020000-wal",
+        "parent_uid": "555d0e88-acb9-43a5-a377-21aeca973c44",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-555d0e88-acb9-43a5-a377-21aeca973c44",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-5905d3b8-0f34-47cb-9168-34527284fa27",
+        "content_uid": "9bbbc820-4988-4924-a7e2-0a18f4121af8",
+        "parent_namespace": "media",
+        "parent_name": "radarr-6-config-final-snapshot",
+        "parent_uid": "5905d3b8-0f34-47cb-9168-34527284fa27",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-83c16d86-74a8-41c6-a07b-41cef210ecba",
+        "snapshot": "snapshot-5905d3b8-0f34-47cb-9168-34527284fa27",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-5bbb4fde-c12b-4763-968f-4422839ff59b",
+        "content_uid": "82cf4355-a78b-427b-8649-4f535d5544f5",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-1-to-canonical",
+        "parent_uid": "5bbb4fde-c12b-4763-968f-4422839ff59b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf8718bd-e483-44ce-854f-4320092d6c9d",
+        "snapshot": "snapshot-5bbb4fde-c12b-4763-968f-4422839ff59b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-5f8c0ef6-a60b-4f5b-96c1-b06175440b4b",
+        "content_uid": "fbdaf5cc-adc8-4550-a95c-13494ef5505e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261013020000-wal",
+        "parent_uid": "5f8c0ef6-a60b-4f5b-96c1-b06175440b4b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-5f8c0ef6-a60b-4f5b-96c1-b06175440b4b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-5fd1785c-a251-4b80-9f6f-f9c67cf35073",
+        "content_uid": "aa0954c1-0c58-4b2a-970f-efcabde89937",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-5-config-to-canonical",
+        "parent_uid": "5fd1785c-a251-4b80-9f6f-f9c67cf35073",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-80a9a2be-cfce-4073-9044-b9536cb726cf",
+        "snapshot": "snapshot-5fd1785c-a251-4b80-9f6f-f9c67cf35073",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-5fd71f9d-34bc-404a-a5a7-a42061cc598d",
+        "content_uid": "0e298028-743d-49fc-9a96-b2776504b6a5",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-resized-snapshot",
+        "parent_uid": "5fd71f9d-34bc-404a-a5a7-a42061cc598d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-77376661-cab7-4a8c-a9d4-6ffd3f111619",
+        "snapshot": "snapshot-5fd71f9d-34bc-404a-a5a7-a42061cc598d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-61991e48-8284-40c5-a1fb-6a86019ccc72",
+        "content_uid": "ce79c90f-a5c8-406b-8a64-9e59387fe25e",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-2-config-corrupt-20260923",
+        "parent_uid": "61991e48-8284-40c5-a1fb-6a86019ccc72",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-72d13fe5-55cd-4e13-b3be-9651a095a810",
+        "snapshot": "snapshot-61991e48-8284-40c5-a1fb-6a86019ccc72",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-61c4fe9c-fc91-4611-9a11-2e9fcb684a63",
+        "content_uid": "8f7bb353-271b-44c1-9501-f179d7d1841b",
+        "parent_namespace": "llm-switchboard",
+        "parent_name": "llm-switchboard-data-linstor-snapshot",
+        "parent_uid": "61c4fe9c-fc91-4611-9a11-2e9fcb684a63",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f",
+        "snapshot": "snapshot-61c4fe9c-fc91-4611-9a11-2e9fcb684a63",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-6238f03b-1425-4229-be0a-1b3742ba1b38",
+        "content_uid": "f3f32da1-108a-4f55-b3cc-e9744c369f6e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260924020000",
+        "parent_uid": "6238f03b-1425-4229-be0a-1b3742ba1b38",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-6238f03b-1425-4229-be0a-1b3742ba1b38",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-628e74bc-63e1-41cf-b202-3120db4ac65c",
+        "content_uid": "718af075-1051-428b-8e8c-1ee01c2cfa26",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-4-config-linstor-snapshot",
+        "parent_uid": "628e74bc-63e1-41cf-b202-3120db4ac65c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ddda5de4-2a4d-4c73-a930-b2f52601bb27",
+        "snapshot": "snapshot-628e74bc-63e1-41cf-b202-3120db4ac65c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-65841c77-3c8c-4152-979c-d593376a8faf",
+        "content_uid": "81c9b9ba-d82f-48c5-943c-29261717a2af",
+        "parent_namespace": "monitoring",
+        "parent_name": "gotify-data-final-snapshot",
+        "parent_uid": "65841c77-3c8c-4152-979c-d593376a8faf",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-9ae41b58-bde4-4e0d-90e3-bfda214a71a7",
+        "snapshot": "snapshot-65841c77-3c8c-4152-979c-d593376a8faf",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-65de1cfc-a12b-4c73-8dd1-595ade5054fa",
+        "content_uid": "fe96d597-e461-4640-8923-4a326b4db748",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260913020000",
+        "parent_uid": "65de1cfc-a12b-4c73-8dd1-595ade5054fa",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-65de1cfc-a12b-4c73-8dd1-595ade5054fa",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-66489a4a-2b91-462b-9915-111f829a1b2f",
+        "content_uid": "2ac26785-a24c-4755-b5b5-92ef4db0268d",
+        "parent_namespace": "media",
+        "parent_name": "arr-dashboard-data-to-canonical",
+        "parent_uid": "66489a4a-2b91-462b-9915-111f829a1b2f",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-dc745e25-68ee-4374-b3a4-afb9887dc919",
+        "snapshot": "snapshot-66489a4a-2b91-462b-9915-111f829a1b2f",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-6701490f-7092-4539-b3f2-c44c76c789ee",
+        "content_uid": "2acc7946-9411-41ff-9ef0-12c7fa1f53cb",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-rustfs-access-validated-20261014-wal",
+        "parent_uid": "6701490f-7092-4539-b3f2-c44c76c789ee",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-6701490f-7092-4539-b3f2-c44c76c789ee",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-675678ae-838b-4e54-8154-d7efddad9ff4",
+        "content_uid": "3450a2ea-50af-4403-9918-d987d172997e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261010020000",
+        "parent_uid": "675678ae-838b-4e54-8154-d7efddad9ff4",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-675678ae-838b-4e54-8154-d7efddad9ff4",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-6826dcb2-72d0-4b61-acda-5b35825238a7",
+        "content_uid": "d6bc9274-6f14-478b-b23e-d5b648c54ebe",
+        "parent_namespace": "media",
+        "parent_name": "seerr-data-to-canonical",
+        "parent_uid": "6826dcb2-72d0-4b61-acda-5b35825238a7",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-1962c393-903f-470b-bbf8-925a38b27236",
+        "snapshot": "snapshot-6826dcb2-72d0-4b61-acda-5b35825238a7",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-68c8f97b-3607-46ef-a23f-92c4502f84fa",
+        "content_uid": "16146bab-bd26-44ba-bf27-bd8130df2e3a",
+        "parent_namespace": "media",
+        "parent_name": "checkrr-config-to-canonical-v4",
+        "parent_uid": "68c8f97b-3607-46ef-a23f-92c4502f84fa",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776",
+        "snapshot": "snapshot-68c8f97b-3607-46ef-a23f-92c4502f84fa",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-691ff8e9-1707-47f3-9c7c-956cbaf9f909",
+        "content_uid": "42e385fc-74df-4af3-808e-543d78b2abc3",
+        "parent_namespace": "media",
+        "parent_name": "radarr-8-config-final-snapshot",
+        "parent_uid": "691ff8e9-1707-47f3-9c7c-956cbaf9f909",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6c472dda-6006-4d15-aec3-146130562f50",
+        "snapshot": "snapshot-691ff8e9-1707-47f3-9c7c-956cbaf9f909",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-6956a9a3-e875-4205-b3d5-2e7b675723cb",
+        "content_uid": "f68feed4-799b-405b-9531-7d72b1599252",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-primary-recovery-validation-20261014",
+        "parent_uid": "6956a9a3-e875-4205-b3d5-2e7b675723cb",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-6956a9a3-e875-4205-b3d5-2e7b675723cb",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-6a1a662e-8f06-4323-a47c-1890d789bfef",
+        "content_uid": "be00609d-6785-4146-8d0d-50db26a32cf5",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-3-config-to-canonical",
+        "parent_uid": "6a1a662e-8f06-4323-a47c-1890d789bfef",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ad07dcb6-6231-441d-a119-f5cb84e74389",
+        "snapshot": "snapshot-6a1a662e-8f06-4323-a47c-1890d789bfef",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-6a69aad7-0b24-41c7-8e69-548e52c95000",
+        "content_uid": "7e56204d-69dc-46fa-9df5-77d8ea4095df",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-to-canonical",
+        "parent_uid": "6a69aad7-0b24-41c7-8e69-548e52c95000",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-5844000d-4eec-4a71-a334-809683eeb2ff",
+        "snapshot": "snapshot-6a69aad7-0b24-41c7-8e69-548e52c95000",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-6b5b02a5-5680-4e2b-95c3-fc4e0b1e225a",
+        "content_uid": "16602fb2-d900-4655-ac21-921057dfea96",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260922020000",
+        "parent_uid": "6b5b02a5-5680-4e2b-95c3-fc4e0b1e225a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-6b5b02a5-5680-4e2b-95c3-fc4e0b1e225a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-707269aa-d2a6-43d4-a964-be3c9f8bc319",
+        "content_uid": "1aec2f12-4e1d-4fd8-8fa4-ad51c15b73c6",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260927020000-wal",
+        "parent_uid": "707269aa-d2a6-43d4-a964-be3c9f8bc319",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-707269aa-d2a6-43d4-a964-be3c9f8bc319",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-7188ab87-c563-4d76-a690-cf4da3577032",
+        "content_uid": "7762494b-abbf-43da-beaf-3154acf57be5",
+        "parent_namespace": "media",
+        "parent_name": "radarr-4-config-final-snapshot",
+        "parent_uid": "7188ab87-c563-4d76-a690-cf4da3577032",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-23165ca8-1c17-4d5b-a52c-b9589f41c5da",
+        "snapshot": "snapshot-7188ab87-c563-4d76-a690-cf4da3577032",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-719060fb-9d04-4c04-8a85-beada183d006",
+        "content_uid": "b209c305-0195-4546-80a3-9f8ea41b38f2",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-6-config-recovery-20260923",
+        "parent_uid": "719060fb-9d04-4c04-8a85-beada183d006",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f2475e6a-c674-4fbb-ad4a-05cc833e465a",
+        "snapshot": "snapshot-719060fb-9d04-4c04-8a85-beada183d006",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-71a8c8f9-b1c9-4c22-be40-97d3e1cd2838",
+        "content_uid": "8740b439-706d-483e-97d7-989b7e007da2",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261004020000-wal",
+        "parent_uid": "71a8c8f9-b1c9-4c22-be40-97d3e1cd2838",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-71a8c8f9-b1c9-4c22-be40-97d3e1cd2838",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-73b8d75a-7b6a-4e9a-9293-2688f8aedf87",
+        "content_uid": "789b5f48-372d-4b71-a87a-48ac2b51b266",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260928020000",
+        "parent_uid": "73b8d75a-7b6a-4e9a-9293-2688f8aedf87",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-73b8d75a-7b6a-4e9a-9293-2688f8aedf87",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-74f1559f-6886-436b-871d-45653d261a35",
+        "content_uid": "72b0acb1-5f01-459b-afb0-2db1dd03e0ac",
+        "parent_namespace": "media",
+        "parent_name": "prowlarr-config-linstor-snapshot",
+        "parent_uid": "74f1559f-6886-436b-871d-45653d261a35",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-5b70587e-fe84-4388-825f-055dd26c15d9",
+        "snapshot": "snapshot-74f1559f-6886-436b-871d-45653d261a35",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-75445a44-81df-4a5e-9b91-3de54e332217",
+        "content_uid": "99881e1f-2df0-40ff-b942-5491d786e26d",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260925020000",
+        "parent_uid": "75445a44-81df-4a5e-9b91-3de54e332217",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-75445a44-81df-4a5e-9b91-3de54e332217",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-76cb7856-c8b5-434c-9807-370b25355e9a",
+        "content_uid": "393509c7-a12e-4809-86e5-6b5a7163a7d0",
+        "parent_namespace": "media",
+        "parent_name": "checkrr-data-to-canonical-v3",
+        "parent_uid": "76cb7856-c8b5-434c-9807-370b25355e9a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776",
+        "snapshot": "snapshot-76cb7856-c8b5-434c-9807-370b25355e9a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-7758f32e-9993-425d-92a5-fe22a933e326",
+        "content_uid": "7dc16512-7561-4fb3-a78d-757616df7a98",
+        "parent_namespace": "media",
+        "parent_name": "radarr-4-config-corrupt-20260923",
+        "parent_uid": "7758f32e-9993-425d-92a5-fe22a933e326",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-793113ea-f798-461b-a1db-b9a316dda20c",
+        "snapshot": "snapshot-7758f32e-9993-425d-92a5-fe22a933e326",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-795c3486-2aa1-4a25-9e1a-8abf25966bae",
+        "content_uid": "4d556de2-33a9-4aa7-9efe-7e437a8376f8",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260924020000-wal",
+        "parent_uid": "795c3486-2aa1-4a25-9e1a-8abf25966bae",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-795c3486-2aa1-4a25-9e1a-8abf25966bae",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-79bc644d-4ace-4940-b79d-cf41be98be9e",
+        "content_uid": "8b23f6ab-6416-47e8-8561-b32b0e7743fd",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260925020000-wal",
+        "parent_uid": "79bc644d-4ace-4940-b79d-cf41be98be9e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-79bc644d-4ace-4940-b79d-cf41be98be9e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-7ac9ae0d-81ef-4f69-a059-d4745e99ae4a",
+        "content_uid": "f391322f-56cb-430f-820d-723e055eb946",
+        "parent_namespace": "default",
+        "parent_name": "zero-cache-triple-pilot",
+        "parent_uid": "7ac9ae0d-81ef-4f69-a059-d4745e99ae4a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e",
+        "snapshot": "snapshot-7ac9ae0d-81ef-4f69-a059-d4745e99ae4a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-7bc238bb-66bd-4437-ab22-ab7525ecac7e",
+        "content_uid": "e54c4395-1db3-441b-9bc3-f73332738926",
+        "parent_namespace": "media",
+        "parent_name": "radarr-6-data-to-canonical-v2",
+        "parent_uid": "7bc238bb-66bd-4437-ab22-ab7525ecac7e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-d3420bb1-707f-4a62-b6e9-ac51e976526a",
+        "snapshot": "snapshot-7bc238bb-66bd-4437-ab22-ab7525ecac7e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-7c22150a-6780-43b1-8cbc-0e5fa221fa6d",
+        "content_uid": "6b620669-e44f-4197-8015-b73050dd62f7",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261005020000",
+        "parent_uid": "7c22150a-6780-43b1-8cbc-0e5fa221fa6d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-7c22150a-6780-43b1-8cbc-0e5fa221fa6d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-7c9c262e-fdc8-45c5-9ecf-2c72b2c15b14",
+        "content_uid": "faad2bb5-319c-4266-a2dc-9631f78d2d4b",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-postgresql-to-canonical-v2",
+        "parent_uid": "7c9c262e-fdc8-45c5-9ecf-2c72b2c15b14",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-05847ca3-af79-40c8-bbe8-6ea6a44cf445",
+        "snapshot": "snapshot-7c9c262e-fdc8-45c5-9ecf-2c72b2c15b14",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-848c364c-9a8f-4e09-8525-8ec9934b5055",
+        "content_uid": "0a424cb6-00c1-4256-ac7f-f8f8ec065fea",
+        "parent_namespace": "media",
+        "parent_name": "radarr-4-config-recovery-20260923",
+        "parent_uid": "848c364c-9a8f-4e09-8525-8ec9934b5055",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6da2dc12-dd5e-45f3-8931-25274cd74bdf",
+        "snapshot": "snapshot-848c364c-9a8f-4e09-8525-8ec9934b5055",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-84a1b136-3bd4-4ded-9cc4-8e6025b61173",
+        "content_uid": "b889617f-0946-4b6a-9e89-c87a512e1146",
+        "parent_namespace": "media",
+        "parent_name": "jellyfin-config-to-canonical",
+        "parent_uid": "84a1b136-3bd4-4ded-9cc4-8e6025b61173",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ff20eeef-dbf4-4ab0-9b7f-ee2df2bc8b12",
+        "snapshot": "snapshot-84a1b136-3bd4-4ded-9cc4-8e6025b61173",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-86e9b883-2e27-4ea9-8a9b-f4c51cf58c93",
+        "content_uid": "e220fa02-3046-44dd-b5e0-120cbeb5d3b3",
+        "parent_namespace": "media",
+        "parent_name": "reiverr-config-to-canonical",
+        "parent_uid": "86e9b883-2e27-4ea9-8a9b-f4c51cf58c93",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f403527c-04e6-4f9e-bd14-965a3c3fb036",
+        "snapshot": "snapshot-86e9b883-2e27-4ea9-8a9b-f4c51cf58c93",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-8810e161-2d5a-4fb9-b621-8128c4f08db0",
+        "content_uid": "a20fe081-c1cb-474c-926f-431b8120bf70",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260926020000",
+        "parent_uid": "8810e161-2d5a-4fb9-b621-8128c4f08db0",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-8810e161-2d5a-4fb9-b621-8128c4f08db0",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-892594f6-3e4f-422b-8799-fb19298e9967",
+        "content_uid": "efdfd35d-ce45-415f-9fb7-5bb13300b227",
+        "parent_namespace": "media",
+        "parent_name": "radarr-7-data-to-canonical",
+        "parent_uid": "892594f6-3e4f-422b-8799-fb19298e9967",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b62416a3-ddde-4a49-8794-815ef920cfe2",
+        "snapshot": "snapshot-892594f6-3e4f-422b-8799-fb19298e9967",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-8b6a723a-e3bd-471d-9659-e2fa06003a3a",
+        "content_uid": "ab64967e-3bad-4681-9a1d-123f11cae5c3",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260923020000-wal",
+        "parent_uid": "8b6a723a-e3bd-471d-9659-e2fa06003a3a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-8b6a723a-e3bd-471d-9659-e2fa06003a3a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-8d210ea8-06ee-4350-8a15-c7b9130f850a",
+        "content_uid": "2a3ed7ff-0b1e-4061-8ea1-bf745e56a46e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-7-to-triple",
+        "parent_uid": "8d210ea8-06ee-4350-8a15-c7b9130f850a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-054c6965-69a1-48c1-885c-f6bf3644d8d8",
+        "snapshot": "snapshot-8d210ea8-06ee-4350-8a15-c7b9130f850a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-8e22853f-5ebd-44f8-8a74-a82fbe8e5f4a",
+        "content_uid": "7e55a870-65fb-4df6-8de9-29756c95ae9e",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-linstor-final-20260917",
+        "parent_uid": "8e22853f-5ebd-44f8-8a74-a82fbe8e5f4a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e514156f-3e85-4981-9c31-1d06861ca38a",
+        "snapshot": "snapshot-8e22853f-5ebd-44f8-8a74-a82fbe8e5f4a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-8f323a61-c894-4957-8323-ca8b20b5ee11",
+        "content_uid": "a5f84ec9-81eb-4d8c-b799-84540647bdc3",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261012020000-wal",
+        "parent_uid": "8f323a61-c894-4957-8323-ca8b20b5ee11",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-8f323a61-c894-4957-8323-ca8b20b5ee11",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-913c16f0-29be-4701-b8ab-6f46719e788c",
+        "content_uid": "15ab17ff-da6b-4edc-9638-45d67ae87dbf",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-7-wal-to-triple",
+        "parent_uid": "913c16f0-29be-4701-b8ab-6f46719e788c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-85d1b371-986d-4f35-bece-0c35d6b7bf1f",
+        "snapshot": "snapshot-913c16f0-29be-4701-b8ab-6f46719e788c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-915c8c3b-7d0f-4bd8-95aa-7b23c335b420",
+        "content_uid": "f9a4ad22-d169-4e59-94ce-54bcec2f4e97",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-0-snapshot",
+        "parent_uid": "915c8c3b-7d0f-4bd8-95aa-7b23c335b420",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-d15b9453-43a8-4551-a2e9-f5c467aac4af",
+        "snapshot": "snapshot-915c8c3b-7d0f-4bd8-95aa-7b23c335b420",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-91eeef97-43f2-4427-ada7-1dd095111c01",
+        "content_uid": "0debde9a-aac8-4866-b366-a9fa2aa21203",
+        "parent_namespace": "monitoring",
+        "parent_name": "alertmanager-linstor-to-triple",
+        "parent_uid": "91eeef97-43f2-4427-ada7-1dd095111c01",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-7502d8fa-12e7-4934-b541-d30797d80333",
+        "snapshot": "snapshot-91eeef97-43f2-4427-ada7-1dd095111c01",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-925c9e7c-eeb7-4f58-a719-3cc807be55d5",
+        "content_uid": "c7cffd0f-61d1-4d78-957d-73964879ac2e",
+        "parent_namespace": "media",
+        "parent_name": "radarr-12-config-final-snapshot",
+        "parent_uid": "925c9e7c-eeb7-4f58-a719-3cc807be55d5",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-40f69ace-432e-41ce-a9bc-a649383b5f8b",
+        "snapshot": "snapshot-925c9e7c-eeb7-4f58-a719-3cc807be55d5",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-92963cea-912a-4f01-a80c-28ae062de9cd",
+        "content_uid": "b7a7e917-a04b-4bae-afee-049b99145e72",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261016020000",
+        "parent_uid": "92963cea-912a-4f01-a80c-28ae062de9cd",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-56e7c1b1-49eb-468b-b058-07bda1d7a15a",
+        "snapshot": "snapshot-92963cea-912a-4f01-a80c-28ae062de9cd",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-935a2d8c-302d-4c8a-b599-5b8cba258aae",
+        "content_uid": "4e617bea-430e-451e-8445-151f565b041e",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-5-config-linstor-snapshot",
+        "parent_uid": "935a2d8c-302d-4c8a-b599-5b8cba258aae",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8bbd9a44-126c-47e5-98df-2429534b7c08",
+        "snapshot": "snapshot-935a2d8c-302d-4c8a-b599-5b8cba258aae",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-9421e47b-af73-4b2b-ac4d-1316cf0c7e92",
+        "content_uid": "75ff66e9-8509-470a-9d84-036ee6f6cf54",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-replica-recovery-20261015",
+        "parent_uid": "9421e47b-af73-4b2b-ac4d-1316cf0c7e92",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf69ce4a-7fc5-48f6-9c94-24c183d228ce",
+        "snapshot": "snapshot-9421e47b-af73-4b2b-ac4d-1316cf0c7e92",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-9635eb60-ad02-4bae-a036-b6ed6ef19fe3",
+        "content_uid": "a5a544d9-18e5-45f8-b7af-e1285c5fa572",
+        "parent_namespace": "monitoring",
+        "parent_name": "grafana-data-to-canonical",
+        "parent_uid": "9635eb60-ad02-4bae-a036-b6ed6ef19fe3",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8981ecf6-cf75-4904-93d0-f76dbd77751d",
+        "snapshot": "snapshot-9635eb60-ad02-4bae-a036-b6ed6ef19fe3",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-9a99f5b6-b635-42a8-a3c2-1f21b15be8dc",
+        "content_uid": "9c45ba17-d13e-4abf-a220-c86496c0dd1c",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261002020000-wal",
+        "parent_uid": "9a99f5b6-b635-42a8-a3c2-1f21b15be8dc",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-9a99f5b6-b635-42a8-a3c2-1f21b15be8dc",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-9b5a04ac-ef90-4b9e-b8b5-65a475320e2d",
+        "content_uid": "ce364b0b-cd16-48c0-acd9-80aaf6b55096",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261009020000",
+        "parent_uid": "9b5a04ac-ef90-4b9e-b8b5-65a475320e2d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-9b5a04ac-ef90-4b9e-b8b5-65a475320e2d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-9b93aaca-dd61-4b66-b03f-0a9dd610b392",
+        "content_uid": "ea05bed5-db0a-4294-ac23-7184bad8c34b",
+        "parent_namespace": "media",
+        "parent_name": "radarr-11-config-final-snapshot",
+        "parent_uid": "9b93aaca-dd61-4b66-b03f-0a9dd610b392",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-5a2b6451-2688-4955-9206-15a84554e9c4",
+        "snapshot": "snapshot-9b93aaca-dd61-4b66-b03f-0a9dd610b392",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-9cd28c25-223d-4ccc-aeb3-cf613511fa84",
+        "content_uid": "2c6b6175-4eb8-472c-a1a7-9b118fca366f",
+        "parent_namespace": "monitoring",
+        "parent_name": "grafana-data-final-snapshot",
+        "parent_uid": "9cd28c25-223d-4ccc-aeb3-cf613511fa84",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-83b282e7-31d3-4c31-95c6-994b3d836a77",
+        "snapshot": "snapshot-9cd28c25-223d-4ccc-aeb3-cf613511fa84",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-9dfd59bc-3f2e-4b3e-87cd-b9141bb3fe05",
+        "content_uid": "7b857948-170d-4536-9ed3-2797e72f1aec",
+        "parent_namespace": "artifactory",
+        "parent_name": "artifactory-pg17-to-canonical",
+        "parent_uid": "9dfd59bc-3f2e-4b3e-87cd-b9141bb3fe05",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b98df677-2042-4876-8cb6-bf9097e2d18c",
+        "snapshot": "snapshot-9dfd59bc-3f2e-4b3e-87cd-b9141bb3fe05",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-a1b9bb83-452a-48aa-9440-d085010cadfe",
+        "content_uid": "ee51f8a5-32f0-4f00-9b25-a4a9d544eae6",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260920020000",
+        "parent_uid": "a1b9bb83-452a-48aa-9440-d085010cadfe",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-a1b9bb83-452a-48aa-9440-d085010cadfe",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-a224e933-5293-47a5-8676-1929a19729ce",
+        "content_uid": "0ed29a3d-e0fc-4263-b650-ec3f932e1ec3",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260921020000-wal",
+        "parent_uid": "a224e933-5293-47a5-8676-1929a19729ce",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-a224e933-5293-47a5-8676-1929a19729ce",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-a3412ad9-258f-4866-b321-22a7429521b1",
+        "content_uid": "7e816836-3d5e-4371-9b0b-cde3a2c1bfab",
+        "parent_namespace": "media",
+        "parent_name": "radarr-7-config-final-snapshot",
+        "parent_uid": "a3412ad9-258f-4866-b321-22a7429521b1",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-0a51b511-3736-4da5-a317-6f0351f17670",
+        "snapshot": "snapshot-a3412ad9-258f-4866-b321-22a7429521b1",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-a35dfaf2-7052-4f21-8bc8-cd32bfcf8a2c",
+        "content_uid": "4ffcb0bf-5838-41eb-a0b7-696e9e18c1d4",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-replica-recovery-20261015-wal",
+        "parent_uid": "a35dfaf2-7052-4f21-8bc8-cd32bfcf8a2c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e9c20c49-6ae3-4537-95f9-fa8309b4487e",
+        "snapshot": "snapshot-a35dfaf2-7052-4f21-8bc8-cd32bfcf8a2c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-a6137614-7caf-4972-9d1b-730be5c54ad8",
+        "content_uid": "0729045e-9abc-4b6d-850f-6e8b3ed18347",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261004020000",
+        "parent_uid": "a6137614-7caf-4972-9d1b-730be5c54ad8",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-a6137614-7caf-4972-9d1b-730be5c54ad8",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-a6b520b5-da68-42a4-a552-a9f5df0fae1a",
+        "content_uid": "131eee0b-9d4e-465f-a2ce-8bb08cc8c244",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-minio-snapshot",
+        "parent_uid": "a6b520b5-da68-42a4-a552-a9f5df0fae1a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a",
+        "snapshot": "snapshot-a6b520b5-da68-42a4-a552-a9f5df0fae1a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-aa611a97-c736-42c0-9c3b-850d12023b37",
+        "content_uid": "ffe2ee80-17b1-4cea-a133-6dd50654ae05",
+        "parent_namespace": "media",
+        "parent_name": "radarr-11-data-to-canonical",
+        "parent_uid": "aa611a97-c736-42c0-9c3b-850d12023b37",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-86cf1a0f-6be8-4d29-b51c-058395088f57",
+        "snapshot": "snapshot-aa611a97-c736-42c0-9c3b-850d12023b37",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-ab67e035-d771-4d21-818e-162c493f5de2",
+        "content_uid": "9cf84d09-a196-4b17-92af-1c27e5d65713",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-6-to-triple",
+        "parent_uid": "ab67e035-d771-4d21-818e-162c493f5de2",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e514156f-3e85-4981-9c31-1d06861ca38a",
+        "snapshot": "snapshot-ab67e035-d771-4d21-818e-162c493f5de2",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-aff829a9-2df1-4572-ad9c-16bcfa81ea54",
+        "content_uid": "48a8a4dd-f1ee-4cf4-bd8d-2112ae936233",
+        "parent_namespace": "media",
+        "parent_name": "prowlarr-data-to-canonical",
+        "parent_uid": "aff829a9-2df1-4572-ad9c-16bcfa81ea54",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-1cc3571a-e5b3-4a5a-81c2-d510f2e61a26",
+        "snapshot": "snapshot-aff829a9-2df1-4572-ad9c-16bcfa81ea54",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b06e48ca-e8c5-489e-a83b-508c60cc4174",
+        "content_uid": "9b6566cf-f7ed-4b67-b4b9-28a8c2791d3a",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-5-linstor-validation",
+        "parent_uid": "b06e48ca-e8c5-489e-a83b-508c60cc4174",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-b06e48ca-e8c5-489e-a83b-508c60cc4174",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-b0882247-6d1e-411f-a0a8-43a90c30ebae",
+        "content_uid": "574c0fd4-9067-478a-b887-baa8a29b26dc",
+        "parent_namespace": "artifactory",
+        "parent_name": "artifactory-pg17-recovered-snapshot",
+        "parent_uid": "b0882247-6d1e-411f-a0a8-43a90c30ebae",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-9799a120-b53e-424e-8eac-0ff5288a252d",
+        "snapshot": "snapshot-b0882247-6d1e-411f-a0a8-43a90c30ebae",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b1cb040e-025e-4841-b5da-f6ed257a342c",
+        "content_uid": "98461e8b-300c-4f5b-be0c-b2ad3f9505c2",
+        "parent_namespace": "media",
+        "parent_name": "radarr-5-data-to-canonical",
+        "parent_uid": "b1cb040e-025e-4841-b5da-f6ed257a342c",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ff6ce24d-dd91-42d1-9fa1-a98ca7aaeefe",
+        "snapshot": "snapshot-b1cb040e-025e-4841-b5da-f6ed257a342c",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b229aa43-40e6-4e63-b529-b34372202f8a",
+        "content_uid": "39f00c11-843f-41e2-803c-041d2380db14",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-2-config-to-canonical",
+        "parent_uid": "b229aa43-40e6-4e63-b529-b34372202f8a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-7f3e5813-86a4-4bdc-bc1e-7d7351f8f3fa",
+        "snapshot": "snapshot-b229aa43-40e6-4e63-b529-b34372202f8a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b2cfe050-13be-404a-b882-2c367e85689d",
+        "content_uid": "b6a90265-a7fc-4a25-9883-1d3d633691a9",
+        "parent_namespace": "media",
+        "parent_name": "radarr-2-config-final-snapshot",
+        "parent_uid": "b2cfe050-13be-404a-b882-2c367e85689d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6b96712a-f11d-46ba-ad4d-8e03e51eaf04",
+        "snapshot": "snapshot-b2cfe050-13be-404a-b882-2c367e85689d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b4598a21-3d5c-4660-b9a7-82593c042b81",
+        "content_uid": "6dc8fcf9-5786-43b9-93c9-4953083c0b11",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260928020000-wal",
+        "parent_uid": "b4598a21-3d5c-4660-b9a7-82593c042b81",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-b4598a21-3d5c-4660-b9a7-82593c042b81",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-b471bde6-e835-43d6-a2b3-9639d94c32a4",
+        "content_uid": "3225ea8c-7a6d-44ff-afd5-b8ee52c0a252",
+        "parent_namespace": "media",
+        "parent_name": "checkrr-data-to-canonical",
+        "parent_uid": "b471bde6-e835-43d6-a2b3-9639d94c32a4",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776",
+        "snapshot": "snapshot-b471bde6-e835-43d6-a2b3-9639d94c32a4",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-b736eec2-fbd0-4b27-bc17-73757e1f0359",
+        "content_uid": "65139a5e-f5d1-46db-a058-8271c5a77f43",
+        "parent_namespace": "media",
+        "parent_name": "radarr-9-config-final-snapshot",
+        "parent_uid": "b736eec2-fbd0-4b27-bc17-73757e1f0359",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-7945f448-5bf0-48c0-8312-96611276b20d",
+        "snapshot": "snapshot-b736eec2-fbd0-4b27-bc17-73757e1f0359",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b740b8f8-0983-4960-8bc0-fee829a9824a",
+        "content_uid": "0786406a-79c7-4b20-bc19-3ba09d881014",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-0-to-canonical",
+        "parent_uid": "b740b8f8-0983-4960-8bc0-fee829a9824a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f1dc06ef-404d-45b2-bf02-cf3acf6f0410",
+        "snapshot": "snapshot-b740b8f8-0983-4960-8bc0-fee829a9824a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b77a2706-a93f-461e-a8d5-b4a8d40eebc4",
+        "content_uid": "92e58159-79ee-4770-bdaa-d79620d77706",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261016020000-wal",
+        "parent_uid": "b77a2706-a93f-461e-a8d5-b4a8d40eebc4",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8ccc81cb-b766-45f5-9260-0e2908e63069",
+        "snapshot": "snapshot-b77a2706-a93f-461e-a8d5-b4a8d40eebc4",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-b925e670-b56c-4c18-badf-a64884e8a939",
+        "content_uid": "0c7e594a-2e11-4d87-92ab-6d8e07aab4e7",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-1-config-to-canonical",
+        "parent_uid": "b925e670-b56c-4c18-badf-a64884e8a939",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f847474b-e1c0-4813-9da3-ac1d2424f462",
+        "snapshot": "snapshot-b925e670-b56c-4c18-badf-a64884e8a939",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-b96bab5a-6f05-4b7d-9403-da1cbb22623e",
+        "content_uid": "00aad7de-9981-4240-91f8-b1216de39486",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-6-wal-to-triple",
+        "parent_uid": "b96bab5a-6f05-4b7d-9403-da1cbb22623e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf839966-ef46-4e8a-af65-a08e68bc928e",
+        "snapshot": "snapshot-b96bab5a-6f05-4b7d-9403-da1cbb22623e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-b9aedc02-7c67-4bdc-845a-a90b3a43237b",
+        "content_uid": "fee25376-eec0-467f-854d-3fc274582580",
+        "parent_namespace": "media",
+        "parent_name": "transmission-data-to-canonical",
+        "parent_uid": "b9aedc02-7c67-4bdc-845a-a90b3a43237b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-3ccda052-fe05-496c-bd58-a63f0776fa1d",
+        "snapshot": "snapshot-b9aedc02-7c67-4bdc-845a-a90b3a43237b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-bb853bda-f5fd-4fe2-a8a0-2852040f17e1",
+        "content_uid": "ac58ec99-586c-4db1-a77d-f9c1b5ee55ba",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261008020000-wal",
+        "parent_uid": "bb853bda-f5fd-4fe2-a8a0-2852040f17e1",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-bb853bda-f5fd-4fe2-a8a0-2852040f17e1",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-bc532141-1952-4a86-b502-248b51f7ba64",
+        "content_uid": "0c65783e-0b86-48b9-9fc7-65915a5b799f",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-2-config-recovery-20260923",
+        "parent_uid": "bc532141-1952-4a86-b502-248b51f7ba64",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-7f3e5813-86a4-4bdc-bc1e-7d7351f8f3fa",
+        "snapshot": "snapshot-bc532141-1952-4a86-b502-248b51f7ba64",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-bda30f11-ce73-4186-b1ba-be8e6185f441",
+        "content_uid": "e58138ad-b4fc-4507-9629-8bead30294d5",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-rustfs-access-validated-20261014",
+        "parent_uid": "bda30f11-ce73-4186-b1ba-be8e6185f441",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-bda30f11-ce73-4186-b1ba-be8e6185f441",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-bde68864-b434-4ff8-81c2-b8a333f071eb",
+        "content_uid": "83e4ebed-c7ec-44b9-88ed-d83fc1f1ae57",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261015020000-wal",
+        "parent_uid": "bde68864-b434-4ff8-81c2-b8a333f071eb",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-e9c20c49-6ae3-4537-95f9-fa8309b4487e",
+        "snapshot": "snapshot-bde68864-b434-4ff8-81c2-b8a333f071eb",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-c0028fec-98a4-4142-b325-c089137a8074",
+        "content_uid": "6f49887b-8bf3-4097-a2b5-5ec022ea2fda",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260921020000",
+        "parent_uid": "c0028fec-98a4-4142-b325-c089137a8074",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-136d880e-535e-4625-bff4-ab497086336d",
+        "snapshot": "snapshot-c0028fec-98a4-4142-b325-c089137a8074",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-c18c07a9-f541-4699-aa45-07efba817a63",
+        "content_uid": "ff2eef07-08b7-4a4b-b714-d08802bbe2c6",
+        "parent_namespace": "media",
+        "parent_name": "radarr-9-data-to-canonical",
+        "parent_uid": "c18c07a9-f541-4699-aa45-07efba817a63",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4b5063b6-fd33-4e73-83bd-026720c130a6",
+        "snapshot": "snapshot-c18c07a9-f541-4699-aa45-07efba817a63",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-c2a300d9-a4b7-45bd-ab73-34b841ce675e",
+        "content_uid": "9cb76f4a-e95d-44f7-8ced-b62795262233",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-1-config-linstor-snapshot",
+        "parent_uid": "c2a300d9-a4b7-45bd-ab73-34b841ce675e",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-3fd504d3-d739-4a8e-be77-6a9fcd712de7",
+        "snapshot": "snapshot-c2a300d9-a4b7-45bd-ab73-34b841ce675e",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-c570ccaa-c8bd-4b7e-8ab1-3d8e9fb798b6",
+        "content_uid": "5a1a9365-683f-40a7-b97e-79b92a79ace0",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261008020000",
+        "parent_uid": "c570ccaa-c8bd-4b7e-8ab1-3d8e9fb798b6",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-c570ccaa-c8bd-4b7e-8ab1-3d8e9fb798b6",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-c7a2d1d5-68cc-4598-baec-689a909cea7a",
+        "content_uid": "189f71ec-b256-42f1-81fd-82516b06c7d7",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261007020000-wal",
+        "parent_uid": "c7a2d1d5-68cc-4598-baec-689a909cea7a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-c7a2d1d5-68cc-4598-baec-689a909cea7a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-c898a7c8-bae7-41f8-a777-eb4bed278974",
+        "content_uid": "de38a4b8-0c2d-4fa6-9acd-ae51000d0bce",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-6-config-to-canonical",
+        "parent_uid": "c898a7c8-bae7-41f8-a777-eb4bed278974",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f2475e6a-c674-4fbb-ad4a-05cc833e465a",
+        "snapshot": "snapshot-c898a7c8-bae7-41f8-a777-eb4bed278974",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-cb378afb-2997-4d2d-89dc-472a768e7a0d",
+        "content_uid": "dd305ad5-3bbd-4533-890c-bc0a0dcc0543",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-redis-to-canonical",
+        "parent_uid": "cb378afb-2997-4d2d-89dc-472a768e7a0d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-262f5c7c-c60b-41d1-ad9f-3b1c11b71383",
+        "snapshot": "snapshot-cb378afb-2997-4d2d-89dc-472a768e7a0d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-cb620a9c-62bd-404c-ba70-67fe6794bb32",
+        "content_uid": "08688b5d-5f35-4653-bf5c-6a960a2acd82",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-primary-recovery-validation-20261014-wal",
+        "parent_uid": "cb620a9c-62bd-404c-ba70-67fe6794bb32",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-cb620a9c-62bd-404c-ba70-67fe6794bb32",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-cc3145d5-eacc-409c-a84e-c06f1b5193dc",
+        "content_uid": "fc31c88c-aef3-4702-873a-21465d9eec72",
+        "parent_namespace": "immich",
+        "parent_name": "immich-model-cache-ml-2-to-canonical",
+        "parent_uid": "cc3145d5-eacc-409c-a84e-c06f1b5193dc",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b645fcd1-6a6c-40a9-baae-87e562623ed8",
+        "snapshot": "snapshot-cc3145d5-eacc-409c-a84e-c06f1b5193dc",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-cd2e3a58-fb9d-420c-9b8e-12e606f75186",
+        "content_uid": "754fc6dc-863a-4882-a8a2-468b65c9a185",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260919020000-wal",
+        "parent_uid": "cd2e3a58-fb9d-420c-9b8e-12e606f75186",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-bf839966-ef46-4e8a-af65-a08e68bc928e",
+        "snapshot": "snapshot-cd2e3a58-fb9d-420c-9b8e-12e606f75186",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-ce580968-24e9-4102-888b-398dcf2932b3",
+        "content_uid": "f30459b7-5073-4c84-a28b-6f6defed5c5d",
+        "parent_namespace": "immich",
+        "parent_name": "immich-db-to-canonical-v2",
+        "parent_uid": "ce580968-24e9-4102-888b-398dcf2932b3",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-1ef1053f-8e9a-4a45-8698-91a00eb2d3aa",
+        "snapshot": "snapshot-ce580968-24e9-4102-888b-398dcf2932b3",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d311a604-a290-4f2f-8afc-5213a0ceaf0d",
+        "content_uid": "18569636-7621-455b-8cee-8ef8a988705a",
+        "parent_namespace": "media",
+        "parent_name": "transmission-data-to-canonical-v2",
+        "parent_uid": "d311a604-a290-4f2f-8afc-5213a0ceaf0d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-3ccda052-fe05-496c-bd58-a63f0776fa1d",
+        "snapshot": "snapshot-d311a604-a290-4f2f-8afc-5213a0ceaf0d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d3f34a8f-0e10-442f-a72d-1562e816c38b",
+        "content_uid": "84a6847f-b63e-44a8-8698-2739d24f9ac5",
+        "parent_namespace": "media",
+        "parent_name": "radarr-5-config-final-snapshot",
+        "parent_uid": "d3f34a8f-0e10-442f-a72d-1562e816c38b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-3fa9e8f7-03dd-43ad-b770-211108de4516",
+        "snapshot": "snapshot-d3f34a8f-0e10-442f-a72d-1562e816c38b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d435f0a1-1b29-4774-b134-ed7e88bd4e28",
+        "content_uid": "b325c6f7-cffc-4da3-b80b-acc3babe9a22",
+        "parent_namespace": "immich",
+        "parent_name": "immich-db-pvc-final-snapshot",
+        "parent_uid": "d435f0a1-1b29-4774-b134-ed7e88bd4e28",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-c3c8b091-695f-45c8-bb7c-ac350db8d1f1",
+        "snapshot": "snapshot-d435f0a1-1b29-4774-b134-ed7e88bd4e28",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d47a0aeb-2c8b-4e65-b6cd-f0e37c4d9eb1",
+        "content_uid": "a08f6ae3-5e6f-48ce-be1e-dd9eda9a2592",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260913020000-wal",
+        "parent_uid": "d47a0aeb-2c8b-4e65-b6cd-f0e37c4d9eb1",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-d47a0aeb-2c8b-4e65-b6cd-f0e37c4d9eb1",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-d64024f7-4f46-49e4-a6f8-0cb4b7a58783",
+        "content_uid": "2f93b25d-255c-448e-9abb-f2230a28d738",
+        "parent_namespace": "gitlab",
+        "parent_name": "gitlab-redis-linstor-snapshot",
+        "parent_uid": "d64024f7-4f46-49e4-a6f8-0cb4b7a58783",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-025dcd91-90aa-4ff9-a354-7f92ff740710",
+        "snapshot": "snapshot-d64024f7-4f46-49e4-a6f8-0cb4b7a58783",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d70cb301-1bd3-4eb7-af81-d81b0bd1a53a",
+        "content_uid": "5c76cb4c-8e96-4bb2-a84e-8dc99d98509e",
+        "parent_namespace": "media",
+        "parent_name": "reiverr-plugins-to-canonical",
+        "parent_uid": "d70cb301-1bd3-4eb7-af81-d81b0bd1a53a",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-0b919c81-f8a9-4748-9c08-bd47b4a44e6a",
+        "snapshot": "snapshot-d70cb301-1bd3-4eb7-af81-d81b0bd1a53a",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-d7d0f4f4-7ed4-4bb3-bc56-86e0157fcff7",
+        "content_uid": "a52e6e3a-d1b5-4062-b3f1-7e290924611c",
+        "parent_namespace": "media",
+        "parent_name": "radarr-1-data-to-canonical",
+        "parent_uid": "d7d0f4f4-7ed4-4bb3-bc56-86e0157fcff7",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-46dba0c3-27ff-4365-8283-c2949e7b9173",
+        "snapshot": "snapshot-d7d0f4f4-7ed4-4bb3-bc56-86e0157fcff7",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-da2eab90-3be4-4a28-a15c-b271d3c3990f",
+        "content_uid": "f35cb3b5-5714-480c-92b9-e5b0d3086fd4",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-linstor-standby-20260917-wal",
+        "parent_uid": "da2eab90-3be4-4a28-a15c-b271d3c3990f",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-da2eab90-3be4-4a28-a15c-b271d3c3990f",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-db13eeb5-a5e6-4b1e-b7f1-6fbb73cdcd0d",
+        "content_uid": "d2941fe5-bea0-4f61-9ed6-f80ed083e619",
+        "parent_namespace": "media",
+        "parent_name": "radarr-10-data-to-canonical",
+        "parent_uid": "db13eeb5-a5e6-4b1e-b7f1-6fbb73cdcd0d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-3eea90ac-e3b3-49e3-9bec-95b6b93ffbef",
+        "snapshot": "snapshot-db13eeb5-a5e6-4b1e-b7f1-6fbb73cdcd0d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-dc2f667d-fe8c-42dc-a3f8-400f75f4e78d",
+        "content_uid": "4d769ea7-19e4-47d2-a719-b9164558a024",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-2-config-linstor-snapshot",
+        "parent_uid": "dc2f667d-fe8c-42dc-a3f8-400f75f4e78d",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74",
+        "snapshot": "snapshot-dc2f667d-fe8c-42dc-a3f8-400f75f4e78d",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-de6c40cf-8727-4442-9408-febe27deeb87",
+        "content_uid": "3d2fb65c-9a04-4fa6-bf0d-e178206f4aac",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261013020000",
+        "parent_uid": "de6c40cf-8727-4442-9408-febe27deeb87",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-de6c40cf-8727-4442-9408-febe27deeb87",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-e3bb08e5-da9a-4b05-8143-1d90da255655",
+        "content_uid": "58fa37d4-c851-42e1-b5f7-3db1a0ac0195",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261001020000",
+        "parent_uid": "e3bb08e5-da9a-4b05-8143-1d90da255655",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-e3bb08e5-da9a-4b05-8143-1d90da255655",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-e6e1f454-08ad-4d57-be1f-765a0123a17b",
+        "content_uid": "6fe11011-a181-474e-860d-c8b8673ea749",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261014020000",
+        "parent_uid": "e6e1f454-08ad-4d57-be1f-765a0123a17b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-e6e1f454-08ad-4d57-be1f-765a0123a17b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-e88441aa-c1bc-4f9b-bbd2-391a53e08413",
+        "content_uid": "49a596af-64ab-4c99-bb0c-457374351fef",
+        "parent_namespace": "artifactory",
+        "parent_name": "artifactory-data-to-canonical",
+        "parent_uid": "e88441aa-c1bc-4f9b-bbd2-391a53e08413",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-0dab112d-00c8-4356-bf58-ff6549a274c2",
+        "snapshot": "snapshot-e88441aa-c1bc-4f9b-bbd2-391a53e08413",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-ea20fa5e-31af-49ee-8861-2eebb3b11970",
+        "content_uid": "97bb34de-3478-480d-9180-b8b3c068c68b",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-10-wal-forensic-20261015",
+        "parent_uid": "ea20fa5e-31af-49ee-8861-2eebb3b11970",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-ea20fa5e-31af-49ee-8861-2eebb3b11970",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-ea53fcea-580a-4962-a5d9-b951b657fe11",
+        "content_uid": "e28bb93a-128b-46df-ba85-1e0031c46cb7",
+        "parent_namespace": "media",
+        "parent_name": "bazarr-data-to-canonical",
+        "parent_uid": "ea53fcea-580a-4962-a5d9-b951b657fe11",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79",
+        "snapshot": "snapshot-ea53fcea-580a-4962-a5d9-b951b657fe11",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-eb0fe77a-6eed-4afe-b2d9-7f2e4a04b120",
+        "content_uid": "0623717f-dce3-4f01-adb9-8576f48757b2",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-4-config-to-canonical",
+        "parent_uid": "eb0fe77a-6eed-4afe-b2d9-7f2e4a04b120",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-7190330d-86c6-4f8a-aded-b498c7165e59",
+        "snapshot": "snapshot-eb0fe77a-6eed-4afe-b2d9-7f2e4a04b120",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-eb16392c-359a-496a-92cf-e1799eef3415",
+        "content_uid": "586bbca7-eb1a-4cab-ad61-58e465117fe3",
+        "parent_namespace": "media",
+        "parent_name": "transmission-config-final-snapshot",
+        "parent_uid": "eb16392c-359a-496a-92cf-e1799eef3415",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-30f01a96-d169-4102-bb45-72df18830c44",
+        "snapshot": "snapshot-eb16392c-359a-496a-92cf-e1799eef3415",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-eb4ce059-9f3a-49cf-a0c1-bd4ede555b8f",
+        "content_uid": "a8f7a00f-2002-4896-89fb-69a1c7c73c52",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-11-data-forensic-20261015",
+        "parent_uid": "eb4ce059-9f3a-49cf-a0c1-bd4ede555b8f",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8c63f0bc-109b-4998-b6b0-dd161c5f7819",
+        "snapshot": "snapshot-eb4ce059-9f3a-49cf-a0c1-bd4ede555b8f",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-ec9fd114-574b-42ff-b88f-09ec7f168888",
+        "content_uid": "b5027422-7a85-4af5-bb64-4092b7aa8afe",
+        "parent_namespace": "artifactory",
+        "parent_name": "artifactory-data-final-snapshot",
+        "parent_uid": "ec9fd114-574b-42ff-b88f-09ec7f168888",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4fe30ce1-71ca-4fa3-b842-ac0ca8e2fe72",
+        "snapshot": "snapshot-ec9fd114-574b-42ff-b88f-09ec7f168888",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-ee15f2f5-63e0-405f-891d-cf438c1f258b",
+        "content_uid": "31451f51-7c09-4cc7-9b4f-02d46af44ce6",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260927020000",
+        "parent_uid": "ee15f2f5-63e0-405f-891d-cf438c1f258b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-ee15f2f5-63e0-405f-891d-cf438c1f258b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-ee2a6a6b-6e41-4d06-a34f-bc9283b67d5f",
+        "content_uid": "eaf6235e-a298-4841-bdfc-147679237dc9",
+        "parent_namespace": "media",
+        "parent_name": "radarr-2-data-to-canonical",
+        "parent_uid": "ee2a6a6b-6e41-4d06-a34f-bc9283b67d5f",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-495135ef-1a15-4904-be45-c3186cb702e3",
+        "snapshot": "snapshot-ee2a6a6b-6e41-4d06-a34f-bc9283b67d5f",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-ef827cc1-6037-4b88-bc22-b102a9bdcd80",
+        "content_uid": "e03956ce-8bc4-48c1-bb8f-af8702ea9127",
+        "parent_namespace": "media",
+        "parent_name": "sonarr-6-config-corrupt-20260923",
+        "parent_uid": "ef827cc1-6037-4b88-bc22-b102a9bdcd80",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-b113568f-6947-4b27-bc07-44b82ebc6816",
+        "snapshot": "snapshot-ef827cc1-6037-4b88-bc22-b102a9bdcd80",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-ef975e6d-c3ab-40a4-abd7-b7491c20681b",
+        "content_uid": "b02ddf54-af3c-4f26-855c-78ea62f2b116",
+        "parent_namespace": "media",
+        "parent_name": "radarr-4-data-to-canonical",
+        "parent_uid": "ef975e6d-c3ab-40a4-abd7-b7491c20681b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6da2dc12-dd5e-45f3-8931-25274cd74bdf",
+        "snapshot": "snapshot-ef975e6d-c3ab-40a4-abd7-b7491c20681b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-f033108e-5865-4a7d-a60b-c4fdd23312a9",
+        "content_uid": "70d54e25-1468-421f-b869-453ee0c8947d",
+        "parent_namespace": "media",
+        "parent_name": "arr-dashboard-config-linstor-snapshot",
+        "parent_uid": "f033108e-5865-4a7d-a60b-c4fdd23312a9",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-4e5cf546-3d8f-49c1-bcf1-a5c4196e2c4b",
+        "snapshot": "snapshot-f033108e-5865-4a7d-a60b-c4fdd23312a9",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-f1d86df7-b894-4af7-b039-c2fc5797de86",
+        "content_uid": "0d221b4b-11ed-431e-9ddb-8ea65ff1af8d",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261005020000-wal",
+        "parent_uid": "f1d86df7-b894-4af7-b039-c2fc5797de86",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-f1d86df7-b894-4af7-b039-c2fc5797de86",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-f61ef0c9-798c-460e-8142-e25c792f34b5",
+        "content_uid": "96e81658-e78b-4ad5-af68-52b24ba12316",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260930020000-wal",
+        "parent_uid": "f61ef0c9-798c-460e-8142-e25c792f34b5",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-f61ef0c9-798c-460e-8142-e25c792f34b5",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-f77fc2bd-c627-4947-a907-307e79221c1b",
+        "content_uid": "bb25a9c3-fd95-48d8-a6dd-de60f1d1230f",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261009020000-wal",
+        "parent_uid": "f77fc2bd-c627-4947-a907-307e79221c1b",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-f77fc2bd-c627-4947-a907-307e79221c1b",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-f89e492f-fa0d-4efb-9c38-100b3778a926",
+        "content_uid": "c47714d2-ad67-4c40-a2f7-191b0f48fecc",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260922020000-wal",
+        "parent_uid": "f89e492f-fa0d-4efb-9c38-100b3778a926",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1",
+        "snapshot": "snapshot-f89e492f-fa0d-4efb-9c38-100b3778a926",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-f8ab0d91-5e06-4579-acea-dcc474ceeec4",
+        "content_uid": "53660681-0a62-4879-a630-4a7c63e10397",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-10-data-forensic-20261015",
+        "parent_uid": "f8ab0d91-5e06-4579-acea-dcc474ceeec4",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-f8ab0d91-5e06-4579-acea-dcc474ceeec4",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-fa83149c-954d-4707-ba18-2abb2ce01376",
+        "content_uid": "783e5e4f-454d-4a9f-9996-5bdef779bff6",
+        "parent_namespace": "media",
+        "parent_name": "reiverr-plugins-final-snapshot",
+        "parent_uid": "fa83149c-954d-4707-ba18-2abb2ce01376",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-f1a1158d-4e46-4660-ada8-677c0f1655ea",
+        "snapshot": "snapshot-fa83149c-954d-4707-ba18-2abb2ce01376",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-fcb2996b-411b-4830-8045-8517a018d7ec",
+        "content_uid": "386395ff-3e62-47dd-be14-eb3af52bf93c",
+        "parent_namespace": "media",
+        "parent_name": "checkrr-config-linstor-snapshot",
+        "parent_uid": "fcb2996b-411b-4830-8045-8517a018d7ec",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a",
+        "snapshot": "snapshot-fcb2996b-411b-4830-8045-8517a018d7ec",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "referenced by restore PVC or migration ledger"
+      },
+      {
+        "content": "snapcontent-fcc1ac7a-8e7b-4ece-bd3a-179236f6a515",
+        "content_uid": "ae67dda2-3762-4478-99fb-1d7c9c9e2382",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20261014020000-wal",
+        "parent_uid": "fcc1ac7a-8e7b-4ece-bd3a-179236f6a515",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06",
+        "snapshot": "snapshot-fcc1ac7a-8e7b-4ece-bd3a-179236f6a515",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      },
+      {
+        "content": "snapcontent-fcd6e9de-6686-4b26-af79-e2046452f5c6",
+        "content_uid": "4145ab46-873d-415d-a6c7-d835a078e1bf",
+        "parent_namespace": "cnpg-system",
+        "parent_name": "shared-postgres-daily-backup-20260923020000",
+        "parent_uid": "fcd6e9de-6686-4b26-af79-e2046452f5c6",
+        "policy": "Retain",
+        "class": "linstor-snapshot",
+        "resource": "pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220",
+        "snapshot": "snapshot-fcd6e9de-6686-4b26-af79-e2046452f5c6",
+        "backend_present": true,
+        "backend_nodes": [
+          "kubernetes-node-204",
+          "kubernetes-node-205",
+          "kubernetes-node-206"
+        ],
+        "backend_flags": [
+          "SUCCESSFUL"
+        ],
+        "ready": true,
+        "reason": "manual or recovery snapshot: preserve"
+      }
+    ],
+    "backend_only_snapshots": [
+      {
+        "resource": "pvc-23c0756f-6509-49aa-b5dd-502991784b88",
+        "snapshot": "snapshot-531a2dc7-881c-469e-ba83-089bc0ec03a5",
+        "decision": "hold",
+        "reason": "no Kubernetes content mapping; recovery lineage unverified"
+      },
+      {
+        "resource": "pvc-de2d5e34-37ed-4c6e-b870-73bc5de88c00",
+        "snapshot": "snapshot-eb85716b-e7e9-403c-84db-8db21b3f22d9",
+        "decision": "hold",
+        "reason": "no Kubernetes content mapping; recovery lineage unverified"
+      }
+    ]
+  },
+  "rules": [
+    "No snapshot is currently approved for deletion.",
+    "The three newly orphaned contents are review-only; Retain and/or incomplete lineage prevents treating orphan status as proof of obsolescence.",
+    "Do not delete held snapshots without new evidence resolving recovery, restore, backup-chain, or ownership references.",
+    "Refresh live Kubernetes, LINSTOR, backup-chain, and per-worker LV inventories before any further cleanup."
+  ],
+  "review_only_candidates": [
+    {
+      "content": "snapcontent-4521b32a-ee14-44b6-9ee1-ec0daa217891",
+      "namespace": "linstor-pilot-validation",
+      "parent_name": "scratch-snapshot",
+      "snapshot_handle": "InCluster:///pvc-672c64a5-fa00-4be2-b3f4-7996e1e00585/snapshot-4521b32a-ee14-44b6-9ee1-ec0daa217891",
+      "policy": "Retain",
+      "ready": true,
+      "backend_match": false,
+      "disposition": "hold",
+      "reason": "Orphaned parent with Retain policy; current ownership/recovery value is not proven."
+    },
+    {
+      "content": "snapcontent-b06e48ca-e8c5-489e-a83b-508c60cc4174",
+      "namespace": "cnpg-system",
+      "parent_name": "shared-postgres-5-linstor-validation",
+      "snapshot_handle": "InCluster:///pvc-136d880e-535e-4625-bff4-ab497086336d/snapshot-b06e48ca-e8c5-489e-a83b-508c60cc4174",
+      "policy": "Retain",
+      "ready": true,
+      "backend_match": true,
+      "disposition": "hold",
+      "reason": "Orphaned parent with Retain policy; current ownership/recovery value is not proven."
+    },
+    {
+      "content": "snapcontent-ea53fcea-580a-4962-a5d9-b951b657fe11",
+      "namespace": "media",
+      "parent_name": "bazarr-data-to-canonical",
+      "snapshot_handle": "InCluster:///pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79/snapshot-ea53fcea-580a-4962-a5d9-b951b657fe11",
+      "policy": "Retain",
+      "ready": true,
+      "backend_match": true,
+      "disposition": "hold",
+      "reason": "Orphaned parent with Retain policy; current ownership/recovery value is not proven."
+    }
+  ],
+  "current_live_state": {
+    "nodes": [
+      "kubernetes-node-204",
+      "kubernetes-node-205",
+      "kubernetes-node-206"
+    ],
+    "satellites_connected": true,
+    "volume_snapshots": 176,
+    "volume_snapshot_contents": 179,
+    "orphan_contents_review_only": 3,
+    "per_worker_lvm": {
+      "204": {
+        "vg_mda_free": "25.50k",
+        "lv_count": 1103
+      },
+      "205": {
+        "vg_mda_free": "25.50k",
+        "lv_count": 1125
+      },
+      "206": {
+        "vg_mda_free": "55.50k",
+        "lv_count": 1058
+      }
+    },
+    "configured_metadata_free_gate_bytes": 229376,
+    "metadata_gate_passes": false,
+    "backup_inventory_available": true,
+    "linstor_snapshot_inventory_available": true
+  }
+}
