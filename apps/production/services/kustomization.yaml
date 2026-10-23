@@ -19,6 +19,76 @@ resources:
 components:
   - ../components/prune-protection
 
+# These stateless, low-resource services may tolerate worker 214's taint.
+# No nodeSelector is added, so the normal scheduler can place them on any node
+# using their resource requests and current capacity.
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: blog
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: workload
+            operator: Equal
+            value: low-risk-only
+            effect: NoSchedule
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: downloader
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: workload
+            operator: Equal
+            value: low-risk-only
+            effect: NoSchedule
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: growlog-web
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: workload
+            operator: Equal
+            value: low-risk-only
+            effect: NoSchedule
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: it-tools
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: workload
+            operator: Equal
+            value: low-risk-only
+            effect: NoSchedule
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: resume
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: workload
+            operator: Equal
+            value: low-risk-only
+            effect: NoSchedule
+
 transformers:
   - |-
     apiVersion: builtin
