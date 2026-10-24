@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: linstor-snapshot-reconcile
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
-  suspend: true
+  suspend: false
   # Offset from the backup schedules that start on the hour.
   schedule: "15 * * * *"
   concurrencyPolicy: Forbid
