@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: linstor-snapshot-reconcile
     app.kubernetes.io/part-of: piraeus-datastore
 spec:
-  suspend: true
+  suspend: false
   # Offset from the backup schedules that start on the hour.
   schedule: "15 * * * *"
   concurrencyPolicy: Forbid
@@ -59,8 +59,10 @@ spec:
                   gate="$(kubectl get configmap linstor-protection-gate-status -n piraeus-datastore -o json 2>/dev/null || true)"
                   if ! printf '%s' "$gate" | jq -e '
                     .data.snapshotReady == "true" and
+                    .data.backupReady == "true" and
                     ((now | floor) - ((.data.checkedAt // "0") | tonumber)) < 600 and
-                    ((now | floor) - ((.data.snapshotHealthySince // "0") | tonumber)) >= 86400
+                    ((now | floor) - ((.data.snapshotHealthySince // "0") | tonumber)) >= 86400 and
+                    ((now | floor) - ((.data.backupHealthySince // "0") | tonumber)) >= 86400
                   ' >/dev/null; then
                     echo "Protection gate is not ready for 24 hours; skipping snapshots."
                     exit 0
@@ -73,13 +75,12 @@ spec:
                     echo "Fewer than three available diskful satellites; skipping new snapshots."
                     exit 0
                   fi
-                  # These snapshots are deleted by this job's retention loop;
-                  # use a class that also removes the corresponding LINSTOR
-                  # snapshot when a VolumeSnapshot is pruned.
-                  snapshot_class=linstor-snapshot-prunable
+                  # These managed snapshots are S3 backups in the v2 remote;
+                  # the Delete policy lets retention prune their remote objects.
+                  snapshot_class=linstor-snapshot-s3-v2
                   # A failed create or delete must halt accumulation across runs.
                   if kubectl get volumesnapshot -A -l protection.josmase.dev/managed=true -o json |
-                    jq -e 'any(.items[]; .spec.volumeSnapshotClassName == "linstor-snapshot-prunable" and (.status.readyToUse != true or .metadata.deletionTimestamp != null))' >/dev/null; then
+                    jq -e 'any(.items[]; .spec.volumeSnapshotClassName == "linstor-snapshot-s3-v2" and (.status.readyToUse != true or .metadata.deletionTimestamp != null))' >/dev/null; then
                     echo "Managed snapshot work is still pending; skipping new snapshots."
                     exit 0
                   fi
@@ -170,7 +171,7 @@ spec:
                       case "$retention" in hourly) keep=12 ;; daily) keep=7 ;; weekly) keep=4 ;; esac
                       # Free one slot before creating to avoid a transient
                       # retention-window overrun in the VG metadata area.
-                      old="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName --no-headers --sort-by=.metadata.creationTimestamp | awk '$2 == "linstor-snapshot-prunable" {print $1}')"
+                      old="$(kubectl get volumesnapshot -n "$namespace" -l protection.josmase.dev/managed=true,protection.josmase.dev/tier="$tier",protection.josmase.dev/retention="$retention",protection.josmase.dev/source="$safe" -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName --no-headers --sort-by=.metadata.creationTimestamp | awk '$2 == "linstor-snapshot-s3-v2" {print $1}')"
                       count="$(printf '%s\n' "$old" | sed '/^$/d' | wc -l)"
                       if [ "$count" -ge "$keep" ]; then
                         oldest="$(printf '%s\n' "$old" | sed '/^$/d' | head -n1)"

@@ -11,9 +11,7 @@ resources:
   - final-storage-class.yaml
   - triple-storage-class.yaml
   - final-bootstrap-storage-class.yaml
-  - rustfs-credentials.yaml
   - rustfs-v2-credentials.yaml
-  - rustfs-remote-reconcile.yaml
   - rustfs-v2-remote-reconcile.yaml
   - backup-shipping-concurrency.yaml
   - linstor-protection-policy.yaml
@@ -24,7 +22,6 @@ resources:
   - linstor-vg-reserve-check.yaml
   - linstor-protection-validate.yaml
   - linstor-csi-snapshot-watch-rbac.yaml
-  - linstor-backup-policy-reconcile.yaml
   - linstor-snapshot-reconcile.yaml
   - linstor-protection-gate.yaml
   - snapshot-retention-policy.yaml

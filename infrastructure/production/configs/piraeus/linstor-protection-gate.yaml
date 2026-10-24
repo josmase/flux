@@ -155,23 +155,14 @@ spec:
                 - |
                   controller="linstor-controller.piraeus-datastore.svc:3370"
                   remote="rustfs-linstor-backups-v2"
-                  legacy_remote="rustfs-linstor-backups"
                   policy_ready="$(cat /work/backup-ready)"
                   schedule_data="$(linstor --controllers "$controller" -m schedule list | jq -c '.data')"
                   if [ "$policy_ready" != "true" ]; then
-                    # Retire the pre-gate Radarr schedule as well as the
-                    # generated policy schedules below. The legacy Job that
-                    # created it is no longer reconciled by Flux.
-                    linstor --controllers "$controller" backup schedule disable \
-                      --rd pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf "$remote" radarr10-config || true
-                    linstor --controllers "$controller" backup schedule disable \
-                      --rd pvc-d50cad96-7cca-4ed0-bf79-bad3a3e5a7cf "$legacy_remote" radarr10-config || true
                     while IFS="$(printf '\t')" read -r legacy_namespace legacy_name legacy_resource; do
                       [ -n "$legacy_resource" ] || continue
                       legacy_safe="$(printf '%s-%s' "$legacy_namespace" "$legacy_name" | tr -c '[:alnum:]' '-')"
                       legacy_prefix="$(printf '%s' "$legacy_safe" | cut -c1-47)"
                       legacy_hash="$(printf '%s/%s' "$legacy_namespace" "$legacy_name" | sha256sum | cut -c1-8)"
-                      linstor --controllers "$controller" backup schedule disable --rd "$legacy_resource" "$legacy_remote" "policy-$legacy_prefix-$legacy_hash" || true
                       linstor --controllers "$controller" backup schedule disable --rd "$legacy_resource" "$remote" "policy-v2-$legacy_prefix-$legacy_hash" || true
                     done < /work/legacy-pvcs.tsv
                   fi
@@ -192,11 +183,7 @@ spec:
                       standard) full="$minute 3 * * *"; incremental=""; local_keep=1; remote_keep=7 ;;
                       *) echo "unknown reviewed backup tier $tier for $namespace/$name" >&2; exit 1 ;;
                     esac
-                    legacy_schedule="policy-$prefix-$hash"
                     schedule="policy-v2-$prefix-$hash"
-                    if [ "$policy_ready" != "true" ]; then
-                      linstor --controllers "$controller" backup schedule disable --rd "$resource" "$legacy_remote" "$legacy_schedule" || true
-                    fi
                     if [ "$policy_ready" = "true" ]; then
                       if ! printf '%s' "$schedule_data" | jq -e --arg name "$schedule" 'any(.[]; .schedule_name == $name)' >/dev/null; then
                         if [ -n "$incremental" ]; then

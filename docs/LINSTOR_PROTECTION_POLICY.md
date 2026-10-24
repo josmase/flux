@@ -15,9 +15,9 @@ new backups.
 The hourly snapshot CronJob creates labeled snapshots for canonical PVCs used by
 running, Ready pods and enforces the hourly/daily/weekly retention windows.
 Stopped workloads keep their existing recovery copies and remote backups.
-Scheduled snapshots use the `linstor-snapshot-prunable` Delete class; retention
-counts and deletes only managed snapshots in that class. The Retain class is for
-explicit recovery snapshots.
+Scheduled snapshots use `linstor-snapshot-s3-v2`; retention counts and prunes
+only managed snapshots in that class, deleting the associated v2 remote object.
+The Retain class is for explicit recovery snapshots.
 
 Creation requires three connected diskful satellites, at least 20% free in each
 LINSTOR thin pool, three UpToDate source replicas, and no pending managed create
@@ -30,9 +30,10 @@ before enabling scheduled creation. The reset leaves both the hourly CronJob
 and CloudNativePG's daily snapshot ScheduledBackup suspended pending recovery
 and capacity checks.
 
-The backup reconciliation Job inventories
-only canonical PVCs, creates or modifies the expected LINSTOR schedules, and
-enables each schedule for its resource on `rustfs-linstor-backups`.
+The backup policy gate inventories canonical PVCs, creates or modifies the
+reviewed LINSTOR schedules, and enables each schedule on
+`rustfs-linstor-backups-v2`. Recurring snapshot backups require both snapshot
+and backup readiness gates to remain healthy for 24 hours.
 
 Run the protection validation Job after every policy change. It must enumerate
 at least one canonical PVC and assign exactly one tier to every canonical PVC.
@@ -53,4 +54,4 @@ off-site copy is added.
 
 ## Backend backup schedule recovery hold (2026-10-19)
 
-The Kubernetes backup-policy Job is suspended as well as the snapshot CronJob and CloudNativePG ScheduledBackup. LINSTOR also had 101 active S3 schedule bindings, independent of these Jobs, including schedules on dormant and legacy resources. Their exact settings are saved in protected incident evidence and are being disabled through `backup schedule disable --rd`, preserving schedules and backup data. Re-enable only reviewed resources after capacity and restore gates pass; resuming the existing policy Job would enable bindings for every matching Bound PVC. Existing `back_*` chains are held during CSI cleanup.
+The Kubernetes backup-policy Job is suspended as well as the snapshot CronJob and CloudNativePG ScheduledBackup. LINSTOR also had 101 active S3 schedule bindings, independent of these Jobs, including schedules on dormant and legacy resources. Their exact settings are saved in protected incident evidence and are being disabled through `backup schedule disable --rd`, preserving schedules and backup data. Re-enable only reviewed resources after capacity and restore gates pass; resuming the existing policy Job would enable bindings for every matching Bound PVC. Existing `back_*` chains are held during CSI cleanup. The old remote configuration has since been retired; its `linstor-backups` bucket objects remain preserved and are not pruned as part of the v2 migration.

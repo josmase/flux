@@ -8,9 +8,10 @@ cannot silently alter existing remote retention.
 
 ## Backup generation v2
 
-The new generation writes only to RustFS bucket `linstor-backups-v2` through
-LINSTOR remote `rustfs-linstor-backups-v2`. Keep the existing remote, bucket,
-snapshots, and backup records for investigation and recovery.
+The active generation writes only to RustFS bucket `linstor-backups-v2` through
+LINSTOR remote `rustfs-linstor-backups-v2`. The obsolete LINSTOR remote and its
+reconciliation credentials are removed; the old `linstor-backups` bucket and
+its objects are retained for recovery and are not deleted by this change.
 
 `linstor-backup-generation-manifest` is intentionally unreviewed and empty.
 Set `canonicalVolumeCount` from the full reviewed non-cache LINSTOR inventory,
@@ -51,7 +52,9 @@ preserves the newest successful v2 recovery set even if it is older and uses
 The protection gate keeps its existing fields and adds independent storage,
 remote-access, current-generation coverage, and generation status fields. The
 CNPG and LINSTOR bootstrap Jobs are bounded and run serially while recurring
-producers remain gated. The hourly local snapshot CronJob stays suspended.
+producers remain gated. The hourly managed snapshot CronJob creates S3 snapshots
+through the v2 remote and stays gated until both snapshot and backup readiness
+have been healthy for 24 hours.
 
 RustFS must retain at least 1 TiB of actual filesystem free space after the
 measured v2 retention forecast. The Ansible RustFS role enforces this absolute
@@ -60,13 +63,13 @@ floor; do not replace it with a percentage threshold.
 The current RustFS target is a single failure domain. It protects against
 node and LINSTOR-volume failure, but not total loss of the storage server.
 
-Snapshot classes intentionally separate durable and prunable snapshots:
+Snapshot classes intentionally separate durable, prunable, and S3 snapshots:
 
 - `linstor-snapshot` retains the backend snapshot and remains the class for
   canonical, recovery, and manually managed snapshots.
-- The hourly `linstor-snapshot-reconcile-v3` job creates new retention-managed
-  snapshots with `linstor-snapshot-prunable` (`Delete`), so pruning their
-  `VolumeSnapshot` also deletes the corresponding backend snapshot.
+- The hourly `linstor-snapshot-reconcile-v3` job creates retention-managed S3
+  backups with `linstor-snapshot-s3-v2` (`Delete`), so pruning their
+  `VolumeSnapshot` also deletes the corresponding remote object.
 - Before creating new snapshots, the job requires at least one `LinstorSatellite`
   to report `Available=True` and nonzero `status.freeCapacityBytes`. Kubernetes node readiness
   alone does not show that LINSTOR has a connected diskful satellite.

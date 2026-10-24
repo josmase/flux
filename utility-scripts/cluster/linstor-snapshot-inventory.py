@@ -49,11 +49,11 @@ def collect(output, full_crds, workers):
     run(["kubectl", "-n", "piraeus-datastore", "exec", "deploy/linstor-controller", "--",
          "linstor", "-m", "snapshot", "list"], output / "linstor-snapshots.json", optional=True)
     backups = run(["kubectl", "-n", "piraeus-datastore", "exec", "deploy/linstor-controller", "--",
-                   "linstor", "-m", "backup", "list", "rustfs-linstor-backups"],
-                  output / "linstor-backups.json", optional=True)
+                   "linstor", "-m", "backup", "list", "rustfs-linstor-backups-v2"],
+                  output / "linstor-backups-v2.json", optional=True)
     if isinstance(backups, list) and any(isinstance(x, dict) and x.get("ret_code", 0) < 0 for x in backups):
-        (output / "linstor-backups.error.txt").write_text(
-            "LINSTOR reported an error; inspect linstor-backups.json. Backup inventory is unavailable.\n")
+        (output / "linstor-backups-v2.error.txt").write_text(
+            "LINSTOR reported an error; inspect linstor-backups-v2.json. Backup inventory is unavailable.\n")
     for worker in workers:
         run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", worker,
              "sudo", "-n", "lvs", "--reportformat", "json", "-o",
@@ -211,8 +211,8 @@ def analyze(output, ledger=None):
               "matched_linstor_snapshots": sum(x["backend_match"] for x in rows),
               "review_candidates": sum(x["disposition"] == "review_candidate" for x in rows),
               "backend_inventory_available": (output / "linstor-snapshots.json").exists(),
-              "backup_inventory_available": (output / "linstor-backups.json").exists() and
-                                          not (output / "linstor-backups.error.txt").exists(),
+              "backup_inventory_available": (output / "linstor-backups-v2.json").exists() and
+                                          not (output / "linstor-backups-v2.error.txt").exists(),
               "lv_hosts": sorted(p.stem.removeprefix("lvs-") for p in output.glob("lvs-*.json"))}
     (output / "summary.json").write_text(json.dumps(counts, indent=2) + "\n")
     print(json.dumps(counts, indent=2))
