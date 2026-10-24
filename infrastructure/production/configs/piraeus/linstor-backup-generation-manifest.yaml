@@ -53,7 +53,6 @@ data:
     media	sonarr-5-config-linstor	pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1	standard	yes
     media	sonarr-6-config-linstor	pvc-136dea81-494a-47d3-b6b7-2c62b8f05762	standard	yes
     media	tdarr-config-linstor	pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50	standard	yes
-    media	transmission-config-linstor-v3	pvc-7d594705-fed7-460c-899a-0f2c6ad420c4	standard	yes
     monitoring	alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0	pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79	standard	yes
     monitoring	gotify-data-linstor	pvc-72b0df4b-a891-48f9-a476-91500b022ec8	standard	yes
     monitoring	grafana-data-linstor	pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749	standard	yes

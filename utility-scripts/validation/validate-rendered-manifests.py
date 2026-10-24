@@ -15,7 +15,6 @@ import yaml
 
 VARIABLE_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 INTENTIONAL_RUNTIME_VARIABLES = {
-    ("apps/v1", "Deployment", "media", "transmission"): {"PGID", "PUID"},
 }
 PRUNE_PROTECTED_KINDS = {
     "Namespace",
