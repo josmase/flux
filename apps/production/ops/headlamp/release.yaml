@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  interval: 5m
+  timeout: 5m
+  chart:
+    spec:
+      chart: headlamp
+      version: 0.46.0
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    image:
+      tag: v0.46.0
+    config:
+      inCluster: true
+      unsafeUseServiceAccountToken: true
+      enableHelm: false
+      oidc:
+        secret:
+          create: false
+    serviceAccount:
+      create: true
+      name: headlamp
+    clusterRoleBinding:
+      create: false

@@ -5,6 +5,7 @@ resources:
   - ../../base/traefik-dashboard
   - ../../base/cloudflare-ddns
   - ../../base/renovate-bot
+  - headlamp
   - ../cloudflare-ddns
   - ../renovate-bot
 
