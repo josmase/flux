@@ -9,7 +9,7 @@ metadata:
 data:
   backupGeneration: rustfs-linstor-backups-v2
   reviewed: "true"
-  canonicalVolumeCount: "56"
+  canonicalVolumeCount: "55"
   resources.tsv: |
     artifactory	artifactory-data-linstor	pvc-510570a7-ea65-489b-b50f-267e3ab99476	standard	yes
     artifactory	artifactory-pg17-linstor	pvc-be4ead27-e1a9-4516-9930-44e053eccd1c	standard	yes

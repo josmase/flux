@@ -5,7 +5,7 @@ metadata:
   namespace: piraeus-datastore
 data:
   backupGeneration: rustfs-linstor-backups-v2
-  manifestHash: 59fcda8d7efe42da5f6a7ebec4ca0d3fab62492820095514957f3d05c6f4b330
+  manifestHash: badac174075b10a702d6a24cb15fe4fd0deb6d831dd0d509fc10ac107b9b84bd
   s3CanaryVerified: 'true'
   clusterShippingConcurrencyVerified: 'true'
   canonicalCoverageVerified: 'true'
