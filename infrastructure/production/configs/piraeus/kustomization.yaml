@@ -19,7 +19,6 @@ resources:
   - linstor-backup-generation-status.yaml
   - linstor-backup-bootstrap.yaml
   - linstor-bootstrap-retention.yaml
-  - linstor-vg-reserve-check.yaml
   - linstor-protection-validate.yaml
   - linstor-csi-snapshot-watch-rbac.yaml
   - linstor-snapshot-reconcile.yaml
