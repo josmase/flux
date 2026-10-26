@@ -34,7 +34,15 @@ def validate(objects, name):
     cm = next(o for o in objects if o['kind'] == 'ConfigMap' and o['metadata']['name'] == cfg['state_config_map'])
     assert 'data' not in cm, 'Flux must not manage runtime retry history'
     role = next(o for o in objects if o['kind'] == 'Role' and o['metadata']['name'] == cfg['state_config_map'])
-    assert not any('*' in str(rule) or 'list' in rule['verbs'] or 'create' in rule['verbs'] and rule['resources'] != ['events'] for rule in role['rules'])
+    event_rule = next(r for r in role['rules'] if r['resources'] == ['events'])
+    assert event_rule['verbs'] == ['create', 'list']
+    assert not any(
+        '*' in str(rule)
+        or 'list' in rule['verbs']
+        or 'create' in rule['verbs']
+        for rule in role['rules']
+        if rule is not event_rule
+    )
     assert next(r for r in role['rules'] if r['resources'] == ['configmaps'])['resourceNames'] == [cm['metadata']['name']]
     assert next(r for r in role['rules'] if r['resources'] == ['deployments'])['resourceNames'] == [name]
     assert spec['serviceAccountName'] == cfg['state_config_map']
