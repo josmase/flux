@@ -39,6 +39,7 @@ flux-validate:
 
   script:
     - bash utility-scripts/validation/validate.sh
+    - python3 utility-scripts/nfs-recovery/validate.py
 
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'

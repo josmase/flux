@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+  patch: "- op: add\n  path: /spec/template/spec/containers/-\n  value:\n    name:\
+    \ nfs-stale-recovery\n    image: artifactory.local.hejsan.xyz/local/nfs-workload-recovery@sha256:0aae98b27425b4fbdf0f73d37ad2d47f55f64394c1d90b7b053558409d6f193c\n\
+    \    imagePullPolicy: IfNotPresent\n    env:\n    - name: POD_NAME\n      valueFrom:\n\
+    \        fieldRef:\n          fieldPath: metadata.name\n          apiVersion:\
+    \ v1\n    - name: POD_NAMESPACE\n      valueFrom:\n        fieldRef:\n       \
+    \   fieldPath: metadata.namespace\n          apiVersion: v1\n    - name: POD_UID\n\
+    \      valueFrom:\n        fieldRef:\n          fieldPath: metadata.uid\n    \
+    \      apiVersion: v1\n    - name: NFS_RECOVERY_CONFIG\n      valueFrom:\n   \
+    \     fieldRef:\n          fieldPath: metadata.annotations['nfs-recovery.josmase.io/config']\n\
+    \          apiVersion: v1\n    securityContext:\n      runAsNonRoot: true\n  \
+    \    runAsUser: 1000\n      runAsGroup: 1000\n      allowPrivilegeEscalation:\
+    \ false\n      readOnlyRootFilesystem: true\n      capabilities:\n        drop:\n\
+    \        - ALL\n      seccompProfile:\n        type: RuntimeDefault\n    resources:\n\
+    \      requests:\n        cpu: 10m\n        memory: 32Mi\n      limits:\n    \
+    \    memory: 128Mi\n"

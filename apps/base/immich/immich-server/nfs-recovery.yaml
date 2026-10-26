@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-server
+  namespace: immich
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        nfs-recovery.josmase.io/config: '{"container":"immich-server","deployment":"immich-server","state_config_map":"nfs-recovery-immich-server","paths":["/nfs-check/files/immich/data","/nfs-check/files/immich/external-library"]}'
+    spec:
+      serviceAccountName: nfs-recovery-immich-server
+      containers:
+      - name: nfs-stale-recovery
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /nfs-check
+          readOnly: true
+      - name: immich-server
+        startupProbe:
+          httpGet:
+            path: /api/server/ping
+            port: 2283
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        readinessProbe:
+          exec:
+            command:
+            - node
+            - -e
+            - const fs=require('fs');for(const p of ['/data','/external-library'])fs.statSync(p);require('http').get('http://127.0.0.1:2283/api/server/ping',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1));
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 2

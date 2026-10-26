@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nfs-recovery-jellyfin
+  namespace: media
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nfs-recovery-jellyfin
+  namespace: media
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nfs-recovery-jellyfin
+  namespace: media
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - pods
+  verbs:
+  - get
+  - delete
+- apiGroups:
+  - ''
+  resources:
+  - pods/log
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  resourceNames:
+  - jellyfin
+  verbs:
+  - get
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  resourceNames:
+  - nfs-recovery-jellyfin
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nfs-recovery-jellyfin
+  namespace: media
+subjects:
+- kind: ServiceAccount
+  name: nfs-recovery-jellyfin
+  namespace: media
+roleRef:
+  kind: Role
+  name: nfs-recovery-jellyfin
+  apiGroup: rbac.authorization.k8s.io

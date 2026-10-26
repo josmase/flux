@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin
+spec:
+  template:
+    metadata:
+      annotations:
+        nfs-recovery.josmase.io/config: '{"container":"jellyfin","deployment":"jellyfin","state_config_map":"nfs-recovery-jellyfin","paths":["/nfs-check/files","/nfs-check/files/.jellyfin-subtitle-cache"]}'
+    spec:
+      serviceAccountName: nfs-recovery-jellyfin
+      containers:
+      - name: nfs-stale-recovery
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /nfs-check
+          readOnly: true
+      - name: log-watcher
+        $patch: delete

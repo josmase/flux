@@ -29,8 +29,8 @@ domains:
     count: 13
     sha256: 2b466305e954ec4c1332a72e296e077f174ec59a8e67002266f03f146b9f3adc
   apps-photos:
-    count: 29
-    sha256: ef83f97b85f270bf975739e971c2a37832e0e1b9152a2b0b969ef28b110c0eb8
+    count: 33
+    sha256: 470312cd7e2be02ec1d87919205e36ce1ef87406bc4e3cfc4066ace630d5b9a6
   apps-gitlab:
     count: 21
     sha256: b041c9b1763bedea63b6e4c7e5a4ec41a84569d02ec3a494017cdf36acd582c1

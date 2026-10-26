@@ -1,12 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
-  - ingress.yaml
-  - service.yaml
-  - deployment.yaml
-
+- ingress.yaml
+- service.yaml
+- deployment.yaml
+- nfs-recovery-rbac.yaml
 labels:
-  - includeSelectors: true
-    pairs:
-      app: immich-server
+- includeSelectors: true
+  pairs:
+    app: immich-server
+components:
+- ../../components/nfs-stale-recovery
+patches:
+- path: nfs-recovery.yaml
