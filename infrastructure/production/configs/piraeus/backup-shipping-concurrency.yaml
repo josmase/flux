@@ -10,7 +10,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: configure
-          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:d8da06ae50c0fa9c36f2649a8073667b546d6e9dcacc123c203d3d47ab5bc0f0
           command: [/bin/sh, -ec]
           args:
             - |

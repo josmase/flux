@@ -32,7 +32,7 @@ spec:
                 defaultMode: 0555
           initContainers:
             - name: rustfs-capacity
-              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:d8da06ae50c0fa9c36f2649a8073667b546d6e9dcacc123c203d3d47ab5bc0f0
               command: [python3, /scripts/rustfs-capacity-read.py]
               env:
                 - name: RUSTFS_ACCESS_KEY
@@ -145,7 +145,7 @@ spec:
                   ' /work/gate.json > /work/backup-ready
           containers:
             - name: reconcile
-              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+              image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:d8da06ae50c0fa9c36f2649a8073667b546d6e9dcacc123c203d3d47ab5bc0f0
               volumeMounts:
                 - name: work
                   mountPath: /work
