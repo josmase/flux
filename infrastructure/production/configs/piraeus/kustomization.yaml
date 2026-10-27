@@ -13,6 +13,7 @@ resources:
   - final-bootstrap-storage-class.yaml
   - rustfs-v2-credentials.yaml
   - rustfs-v2-remote-reconcile.yaml
+  - backup-shipping-concurrency-v1-archive.yaml
   - backup-shipping-concurrency.yaml
   - linstor-protection-policy.yaml
   - linstor-backup-generation-manifest.yaml

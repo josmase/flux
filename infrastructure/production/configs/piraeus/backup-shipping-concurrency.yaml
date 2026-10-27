@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-backup-shipping-concurrency-v1
+  name: linstor-backup-shipping-concurrency-v2
   namespace: piraeus-datastore
 spec:
   backoffLimit: 0

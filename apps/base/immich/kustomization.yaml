@@ -7,7 +7,15 @@ namespace: immich
 
 resources:
   - namespace.yaml
+  - backup-health/cronjob.yaml
   - immich-server
   - immich-redis
   - immich-database
   - immich-machine-learning
+
+configMapGenerator:
+  - name: immich-backup-health-check
+    files:
+      - backup-health/check_backup.py
+    options:
+      disableNameSuffixHash: true

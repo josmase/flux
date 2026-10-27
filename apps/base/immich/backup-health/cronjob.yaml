@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-backup-health-check
+  namespace: immich
+spec:
+  # Immich's built-in database backup runs at 02:00 UTC. Check after it has
+  # had time to finish; the monitor only reads the backup directory.
+  schedule: "30 4 * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app: immich-backup-health-check
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: check
+              image: python:3.13-alpine
+              imagePullPolicy: IfNotPresent
+              command: ["python", "/opt/backup-health/check_backup.py"]
+              args: ["--directory", "/data/backups", "--max-age-hours", "36", "--stale-temp-minutes", "90"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: backup-data
+                  mountPath: /data
+                  subPath: files/immich/data
+                  readOnly: true
+                - name: checker
+                  mountPath: /opt/backup-health
+                  readOnly: true
+          volumes:
+            - name: backup-data
+              persistentVolumeClaim:
+                claimName: immich-shared-nfs-pvc
+                readOnly: true
+            - name: checker
+              configMap:
+                name: immich-backup-health-check
+                defaultMode: 0444

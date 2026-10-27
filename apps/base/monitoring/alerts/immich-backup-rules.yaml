@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: immich-backup-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: immich-backup.rules
+      interval: 30s
+      rules:
+        - alert: ImmichBackupHealthCheckFailed
+          expr: |
+            kube_job_status_failed{namespace="immich", job_name=~"immich-backup-health-check-.*"} > 0
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: immich-backup
+          annotations:
+            summary: "Immich database backup validation failed"
+            description: |
+              The read-only backup health check failed. It requires a recent, complete,
+              gzip-valid .sql.gz archive and treats .tmp files as incomplete. Inspect the
+              failed Job logs and the Immich server's previous container logs for the
+              underlying filesystem error (including EIO):
+              kubectl logs -n immich job/{{ $labels.job_name }}
+              kubectl logs -n immich deploy/immich-server -c immich-server --previous

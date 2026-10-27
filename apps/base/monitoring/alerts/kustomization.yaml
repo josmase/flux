@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - deployment-statefulset-rules.yaml
   - jellyfin-rules.yaml
+  - immich-backup-rules.yaml
   - node-storage-rules.yaml
   - linstor-rules.yaml
   - linstor-control-plane-rules.yaml
