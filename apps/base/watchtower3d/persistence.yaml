@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: watchtower3d-data
+  labels:
+    app.kubernetes.io/name: watchtower3d
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: linstor-final
+  resources:
+    requests:
+      storage: 10Gi

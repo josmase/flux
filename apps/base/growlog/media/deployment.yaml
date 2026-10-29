@@ -2,9 +2,9 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: media
+  name: growlog-media
   labels:
-    app: media
+    app: growlog-media
 spec:
   replicas: 1
   progressDeadlineSeconds: 600
@@ -14,14 +14,14 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: media
+      app: growlog-media
   template:
     metadata:
       labels:
-        app: media
+        app: growlog-media
     spec:
       containers:
-        - name: media
+        - name: growlog-media
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/growlog/media:recovery-20261012-c7ff345d@sha256:babb6bf8ee95a782df5fadd183da4d50c1c1a81834e4a7de18dc27cb85281ed9
           imagePullPolicy: IfNotPresent
           env:

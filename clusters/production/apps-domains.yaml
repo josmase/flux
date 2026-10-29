@@ -155,7 +155,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/download
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: false
   healthChecks:
@@ -169,15 +169,7 @@ spec:
       namespace: media
     - apiVersion: apps/v1
       kind: Deployment
-      name: checkrr
-      namespace: media
-    - apiVersion: apps/v1
-      kind: Deployment
       name: prowlarr
-      namespace: media
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: reiverr
       namespace: media
     - apiVersion: apps/v1
       kind: Deployment
@@ -436,7 +428,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/services
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -464,6 +456,34 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/home
+  prune: false
+  deletionPolicy: Orphan
+  wait: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-watchtower3d
+  namespace: flux-system
+spec:
+  suspend: false
+  interval: 10m
+  retryInterval: 1m
+  timeout: 10m
+  dependsOn:
+    - name: apps-storage
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/watchtower3d
   prune: false
   deletionPolicy: Orphan
   wait: true

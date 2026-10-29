@@ -5,6 +5,11 @@ metadata:
 spec:
   template:
     spec:
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: low-risk-only
+          effect: NoSchedule
       volumes:
         - name: gotify-data
           persistentVolumeClaim:

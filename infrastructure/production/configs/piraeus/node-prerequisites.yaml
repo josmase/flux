@@ -28,10 +28,19 @@ spec:
                     operator: DoesNotExist
                   - key: storage.josmase.io/linstor-disabled
                     operator: DoesNotExist
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - kubernetes-node-214
       tolerations:
         - key: workload
           operator: Equal
           value: gpu-only
+          effect: NoSchedule
+        - key: workload
+          operator: Equal
+          value: low-risk-only
           effect: NoSchedule
       initContainers:
         - name: configure-inotify

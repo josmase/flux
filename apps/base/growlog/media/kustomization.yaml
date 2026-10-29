@@ -7,4 +7,4 @@ resources:
 labels:
   - includeSelectors: true
     pairs:
-      app: media
+      app: growlog-media

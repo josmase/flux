@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: watchtower3d-lan
+  labels:
+    app.kubernetes.io/name: watchtower3d
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${WATCHTOWER3D_METRICS_IP}
+  selector:
+    app.kubernetes.io/name: watchtower3d
+  ports:
+    - name: metrics-udp
+      port: 8514
+      targetPort: 8514
+      protocol: UDP
+    - name: go2rtc-8555-tcp
+      port: 8555
+      targetPort: 8555
+      protocol: TCP
+    - name: go2rtc-8555-udp
+      port: 8555
+      targetPort: 8555
+      protocol: UDP
+    - name: go2rtc-8556-tcp
+      port: 8556
+      targetPort: 8556
+      protocol: TCP
+    - name: go2rtc-8556-udp
+      port: 8556
+      targetPort: 8556
+      protocol: UDP
+    - name: go2rtc-8557-tcp
+      port: 8557
+      targetPort: 8557
+      protocol: TCP
+    - name: go2rtc-8557-udp
+      port: 8557
+      targetPort: 8557
+      protocol: UDP
+    - name: go2rtc-8558-tcp
+      port: 8558
+      targetPort: 8558
+      protocol: TCP
+    - name: go2rtc-8558-udp
+      port: 8558
+      targetPort: 8558
+      protocol: UDP
+    - name: go2rtc-8559-tcp
+      port: 8559
+      targetPort: 8559
+      protocol: TCP
+    - name: go2rtc-8559-udp
+      port: 8559
+      targetPort: 8559
+      protocol: UDP
+    - name: go2rtc-8560-tcp
+      port: 8560
+      targetPort: 8560
+      protocol: TCP
+    - name: go2rtc-8560-udp
+      port: 8560
+      targetPort: 8560
+      protocol: UDP
+    - name: go2rtc-8561-tcp
+      port: 8561
+      targetPort: 8561
+      protocol: TCP
+    - name: go2rtc-8561-udp
+      port: 8561
+      targetPort: 8561
+      protocol: UDP
+    - name: go2rtc-8562-tcp
+      port: 8562
+      targetPort: 8562
+      protocol: TCP
+    - name: go2rtc-8562-udp
+      port: 8562
+      targetPort: 8562
+      protocol: UDP
+    - name: go2rtc-8563-tcp
+      port: 8563
+      targetPort: 8563
+      protocol: TCP
+    - name: go2rtc-8563-udp
+      port: 8563
+      targetPort: 8563
+      protocol: UDP
+    - name: go2rtc-8564-tcp
+      port: 8564
+      targetPort: 8564
+      protocol: TCP
+    - name: go2rtc-8564-udp
+      port: 8564
+      targetPort: 8564
+      protocol: UDP

@@ -5,8 +5,6 @@ namespace: media
 resources:
   - qbittorrent/
   - qui/
-  - checkrr/
-  - reiverr/
   # Multi-instance Sonarr/Radarr (using templates from base)
   - sonarr/
   - radarr/

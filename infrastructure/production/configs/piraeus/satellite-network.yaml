@@ -10,9 +10,19 @@ spec:
             operator: DoesNotExist
           - key: storage.josmase.io/linstor-disabled
             operator: DoesNotExist
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - kubernetes-node-214
   # Host networking keeps DRBD replication paths independent of CNI pod IPs
   # and avoids a replication interruption when a Satellite pod is recreated.
   podTemplate:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+        - key: workload
+          operator: Equal
+          value: low-risk-only
+          effect: NoSchedule

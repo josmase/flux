@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: media
+  name: growlog-media
   labels:
-    app: media
+    app: growlog-media
 spec:
   selector:
-    app: media
+    app: growlog-media
   ports:
     - name: http
       port: 3000
