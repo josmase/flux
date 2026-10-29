@@ -63,6 +63,34 @@ floor; do not replace it with a percentage threshold.
 The current RustFS target is a single failure domain. It protects against
 node and LINSTOR-volume failure, but not total loss of the storage server.
 
+## Satellite scheduling and recovery
+
+The `worker-network` `LinstorSatelliteConfiguration` pod template owns the
+satellite toleration list; it must include every taint used by nodes selected
+by its affinity. In particular, keep both `workload=gpu-only` and
+`workload=low-risk-only` tolerations here. The cluster-level tolerations are
+not inherited when this pod template supplies its own list.
+
+On 2026-10-29, the GPU node was selected for diskless LINSTOR use and had the
+`workload=gpu-only:NoSchedule` taint, but its generated satellite DaemonSet had
+zero desired pods because the pod template tolerated only `low-risk-only`.
+The satellite CR reported `Available=False`, the CSI node init container
+waited for that satellite, and the cluster's `Configured` condition remained
+Unknown even while the controller and three diskful satellites were healthy.
+The controller's resource list also had 16 GPU-node diskless records without
+a reported disk state, which correctly caused the fail-closed replica-health
+check to reject its incomplete result.
+The durable correction is to restore the missing GPU toleration through this
+Flux configuration.
+
+Recover through Flux and verify the generated DaemonSet schedules and readies
+the satellite, its `LinstorSatellite` reports `Available=True`, the CSI node
+pod becomes Ready, and `LinstorCluster` remains `Available=True` and
+`Configured=True` across an observation window. Keep protection gates closed
+until their own storage, replica, VG metadata, and backup checks pass. Do not
+manually restart storage components, delete LINSTOR resources, or bypass a
+gate to establish availability.
+
 Snapshot classes intentionally separate durable, prunable, and S3 snapshots:
 
 - `linstor-snapshot` retains the backend snapshot and remains the class for
