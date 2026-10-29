@@ -5,16 +5,10 @@ namespace: media
 resources:
   - ../../../base/media/arr-dashboard
   - ../../../base/media/bazarr
-  - ../../../base/media/checkrr
   - ../../../base/media/prowlarr
   - ../../../base/media/seerr
   - ../qbittorrent
   - ../qui
-  - ../checkrr
-  - ../reiverr
-
-patches:
-  - path: checkrr-deployment-patch.yaml
 
 components:
   - ../../components/prune-protection

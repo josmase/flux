@@ -6,8 +6,9 @@ spec:
   # Persist the controller master passphrase so encrypted volume keys and S3
   # remote credentials remain usable after controller restarts and recovery.
   linstorPassphraseSecret: linstor-passphrase
-  # Keep storage data-plane components off control-plane nodes and workers
-  # explicitly reserved for low-risk workloads.
+  # Keep storage data-plane components off control-plane nodes. Node 214 is
+  # included as a diskless client so low-risk workloads can attach remote DRBD
+  # volumes; storage-pool.yaml still excludes it from replica placement.
   nodeAffinity:
     nodeSelectorTerms:
       - matchExpressions:
@@ -15,12 +16,21 @@ spec:
             operator: DoesNotExist
           - key: storage.josmase.io/linstor-disabled
             operator: DoesNotExist
-  # The GPU worker is intentionally diskless, but it still needs storage
-  # components to attach remote DRBD volumes. The low-risk worker does not.
+      - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - kubernetes-node-214
+  # The GPU worker and node 214 are diskless clients and need storage
+  # components to attach remote DRBD volumes.
   tolerations:
     - key: workload
       operator: Equal
       value: gpu-only
+      effect: NoSchedule
+    - key: workload
+      operator: Equal
+      value: low-risk-only
       effect: NoSchedule
   # Avoid draining multiple replica nodes concurrently during maintenance.
   maxConcurrentEvacuations: 1

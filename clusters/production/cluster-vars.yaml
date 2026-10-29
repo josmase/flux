@@ -16,4 +16,5 @@ data:
   ENVIRONMENT: production
   LETSENCRYPT_SERVER: https://acme-v02.api.letsencrypt.org/directory
   RUSTDESK_LB_IP: 192.168.1.183
+  WATCHTOWER3D_METRICS_IP: 192.168.1.189
   STORAGE_CLASS: linstor-final

@@ -32,3 +32,19 @@ patches:
         path: /metadata/annotations
         value:
           kustomize.toolkit.fluxcd.io/prune: disabled
+  - target:
+      group: snapshot.storage.k8s.io
+      kind: VolumeSnapshot
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          kustomize.toolkit.fluxcd.io/prune: disabled
+  - target:
+      group: snapshot.storage.k8s.io
+      kind: VolumeSnapshotContent
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          kustomize.toolkit.fluxcd.io/prune: disabled

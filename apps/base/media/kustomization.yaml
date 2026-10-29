@@ -10,5 +10,3 @@ resources:
   # Unified dashboard for all instances
   - arr-dashboard
   - jellyfin
-  - checkrr
-  - reiverr

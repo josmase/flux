@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: watchtower3d
+  labels:
+    app.kubernetes.io/name: watchtower3d
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`watchtower3d.${DOMAIN_INTERNAL}`)
+      kind: Rule
+      services:
+        - name: watchtower3d
+          port: http
+  tls:
+    secretName: ${CERT_SECRET_INTERNAL}
