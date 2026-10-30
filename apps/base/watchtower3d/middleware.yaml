@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: watchtower3d-host
+  labels:
+    app.kubernetes.io/name: watchtower3d
+spec:
+  headers:
+    customRequestHeaders:
+      Host: watchtower.local

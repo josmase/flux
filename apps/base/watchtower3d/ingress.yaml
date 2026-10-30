@@ -10,6 +10,8 @@ spec:
   routes:
     - match: Host(`watchtower3d.${DOMAIN_INTERNAL}`)
       kind: Rule
+      middlewares:
+        - name: watchtower3d-host
       services:
         - name: watchtower3d
           port: http
