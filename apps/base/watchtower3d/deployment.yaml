@@ -26,7 +26,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: watchtower3d
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/apps/watchtower3d:1.0.1-beta.5
+          image: registry.local.hejsan.xyz/josmase/apps/watchtower3d:2026-10-30-000bb6f1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
