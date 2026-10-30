@@ -19,7 +19,7 @@ spec:
             - {name: preparation, mountPath: /preparation}
       containers:
         - name: ollama
-          image: ollama/ollama@sha256:20d1bbfbabe1c97ba4b16301f08a20d8484bcf77047742a3cb71c613d8e12d0b
+          image: ollama/ollama@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
           env:
             - name: OLLAMA_KEEP_ALIVE
               value: "-1"
