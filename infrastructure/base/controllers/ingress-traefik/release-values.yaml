@@ -23,6 +23,9 @@ ports:
   websecure:
     tls:
       enabled: true
+    transport:
+      respondingTimeouts:
+        readTimeout: 10m
   wyoming-whisper:
     port: 10300
     exposedPort: 10300
