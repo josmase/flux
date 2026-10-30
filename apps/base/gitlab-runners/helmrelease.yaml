@@ -43,6 +43,7 @@ spec:
             cpu_limit_overwrite_max_allowed = "6"
             memory_request_overwrite_max_allowed = "4Gi"
             memory_limit_overwrite_max_allowed = "8Gi"
+            pod_annotations_overwrite_allowed = '^container\.(seccomp\.security\.alpha\.kubernetes\.io|apparmor\.security\.beta\.kubernetes\.io)/build=unconfined$'
             [runners.kubernetes.node_tolerations]
               "node-role.kubernetes.io/control-plane" = ""
 
