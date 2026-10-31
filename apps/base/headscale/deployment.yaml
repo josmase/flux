@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: headscale
-          image: artifactory.local.hejsan.xyz/docker/headscale/headscale:v0.29.6-debug@sha256:eeb1deee04fb8e1afbcfafdd4e329b186db151a96006a2965deb13312ff3fc6c
+          image: artifactory.local.hejsan.xyz/docker/headscale/headscale:v0.29.7-debug@sha256:e13ad8980c5831a3bf4eff0d4303e438c10d7d87945d72722d3e92550057aa06
           ports:
             - containerPort: 8080
               name: http
