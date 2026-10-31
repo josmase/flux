@@ -24,7 +24,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: searxng
-          image: searxng/searxng@sha256:23482d8ecf7ddf66029479468ea04c1bb11d2b65785a17a7e629e2ffd13296ca
+          image: searxng/searxng@sha256:f4aa660c54d062dedb268be84e821ea24e39f48c7a496af8dd02cc9eedb93847
           env:
             - name: SEARXNG_SECRET
               valueFrom:
