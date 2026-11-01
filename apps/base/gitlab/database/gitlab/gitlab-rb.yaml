@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-db-provisioner
+  namespace: gitlab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: db-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-db-provisioner
+    namespace: gitlab

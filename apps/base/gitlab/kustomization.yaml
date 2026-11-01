@@ -7,3 +7,4 @@ resources:
   - helmrelease.yaml
   - linstor-target-pvcs.yaml
   - ingressroute.yaml
+  - database

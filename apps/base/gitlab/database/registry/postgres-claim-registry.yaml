@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: registry-db-claim
+  namespace: gitlab
+data:
+  database: registry
+  users: |
+    [{"name": "registry-api-user", "role": "read", "secret": "registry-api-connection"}]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: registry-db-init
+  namespace: gitlab
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: db-provisioner
+      containers:
+        - name: provision
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-06-17-511cb6cd
+          env:
+            - name: PG_HOST
+              value: shared-postgres-rw.cnpg-system.svc
+            - name: DB_CLAIM_CONFIGMAP
+              value: registry-db-claim
+          volumeMounts:
+            - name: superuser-password
+              mountPath: /etc/superuser-password
+              readOnly: true
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 200m
+            requests:
+              memory: 64Mi
+              cpu: 100m
+      volumes:
+        - name: superuser-password
+          secret:
+            secretName: shared-postgres-superuser
+            defaultMode: 0400
