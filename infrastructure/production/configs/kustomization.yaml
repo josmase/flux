@@ -48,6 +48,6 @@ patches:
         path: /metadata/annotations
         value:
           reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
-          reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "default,new-new-boplats"
+          reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "default,new-new-boplats,gitlab"
           reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
-          reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "default,new-new-boplats"
+          reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "default,new-new-boplats,gitlab"
