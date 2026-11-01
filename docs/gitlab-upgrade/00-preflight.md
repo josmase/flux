@@ -12,7 +12,7 @@
 | **P5** | Chart tarballs + images available | Helm chart tarballs (10.5.4) confirmed available; PostgreSQL 14.7.0-debian-11-r9 image available in Artifactory | ✅ DONE |
 | **P6** | New SOPS secrets created | `gitlab-postgres-external-password`, `gitlab-valkey-external-password`, `gitlab-registry-external-db-password` encrypted for prod Age key | ✅ DONE |
 | **P7** | CNPG capacity & `max_connections` | `shared-postgres` has 17 active connections (Headroom check deferred) | ✅ DONE |
-| **P8** | Flux artifact pinned | `kubectl -n flux-system get gitrepository flux-system -o jsonpath='{.status.artifact.revision}'` recorded | ⬜ TODO |
+| **P8** | Flux artifact pinned | `main@sha1:605d7e8de8cf2d75e5140967a48a1e5e2f3b0b4b` | ✅ DONE |
 | **P9** | Renovate/auto-merges frozen | Renovate PRs closed; no merges to `main` during window | ⬜ TODO |
 | **P10** | Maintenance window scheduled & announced | Calendar block + Slack/email to stakeholders | ⬜ TODO |
 | **P11** | Rollback artifacts prepared | Helm revision recorded; old PVCs labeled `rollback-candidate`; git bundle created | ⬜ TODO |
