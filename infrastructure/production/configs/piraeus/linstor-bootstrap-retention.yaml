@@ -37,7 +37,7 @@ spec:
               defaultMode: 365
           containers:
           - name: retention
-            image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:d8da06ae50c0fa9c36f2649a8073667b546d6e9dcacc123c203d3d47ab5bc0f0
+            image: quay.io/piraeusdatastore/piraeus-server:v1.35.3@sha256:95d6269a57293fa5a0f7ff093c7cd4550f25fb2e89180d2b418af87837954729
             command:
             - python3
             - /scripts/bootstrap-retention.py

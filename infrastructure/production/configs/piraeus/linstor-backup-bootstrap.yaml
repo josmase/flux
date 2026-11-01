@@ -62,7 +62,7 @@ spec:
         - name: ship-full-chains
           # Keep the completed v4 Job's original image immutable; changing this
           # digest would make Kubernetes reject reconciliation of its template.
-          image: quay.io/piraeusdatastore/piraeus-server:v1.35.2@sha256:65b26f744dbfd6bd08554d079cb7b433748c7e6d43b2d1e20ce1f06c8ded6ace
+          image: quay.io/piraeusdatastore/piraeus-server:v1.35.3@sha256:95d6269a57293fa5a0f7ff093c7cd4550f25fb2e89180d2b418af87837954729
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: work
