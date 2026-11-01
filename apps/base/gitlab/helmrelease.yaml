@@ -231,7 +231,7 @@ spec:
       replica:
         replicaCount: 0
       metrics:
-        enabled: true
+        enabled: false
 
     minio:
       install: false
