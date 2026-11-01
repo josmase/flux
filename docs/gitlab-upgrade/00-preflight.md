@@ -13,8 +13,8 @@
 | **P6** | New SOPS secrets created | `gitlab-postgres-external-password`, `gitlab-valkey-external-password`, `gitlab-registry-external-db-password` encrypted for prod Age key | ✅ DONE |
 | **P7** | CNPG capacity & `max_connections` | `shared-postgres` has 17 active connections (Headroom check deferred) | ✅ DONE |
 | **P8** | Flux artifact pinned | `main@sha1:605d7e8de8cf2d75e5140967a48a1e5e2f3b0b4b` | ✅ DONE |
-| **P9** | Renovate/auto-merges frozen | Renovate PRs closed; no merges to `main` during window | ⬜ TODO |
-| **P10** | Maintenance window scheduled & announced | Calendar block + Slack/email to stakeholders | ⬜ TODO |
+| **P9** | Renovate/auto-merges frozen | Renovate PRs closed; no merges to `main` during window | ✅ DONE |
+| **P10** | Maintenance window scheduled & announced | Calendar block + Slack/email to stakeholders | ✅ DONE |
 | **P11** | Rollback artifacts prepared | Helm revision recorded; old PVCs labeled `rollback-candidate`; git bundle created | ⬜ TODO |
 | **P12** | Docker toolbox validated | `docker run --rm postgres:17.2 pg_dump --version` → `17.2`; `--exclude-extension` works | ⬜ TODO |
 
