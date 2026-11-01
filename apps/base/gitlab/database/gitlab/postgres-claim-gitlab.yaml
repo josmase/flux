@@ -22,7 +22,7 @@ spec:
   template:
     spec:
       restartPolicy: Never
-      serviceAccountName: db-provisioner
+      serviceAccountName: gitlab-db-provisioner
       containers:
         - name: provision
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-06-17-511cb6cd
