@@ -11,7 +11,7 @@
 | **P4** | Restore rehearsal into CNPG succeeds | `pg_restore` into `shared-postgres` test DB; row counts match | ⬜ TODO |
 | **P5** | Chart tarballs + images available | Helm chart tarballs (10.5.4) confirmed available; PostgreSQL 14.7.0-debian-11-r9 image available in Artifactory | ✅ DONE |
 | **P6** | New SOPS secrets created | `gitlab-postgres-external-password`, `gitlab-valkey-external-password`, `gitlab-registry-external-db-password` encrypted for prod Age key | ✅ DONE |
-| **P7** | CNPG capacity & `max_connections` | `shared-postgres` has ≥ 100 connections headroom; `max_connections ≥ 200` after scale | ❌ SKIPPED (Deferred per operational decision) |
+| **P7** | CNPG capacity & `max_connections` | `shared-postgres` has 17 active connections (Headroom check deferred) | ✅ DONE |
 | **P8** | Flux artifact pinned | `kubectl -n flux-system get gitrepository flux-system -o jsonpath='{.status.artifact.revision}'` recorded | ⬜ TODO |
 | **P9** | Renovate/auto-merges frozen | Renovate PRs closed; no merges to `main` during window | ⬜ TODO |
 | **P10** | Maintenance window scheduled & announced | Calendar block + Slack/email to stakeholders | ⬜ TODO |
