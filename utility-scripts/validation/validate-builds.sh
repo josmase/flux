@@ -222,6 +222,8 @@ validate_kustomize() {
     else
         echo -e "  ${RED}✗ Failed${NC}"
         echo "    Error: $output" | head -5
+        echo "    Action needed: Review the Kustomize path ($name) and the corresponding inventory file ($SCRIPT_DIR/production-domain-inventory.yaml)."
+        echo "    IMPORTANT: ONLY update the resource count/SHA in the inventory if the change was intentional and reviewed."
         ERRORS=$((ERRORS + 1))
         return 1
     fi
@@ -259,6 +261,8 @@ validate_flux() {
     else
         echo -e "  ${RED}✗ Failed${NC}"
         echo "    Error: $output" | head -5
+        echo "    Action needed: Review the Kustomize path ($name) and the corresponding inventory file ($SCRIPT_DIR/production-domain-inventory.yaml)."
+        echo "    IMPORTANT: ONLY update the resource count/SHA in the inventory if the change was intentional and reviewed."
         ERRORS=$((ERRORS + 1))
         return 1
     fi
