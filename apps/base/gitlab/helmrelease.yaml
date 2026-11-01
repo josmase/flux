@@ -13,7 +13,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "8.11.2"
+      version: "8.11.8"
       sourceRef:
         kind: HelmRepository
         name: gitlab
@@ -21,16 +21,16 @@ spec:
       interval: 1h
   values:
     upgradeCheck:
-      enabled: false
+      enabled: true
 
     nginx-ingress:
-      enabled: false
+      enabled: true
 
     certmanager:
       install: false
 
     certmanager-issuer:
-      enabled: false
+      enabled: true
       email: "gitlab@localhost.local"
 
     global:
@@ -74,10 +74,10 @@ spec:
         domain: ${DOMAIN_INTERNAL}
         https: true
         externalIP:
-          enabled: false
+          enabled: true
 
       minio:
-        enabled: false
+        enabled: true
 
       initialRootPassword:
         secret: gitlab-initial-root-password
@@ -115,7 +115,7 @@ spec:
             cpu: 2000m
             memory: 4Gi
         ingress:
-          enabled: false
+          enabled: true
 
       gitaly:
         replicaCount: 1
@@ -176,7 +176,7 @@ spec:
       image:
         registry: artifactory.local.hejsan.xyz
         repository: docker/bitnamilegacy/postgresql
-        tag: "14.13.0-debian-12-r9"
+        tag: "14.17.0-debian-12-r9"
       primary:
         replicaCount: 1
         persistence:
@@ -198,7 +198,7 @@ spec:
           adminPasswordKey: postgres-password
           userPasswordKey: postgres-password
       metrics:
-        enabled: false
+        enabled: true
 
     redis:
       install: true
@@ -231,7 +231,7 @@ spec:
       replica:
         replicaCount: 0
       metrics:
-        enabled: false
+        enabled: true
 
     minio:
       install: false
@@ -239,7 +239,7 @@ spec:
     registry:
       enabled: true
       ingress:
-        enabled: false
+        enabled: true
       hpa:
         minReplicas: 1
         maxReplicas: 1
@@ -267,4 +267,4 @@ spec:
     prometheus:
       install: false
     gitlab-exporter:
-      enabled: false
+      enabled: true
