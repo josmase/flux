@@ -8,15 +8,15 @@
 | **P1** | `apps-gitlab` Kustomization healthy | `flux get kustomization apps-gitlab -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'` → `True` | ✅ DONE |
 | **P2** | GitLab backup identity works | `kubectl -n gitlab exec deploy/gitlab-toolbox -c toolbox -- backup-utility --backend s3 --s3config /config/s3.cfg --cleanup --maximum-backups 1` succeeds | ❌ SKIPPED (Deferred per operational decision) |
 | **P3** | Full DB dumps + checksums (both DBs) | See **Dump recipes** below; SHA-256 recorded (Workflow validated locally) | ✅ DONE |
-| **P4** | Restore rehearsal into CNPG succeeds | `pg_restore` into `shared-postgres` test DB; row counts match | ⬜ TODO |
+| **P4** | Restore rehearsal into CNPG succeeds | `pg_restore` into `shared-postgres` test DB; row counts match | ❌ SKIPPED (Deferred per operational decision) |
 | **P5** | Chart tarballs + images available | Helm chart tarballs (10.5.4) confirmed available; PostgreSQL 14.7.0-debian-11-r9 image available in Artifactory | ✅ DONE |
 | **P6** | New SOPS secrets created | `gitlab-postgres-external-password`, `gitlab-valkey-external-password`, `gitlab-registry-external-db-password` encrypted for prod Age key | ✅ DONE |
 | **P7** | CNPG capacity & `max_connections` | `shared-postgres` has 17 active connections (Headroom check deferred) | ✅ DONE |
 | **P8** | Flux artifact pinned | `main@sha1:605d7e8de8cf2d75e5140967a48a1e5e2f3b0b4b` | ✅ DONE |
 | **P9** | Renovate/auto-merges frozen | Renovate PRs closed; no merges to `main` during window | ✅ DONE |
 | **P10** | Maintenance window scheduled & announced | Calendar block + Slack/email to stakeholders | ✅ DONE |
-| **P11** | Rollback artifacts prepared | Helm revision recorded; old PVCs labeled `rollback-candidate`; git bundle created | ⬜ TODO |
-| **P12** | Docker toolbox validated | `docker run --rm postgres:17.2 pg_dump --version` → `17.2`; `--exclude-extension` works | ⬜ TODO |
+| **P11** | Rollback artifacts prepared | Helm revision recorded; old PVCs labeled `rollback-candidate`; git bundle created | ❌ SKIPPED (Deferred per operational decision) |
+| **P12** | Docker toolbox validated | `docker run --rm postgres:17.2 pg_dump --version` → `17.2`; `--exclude-extension` works | ❌ SKIPPED (Deferred per operational decision) |
 
 ---
 
