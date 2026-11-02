@@ -11,4 +11,4 @@ rules:
   # Add other necessary permissions for DB provisioning if required by context
   - apiGroups: [""]
     resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]

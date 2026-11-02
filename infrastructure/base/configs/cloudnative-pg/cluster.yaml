@@ -18,6 +18,9 @@ spec:
   # postgres superuser password is versioned as IaC.
   superuserSecret:
     name: shared-postgres-superuser
+  # Enable superuser access so db-provisioner Jobs can create databases,
+  # roles, and extensions during the CNPG migration (Stop 2).
+  enableSuperuserAccess: true
 
   # --- PostgreSQL configuration ---
   postgresql:
