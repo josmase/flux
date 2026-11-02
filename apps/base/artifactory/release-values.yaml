@@ -1,5 +1,10 @@
 ## All values are under the 'artifactory' sub chart. According to https://github.com/jfrog/charts/blob/master/stable/artifactory-jcr/values.yaml
 artifactory:
+  probes:
+    # Use explicit IPv4 instead of localhost to avoid IPv6 resolution timing issues
+    # that can cause intermittent health probe failures (see ARTIFACTORY_INVESTIGATION_SUMMARY.md)
+    host: "127.0.0.1"
+
   databaseUpgradeReady: "yes"
 
   artifactory:
@@ -80,6 +85,7 @@ artifactory:
           path: /{{ .Values.jfbus.apiContext }}/system/health/readiness
           port: {{ .Values.jfbus.internalRestPort }}
           scheme: HTTP
+          host: 127.0.0.1
         timeoutSeconds: {{ .Values.probes.timeoutSeconds }}
         initialDelaySeconds: 0
         periodSeconds: 5
