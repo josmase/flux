@@ -1,34 +1,39 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-db-claim
   namespace: gitlab
 data:
-  database: gitlab
+  database: gitlabhq_production
   users: |
-    [{"name": "gitlab-api-user", "role": "read", "secret": "gitlab-api-connection"}, {"name": "gitlab-scraper-user", "role": "readWrite", "secret": "gitlab-scraper-connection"}]
+    [{"name": "gitlab", "role": "owner", "secret": "gitlab-external-db"}]
+  postInitSQL: |
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: gitlab-db-init
+  # The prior Stop 2 Job is stuck against the old shared database. A new name
+  # makes this recovery Job an explicit, immutable execution rather than
+  # attempting to patch that Job's immutable Pod template.
+  name: gitlab-db-init-stop2
   namespace: gitlab
-  annotations:
-    helm.sh/hook: post-install
-    helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation
 spec:
+  backoffLimit: 3
   template:
+    metadata:
+      labels:
+        app: gitlab
+        component: db-provisioner
     spec:
       restartPolicy: Never
-      serviceAccountName: gitlab-db-provisioner
+      serviceAccountName: db-provisioner
       containers:
         - name: provision
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-11-02-367b4cc2
           env:
             - name: PG_HOST
-              value: shared-postgres-rw.cnpg-system.svc
+              value: gitlab-postgres-rw.gitlab.svc
             - name: DB_CLAIM_CONFIGMAP
               value: gitlab-db-claim
           volumeMounts:
@@ -36,14 +41,14 @@ spec:
               mountPath: /etc/superuser-password
               readOnly: true
           resources:
-            limits:
-              memory: 128Mi
-              cpu: 200m
             requests:
-              memory: 64Mi
               cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
       volumes:
         - name: superuser-password
           secret:
-            secretName: shared-postgres-superuser
+            secretName: gitlab-postgres-superuser
             defaultMode: 0400

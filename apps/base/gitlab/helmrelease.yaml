@@ -13,7 +13,8 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "8.11.8"
+      version: "9.2.8"
+      reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
         name: gitlab
@@ -24,13 +25,13 @@ spec:
       enabled: true
 
     nginx-ingress:
-      enabled: true
+      enabled: false
 
     certmanager:
       install: false
 
     certmanager-issuer:
-      enabled: true
+      enabled: false
       email: "gitlab@localhost.local"
 
     global:
@@ -76,8 +77,12 @@ spec:
         externalIP:
           enabled: true
 
+      ingress:
+        enabled: false
+
+      # Disable bundled MinIO - use S3 via appConfig instead
       minio:
-        enabled: true
+        enabled: false
 
       initialRootPassword:
         secret: gitlab-initial-root-password
@@ -86,18 +91,23 @@ spec:
       persistence:
         storageClass: ${STORAGE_CLASS}
 
-      redis:
-        password:
-          enabled: true
-          useSecret: true
-          secret: gitlab-redis-password
-          key: redis-password
-
       psql:
+        host: gitlab-postgres-rw.gitlab.svc
+        port: 5432
+        username: gitlab
+        database: gitlabhq_production
         password:
           useSecret: true
-          secret: gitlab-postgres-password
-          key: postgres-password
+          secret: gitlab-external-db
+          key: password
+
+      redis:
+        host: gitlab-valkey.gitlab.svc
+        port: 6379
+        auth:
+          enabled: true
+          secret: gitlab-valkey-auth
+          key: password
 
     gitlab:
       webservice:
@@ -115,7 +125,7 @@ spec:
             cpu: 2000m
             memory: 4Gi
         ingress:
-          enabled: true
+          enabled: false
 
       gitaly:
         replicaCount: 1
@@ -163,6 +173,8 @@ spec:
             memory: 64Mi
 
       kas:
+        ingress:
+          enabled: false
         resources:
           requests:
             cpu: 100m
@@ -171,75 +183,23 @@ spec:
             cpu: 250m
             memory: 256Mi
 
+    # Disable bundled PostgreSQL - use external CNPG only
     postgresql:
-      install: true
-      image:
-        registry: artifactory.local.hejsan.xyz
-        repository: docker/bitnamilegacy/postgresql
-        tag: "14.17.0-debian-12-r9"
-      primary:
-        replicaCount: 1
-        persistence:
-          storageClass: linstor-final-triple
-          size: 20Gi
-          existingClaim: gitlab-postgresql-triple
-        resources:
-          requests:
-            cpu: 250m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 2Gi
-      auth:
-        username: gitlab
-        database: gitlabhq_production
-        existingSecret: gitlab-postgres-password
-        secretKeys:
-          adminPasswordKey: postgres-password
-          userPasswordKey: postgres-password
-      metrics:
-        enabled: false
+      install: false
 
+    # The bundled Redis chart is disabled; GitLab uses global.redis above.
     redis:
-      install: true
-      image:
-        registry: artifactory.local.hejsan.xyz
-        repository: docker/bitnamilegacy/redis
-        tag: "7.2.4-debian-12-r9"
-      auth:
-        enabled: true
-        existingSecret: gitlab-redis-password
-        existingSecretPasswordKey: redis-password
-      master:
-        podAnnotations:
-          migration.josmase.io/redis-statefulset: existing-claim
-        tolerations:
-          - key: drbd.linbit.com/lost-quorum
-            operator: Exists
-            effect: NoSchedule
-        persistence:
-          storageClass: linstor-final-triple
-          size: 10Gi
-          existingClaim: gitlab-redis-triple
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-      replica:
-        replicaCount: 0
-      metrics:
-        enabled: false
+      install: false
 
+    # Disable bundled MinIO
     minio:
       install: false
 
+    # Registry database uses external PostgreSQL (CNPG)
     registry:
       enabled: true
       ingress:
-        enabled: true
+        enabled: false
       hpa:
         minReplicas: 1
         maxReplicas: 1
@@ -250,12 +210,12 @@ spec:
           disable: true
       database:
         enabled: true
-        host: gitlab-postgresql
+        host: gitlab-postgres-rw.gitlab.svc
         port: 5432
         name: registry
         user: registry
         password:
-          secret: gitlab-registry-database-password
+          secret: gitlab-registry-external-db
           key: password
         sslmode: disable
         migrations:

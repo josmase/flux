@@ -1,0 +1,11 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: gitlab-postgres-six-hourly
+  namespace: gitlab
+spec:
+  schedule: "0 0 */6 * * *"
+  backupOwnerReference: self
+  method: volumeSnapshot
+  cluster:
+    name: gitlab-postgres

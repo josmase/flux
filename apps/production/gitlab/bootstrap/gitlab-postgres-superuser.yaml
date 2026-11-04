@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: gitlab-postgres-superuser
+    namespace: gitlab
+type: Opaque
+stringData:
+    username: ENC[AES256_GCM,data:BPXvFgDCuHU=,iv:NhAO5bSObJUsRn9S/4CfGE+H5zPFVVXN3VG7/LfWl5I=,tag:ZkN7MDbThkkDaboA1hsudg==,type:str]
+    password: ENC[AES256_GCM,data:lXR4GcucdAJRfUv8cDIo6PtL9LpSOGXx7FvcqkDY99GbCyxiTwQIepNwf7bKPXU56qZ6nqzEKV1NtgZnEDwe5A==,iv:IH3DFONkmQKHeucKpMGMmufUqK69ISpWiQqCEJ7Usao=,tag:4ekO5JuYKynslNjZdi6a/w==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCVDQ1cWRFZ1NkWWUvcTNO
+            WjdENkZDRXR3ODRUSjFMaUtIY0ZUYXFjY2h3CkkySGhGdkh3TWNvZnlodnlBdG5v
+            ZW1KYlVjdk5aa281UmVxL2czR1pkM2sKLS0tIGI4bnVybXJkRWQrT0Q4NjBkZGFl
+            cHFUbStoaGl6c2JLNzhGUGN2eU5LU3MK7GVzOhgkAmnZatILqtQVKvLY/UZvM728
+            xAud4oDZxvTCJDPk1gVp2ZHcYlSxhxatHyCrAwE3mxbQ6+VbbuDpxA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-04T23:13:06Z"
+    mac: ENC[AES256_GCM,data:2d5yjvALYoLjzojdCvfL/pmtDA3JWqubL0sBkclUPtm4R9nATiW/B/+AmEQLlyKcsSkBJ9JWnRs/jSxAN8qt3LfuT+WeNP5VY3XzPA5qr9wMYuM1wVpCDvGo4s/R3zw9rXAMFfxZuYO0ZU6tV/uLQ6MTxDSf8bCUXxFcvX2M1+0=,iv:ozFG2Jmwn9NpG/of8ZsGKvY8OtmWDQ2QowAKQE06XQQ=,tag:BcqH4miwLyqMENGWFQxgZQ==,type:str]
+    version: 3.13.3

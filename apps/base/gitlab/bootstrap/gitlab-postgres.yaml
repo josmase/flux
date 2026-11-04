@@ -1,0 +1,70 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: gitlab-postgres
+  namespace: gitlab
+spec:
+  instances: 3
+  minSyncReplicas: 1
+  maxSyncReplicas: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  superuserSecret:
+    name: gitlab-postgres-superuser
+  enableSuperuserAccess: true
+  postgresql:
+    pg_hba:
+      - host all all all scram-sha-256
+    parameters:
+      archive_mode: "on"
+      archive_timeout: 5min
+      max_connections: "200"
+      max_parallel_workers: "32"
+      max_replication_slots: "32"
+      max_worker_processes: "32"
+      shared_preload_libraries: ""
+      wal_keep_size: 512MB
+      wal_level: logical
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
+      dataChecksums: true
+      locale: en_US.UTF-8
+      encoding: UTF-8
+      postInitTemplateSQL:
+        - CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+  storage:
+    size: 20Gi
+    storageClass: linstor-final-triple
+    resizeInUseVolumes: false
+  walStorage:
+    size: 20Gi
+    storageClass: linstor-final-triple
+    resizeInUseVolumes: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 2Gi
+  monitoring:
+    enablePodMonitor: true
+  backup:
+    target: prefer-standby
+    retentionPolicy: 30d
+    volumeSnapshot:
+      className: linstor-snapshot-s3-v2
+      snapshotOwnerReference: backup
+  affinity:
+    additionalPodAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: cnpg.io/cluster
+                  operator: In
+                  values:
+                    - gitlab-postgres
+            topologyKey: kubernetes.io/hostname

@@ -1,4 +1,3 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,28 +6,32 @@ metadata:
 data:
   database: registry
   users: |
-    [{"name": "registry-api-user", "role": "read", "secret": "registry-api-connection"}]
+    [{"name": "registry", "role": "owner", "secret": "gitlab-registry-external-db"}]
+  postInitSQL: |
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: registry-db-init
+  # See gitlab-db-init-stop2: do not reuse the failed previous Stop 2 Job.
+  name: registry-db-init-stop2
   namespace: gitlab
-  annotations:
-    helm.sh/hook: post-install
-    helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-succeeded,before-hook-creation
 spec:
+  backoffLimit: 3
   template:
+    metadata:
+      labels:
+        app: registry
+        component: db-provisioner
     spec:
       restartPolicy: Never
-      serviceAccountName: registry-db-provisioner
+      serviceAccountName: db-provisioner
       containers:
         - name: provision
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-11-02-367b4cc2
           env:
             - name: PG_HOST
-              value: shared-postgres-rw.cnpg-system.svc
+              value: gitlab-postgres-rw.gitlab.svc
             - name: DB_CLAIM_CONFIGMAP
               value: registry-db-claim
           volumeMounts:
@@ -36,14 +39,14 @@ spec:
               mountPath: /etc/superuser-password
               readOnly: true
           resources:
-            limits:
-              memory: 128Mi
-              cpu: 200m
             requests:
-              memory: 64Mi
               cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
       volumes:
         - name: superuser-password
           secret:
-            secretName: shared-postgres-superuser
+            secretName: gitlab-postgres-superuser
             defaultMode: 0400

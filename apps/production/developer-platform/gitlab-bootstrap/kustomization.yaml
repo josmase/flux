@@ -2,6 +2,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - registry-sa.yaml
-  - registry-rb.yaml
-  - postgres-claim-registry.yaml
+  - ../../../base/gitlab/bootstrap/
+  - ../../gitlab/bootstrap/

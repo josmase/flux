@@ -43,6 +43,8 @@ PRODUCTION_DOMAINS=(
     "apps-media-configarr|./apps/production/media/configarr"
     "apps-media-playback|./apps/production/media/playback"
     "apps-photos|./apps/production/photos"
+    "apps-gitlab-bootstrap|./apps/production/developer-platform/gitlab-bootstrap"
+    "apps-gitlab-db-bootstrap|./apps/production/developer-platform/gitlab-db-bootstrap"
     "apps-gitlab|./apps/production/developer-platform/gitlab"
     "apps-artifacts|./apps/production/developer-platform/artifacts"
     "apps-services|./apps/production/services"
