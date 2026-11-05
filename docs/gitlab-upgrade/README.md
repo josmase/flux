@@ -54,9 +54,10 @@ Important live details:
   LINSTOR volume must report a real device path before it is considered usable.
 - GitLab application images are pulled from `registry.gitlab.com`, not from the
   local Artifactory mirror. Nodes must be able to pull the target images.
-- The GitLab Runner is `alpine-v16.11.0` and the runner chart is `0.64.0`.
-  This is older than the GitLab server and is a compatibility risk for 18.x
-  and 19.x.
+- GitLab Runner must be upgraded before Stop 3. The published 18.5-line
+  artifact is runner chart `0.82.0` / Runner `18.5.0`; GitLab does not publish
+  a Runner `18.5.7` chart artifact. Accept a runner job before the server
+  maintenance window.
 
 ## Progress
 
@@ -83,7 +84,7 @@ for each stop.
 | 0 | [00-preflight.md](00-preflight.md) | 17.11.2 | 8.11.2 | Cross-version gates |
 | 1 | [02-17.11.7.md](02-17.11.7.md) | 17.11.7 | 8.11.8 | Patch probe, PostgreSQL 14.17, enable upgrade checks |
 | 2 | [03-18.2.8-restart.md](03-18.2.8-restart.md) | 18.2.8 | 9.2.8 | Required stop, dedicated CNPG/Valkey and logical restore |
-| 3 | [04-18.5.7.md](04-18.5.7.md) | 18.5.7 | 9.5.7 | Required stop, `amcheck` validation |
+| 3 | [04-18.5.7.md](04-18.5.7.md) | 18.5.7 | 9.5.7 | Required stop, install `amcheck`; Runner 18.5-line prerequisite |
 | 4 | [05-18.8.11.md](05-18.8.11.md) | 18.8.11 | 9.8.12 | Required stop, externalize Valkey |
 | 5 | [06-18.11.14.md](06-18.11.14.md) | 18.11.14 | 9.11.16 | Required stop, last 18.x validation |
 | 6 | [07-19.2.10.md](07-19.2.10.md) | 19.2.10 | 10.2.10 | Required stop, chart 10, registry `s3_v2` |

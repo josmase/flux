@@ -13,7 +13,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "9.2.8"
+      version: "9.5.7"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
@@ -27,8 +27,9 @@ spec:
     nginx-ingress:
       enabled: false
 
-    certmanager:
-      install: false
+    # Chart 9.5 replaces certmanager.install with this top-level value so the
+    # cert-manager subchart can validate its own values schema.
+    installCertmanager: false
 
     certmanager-issuer:
       enabled: false
