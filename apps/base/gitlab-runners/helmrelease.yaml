@@ -9,9 +9,9 @@ spec:
   chart:
     spec:
       chart: gitlab-runner
-      # Chart 0.88.4 supplies Runner 18.11.4, the selected published Runner
-      # artifact in the 18.11 line for the GitLab 18.11.14 server stop.
-      version: "0.88.4"
+      # Chart 0.94.1 supplies Runner 19.5.1. GitLab's October 2026 security
+      # advisory requires self-hosted Runners at this version or later.
+      version: "0.94.1"
       sourceRef:
         kind: HelmRepository
         name: gitlab
