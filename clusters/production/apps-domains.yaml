@@ -421,7 +421,9 @@ spec:
   # Stop 2 is a restore-led recovery. Do not let Flux start the chart between
   # role/database provisioning and completion of the validated logical restore.
   # Set this to false only in the follow-up commit after the restore gates pass.
-  suspend: true
+  # Stop 2 restore and acceptance checks completed on 2026-11-05.  Flux now
+  # owns the deployed release again.
+  suspend: false
   interval: 10m
   retryInterval: 1m
   timeout: 30m
