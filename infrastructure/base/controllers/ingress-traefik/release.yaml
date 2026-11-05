@@ -5,6 +5,16 @@ metadata:
   namespace: traefik
 spec:
   interval: 5m
+  # The chart installs and updates a substantial CRD set.  Five minutes is
+  # insufficient on this cluster: Helm reaches its client wait budget after
+  # the workloads are healthy, leaving an otherwise working release Failed.
+  timeout: 15m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
   chart:
     spec:
       chart: traefik
