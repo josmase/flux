@@ -9,10 +9,9 @@ spec:
   chart:
     spec:
       chart: gitlab-runner
-      # Chart 0.82.0 is the GitLab-published chart for Runner 18.5.0. The
-      # chart index has no 18.5.7 Runner artifact; retain the 18.5 line for
-      # the Stop 3 server upgrade.
-      version: "0.82.0"
+      # Chart 0.85.0 supplies Runner 18.8.0, the latest published Runner in
+      # the 18.8 line. No Runner 18.8.11 chart artifact is published.
+      version: "0.85.0"
       sourceRef:
         kind: HelmRepository
         name: gitlab
