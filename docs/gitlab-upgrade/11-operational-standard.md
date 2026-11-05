@@ -132,3 +132,21 @@ running, so check those Kubernetes workloads directly.
   rely on an `emptyDir` artifact surviving a restart.
 - Roll back only to the recorded prior stop. Do not cross database-topology or
   major-version boundaries without the corresponding restore plan.
+
+## 7. Database-bootstrap secret rotation
+
+The database-provisioner updates an existing application role password when it
+reruns a claim. It also updates the corresponding Kubernetes Secret. GitLab
+workloads copy that Secret into an `emptyDir` during their init phase, so they
+do not automatically observe the new password. After any claim rerun that
+updates `gitlab-external-db` or `gitlab-registry-external-db`:
+
+1. Test the current Secret against the target database role without printing
+   its value.
+2. Restart every workload that mounts the changed Secret (for Rails this
+   includes webservice, Sidekiq, Toolbox, and exporter) before declaring the
+   database healthy.
+3. Verify application database connectivity plus Git HTTP before beginning a
+   chart upgrade.
+
+Record the restart and the post-reload validation in the stop change record.
