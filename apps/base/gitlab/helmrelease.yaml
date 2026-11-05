@@ -9,11 +9,13 @@ spec:
   upgrade:
     force: true
     remediation:
-      retries: 3
+      # Chart 10 introduces migration-bearing changes. Do not let the
+      # controller automatically roll a partially migrated release back.
+      retries: 0
   chart:
     spec:
       chart: gitlab
-      version: "9.11.16"
+      version: "10.2.10"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
@@ -36,6 +38,15 @@ spec:
       email: "gitlab@localhost.local"
 
     global:
+      # This installation is exposed exclusively through the Traefik
+      # IngressRoutes in ingressroute.yaml. Chart 10 otherwise enables
+      # Gateway API and its bundled Envoy Gateway by default.
+      gatewayApi:
+        enabled: false
+        installEnvoy: false
+        configureEnvoy: false
+        configureCertmanager: false
+
       appConfig:
         artifacts:
           enabled: true
@@ -183,18 +194,6 @@ spec:
           limits:
             cpu: 250m
             memory: 256Mi
-
-    # Disable bundled PostgreSQL - use external CNPG only
-    postgresql:
-      install: false
-
-    # The bundled Redis chart is disabled; GitLab uses global.redis above.
-    redis:
-      install: false
-
-    # Disable bundled MinIO
-    minio:
-      install: false
 
     # Registry database uses external PostgreSQL (CNPG)
     registry:

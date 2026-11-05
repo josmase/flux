@@ -54,10 +54,10 @@ Important live details:
   LINSTOR volume must report a real device path before it is considered usable.
 - GitLab application images are pulled from `registry.gitlab.com`, not from the
   local Artifactory mirror. Nodes must be able to pull the target images.
-- GitLab Runner must be upgraded before Stop 3. The published 18.5-line
-  artifact is runner chart `0.82.0` / Runner `18.5.0`; GitLab does not publish
-  a Runner `18.5.7` chart artifact. Accept a runner job before the server
-  maintenance window.
+- Before Stop 6, upgrade the separately managed Runner to chart `0.94.1` /
+  Runner `19.5.1` and accept a runner job. Verify the rendered Runner image,
+  not merely chart-version adjacency; this also satisfies GitLab's current
+  self-hosted Runner security guidance.
 
 ## Progress
 
