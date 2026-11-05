@@ -2,6 +2,33 @@
 
 **Do not start any upgrade stop until every gate below is ✅ DONE and recorded.**
 
+> **Stop 2 correction (2026-11-05):** The completed-state markers, shared-CNPG
+> endpoints, static application-password instructions, and `postgres:17.2`
+> examples below are historical Stop 2 planning material. They are not current
+> authorization for Stops 3–7. Use
+> [11-operational-standard.md](11-operational-standard.md) as the controlling
+> preflight, with `gitlab-postgres-rw.gitlab.svc`, generated application DB
+> Secrets, dedicated `gitlab-valkey`, actual dump SHA-256 values, a LINSTOR
+> attachability check, and Ready Flux/Helm dependencies.
+
+## Mandatory additions after Stop 2
+
+Record all of the following in addition to any legacy gate below:
+
+1. No critical Service, PVC, StatefulSet, CNPG cluster, or storage resource is
+   terminating. Inspect `deletionTimestamp` and finalizers rather than relying
+   on a Ready Pod.
+2. `traefik`, `gitlab`, and `gitlab-runner` HelmReleases are Ready and their
+   current Helm history has a deployed revision. Flux must not begin from a
+   stalled dependency.
+3. Every LINSTOR satellite is Online and Gitaly's PVC reports a concrete
+   `/dev/drbd…` device path, not only `UpToDate` replicas.
+4. Each dump is non-zero, its locally calculated SHA-256 is recorded, and its
+   TOC can be listed. A sidecar checksum mismatch is a stop condition until an
+   operator explicitly selects and records the recovery input.
+5. The rendered target manifest proves no unintended database, Valkey,
+   ingress, Gitaly-PVC, or generated-Secret change.
+
 | Gate | Description | Verification Command | Status |
 |------|-------------|---------------------|--------|
 | **P0** | `infra-configs` Kustomization healthy | `flux get kustomization infra-configs -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'` → `True` | ✅ DONE |
