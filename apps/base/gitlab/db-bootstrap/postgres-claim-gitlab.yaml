@@ -28,6 +28,10 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: db-provisioner
+      # The recovery-only provisioner image is cached on this worker while
+      # Artifactory remains unavailable during the GitLab outage.
+      nodeSelector:
+        kubernetes.io/hostname: kubernetes-node-205
       containers:
         - name: provision
           image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-11-02-367b4cc2

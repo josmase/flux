@@ -74,6 +74,8 @@ spec:
               maxmemory-policy noeviction
               requirepass $password
               EOF
+              chown 999:999 /runtime/valkey.conf
+              chmod 0400 /runtime/valkey.conf
           volumeMounts:
             - name: auth
               mountPath: /auth
