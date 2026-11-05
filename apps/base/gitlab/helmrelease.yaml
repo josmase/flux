@@ -13,7 +13,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "9.5.7"
+      version: "9.8.12"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
