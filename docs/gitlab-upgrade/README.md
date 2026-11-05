@@ -1,7 +1,7 @@
 # GitLab upgrade plan: 17.11.2 to 19.5.3
 
-Status: **Stops 1–4 are complete.** Stop 4 (18.8.11 / chart 9.8.12)
-completed on 2026-11-05 and is Flux-managed. Stops 5–7 remain. Each stop
+Status: **Stops 1–5 are complete.** Stop 5 (18.11.14 / chart 9.11.16)
+completed on 2026-11-05 and is Flux-managed. Stops 6–7 remain. Each stop
 requires its own change record, backup evidence, and acceptance sign-off.
 
 This directory contains one plan per required GitLab upgrade stop, plus the
@@ -28,8 +28,8 @@ Verified from the live cluster on 2026-11-01, updated during Stop 2 (2026-11-02)
 
 | Item | Current | Target |
 | --- | --- | --- |
-| GitLab | `18.8.11-ee` | `19.5.3-ee` |
-| Helm chart | `9.8.12` | `10.5.4` |
+| GitLab | `18.11.14-ee` | `19.5.3-ee` |
+| Helm chart | `9.11.16` | `10.5.4` |
 | PostgreSQL | Dedicated CNPG `gitlab-postgres`, PostgreSQL 17, three instances | Unchanged |
 | Valkey | Dedicated authenticated, AOF-backed `gitlab-valkey` StatefulSet | Unchanged |
 | Registry DB | `registry` database in bundled PostgreSQL | `registry` database in CNPG |
@@ -68,7 +68,7 @@ Important live details:
 | 2 | [03-18.2.8-restart.md](03-18.2.8-restart.md) | 18.2.8 | 9.2.8 | ✅ Complete — 2026-11-05 |
 | 3 | [04-18.5.7.md](04-18.5.7.md) | 18.5.7 | 9.5.7 | ✅ Complete — 2026-11-05 |
 | 4 | [05-18.8.11.md](05-18.8.11.md) | 18.8.11 | 9.8.12 | ✅ Complete — 2026-11-05 |
-| 5 | [06-18.11.14.md](06-18.11.14.md) | 18.11.14 | 9.11.16 | ⬜ Planned |
+| 5 | [06-18.11.14.md](06-18.11.14.md) | 18.11.14 | 9.11.16 | ✅ Complete — 2026-11-05 |
 | 6 | [07-19.2.10.md](07-19.2.10.md) | 19.2.10 | 10.2.10 | ⬜ Planned |
 | 7 | [08-19.5.3.md](08-19.5.3.md) | 19.5.3 | 10.5.4 | ⬜ Planned |
 
