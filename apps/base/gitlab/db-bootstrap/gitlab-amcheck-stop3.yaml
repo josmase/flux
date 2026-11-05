@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitlab-amcheck-stop3
+  namespace: gitlab
+  labels:
+    app: gitlab
+    component: db-provisioner
+    app.kubernetes.io/part-of: gitlab
+    app.kubernetes.io/component: database-prerequisite
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: gitlab
+        component: db-provisioner
+    spec:
+      restartPolicy: Never
+      serviceAccountName: db-provisioner
+      # Reuse the proven Stop 2 provisioner contract. The Job reruns the
+      # idempotent claim SQL so amcheck is created in the Rails database.
+      nodeSelector:
+        kubernetes.io/hostname: kubernetes-node-205
+      containers:
+        - name: provision
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/db-provisioner:2026-11-02-367b4cc2
+          env:
+            - name: PG_HOST
+              value: gitlab-postgres-rw.gitlab.svc
+            - name: DB_CLAIM_CONFIGMAP
+              value: gitlab-db-claim
+          volumeMounts:
+            - name: superuser-password
+              mountPath: /etc/superuser-password
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: superuser-password
+          secret:
+            secretName: gitlab-postgres-superuser
+            defaultMode: 0400

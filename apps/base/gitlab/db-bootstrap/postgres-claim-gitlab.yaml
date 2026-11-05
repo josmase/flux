@@ -9,6 +9,7 @@ data:
     [{"name": "gitlab", "role": "owner", "secret": "gitlab-external-db"}]
   postInitSQL: |
     CREATE EXTENSION IF NOT EXISTS pgcrypto;
+    CREATE EXTENSION IF NOT EXISTS amcheck;
 ---
 apiVersion: batch/v1
 kind: Job

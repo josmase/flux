@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - db-provisioner.yaml
   - postgres-claim-gitlab.yaml
+  - gitlab-amcheck-stop3.yaml
   - postgres-claim-registry.yaml
