@@ -12,6 +12,7 @@ spec:
       # Chart 10 introduces migration-bearing changes. Do not let the
       # controller automatically roll a partially migrated release back.
       retries: 0
+      remediateLastFailure: false
   chart:
     spec:
       chart: gitlab
