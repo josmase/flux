@@ -1,7 +1,7 @@
 # GitLab upgrade plan: 17.11.2 to 19.5.3
 
-Status: **Stops 1–5 are complete.** Stop 5 (18.11.14 / chart 9.11.16)
-completed on 2026-11-05 and is Flux-managed. Stops 6–7 remain. Each stop
+Status: **Stops 1–6 are complete.** Stop 6 (19.2.10 / chart 10.2.10)
+completed on 2026-11-06 and is Flux-managed. Stop 7 remains. Each stop
 requires its own change record, backup evidence, and acceptance sign-off.
 
 This directory contains one plan per required GitLab upgrade stop, plus the
@@ -69,7 +69,7 @@ Important live details:
 | 3 | [04-18.5.7.md](04-18.5.7.md) | 18.5.7 | 9.5.7 | ✅ Complete — 2026-11-05 |
 | 4 | [05-18.8.11.md](05-18.8.11.md) | 18.8.11 | 9.8.12 | ✅ Complete — 2026-11-05 |
 | 5 | [06-18.11.14.md](06-18.11.14.md) | 18.11.14 | 9.11.16 | ✅ Complete — 2026-11-05 |
-| 6 | [07-19.2.10.md](07-19.2.10.md) | 19.2.10 | 10.2.10 | ⬜ Planned |
+| 6 | [07-19.2.10.md](07-19.2.10.md) | 19.2.10 | 10.2.10 | ✅ Complete — 2026-11-06 |
 | 7 | [08-19.5.3.md](08-19.5.3.md) | 19.5.3 | 10.5.4 | ⬜ Planned |
 
 ---
@@ -163,9 +163,11 @@ The short version:
 
 1. Prepare and push the upgrade commit while GitLab is healthy.
 2. Suspend `apps-gitlab` and the `gitlab` HelmRelease before the window.
-3. Perform the stop with Dockerized Helm, not with a live Flux reconcile.
+3. Use the Flux Helm controller for the target HelmRelease; never take over a
+   Flux-owned release with direct Helm. Prevent stale source reconciliation
+   while the live target state differs from Git.
 4. Validate the stop.
-5. Merge the prepared commit in GitLab and resume Flux.
+5. Publish the prepared commit in GitLab and resume the Flux hierarchy.
 6. Never restart `source-controller` while GitLab is down.
 
 ### Backups

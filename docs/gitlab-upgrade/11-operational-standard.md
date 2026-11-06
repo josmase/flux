@@ -68,11 +68,13 @@ kubectl get svc -A -o json | jq -r \
    pg_restore --exit-on-error --no-owner --no-privileges --role=<application-role>
    ```
 
-5. Run the manually rendered GitLab Helm release with an explicit timeout.
-   Never pass a HelmRelease YAML directly as a Helm values file; render the
-   values first. Do not use `--atomic` for a release whose database migrations
-   make an automatic chart rollback unsafe.
-6. Wait for migrations, then restore writers in the dependency order stated by
+5. Reconcile through the Flux Helm controller with an explicit timeout. Do not
+   take over a Flux-owned release with direct Helm. Do not use automatic
+   remediation for a release whose database migrations make chart rollback
+   unsafe.
+6. Do not delete an active Helm hook Job to unblock an action. Wait for its
+   terminal state, or suspend the HelmRelease before making a recovery change.
+7. Wait for migrations, then restore writers in the dependency order stated by
    the stop. Any failed migration, storage attach, or image pull is a stop
    condition, not an invitation to continue to the next version.
 
