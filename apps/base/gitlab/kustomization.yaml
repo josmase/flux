@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
-  - linstor-target-pvcs.yaml
   - ingressroute.yaml

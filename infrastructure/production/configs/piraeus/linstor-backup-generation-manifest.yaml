@@ -9,14 +9,12 @@ metadata:
 data:
   backupGeneration: rustfs-linstor-backups-v2
   reviewed: "true"
-  canonicalVolumeCount: "55"
+  canonicalVolumeCount: "53"
   resources.tsv: |
     artifactory	artifactory-data-linstor	pvc-510570a7-ea65-489b-b50f-267e3ab99476	standard	yes
     artifactory	artifactory-pg17-linstor	pvc-be4ead27-e1a9-4516-9930-44e053eccd1c	standard	yes
     default	growlog-media-data-linstor	pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf	standard	yes
     default	zero-cache-data-linstor-v2	pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3	standard	yes
-    gitlab	gitlab-postgresql-linstor-v2	pvc-586ff4f4-edab-45b1-ae75-03d708558396	critical	yes
-    gitlab	gitlab-redis-linstor	pvc-ed58835f-bace-4d6c-94f4-b5e33f29b909	critical	yes
     gitlab	repo-data-gitlab-gitaly-0	pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532	critical	yes
     immich	immich-db-linstor	pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27	standard	yes
     llm-switchboard	llm-switchboard-data-linstor	pvc-11012fbd-dd01-40e8-8ddd-72034e929686	standard	yes

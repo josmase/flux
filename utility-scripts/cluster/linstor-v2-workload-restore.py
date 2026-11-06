@@ -12,7 +12,7 @@ import subprocess
 import time
 
 p = argparse.ArgumentParser(description=__doc__)
-p.add_argument('workload', choices=['gitlab-postgresql', 'grafana'])
+p.add_argument('workload', choices=['grafana'])
 p.add_argument('--evidence-dir', required=True, type=pathlib.Path)
 p.add_argument('--resume', action='store_true', help='Reuse the reviewed existing scratch resource and preserve its original journal')
 a = p.parse_args()
@@ -86,7 +86,7 @@ job = kube('-n', 'piraeus-datastore', 'get', 'job', 'linstor-backup-v2-bootstrap
 assert job.get('status', {}).get('succeeded') == 1, 'Serial production bootstrap must finish first'
 manifest = kube('-n', 'piraeus-datastore', 'get', 'configmap', 'linstor-backup-generation-manifest', '-o', 'json')['data']
 assert manifest['reviewed'] == 'true' and manifest['backupGeneration'] == remote
-source_ns, claim = ('gitlab', 'gitlab-postgresql-linstor-v2') if a.workload == 'gitlab-postgresql' else ('monitoring', 'grafana-data-linstor')
+source_ns, claim = ('monitoring', 'grafana-data-linstor')
 row = next(r.split('\t') for r in manifest['resources.tsv'].splitlines() if r.split('\t')[:2] == [source_ns, claim])
 source = row[2]
 pvc = kube('-n', source_ns, 'get', 'pvc', claim, '-o', 'json')
@@ -102,7 +102,7 @@ target_exists = any(r['name'] == target for r in get(l + ['resource-definition',
 existing_namespace = next((v for v in kube('get', 'namespaces', '-o', 'json')['items'] if v['metadata']['name'] == ns), None)
 assert target_exists == a.resume, 'Use --resume only for the existing reviewed drill'
 if a.resume:
-    expected_restore = l + ['backup', 'restore', remote, 'kubernetes-node-204' if a.workload == 'grafana' else 'kubernetes-node-206', target, '--id', backup['id']]
+    expected_restore = l + ['backup', 'restore', remote, 'kubernetes-node-204', target, '--id', backup['id']]
     assert any(r['argv'] == expected_restore and r['rc'] == 0 for r in prior_records), 'Original journal must prove this exact scratch restore'
 else:
     assert existing_namespace is None, 'Another isolated drill is present'

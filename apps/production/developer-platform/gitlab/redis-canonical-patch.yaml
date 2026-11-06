@@ -1,6 +1,0 @@
-- op: replace
-  path: /spec/values/redis/master/persistence/storageClass
-  value: linstor
-- op: replace
-  path: /spec/values/redis/master/persistence/existingClaim
-  value: gitlab-redis-linstor
