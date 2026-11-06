@@ -72,7 +72,10 @@ def main():
     workload = yaml.safe_load(secret("gitlab-object-storage", "connection"))
     backup = configparser.ConfigParser(interpolation=None)
     backup.read_string(secret("gitlab-backup-object-storage", "config"))
-    registry = yaml.safe_load(secret("gitlab-registry-storage", "config"))["s3"]
+    registry_config = yaml.safe_load(secret("gitlab-registry-storage", "config"))
+    # Registry storage switched to the v2 driver in GitLab 19.2. Keep the
+    # audit compatible with both the current and legacy configuration shapes.
+    registry = registry_config.get("s3_v2") or registry_config["s3"]
     b = backup["default"]
     configs = {
         "workload": {"endpoint": workload["endpoint"], "region": workload.get("region", "us-east-1"), "access": workload["aws_access_key_id"], "secret": workload["aws_secret_access_key"]},
