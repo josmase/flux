@@ -16,7 +16,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "10.2.10"
+      version: "10.5.4"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
