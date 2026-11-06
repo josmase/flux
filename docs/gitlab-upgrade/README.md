@@ -1,8 +1,9 @@
 # GitLab upgrade plan: 17.11.2 to 19.5.3
 
-Status: **Stops 1–6 are complete.** Stop 6 (19.2.10 / chart 10.2.10)
-completed on 2026-11-06 and is Flux-managed. Stop 7 remains. Each stop
-requires its own change record, backup evidence, and acceptance sign-off.
+Status: **Stops 1–6 are complete and Stop 7 is deployed.** Stop 7
+(19.5.3 / chart 10.5.4) was deployed on 2026-11-06 and is Flux-managed.
+Its seven-day monitoring hold and remaining user-path acceptance evidence are
+still open.
 
 This directory contains one plan per required GitLab upgrade stop, plus the
 cross-cutting preflight, Flux coupling, and rollback procedures.
@@ -70,7 +71,7 @@ Important live details:
 | 4 | [05-18.8.11.md](05-18.8.11.md) | 18.8.11 | 9.8.12 | ✅ Complete — 2026-11-05 |
 | 5 | [06-18.11.14.md](06-18.11.14.md) | 18.11.14 | 9.11.16 | ✅ Complete — 2026-11-05 |
 | 6 | [07-19.2.10.md](07-19.2.10.md) | 19.2.10 | 10.2.10 | ✅ Complete — 2026-11-06 |
-| 7 | [08-19.5.3.md](08-19.5.3.md) | 19.5.3 | 10.5.4 | ⬜ Planned |
+| 7 | [08-19.5.3.md](08-19.5.3.md) | 19.5.3 | 10.5.4 | 🔄 Deployed — 2026-11-06; monitoring/acceptance open |
 
 ---
 
