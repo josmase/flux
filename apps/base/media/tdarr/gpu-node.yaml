@@ -71,6 +71,6 @@ spec:
           emptyDir: {}
         - name: media
           persistentVolumeClaim:
-            claimName: media-media-shared-nfs-pvc
+            claimName: media-shared-nfs-omv-pvc
         - name: temp
           emptyDir: {}

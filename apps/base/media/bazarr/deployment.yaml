@@ -76,4 +76,4 @@ spec:
             claimName: bazarr-config-linstor-v2
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-media-shared-nfs-pvc
+            claimName: media-shared-nfs-omv-pvc

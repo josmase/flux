@@ -52,4 +52,4 @@ spec:
                 defaultMode: 0555
             - name: shared-storage
               persistentVolumeClaim:
-                claimName: media-media-shared-nfs-pvc
+                claimName: media-shared-nfs-omv-pvc

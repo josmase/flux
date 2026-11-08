@@ -229,4 +229,4 @@ spec:
           emptyDir: {}
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: jellyfin-media-nfs-pvc
+            claimName: jellyfin-media-nfs-omv-pvc

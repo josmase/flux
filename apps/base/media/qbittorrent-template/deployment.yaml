@@ -126,7 +126,7 @@ spec:
             claimName: qbittorrent-config
         - name: shared-storage
           persistentVolumeClaim:
-            claimName: media-media-shared-nfs-pvc
+            claimName: media-shared-nfs-omv-pvc
         - name: qbittorrent-auth
           secret:
             secretName: qbittorrent-auth
