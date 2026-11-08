@@ -1,0 +1,186 @@
+# Parallel claims for the OMV NFS cutover. Existing claims remain in place.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: shared-nfs-omv-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 110Ti
+  claimRef:
+    namespace: default
+    name: shared-nfs-omv-pvc
+  mountOptions:
+  - hard
+  - nfsvers=4.1
+  - async
+  - timeo=600
+  - retrans=3
+  - actimeo=5
+  - lookupcache=none
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+  nfs:
+    path: /MergerFS
+    server: storage.local.hejsan.xyz
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-nfs-omv-pvc
+  namespace: default
+spec:
+  storageClassName: manual
+  volumeName: shared-nfs-omv-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 110Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-shared-nfs-omv-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 110Ti
+  claimRef:
+    namespace: immich
+    name: immich-shared-nfs-omv-pvc
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /MergerFS
+    volumeHandle: immich-shared-nfs-omv
+  mountOptions:
+  - hard
+  - nfsvers=4.1
+  - async
+  - timeo=600
+  - retrans=3
+  - actimeo=5
+  - lookupcache=none
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-shared-nfs-omv-pvc
+  namespace: immich
+spec:
+  storageClassName: manual
+  volumeName: immich-shared-nfs-omv-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 110Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-shared-nfs-omv-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 110Ti
+  claimRef:
+    namespace: media
+    name: media-shared-nfs-omv-pvc
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /MergerFS
+    volumeHandle: media-shared-nfs-omv
+  mountOptions:
+  - hard
+  - nfsvers=4.1
+  - async
+  - timeo=600
+  - retrans=3
+  - actimeo=5
+  - lookupcache=none
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-shared-nfs-omv-pvc
+  namespace: media
+spec:
+  storageClassName: manual
+  volumeName: media-shared-nfs-omv-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 110Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-media-nfs-omv-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 110Ti
+  claimRef:
+    namespace: media
+    name: jellyfin-media-nfs-omv-pvc
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /MergerFS
+    volumeHandle: jellyfin-media-nfs-omv
+  mountOptions:
+  - hard
+  - rw
+  - nfsvers=4.1
+  - proto=tcp
+  - timeo=600
+  - retrans=3
+  - rsize=1048576
+  - wsize=1048576
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: jellyfin-media
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media-nfs-omv-pvc
+  namespace: media
+spec:
+  storageClassName: jellyfin-media
+  volumeName: jellyfin-media-nfs-omv-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 110Ti

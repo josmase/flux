@@ -8,6 +8,7 @@ resources:
   # Base infrastructure configs (reference the directory)
   - ../../base/configs/
   - piraeus/
+  - omv-nfs-claims.yaml
 
   # Production secrets
   - secret-cf-token.yaml
