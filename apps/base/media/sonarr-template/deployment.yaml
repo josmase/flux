@@ -38,7 +38,26 @@ spec:
                 topologyKey: kubernetes.io/hostname
       initContainers:
         - name: nfs-stale-check
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/nfs-stale-init-container:2026-06-27-8aee1270
+          image: busybox@sha256:a46257e06c82ad85242d0d38077d0a52d9896389ca60a1a59d3463db586e5fa4
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              result="$(ls -d "$CHECK_PATH" 2>&1)" || true
+              printf '%s\n' "$result"
+              case "$result" in
+                *"Stale file handle"*|*"Input/output error"*)
+                  echo "STALE: $CHECK_PATH has a stale file handle. Attempting recovery..."
+                  umount -f -l "$CHECK_PATH" || { echo "FAILED: Could not unmount $CHECK_PATH"; exit 1; }
+                  echo "RECOVERED: Successfully unmounted $CHECK_PATH. Kubelet will remount."
+                  ;;
+                "")
+                  echo "WARNING: $CHECK_PATH is empty or inaccessible"
+                  exit 1
+                  ;;
+              esac
+              exit 0
+
           securityContext:
             privileged: true
             capabilities:
