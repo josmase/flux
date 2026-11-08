@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: media
 
 resources:
-  - ../../../base/persistence/media
   - namespace.yaml
   - default-app-config.yaml
 

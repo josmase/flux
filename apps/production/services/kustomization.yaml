@@ -10,7 +10,6 @@ resources:
   - ../../base/growlog
   - ../searxng
   - ../voice-router-candidate
-  - ../../base/persistence/default
   - ../growlog
   - default-app-config.yaml
 
