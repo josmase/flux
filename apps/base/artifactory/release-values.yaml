@@ -142,6 +142,7 @@ artifactory:
         memory: 288Mi
   nginx:
     enabled: true
+    tlsSecretName: local-hejsan-xyz-tls
     resources:
       requests:
         cpu: 10m
