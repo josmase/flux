@@ -8,3 +8,21 @@ resources:
 
 components:
   - ../components/prune-protection
+
+patches:
+  - target:
+      kind: Deployment
+      name: immich-server
+      namespace: immich
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: immich-shared-nfs-omv-pvc
+  - target:
+      kind: CronJob
+      name: immich-backup-health-check
+      namespace: immich
+    patch: |-
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: immich-shared-nfs-omv-pvc
