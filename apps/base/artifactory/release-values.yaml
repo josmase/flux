@@ -85,7 +85,6 @@ artifactory:
           path: /{{ .Values.jfbus.apiContext }}/system/health/readiness
           port: {{ .Values.jfbus.internalRestPort }}
           scheme: HTTP
-          host: 127.0.0.1
         timeoutSeconds: {{ .Values.probes.timeoutSeconds }}
         initialDelaySeconds: 0
         periodSeconds: 5
