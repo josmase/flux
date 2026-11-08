@@ -13,7 +13,7 @@ spec:
     name: shared-nfs-omv-pvc
   mountOptions:
   - hard
-  - nfsvers=4.1
+  - nfsvers=4.2
   - async
   - timeo=600
   - retrans=3
@@ -64,7 +64,7 @@ spec:
     volumeHandle: immich-shared-nfs-omv
   mountOptions:
   - hard
-  - nfsvers=4.1
+  - nfsvers=4.2
   - async
   - timeo=600
   - retrans=3
@@ -112,7 +112,7 @@ spec:
     volumeHandle: media-shared-nfs-omv
   mountOptions:
   - hard
-  - nfsvers=4.1
+  - nfsvers=4.2
   - async
   - timeo=600
   - retrans=3
@@ -161,7 +161,7 @@ spec:
   mountOptions:
   - hard
   - rw
-  - nfsvers=4.1
+  - nfsvers=4.2
   - proto=tcp
   - timeo=600
   - retrans=3
