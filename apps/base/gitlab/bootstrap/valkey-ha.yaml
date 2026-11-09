@@ -147,3 +147,78 @@ spec:
               app.kubernetes.io/instance: gitlab-valkey-ha
               app.kubernetes.io/component: valkey
           topologyKey: kubernetes.io/hostname
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+      prometheusRule:
+        enabled: true
+        labels:
+          prometheus: 'true'
+        rules:
+        - alert: GitlabValkeyDown
+          expr: redis_up{namespace="gitlab",service="gitlab-valkey-ha-metrics"} ==
+            0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: GitlabValkeyDown
+        - alert: GitlabValkeyReplicaMissing
+          expr: max(redis_connected_slaves{namespace="gitlab",service="gitlab-valkey-ha-metrics"})
+            < 2
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyReplicaMissing
+        - alert: GitlabValkeyReplicaLinkDown
+          expr: redis_master_link_up{namespace="gitlab",service="gitlab-valkey-ha-metrics"}
+            == 0
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyReplicaLinkDown
+        - alert: GitlabValkeyAofWriteError
+          expr: redis_aof_last_write_status{namespace="gitlab",service="gitlab-valkey-ha-metrics"}
+            == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: GitlabValkeyAofWriteError
+        - alert: GitlabValkeyMemoryHigh
+          expr: redis_memory_used_bytes{namespace="gitlab",service="gitlab-valkey-ha-metrics"}
+            / redis_memory_max_bytes{namespace="gitlab",service="gitlab-valkey-ha-metrics"}
+            > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyMemoryHigh
+        - alert: GitlabValkeySentinelQuorumAtRisk
+          expr: kube_statefulset_status_replicas_ready{namespace="gitlab",statefulset="gitlab-valkey-ha-sentinel"}
+            < 3
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeySentinelQuorumAtRisk
+        - alert: GitlabValkeyProxyCapacityReduced
+          expr: kube_deployment_status_replicas_available{namespace="gitlab",deployment="gitlab-valkey-ha-haproxy"}
+            < 3
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyProxyCapacityReduced
+      exporter:
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
