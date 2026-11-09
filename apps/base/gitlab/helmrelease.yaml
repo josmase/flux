@@ -115,7 +115,7 @@ spec:
           key: password
 
       redis:
-        host: gitlab-valkey.gitlab.svc
+        host: gitlab-valkey-ha-haproxy.gitlab.svc
         port: 6379
         auth:
           enabled: true
