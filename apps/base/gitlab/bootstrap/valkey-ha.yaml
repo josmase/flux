@@ -1,0 +1,149 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: valkey
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://valkey.io/valkey-helm/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab-valkey-ha
+  namespace: gitlab
+spec:
+  interval: 10m
+  timeout: 15m
+  chart:
+    spec:
+      chart: valkey
+      version: 1.0.0-rc.1
+      sourceRef:
+        kind: HelmRepository
+        name: valkey
+        namespace: flux-system
+  values:
+    image:
+      tag: 9.1.3@sha256:3add1a336a920ea54770a001ab6feb3da5fceea96a40373a3a2cd469b815f0b7
+    replica:
+      enabled: true
+      replicas: 3
+      minReplicasToWrite: 0
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Retain
+        whenScaled: Retain
+      service:
+        enabled: false
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: linstor-final-triple
+    auth:
+      enabled: true
+      usersExistingSecret: gitlab-valkey-auth
+      aclUsers:
+        default:
+          permissions: ~* &* +@all
+          passwordKey: password
+    sentinel:
+      enabled: true
+      replicas: 3
+      existingSecret: gitlab-valkey-sentinel-auth
+      passwordKey: password
+      podDisruptionBudget:
+        enabled: true
+        minAvailable: 2
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - kubernetes-node-204
+                - kubernetes-node-205
+                - kubernetes-node-206
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/instance: gitlab-valkey-ha
+                app.kubernetes.io/component: sentinel
+            topologyKey: kubernetes.io/hostname
+    haproxy:
+      enabled: true
+      replicas: 3
+      podDisruptionBudget:
+        enabled: true
+        minAvailable: 2
+      image:
+        tag: 3.2-alpine@sha256:96ec3c75a9264ba94e733eeacb44051ed6e7b79bb77a73c2c36f236b6423f1f0
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - kubernetes-node-204
+                - kubernetes-node-205
+                - kubernetes-node-206
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/instance: gitlab-valkey-ha
+                app.kubernetes.io/component: haproxy
+            topologyKey: kubernetes.io/hostname
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 2
+    extraConfig: 'appendonly yes
+
+      appendfsync everysec
+
+      maxmemory 384mb
+
+      maxmemory-policy noeviction
+
+      '
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+              - kubernetes-node-204
+              - kubernetes-node-205
+              - kubernetes-node-206
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: gitlab-valkey-ha
+              app.kubernetes.io/component: valkey
+          topologyKey: kubernetes.io/hostname

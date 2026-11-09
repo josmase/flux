@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: gitlab-valkey-sentinel-auth
+    namespace: gitlab
+type: Opaque
+stringData:
+    password: ENC[AES256_GCM,data:/t2frHb1NgIVGlCIl9h2QYJCnv/3VLCtMMjmtxTVKPOjlxgyr8ioBEmG02RqJzQKYLE4jjJt8N1qPEeVYGLCuA==,iv:CIbsfMs+lDJbhEHcf3d9GY2af6RZzgcxJh8ZxVB/tZ0=,tag:ifshIu4dHxP/rOcFxnKvWg==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoZkZKVC8xdmlxOGVwT3U0
+            NEVla0EwRFVVdVVRN01pckY3amFEcXhZUlFZCkUzTlZrWUpJL3lrRDQ4cms4NzRs
+            cDZrcDVib21QRmcyZVdyZ0k3U3JGQ0kKLS0tIE95SVZHOVJqWkZpc0dJV01VR0M1
+            eUdwazkyV2FCZW5TTlpMQ0ovclMwczgKZS2brbTsK+lJummSa410E/AUmWF1HH0O
+            ymM7QxnNgrsxbq3BMBWNed2i8NQzbeHQ9A/g/VFWy4dQe7VMP1ukvQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1crq59usy028utgwh2xfghs3hyykwn2hmgdvv4hxlhgasw0gre43q88y0kx
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-11-09T16:54:26Z"
+    mac: ENC[AES256_GCM,data:ZrpPhOwX9Irc4iQ+DN2TUJ7rKjSxofFtCwI2/FAOHWZFdx3lOHkvSZ+5J4vrAZa0FJsyC8aIjLLZ8icu2LoX0OSG50o+nBWMVHfOGu4zMyBNPKX6JfGwMc23fEeC2deSQXyXFboZXaPM1FLvu4an74b8N8F6ld85zLef8mfOQBI=,iv:x13JOfSIDITRGXREIHRQxzjAX4UGgya3xV+lAKsRnLs=,tag:pjvguo75F0KLlO7UckG+1g==,type:str]
+    version: 3.13.3

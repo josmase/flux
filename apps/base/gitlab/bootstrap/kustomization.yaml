@@ -6,3 +6,4 @@ resources:
   - gitlab-postgres.yaml
   - gitlab-postgres-backup.yaml
   - valkey.yaml
+  - valkey-ha.yaml

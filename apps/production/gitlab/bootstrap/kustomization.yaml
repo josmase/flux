@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - gitlab-postgres-superuser.yaml
   - gitlab-valkey-auth.yaml
+  - gitlab-valkey-sentinel-auth.yaml
