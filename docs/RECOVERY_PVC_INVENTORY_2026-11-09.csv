@@ -1,0 +1,120 @@
+namespace,claim,storage_class,phase,volume,pod_consumers_observed,recovery_method,owner,review_status
+artifactory,artifactory-data-linstor,linstor,Bound,pvc-510570a7-ea65-489b-b50f-267e3ab99476,artifactory-0,unassigned,unassigned,needs review
+artifactory,artifactory-data-triple,linstor-final-triple,Bound,pvc-0dab112d-00c8-4356-bf58-ff6549a274c2,,unassigned,unassigned,needs review
+artifactory,artifactory-pg17-linstor,linstor,Bound,pvc-be4ead27-e1a9-4516-9930-44e053eccd1c,artifactory-postgresql-0,unassigned,unassigned,needs review
+artifactory,artifactory-pg17-triple,linstor-final-triple,Bound,pvc-b98df677-2042-4876-8cb6-bf9097e2d18c,,unassigned,unassigned,needs review
+cnpg-system,forensic-pg10-data-copy-20261015,linstor-final-triple,Bound,pvc-46690e78-822a-43b8-82ec-07a82d2cc19c,,unassigned,unassigned,needs review
+cnpg-system,forensic-pg10-data-recovery-20261015,linstor-final-triple,Bound,pvc-429dfaea-5686-42ef-acd4-0f114a06cdbb,,unassigned,unassigned,needs review
+cnpg-system,forensic-pg10-wal-copy-20261015,linstor-final-triple,Bound,pvc-33647236-dc07-4066-addf-5b1df6ee51dc,,unassigned,unassigned,needs review
+cnpg-system,forensic-pg10-wal-recovery-20261015,linstor-final-triple,Bound,pvc-9dc8a358-e75d-44c8-84f2-b68720049d6d,,unassigned,unassigned,needs review
+cnpg-system,gitlabhq-dump-storage,standard,Pending,,copy-dump-to-pvc,unassigned,unassigned,needs review
+cnpg-system,shared-postgres-12,linstor-final-triple,Bound,pvc-56e7c1b1-49eb-468b-b058-07bda1d7a15a,shared-postgres-12,CNPG cluster backup (verify membership),unassigned,needs review
+cnpg-system,shared-postgres-12-wal,linstor-final-triple,Bound,pvc-8ccc81cb-b766-45f5-9260-0e2908e63069,shared-postgres-12,CNPG cluster backup (verify membership),unassigned,needs review
+cnpg-system,shared-postgres-13,linstor-final-triple,Bound,pvc-ffef336f-1dcf-4d3f-9335-9f3cc2233cf7,shared-postgres-13,CNPG cluster backup (verify membership),unassigned,needs review
+cnpg-system,shared-postgres-13-wal,linstor-final-triple,Bound,pvc-0ee02348-d969-4802-a00e-b8e0ffab87aa,shared-postgres-13,CNPG cluster backup (verify membership),unassigned,needs review
+cnpg-system,shared-postgres-9,linstor-final-triple,Bound,pvc-bf69ce4a-7fc5-48f6-9c94-24c183d228ce,shared-postgres-9,CNPG cluster backup (verify membership),unassigned,needs review
+cnpg-system,shared-postgres-9-wal,linstor-final-triple,Bound,pvc-e9c20c49-6ae3-4537-95f9-fa8309b4487e,shared-postgres-9,CNPG cluster backup (verify membership),unassigned,needs review
+default,growlog-media-data-linstor,linstor,Bound,pvc-f1436ef6-209c-4d7e-a504-d4afa9b2e9bf,growlog-media-795d65d5cd-xntqz,unassigned,unassigned,needs review
+default,shared-nfs-omv-csi-pvc,manual,Bound,shared-nfs-omv-csi-pv,,unassigned,unassigned,needs review
+default,zero-cache-data-linstor,linstor,Bound,pvc-499f5bb4-1d89-4bc8-b656-c8aff9750e27,,unassigned,unassigned,needs review
+default,zero-cache-data-linstor-v2,linstor,Bound,pvc-8b783e1e-f6d4-44cc-ad2f-557026236fc3,zero-cache-5b7f6bbbc7-xtz7t,unassigned,unassigned,needs review
+default,zero-cache-data-triple,linstor-final-triple,Bound,pvc-c0da6f07-391b-4c30-9ab9-752cab8f963e,,unassigned,unassigned,needs review
+gitlab,data-gitlab-valkey-0,linstor-final-triple,Bound,pvc-c75c6082-714b-4633-b5d5-c6921e162b79,,unassigned,unassigned,needs review
+gitlab,gitlab-postgres-2,linstor-final-triple,Bound,pvc-7d4009a1-86d1-4cd3-9afd-64e797f50f91,,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-2-wal,linstor-final-triple,Bound,pvc-cff0b451-e36e-4ad5-a462-9858b41f593e,,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-3,linstor-final-triple,Bound,pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03,gitlab-postgres-3,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-3-wal,linstor-final-triple,Bound,pvc-d7d6dc18-d811-4dee-9513-40be5f222d39,gitlab-postgres-3,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-4,linstor-final-triple,Bound,pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f,gitlab-postgres-4,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-4-wal,linstor-final-triple,Bound,pvc-0d695524-cbb4-446b-9d48-a61824bf8053,gitlab-postgres-4,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-5,linstor-final-triple,Bound,pvc-2a4ec4d4-177f-45ad-9ee1-feb1aa3b140b,gitlab-postgres-5,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,gitlab-postgres-5-wal,linstor-final-triple,Bound,pvc-482b82cb-4452-4965-b7d0-068090ffd2f2,gitlab-postgres-5,CNPG cluster backup (verify membership),unassigned,needs review
+gitlab,repo-data-gitlab-gitaly-0,linstor-final-triple,Bound,pvc-d6aacc5d-85ca-412b-a52c-8245a35cf532,gitlab-gitaly-0,unassigned,unassigned,needs review
+gitlab,valkey-data-gitlab-valkey-ha-0,linstor-final-triple,Bound,pvc-02cd7071-7181-49a2-8411-f0b38e094140,gitlab-valkey-ha-0,unassigned,unassigned,needs review
+gitlab,valkey-data-gitlab-valkey-ha-1,linstor-final-triple,Bound,pvc-efebf869-b1fa-4602-946d-9c126f91891d,gitlab-valkey-ha-1,unassigned,unassigned,needs review
+gitlab,valkey-data-gitlab-valkey-ha-2,linstor-final-triple,Bound,pvc-43aee892-f70c-4222-a31d-53782d54781a,gitlab-valkey-ha-2,unassigned,unassigned,needs review
+immich,immich-db-linstor,linstor,Bound,pvc-e6d490c9-d251-4268-bfa1-bfef39dcaa27,immich-postgres-7fc7b95cbd-z7g9j,unassigned,unassigned,needs review
+immich,immich-db-triple,linstor-final-triple,Bound,pvc-1ef1053f-8e9a-4a45-8698-91a00eb2d3aa,,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-0-linstor,linstor,Bound,pvc-0d9c0194-c69e-40d9-99c1-7d029c897a16,immich-machine-learning-7c6dcc765d-j5w9f,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-0-triple,linstor-final-triple,Bound,pvc-f1dc06ef-404d-45b2-bf02-cf3acf6f0410,,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-1-linstor,linstor,Bound,pvc-dc659f8a-b108-4823-bda1-eede5976ad7d,immich-machine-learning-7c6dcc765d-j5w9f,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-1-triple,linstor-final-triple,Bound,pvc-bf8718bd-e483-44ce-854f-4320092d6c9d,,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-2-linstor,linstor,Bound,pvc-db3e96b2-589b-45ea-a746-6c8138ffe3c6,immich-machine-learning-7c6dcc765d-j5w9f,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-2-triple,linstor-final-triple,Bound,pvc-b645fcd1-6a6c-40a9-baae-87e562623ed8,,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-linstor,linstor,Bound,pvc-986e2043-3a1e-4866-963c-5af236ee8c6e,immich-machine-learning-7c6dcc765d-j5w9f,unassigned,unassigned,needs review
+immich,immich-model-cache-ml-triple,linstor-final-triple,Bound,pvc-5844000d-4eec-4a71-a334-809683eeb2ff,,unassigned,unassigned,needs review
+immich,immich-shared-nfs-omv-pvc,manual,Bound,immich-shared-nfs-omv-pv,immich-backup-health-check-29903250-gr9cp;immich-server-696fcd7f6f-nsw77,unassigned,unassigned,needs review
+llm-switchboard,llm-switchboard-data-linstor,linstor,Bound,pvc-11012fbd-dd01-40e8-8ddd-72034e929686,,unassigned,unassigned,needs review
+media,arr-dashboard-config-linstor,linstor,Bound,pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc,arr-dashboard-7cb8467596-49lh2,unassigned,unassigned,needs review
+media,arr-dashboard-config-triple,linstor-final-triple,Bound,pvc-dc745e25-68ee-4374-b3a4-afb9887dc919,,unassigned,unassigned,needs review
+media,bazarr-config-linstor-v2,linstor,Bound,pvc-d3c79f5b-bffe-41b7-bba6-cbe3c39c5df0,bazarr-797ff4f865-rm6l8,unassigned,unassigned,needs review
+media,bazarr-config-triple,linstor-final-triple,Bound,pvc-8b897034-48e8-4cc7-b4ef-5bb2383d7c79,,unassigned,unassigned,needs review
+media,checkrr-config-linstor-v5,linstor,Bound,pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828,,unassigned,unassigned,needs review
+media,checkrr-config-triple,linstor-final-triple,Bound,pvc-4066b8ef-2ed7-435a-8ff9-b51db9866776,,unassigned,unassigned,needs review
+media,jellyfin-config-pvc-jellyfin-0-canonical,linstor,Bound,pvc-d38dff11-b9a0-422a-8776-78340c374653,jellyfin-65fb57995b-tfmg2,unassigned,unassigned,needs review
+media,jellyfin-config-pvc-jellyfin-0-linstor,linstor-final,Bound,pvc-ff20eeef-dbf4-4ab0-9b7f-ee2df2bc8b12,,unassigned,unassigned,needs review
+media,jellyfin-media-nfs-omv-pvc,jellyfin-media,Bound,jellyfin-media-nfs-omv-pv,jellyfin-65fb57995b-tfmg2,unassigned,unassigned,needs review
+media,media-shared-nfs-omv-pvc,manual,Bound,media-shared-nfs-omv-pv,arr-dashboard-7cb8467596-49lh2;bazarr-797ff4f865-rm6l8;prowlarr-5d9dd98bdc-8tphr;qbittorrent-2-qbittorrent-784b968784-b8twr;qbittorrent-3-qbittorrent-6794fcb7f8-dfr9x;qbittorrent-4-qbittorrent-6676f855fb-cpxwc;qbittorrent-5-qbittorrent-6675f79d-r49vs;qbittorrent-7f7dd77c74-r5mss;qui-dff4748c9-zhlv6;radarr-1-radarr-6b8dc9c6b8-wkhvq;radarr-10-radarr-7d5cdb94dd-4phvb;radarr-11-radarr-6ccf869846-t8w29;radarr-12-radarr-7b7879db97-gkb4d;radarr-2-radarr-56c8647cc5-tfrx2;radarr-3-radarr-7c4594cc94-74vnj;radarr-4-radarr-57b5b6bf4b-ghvm8;radarr-5-radarr-64c6b5569f-2t7gx;radarr-6-radarr-85cc4798f6-fw4np;radarr-7-radarr-8669cf6d47-nh6t8;radarr-8-radarr-5bf4945454-jj4gs;radarr-9-radarr-79db4648c9-h9hbd;sonarr-1-sonarr-5c8bbb84c8-sphmh;sonarr-2-sonarr-5f66cb78f4-wjt9g;sonarr-3-sonarr-6bcf9cbfdb-8zj4q;sonarr-4-sonarr-7d7c5f5d9d-dsvq4;sonarr-5-sonarr-dc885cbf4-g6x2m;sonarr-6-sonarr-66cf8575db-b7zwt;tdarr-67589c46bd-tm8x5;tdarr-gpu-node-5f6749f897-x8gbd,unassigned,unassigned,needs review
+media,prowlarr-config-linstor,linstor,Bound,pvc-d7bc9b05-3f0b-4720-82f4-33d493646f42,prowlarr-5d9dd98bdc-8tphr,unassigned,unassigned,needs review
+media,prowlarr-config-triple,linstor-final-triple,Bound,pvc-1cc3571a-e5b3-4a5a-81c2-d510f2e61a26,,unassigned,unassigned,needs review
+media,qbittorrent-2-qbittorrent-config,linstor,Bound,pvc-352cf73e-bee2-45c6-b315-4e299d5af31c,qbittorrent-2-qbittorrent-784b968784-b8twr,unassigned,unassigned,needs review
+media,qbittorrent-3-qbittorrent-config,linstor,Bound,pvc-06294ad5-85d7-4532-8182-d71dc8749c57,qbittorrent-3-qbittorrent-6794fcb7f8-dfr9x,unassigned,unassigned,needs review
+media,qbittorrent-4-qbittorrent-config,linstor,Bound,pvc-e9947608-8121-4e99-bc33-a3c4cf416f73,qbittorrent-4-qbittorrent-6676f855fb-cpxwc,unassigned,unassigned,needs review
+media,qbittorrent-5-qbittorrent-config,linstor,Bound,pvc-ca75685f-2cc9-4ac5-a87e-dbf05f664365,qbittorrent-5-qbittorrent-6675f79d-r49vs,unassigned,unassigned,needs review
+media,qbittorrent-config,linstor,Bound,pvc-cb660507-8ea7-4a17-939e-216216c50bd0,qbittorrent-7f7dd77c74-r5mss,unassigned,unassigned,needs review
+media,qui-config,linstor,Bound,pvc-4979eb5d-3ea8-4979-a18e-580851dbc352,qui-dff4748c9-zhlv6,unassigned,unassigned,needs review
+media,radarr-1-config-linstor,linstor,Bound,pvc-9ac1b0b1-6dbd-4bf8-a836-f468361161f5,radarr-1-radarr-6b8dc9c6b8-wkhvq,unassigned,unassigned,needs review
+media,radarr-1-config-triple,linstor-final-triple,Bound,pvc-46dba0c3-27ff-4365-8283-c2949e7b9173,,unassigned,unassigned,needs review
+media,radarr-10-config-linstor,linstor,Bound,pvc-96c6ef03-805b-43ea-b109-26e6d4054776,radarr-10-radarr-7d5cdb94dd-4phvb,unassigned,unassigned,needs review
+media,radarr-10-config-triple,linstor-final-triple,Bound,pvc-3eea90ac-e3b3-49e3-9bec-95b6b93ffbef,,unassigned,unassigned,needs review
+media,radarr-11-config-linstor,linstor,Bound,pvc-32afa737-e3d4-4483-a7c0-d04dc712edf6,radarr-11-radarr-6ccf869846-t8w29,unassigned,unassigned,needs review
+media,radarr-11-config-triple,linstor-final-triple,Bound,pvc-86cf1a0f-6be8-4d29-b51c-058395088f57,,unassigned,unassigned,needs review
+media,radarr-12-config-linstor,linstor,Bound,pvc-fcf79cc3-c197-44ad-9a38-5899281b843a,radarr-12-radarr-7b7879db97-gkb4d,unassigned,unassigned,needs review
+media,radarr-12-config-triple,linstor-final-triple,Bound,pvc-06936146-364d-4293-8a3d-b21e4bdd88dd,,unassigned,unassigned,needs review
+media,radarr-2-config-linstor,linstor,Bound,pvc-b6352f5a-8e1f-48f1-8316-3946b6647cfc,radarr-2-radarr-56c8647cc5-tfrx2,unassigned,unassigned,needs review
+media,radarr-2-config-triple,linstor-final-triple,Bound,pvc-495135ef-1a15-4904-be45-c3186cb702e3,,unassigned,unassigned,needs review
+media,radarr-3-config-linstor,linstor,Bound,pvc-f2c4b7cb-3f99-4497-8a9b-005b51cd857c,radarr-3-radarr-7c4594cc94-74vnj,unassigned,unassigned,needs review
+media,radarr-3-config-triple,linstor-final-triple,Bound,pvc-44a2a316-68ea-4dae-92ad-b6ba1fa58279,,unassigned,unassigned,needs review
+media,radarr-4-config-linstor,linstor,Bound,pvc-793113ea-f798-461b-a1db-b9a316dda20c,radarr-4-radarr-57b5b6bf4b-ghvm8,unassigned,unassigned,needs review
+media,radarr-4-config-triple,linstor-final-triple,Bound,pvc-6da2dc12-dd5e-45f3-8931-25274cd74bdf,,unassigned,unassigned,needs review
+media,radarr-5-config-linstor,linstor,Bound,pvc-2f67069a-1589-4805-87ce-fa79a5287c1d,radarr-5-radarr-64c6b5569f-2t7gx,unassigned,unassigned,needs review
+media,radarr-5-config-triple,linstor-final-triple,Bound,pvc-ff6ce24d-dd91-42d1-9fa1-a98ca7aaeefe,,unassigned,unassigned,needs review
+media,radarr-6-config-linstor,linstor,Bound,pvc-785c85d1-44f0-48a5-805f-b1cc3857f3c7,,unassigned,unassigned,needs review
+media,radarr-6-config-linstor-v2,linstor,Bound,pvc-3f238dd2-2f65-4fa9-b0d2-94e74dfdde5b,radarr-6-radarr-85cc4798f6-fw4np,unassigned,unassigned,needs review
+media,radarr-6-config-triple,linstor-final-triple,Bound,pvc-d3420bb1-707f-4a62-b6e9-ac51e976526a,,unassigned,unassigned,needs review
+media,radarr-7-config-linstor,linstor,Bound,pvc-4a2bec39-6dc3-41ec-bba6-4a972fd31229,radarr-7-radarr-8669cf6d47-nh6t8,unassigned,unassigned,needs review
+media,radarr-7-config-triple,linstor-final-triple,Bound,pvc-b62416a3-ddde-4a49-8794-815ef920cfe2,,unassigned,unassigned,needs review
+media,radarr-8-config-linstor,linstor,Bound,pvc-000f43f9-b7ef-417d-ad3a-19c9bc00b557,radarr-8-radarr-5bf4945454-jj4gs,unassigned,unassigned,needs review
+media,radarr-8-config-triple,linstor-final-triple,Bound,pvc-b591bac4-5fd3-4586-b5be-9c64dca84c61,,unassigned,unassigned,needs review
+media,radarr-9-config-linstor,linstor,Bound,pvc-ee507f76-28b0-4739-a1a1-40220db04521,radarr-9-radarr-79db4648c9-h9hbd,unassigned,unassigned,needs review
+media,radarr-9-config-triple,linstor-final-triple,Bound,pvc-4b5063b6-fd33-4e73-83bd-026720c130a6,,unassigned,unassigned,needs review
+media,reiverr-config-linstor,linstor,Bound,pvc-f9265e35-77a8-4720-bd7a-681effea820b,,unassigned,unassigned,needs review
+media,reiverr-config-triple,linstor-final-triple,Bound,pvc-f403527c-04e6-4f9e-bd14-965a3c3fb036,,unassigned,unassigned,needs review
+media,reiverr-plugins-linstor,linstor,Bound,pvc-3118762c-dbff-47bc-b3de-8851d331b9ca,,unassigned,unassigned,needs review
+media,reiverr-plugins-triple,linstor-final-triple,Bound,pvc-0b919c81-f8a9-4748-9c08-bd47b4a44e6a,,unassigned,unassigned,needs review
+media,seerr-config-linstor,linstor,Bound,pvc-09272831-116c-4b7c-aa46-70a9860a75cb,seerr-94c47ff8-s88mn,unassigned,unassigned,needs review
+media,seerr-config-triple,linstor-final-triple,Bound,pvc-1962c393-903f-470b-bbf8-925a38b27236,,unassigned,unassigned,needs review
+media,sonarr-1-config-linstor,linstor,Bound,pvc-8f9a7689-b52a-46ce-a8f0-9e2ca28e1123,sonarr-1-sonarr-5c8bbb84c8-sphmh,unassigned,unassigned,needs review
+media,sonarr-1-config-triple,linstor-final-triple,Bound,pvc-f847474b-e1c0-4813-9da3-ac1d2424f462,,unassigned,unassigned,needs review
+media,sonarr-2-config-linstor,linstor,Bound,pvc-0dd303aa-40e5-4954-bfc5-01ee65b52994,sonarr-2-sonarr-5f66cb78f4-wjt9g,unassigned,unassigned,needs review
+media,sonarr-2-config-triple,linstor-final-triple,Bound,pvc-7f3e5813-86a4-4bdc-bc1e-7d7351f8f3fa,,unassigned,unassigned,needs review
+media,sonarr-3-config-linstor,linstor,Bound,pvc-39b7a657-9ade-43c1-9a20-1a497ee086b7,sonarr-3-sonarr-6bcf9cbfdb-8zj4q,unassigned,unassigned,needs review
+media,sonarr-3-config-triple,linstor-final-triple,Bound,pvc-ad07dcb6-6231-441d-a119-f5cb84e74389,,unassigned,unassigned,needs review
+media,sonarr-4-config-linstor,linstor,Bound,pvc-da849381-c518-46b5-b204-ceab53e758a9,sonarr-4-sonarr-7d7c5f5d9d-dsvq4,unassigned,unassigned,needs review
+media,sonarr-4-config-triple,linstor-final-triple,Bound,pvc-7190330d-86c6-4f8a-aded-b498c7165e59,,unassigned,unassigned,needs review
+media,sonarr-5-config-linstor,linstor,Bound,pvc-44a38ff8-54c5-4736-8663-ad5a40c8b0c1,sonarr-5-sonarr-dc885cbf4-g6x2m,unassigned,unassigned,needs review
+media,sonarr-5-config-triple,linstor-final-triple,Bound,pvc-80a9a2be-cfce-4073-9044-b9536cb726cf,,unassigned,unassigned,needs review
+media,sonarr-6-config-linstor,linstor,Bound,pvc-136dea81-494a-47d3-b6b7-2c62b8f05762,sonarr-6-sonarr-66cf8575db-b7zwt,unassigned,unassigned,needs review
+media,sonarr-6-config-triple,linstor-final-triple,Bound,pvc-f2475e6a-c674-4fbb-ad4a-05cc833e465a,,unassigned,unassigned,needs review
+media,tdarr-config-linstor,linstor,Bound,pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50,tdarr-67589c46bd-tm8x5,unassigned,unassigned,needs review
+monitoring,alertmanager-kube-prometheus-stack-alertmanager-db-linstor,linstor,Bound,pvc-4865313d-a2ca-4da1-bbdd-fa8e70193c4b,,unassigned,unassigned,needs review
+monitoring,alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0,linstor,Bound,pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79,alertmanager-kube-prometheus-stack-alertmanager-0,unassigned,unassigned,needs review
+monitoring,alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0,linstor-final-triple,Bound,pvc-5a05cbe4-9a5b-4841-8a33-3fe28c7885f6,,unassigned,unassigned,needs review
+monitoring,gotify-data-linstor,linstor,Bound,pvc-72b0df4b-a891-48f9-a476-91500b022ec8,gotify-6c9456f754-d6k9w,unassigned,unassigned,needs review
+monitoring,gotify-data-triple,linstor-final-triple,Bound,pvc-6989889e-3333-41a3-a450-efad3e1ae03f,,unassigned,unassigned,needs review
+monitoring,grafana-data-linstor,linstor,Bound,pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749,kube-prometheus-stack-grafana-5d45f68c86-6tx4x,unassigned,unassigned,needs review
+monitoring,grafana-data-triple,linstor-final-triple,Bound,pvc-8981ecf6-cf75-4904-93d0-f76dbd77751d,,unassigned,unassigned,needs review
+monitoring,prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0,linstor-final-triple,Bound,pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6,prometheus-kube-prometheus-stack-prometheus-0,unassigned,unassigned,needs review
+ollama,voice-models,linstor,Bound,pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9,ollama-687898bd84-qtwbc,unassigned,unassigned,needs review
+rustdesk,rustdesk-data,linstor,Bound,pvc-f803f54c-013c-484d-b16a-69ae2ea168f4,rustdesk-67dd66f84-fn5ml,unassigned,unassigned,needs review
+watchtower3d,watchtower3d-data,linstor-final,Bound,pvc-f530a13e-401a-438d-879e-dde2db395add,watchtower3d-65cc46f4c9-59cdc,unassigned,unassigned,needs review
+wyoming-voice,whisper-models,linstor,Bound,pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07,wyoming-whisper-7cd7cfcc86-vgtzf,unassigned,unassigned,needs review

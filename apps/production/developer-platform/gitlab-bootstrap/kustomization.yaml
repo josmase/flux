@@ -4,3 +4,14 @@ kind: Kustomization
 resources:
   - ../../../base/gitlab/bootstrap/
   - ../../gitlab/bootstrap/
+
+patches:
+  - target:
+      group: postgresql.cnpg.io
+      kind: ScheduledBackup
+      name: gitlab-postgres-six-hourly
+      namespace: gitlab
+    patch: |-
+      - op: add
+        path: /spec/suspend
+        value: true

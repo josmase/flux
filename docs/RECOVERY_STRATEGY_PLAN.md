@@ -1,0 +1,40 @@
+# Recovery strategy implementation
+
+Status: in progress. Update this document with evidence, decisions, blockers and deviations after each phase.
+
+## Objectives and constraints
+
+- Recover critical PostgreSQL with a target recovery point of one hour and recovery time of eight hours, measured through isolated restores. Retain 14 days of recoverable history.
+- RustFS is the sole backup destination. Loss of RustFS or the site can destroy both source data and backups; this risk is accepted.
+- Disable old producers early, but preserve all existing snapshots, backup chains, remote definitions and credentials. This can create a temporary protection gap.
+- Do not enable new producers until RustFS connectivity and capacity are verified, including a 14-day forecast leaving at least 1 TiB free.
+
+## Work and acceptance
+
+1. **Safe starting point** — Inventory PVCs, databases, GitLab buckets, secrets and dependencies; assign a recovery method and owner or mark as regenerable. Record critical recovery points and gaps. Disable old Flux-managed producers, including CNPG schedules and LINSTOR backend bindings; confirm no new jobs or shipments. Independently check node and replica health.
+2. **Destinations** — Create separate scoped RustFS buckets and credentials for PostgreSQL, application volumes, GitLab archives and cluster recovery. Keep credentials and keys accessible outside the running cluster. Forecast capacity. Copy GitLab object data to the backup bucket daily with 14-day retention; a second bucket does not protect against RustFS loss.
+3. **PostgreSQL** — Verify and test a supported upgrade path from CNPG 1.25.1 to a pinned operator and compatible Barman Cloud plugin. Configure separate object stores and archives for shared-postgres and gitlab-postgres, daily physical base backups, continuous WAL archiving and 14-day recoverability. Configure WAL switching and alert on archive lag over 30 minutes or recoverable-point age over one hour. Do not schedule LINSTOR backups of PostgreSQL data/WAL PVCs.
+4. **Applications and GitLab** — Inventory all non-database claims, including stopped workloads; exclude only documented regenerable caches. Schedule daily Piraeus CSI S3 backups with 14 successful recovery points, bounded concurrency, per-claim status and independent failure handling. Implement application quiescing or native backup where crash consistency is insufficient. Run GitLab's supported daily backup and preserve secrets, configuration, exact version and edition; coordinate database, repository and object-data recovery points.
+5. **Infrastructure and operation** — Copy K3s etcd snapshots to the recovery bucket daily, retain 14 days and separately protect the original server token, GitOps access, SOPS keys, RustFS access and runbooks. Identify and test the supported LINSTOR controller database recovery procedure. Alert on backup age/failure, archive lag, coverage gaps, RustFS availability/capacity and overdue restore drills. Remove obsolete producer configuration only after replacement restores pass; assess artifact deletion separately.
+
+## Validation
+
+- Reconcile the inventory against live PVCs and verify each has a successful backup or documented regeneration method.
+- Restore both PostgreSQL clusters to selected points in isolation; validate data and measure recovery-point lag and restoration duration.
+- Restore a representative application PVC into a separate LINSTOR environment, and restore GitLab with matching version, secrets, repositories, database and object data; validate application functionality.
+- Restore K3s etcd and LINSTOR metadata in a disposable environment using recovery materials available without the original control plane.
+- Simulate RustFS and individual backup failures; confirm alerting, per-workload visibility and independent progress.
+- Repeat PostgreSQL and representative application restores monthly and complete infrastructure and GitLab restores quarterly.
+
+## Progress and evidence
+
+- 2026-11-09: Implementation started. Existing user-owned untracked `apps/base/gitlab/backups/` was present before this work and is not part of this plan.
+- 2026-11-09: Captured [the live PVC inventory](RECOVERY_PVC_INVENTORY_2026-11-09.csv): 119 claims, including one Pending. Pod references are a point-in-time observation and include stale or terminating pods. Recovery methods and owners still need review; names alone do not prove a claim is a current database instance.
+- 2026-11-09: Most recent completed CNPG `Backup` records observed: shared-postgres 2026-10-24 18:02:34 UTC; gitlab-postgres 2026-11-05 06:01:45 UTC. These are Kubernetes records, not proof the associated backup is currently restorable. GitLab's 2026-11-09 18:00 UTC backup failed. No current one-hour recovery point has been established.
+- 2026-11-09: Set the five legacy CronJobs and GitLab ScheduledBackup to suspended in the live API. Shared PostgreSQL's native ScheduledBackup was already suspended. LINSTOR reported no active schedule bindings and an empty shipping queue. Existing Jobs were not terminated, and no existing snapshots or backups were deleted. GitOps manifests contain corresponding suspension patches; both full kustomizations rendered successfully. **The changes are uncommitted and not reconciled by Flux; its 10-minute reconciliation can revert the live suspension until these changes are committed and delivered.** Recheck live status and the queue after reconciliation before claiming the freeze is durable.
+- 2026-11-09: LINSTOR controller configuration reports the Kubernetes `k8s` database backend. Diskful satellites 204–206 were online; diskless 214 remained offline. Full replica verification remains pending.
+- 2026-11-09: RustFS at configured 192.168.1.102:9000 is unreachable; SSH to 192.168.1.102 reports no route to host. `storage.local.hejsan.xyz` resolves to 192.168.1.198 and presents an SSH host key different from the recorded one. Host identity has not been verified; no host-key checking was bypassed and no host changes were made. User input requested to confirm the move/fingerprint or restore access. RustFS capacity, bucket provisioning and new backup enablement remain blocked until its identity and availability are established.
+- 2026-11-09, follow-up: User accepted the new IP and SSH key. Updated the hostname's known-host entry; verified the new key matches the pre-existing trusted key for 192.168.1.198. The host identifies as `openmediavault`, RustFS readiness returns HTTP 200, and the scoped v2 credential retrieved the existing `linstor-backups-v2/__protection/capacity.json` report. It reports 106,498,531,106,816 bytes free and 116,413,968,424 bytes in the v2 bucket. This proves access to that report, not the restorability or completeness of historical backup chains. The 14-day forecast is still outstanding. The existing LINSTOR remote and capacity reader still point at 192.168.1.102; do not retarget them until producer state and the consequences of queued CSI operations have been reviewed.
+- 2026-11-09, follow-up: Flux reverted the live producer suspension before the uncommitted GitOps changes were reconciled. Automatic approval review rejected suspending the two enclosing Flux Kustomizations because that would also pause unrelated production updates. No Flux reconciliation was suspended. The freeze is not effective or durable; the narrow suspension changes must be committed and delivered through the normal GitOps workflow, then verified. Do not enable new producers while the freeze and backup readiness remain unresolved.
+- Barman Cloud plugin [v0.15.1 installation guidance](https://cloudnative-pg.io/plugin-barman-cloud/docs/installation/) requires CNPG 1.26 or newer and cert-manager. The installed CNPG is 1.25.1; cert-manager deployments are present. A tested, supported upgrade and version pin are still required; no operator upgrade has been made.
+- All further phases and restore validation remain pending. Historical October evidence is not proof of present recovery coverage. Recovery point and time targets remain unverified.

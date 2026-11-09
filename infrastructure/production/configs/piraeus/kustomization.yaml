@@ -30,6 +30,19 @@ resources:
   - linstor-vg-metadata-budget.yaml
   - node-prerequisites.yaml
 
+# Freeze legacy producers and retention while the replacement recovery system
+# is developed. Keep the resources and their backup artifacts in place.
+patches:
+  - target:
+      group: batch
+      version: v1
+      kind: CronJob
+      name: 'linstor-backup-policy-gate-v1|linstor-snapshot-reconcile-v3|linstor-bootstrap-chain-retention|shared-postgres-gated-backup|shared-postgres-v2-backup-retention'
+    patch: |-
+      - op: add
+        path: /spec/suspend
+        value: true
+
 configMapGenerator:
   - name: linstor-protection-gate-script
     namespace: piraeus-datastore
