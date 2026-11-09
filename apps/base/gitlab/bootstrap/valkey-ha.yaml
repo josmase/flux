@@ -215,6 +215,30 @@ spec:
             severity: warning
           annotations:
             summary: GitlabValkeyProxyCapacityReduced
+        - alert: GitlabValkeyReplicaLag
+          expr: redis_connected_slave_lag_seconds{namespace="gitlab",service="gitlab-valkey-ha-metrics"}
+            > 10
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyReplicaLag
+        - alert: GitlabValkeyPrimaryChanged
+          expr: count(count_over_time(redis_instance_info{namespace="gitlab",service="gitlab-valkey-ha-metrics",role="master"}[10m]))
+            > 1
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: GitlabValkeyPrimaryChanged
+        - alert: GitlabValkeyPvcNotBound
+          expr: kube_persistentvolumeclaim_status_phase{namespace="gitlab",persistentvolumeclaim=~"valkey-data-gitlab-valkey-ha-[0-2]",phase="Bound"}
+            != 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: GitlabValkeyPvcNotBound
       exporter:
         resources:
           requests:
