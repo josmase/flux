@@ -33,6 +33,16 @@ metadata:
   name: apps-rustdesk
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -61,6 +71,35 @@ metadata:
   name: apps-ops
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
+    - target:
+        group: helm.toolkit.fluxcd.io
+        version: v2
+        kind: HelmRelease
+        name: headlamp
+        namespace: headlamp
+      patch: |-
+        - op: add
+          path: /spec/values/replicaCount
+          value: 0
+    - target:
+        group: batch
+        version: v1
+        kind: CronJob
+        name: "renovate"
+      patch: |-
+        - op: add
+          path: /spec/suspend
+          value: true
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -145,6 +184,25 @@ metadata:
   name: apps-media-download
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
+    - target:
+        group: batch
+        version: v1
+        kind: CronJob
+        name: "qui-qbittorrent-instance-sync"
+      patch: |-
+        - op: add
+          path: /spec/suspend
+          value: true
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -220,6 +278,16 @@ metadata:
   name: apps-media-arr
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -248,6 +316,16 @@ metadata:
   name: apps-media-playback
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -276,6 +354,16 @@ metadata:
   name: apps-media-tdarr
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -304,6 +392,25 @@ metadata:
   name: apps-media-configarr
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
+    - target:
+        group: batch
+        version: v1
+        kind: CronJob
+        name: "configarr|radarr-compact-sync"
+      patch: |-
+        - op: add
+          path: /spec/suspend
+          value: true
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -334,6 +441,17 @@ metadata:
   name: apps-photos
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+        name: "immich-(machine-learning|server|postgres|redis)"
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -480,6 +598,25 @@ metadata:
   name: apps-services
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
+    - target:
+        group: batch
+        version: v1
+        kind: CronJob
+        name: "new-new-boplats-scraper"
+      patch: |-
+        - op: add
+          path: /spec/suspend
+          value: true
   suspend: false
   interval: 10m
   retryInterval: 1m
@@ -536,6 +673,16 @@ metadata:
   name: apps-watchtower3d
   namespace: flux-system
 spec:
+  # Temporary CNPG upgrade maintenance; remove after the upgrade window.
+  patches:
+    - target:
+        group: apps
+        version: v1
+        kind: Deployment
+      patch: |-
+        - op: add
+          path: /spec/replicas
+          value: 0
   suspend: false
   interval: 10m
   retryInterval: 1m
