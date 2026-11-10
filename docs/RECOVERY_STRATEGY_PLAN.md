@@ -64,3 +64,5 @@ Status: in progress. Update this document with evidence, decisions, blockers and
 - Follow-up: Artifactory message bus recovered to 3/3. All seven nodes remained Ready on K3s 1.32.13 and both PostgreSQL clusters remained healthy at 3/3. Later version stages and the recovery system remain pending.
 
 - 2026-11-10 CNPG upgrade preparation was stopped before any operator change after worker 204 developed severe I/O/memory pressure and shared PostgreSQL failed over. Both PostgreSQL clusters returned to 3/3; fresh encrypted etcd and PostgreSQL copies were checksum-verified but remain untested for restore. Four media services were temporarily scaled down and then restored to one replica; two were awaiting registry image pulls while Artifactory recovered. See the upgrade plan for evidence and outstanding health checks.
+
+- Follow-up: Artifactory, Bazarr, Prowlarr and both temporarily stopped qBittorrent deployments recovered; both databases were 3/3. Worker 204 still showed elevated I/O and memory pressure, so the CNPG upgrade remains paused pending diagnosis.
