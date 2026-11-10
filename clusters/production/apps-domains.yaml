@@ -82,16 +82,6 @@ spec:
           path: /spec/replicas
           value: 0
     - target:
-        group: helm.toolkit.fluxcd.io
-        version: v2
-        kind: HelmRelease
-        name: headlamp
-        namespace: headlamp
-      patch: |-
-        - op: add
-          path: /spec/values/replicaCount
-          value: 0
-    - target:
         group: batch
         version: v1
         kind: CronJob
