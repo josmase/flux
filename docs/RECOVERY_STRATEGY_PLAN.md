@@ -58,3 +58,7 @@ Status: in progress. Update this document with evidence, decisions, blockers and
 - All further phases and restore validation remain pending. Historical October evidence is not proof of present recovery coverage. Recovery point and time targets remain unverified.
 
 - 2026-11-10 follow-up: Jellyfin recovered. GitLab PostgreSQL was switched over successfully, and the LINSTOR controller moved off worker 205. Its drain was stopped before upgrading because a runner was finishing active job 4820 and the two remaining GitLab PostgreSQL instances were concentrated on 206. Node 205 was uncordoned; both PostgreSQL clusters returned to 3/3. See the upgrade plan before resuming.
+
+- 2026-11-10 retry: completed K3s 1.32.13 across all seven nodes. Both PostgreSQL clusters and LINSTOR recovered; temporary media scaling was reversed, and monitoring reconciled successfully after a drain-related timeout. Artifactory's message bus remained unready during post-stage checks and must recover before the next minor stage. CNPG upgrade/compatibility bridge, new backup producers and restore validation remain outstanding. See the upgrade plan.
+
+- Follow-up: Artifactory message bus recovered to 3/3. All seven nodes remained Ready on K3s 1.32.13 and both PostgreSQL clusters remained healthy at 3/3. Later version stages and the recovery system remain pending.
