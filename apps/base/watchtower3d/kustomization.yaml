@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - persistence.yaml
+  - persistence-canonical.yaml
   - deployment.yaml
   - service.yaml
   - lan-service.yaml

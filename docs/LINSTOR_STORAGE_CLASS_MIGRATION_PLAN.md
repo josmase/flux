@@ -39,22 +39,30 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 52 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 58 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 2 | 52 | Includes active workloads and retained rollback/source claims. |
-| `linstor-final-triple` | 60 | 8 | Includes active workloads and retained rollback/source claims. |
+| `linstor-final-triple` | 46 | 16 | Includes active workloads and retained rollback/source claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 62 bound PVCs and 62 Released PVs on the three legacy classes
-associated with those classes. The Released PVs are not disposable: reclaim
-policy is `Retain`, and deletion could remove the only remaining copy of data.
-Do not remove classes or PVs based only on claim status.
+There are 48 bound PVCs and 70 Released PVs on the three legacy classes.
+Remaining Released PVs use `Retain`; they may still hold the only copy of data.
+Classify each before deletion.
+
+Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
+clusters have three Ready instances and quorum-synchronous streaming replicas;
+each cluster's six target PGDATA/WAL volumes have three UpToDate replicas on
+nodes 204–206. The six old Shared PostgreSQL PVs and their LINSTOR resources
+were deleted after validation, with all twelve ready `VolumeSnapshotContent`
+artifacts retained. GitLab's eight old source PVs remain Released/Retain. Its
+serial-2 Backup-owned snapshot objects were already being deleted when Backup
+resources were removed; the Kubernetes snapshot objects are gone and twelve
+LINSTOR backend snapshot records remain flagged `FAILED_DEPLOYMENT`. Preserve
+these source PVs until the artifact state has been reviewed.
 
 The currently mounted legacy claims include:
 
 | Workload | Mounted legacy data |
 |---|---|
-| Shared CNPG PostgreSQL | Three instances, each with data and WAL claims. |
-| GitLab CNPG PostgreSQL | Three instances, each with data and WAL claims. |
 | GitLab Gitaly | One repository-data claim. |
 | GitLab Valkey HA | Three data claims. |
 | Prometheus | One Prometheus data claim. |
@@ -70,28 +78,27 @@ candidate, but no production mutation has been made. The current repo source
 still names `linstor-final` for its PVC and must be updated in the same change
 as the target claim/cutover procedure.
 
-The shared and GitLab PostgreSQL clusters are each healthy at three ready
-instances. Their PVCs cannot be migrated by editing the class field: follow
-the CNPG storage recreation procedure one instance at a time. Production runs
-CNPG 1.30.1. The checked-in CNPG cluster specs now use `${STORAGE_CLASS}` for
-both PGDATA and WAL and set both `resizeInUseVolumes` flags to `false`. The
-live clusters still use `linstor-final-triple` for both fields, so these local
-changes are not live yet. For each cluster, first reconcile the new template,
-then recreate a standby through the CNPG operator, wait for it to rejoin and
-verify it is healthy on three UpToDate LINSTOR replicas. Repeat for the other
-standby, promote a verified new-class standby, and recreate the former primary.
-Keep the old PVs (their reclaim policy is `Retain`) until all instances have
-rejoined, the primary has been verified, and database-level checks pass. Apply
-the same class update and sequential recreation to each WAL claim. This follows
-the [CNPG storage recreation guidance](https://cloudnative-pg.io/docs/current/storage/)
-for regenerating cluster storage. The same retention rule applies to the
-Helm-managed Valkey and Prometheus claims and the Gitaly StatefulSet claim.
+Both CNPG clusters now use `${STORAGE_CLASS}` resolved to `linstor` for PGDATA
+and WAL, with both `resizeInUseVolumes` flags set to `false`. Production runs
+CNPG 1.30.1. Each cluster was recreated one replica at a time: rebuild both
+standbys, verify synchronous quorum, then let CNPG fail over and recreate the
+former primary. All six new volumes per cluster are Bound on `linstor` with
+three UpToDate LINSTOR replicas, and SQL checks passed. Shared PostgreSQL's old
+data was cleaned up. GitLab's old source PVs remain Retain because backup-owned
+snapshot cleanup was already in progress and its remaining backend records
+need review. This follows the
+[CNPG storage recreation guidance](https://cloudnative-pg.io/docs/current/storage/).
+The same retention rule applies to the Helm-managed Valkey and Prometheus
+claims and the Gitaly StatefulSet claim.
 
-This census is a point-in-time inventory, not acceptance evidence. No PVC or
-PV has been deleted, and no bound claim has been moved. Record each individual
-claim's source/target handle, replica health, recovery artifact, content or
-database validation, and cutover outcome in the migration ledger before
-releasing its source data.
+This census is a point-in-time inventory, not acceptance evidence. Shared
+PostgreSQL's six source claims and backing LINSTOR resources have been cleaned
+up; its snapshot artifacts remain. GitLab PostgreSQL's six active source PVCs
+and two stale serial-2 claims are deleted, but all eight Released source PVs
+and LINSTOR resources remain retained. Record each individual claim's
+source/target handle, replica health, recovery artifact, content or database
+validation, and cutover outcome in the migration ledger before releasing its
+source data.
 
 ## Migration sequence
 
