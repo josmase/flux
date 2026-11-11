@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: repo-data-gitlab-gitaly-0
+  namespace: gitlab
+  labels:
+    app.kubernetes.io/part-of: gitlab
+    storage-migration: gitlab-gitaly-to-canonical
+    storage-migration-phase: cutover-in-progress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: ${STORAGE_CLASS}
