@@ -20,7 +20,7 @@ templates requiring explicit review:
 
 | Class | References | Resources |
 |---|---:|---|
-| `linstor-final` | 3 | `watchtower3d-data`, `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor` |
+| `linstor-final` | 2 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor` |
 | `linstor-final-triple` | 39 | 37 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, four Immich model-cache claims, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr/zero-cache source claims, and 18 Radarr/Sonarr `config-triple` sources. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 58 | 22 | Target class; current manifest is Retain with three replicas. |
-| `linstor-final` | 2 | 52 | Includes active workloads and retained rollback/source claims. |
+| `linstor` | 65 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor-final` | 1 | 52 | Includes active workloads and retained rollback/source claims. |
 | `linstor-final-triple` | 46 | 16 | Includes active workloads and retained rollback/source claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 48 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 47 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -66,17 +66,13 @@ The currently mounted legacy claims include:
 | GitLab Gitaly | One repository-data claim. |
 | GitLab Valkey HA | Three data claims. |
 | Prometheus | One Prometheus data claim. |
-| Watchtower3D | `watchtower3d-data` (`linstor-final`, 10 GiB). |
 
-Watchtower3D contains about 4.2 GB across 460 files and is actively mounted.
-Its LINSTOR PV uses `Retain`; the cluster exposes LINSTOR snapshot classes,
-including one with `Retain`, but no pre-existing snapshot was found for this
-claim. The workload therefore needs a quiesced migration snapshot (or an
-equivalent independently verified copy) before cutover. Its deployment uses
-one replica and `Recreate`, so it is a feasible single-workload migration
-candidate, but no production mutation has been made. The current repo source
-still names `linstor-final` for its PVC and must be updated in the same change
-as the target claim/cutover procedure.
+Watchtower3D's source held about 4.2 GB across 460 files. No pre-existing
+snapshot was available, and the one-time CSI snapshot timed out while checking
+the RustFS remote. The app was quiesced and copied to a fresh canonical PVC;
+the source and target SHA-256 manifests matched. The app is Ready 1/1 on the
+target, and the old PV data has been cleaned up. Its failed migration snapshot
+content record remains for diagnosis.
 
 Both CNPG clusters now use `${STORAGE_CLASS}` resolved to `linstor` for PGDATA
 and WAL, with both `resizeInUseVolumes` flags set to `false`. Production runs
