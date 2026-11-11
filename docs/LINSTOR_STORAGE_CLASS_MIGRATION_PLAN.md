@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 69 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 70 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 7 | 16 | Remaining active and blocked-migration claims. |
+| `linstor-final-triple` | 6 | 16 | Remaining active claims and other held PVs. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 7 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 6 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -73,9 +73,21 @@ were deleted only after that comparison. The original data and WAL
 `VolumeSnapshotContent` objects remain Ready with `Retain` policy. The new
 canonical claims remain declared in `apps/production/services/forensic-pg10-migration/`.
 
+## Checkrr migration (2026-11-11)
+
+The legacy `media/checkrr-config-triple` PVC was unmounted; production had no
+Checkrr Deployment or pod. A fresh `${STORAGE_CLASS}` target,
+`checkrr-config-linstor-v6`, was populated using a file-level archive copy with
+the source mounted read-only. A recursive manifest of all 17 paths matched
+exactly, including SHA-256 file hashes and metadata. The old PVC/PV and LINSTOR
+resource were removed; the three source `VolumeSnapshotContent` objects remain
+Ready with `Retain` policy. An earlier target, `checkrr-config-linstor-v5`,
+did not match and remains separate. Checkrr was not re-enabled; SQLite integrity
+was not checked because the available copy image lacks SQLite tooling.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 7 claims remain in the production inventory after the
+The following 6 claims remain in the production inventory after the
 Radarr/Sonarr, migrated-source, and forensic PG10 cleanup. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
@@ -89,7 +101,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 | `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-1` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-2` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
-| `media/checkrr-config-triple` | `linstor-final-triple` | Migration blocked by repeatable CSI snapshot restore filesystem corruption. Keep source authoritative; test a quiesced file-level copy to a fresh `linstor` claim and validate offline before cutover. |
 | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Active Prometheus data. Use the Prometheus operator's supported claim replacement path; quiesce/ snapshot or perform a consistent block copy, validate TSDB and readiness on `${STORAGE_CLASS}`, then cut over. |
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
@@ -196,7 +207,6 @@ row.
 | `linstor-final-bootstrap` | `PersistentVolumeClaim/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `apps/production/monitoring/prometheus-linstor-copy-pvc.yaml` |
 | `linstor-final-triple` | `HelmRelease/gitlab-valkey-ha` | `apps/base/gitlab/bootstrap/valkey-ha.yaml` |
 | `linstor-final-triple` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/checkrr-config-triple` | `apps/base/media/checkrr/persistence-linstor.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/minecraft-data-triple` | `apps/base/minecraft/persistence-resized.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/minecraft-modpacks-triple` | `apps/base/minecraft/persistence-resized.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/qbittorrent-config` | `apps/base/media/qbittorrent-template/persistence.yaml` |

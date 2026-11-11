@@ -125,4 +125,4 @@ spec:
             secretName: checkrr-config
         - name: checkrr-config-pvc
           persistentVolumeClaim:
-            claimName: checkrr-config-triple
+            claimName: checkrr-config-linstor-v6

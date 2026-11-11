@@ -8,4 +8,4 @@ spec:
       volumes:
         - name: checkrr-config-pvc
           persistentVolumeClaim:
-            claimName: checkrr-config-linstor-v5
+            claimName: checkrr-config-linstor-v6
