@@ -38,7 +38,7 @@ spec:
     persistence:
       enabled: true
       size: 10Gi
-      storageClass: linstor-final-triple
+      storageClass: ${STORAGE_CLASS}
     auth:
       enabled: true
       usersExistingSecret: gitlab-valkey-auth
