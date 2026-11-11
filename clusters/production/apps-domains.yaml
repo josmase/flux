@@ -15,7 +15,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/storage
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -43,7 +43,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/rustdesk
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -71,7 +71,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/ops
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -99,7 +99,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/observability
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -127,7 +127,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/foundation
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -230,7 +230,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/arr
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -258,7 +258,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/playback
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -286,7 +286,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/tdarr
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -316,7 +316,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/media/configarr
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -344,7 +344,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/photos
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -372,7 +372,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/developer-platform/gitlab-bootstrap
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -400,7 +400,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/developer-platform/gitlab-db-bootstrap
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -434,7 +434,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/developer-platform/gitlab
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -462,7 +462,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/developer-platform/artifacts
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -518,7 +518,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/home
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:
@@ -546,7 +546,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./apps/production/watchtower3d
-  prune: false
+  prune: true
   deletionPolicy: Orphan
   wait: true
   decryption:

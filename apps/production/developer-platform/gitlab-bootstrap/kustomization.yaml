@@ -15,3 +15,6 @@ patches:
       - op: add
         path: /spec/suspend
         value: true
+
+components:
+  - ../../components/prune-protection

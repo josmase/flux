@@ -10,3 +10,6 @@ resources:
   - services.yaml
   - ingressroute.yaml
   - network-policy.yaml
+
+components:
+  - ../components/prune-protection

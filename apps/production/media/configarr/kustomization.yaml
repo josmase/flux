@@ -16,3 +16,6 @@ configMapGenerator:
   - name: radarr-compact-sync
     files:
       - compact-sync.py
+
+components:
+  - ../../components/prune-protection
