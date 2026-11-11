@@ -143,7 +143,9 @@ spec:
       gitaly:
         replicaCount: 1
         persistence:
-          storageClass: ${STORAGE_CLASS}
+          # The existing gitlab-gitaly StatefulSet claim template is immutable.
+          # Keep its current class until the Gitaly data migration recreates it.
+          storageClass: linstor-final
           size: 50Gi
         resources:
           requests:

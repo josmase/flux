@@ -20,7 +20,7 @@ templates requiring explicit review:
 
 | Class | References | Resources |
 |---|---:|---|
-| `linstor-final` | 2 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor` |
+| `linstor-final` | 3 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor`, and the GitLab Gitaly StatefulSet claim template. Gitaly's template is temporarily pinned to its live immutable value until its PVC is migrated and the StatefulSet is recreated. |
 | `linstor-final-triple` | 15 | 13 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr source claims. The 18 Radarr/Sonarr source manifests have been removed. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
