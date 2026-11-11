@@ -11,6 +11,7 @@ resources:
   - ../searxng
   - ../voice-router-candidate
   - ../growlog
+  - forensic-pg10-migration
   - default-app-config.yaml
 
 components:
