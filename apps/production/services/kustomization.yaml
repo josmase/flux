@@ -14,6 +14,7 @@ resources:
   - forensic-pg10-migration
   - checkrr-migration
   - gitlab-valkey-migration
+  - gitlab-gitaly-migration
   - default-app-config.yaml
 
 components:
