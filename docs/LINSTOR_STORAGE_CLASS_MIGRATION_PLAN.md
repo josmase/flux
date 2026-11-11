@@ -41,10 +41,10 @@ live LINSTOR claim state:
 |---|---:|---:|---|
 | `linstor` | 65 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 1 | 52 | Includes active workloads and retained rollback/source claims. |
-| `linstor-final-triple` | 41 | 16 | Includes active workloads and retained rollback/source claims. |
+| `linstor-final-triple` | 23 | 16 | Includes active workloads and retained rollback/source claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 42 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 24 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 

@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../../../base/media/radarr-template
-  - persistence-linstor.yaml
   - snapshot-canonical.yaml
   - persistence-canonical.yaml
 
