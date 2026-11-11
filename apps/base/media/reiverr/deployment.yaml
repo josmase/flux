@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: reiverr
-          image: ghcr.io/aleksilassila/reiverr:v2.2.0
+          image: ghcr.io/aleksilassila/reiverr:v2.2.1@sha256:40dcef59365e9410bb9794edd650242ba167432da434d9424f19313e91795d1c
           ports:
             - containerPort: 9494
               name: http
