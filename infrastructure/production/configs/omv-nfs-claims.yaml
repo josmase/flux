@@ -98,6 +98,54 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: immich-external-library-omv-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 110Ti
+  claimRef:
+    namespace: immich
+    name: immich-external-library-omv-pvc
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: storage.local.hejsan.xyz
+      share: /MergerFS/files/immich/external-library
+    volumeHandle: immich-external-library-omv
+  mountOptions:
+  - hard
+  - nfsvers=4.2
+  - async
+  - timeo=600
+  - retrans=3
+  - actimeo=5
+  - lookupcache=none
+  - rsize=1048576
+  - wsize=1048576
+  - noatime
+  - nodiratime
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-external-library-omv-pvc
+  namespace: immich
+spec:
+  storageClassName: manual
+  volumeName: immich-external-library-omv-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 110Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: media-shared-nfs-omv-pv
 spec:
   accessModes:

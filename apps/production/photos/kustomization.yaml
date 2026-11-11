@@ -41,3 +41,19 @@ patches:
                       operator: NotIn
                       values:
                         - kubernetes-node-204
+  - target:
+      kind: Deployment
+      name: immich-server
+      namespace: immich
+    patch: |-
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: external-library
+          persistentVolumeClaim:
+            claimName: immich-external-library-omv-pvc
+      - op: replace
+        path: /spec/template/spec/containers/1/volumeMounts/1/name
+        value: external-library
+      - op: remove
+        path: /spec/template/spec/containers/1/volumeMounts/1/subPath
