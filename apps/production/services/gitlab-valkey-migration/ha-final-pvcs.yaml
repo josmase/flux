@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valkey-data-gitlab-valkey-ha-0
+  namespace: gitlab
+  labels:
+    app.kubernetes.io/instance: gitlab-valkey-ha
+    app.kubernetes.io/name: valkey
+  annotations:
+    migration.josmase.dev/source-pvc: valkey-data-gitlab-valkey-ha-0
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valkey-data-gitlab-valkey-ha-1
+  namespace: gitlab
+  labels:
+    app.kubernetes.io/instance: gitlab-valkey-ha
+    app.kubernetes.io/name: valkey
+  annotations:
+    migration.josmase.dev/source-pvc: valkey-data-gitlab-valkey-ha-1
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valkey-data-gitlab-valkey-ha-2
+  namespace: gitlab
+  labels:
+    app.kubernetes.io/instance: gitlab-valkey-ha
+    app.kubernetes.io/name: valkey
+  annotations:
+    migration.josmase.dev/source-pvc: valkey-data-gitlab-valkey-ha-2
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
