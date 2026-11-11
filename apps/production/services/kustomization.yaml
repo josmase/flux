@@ -12,6 +12,7 @@ resources:
   - ../voice-router-candidate
   - ../growlog
   - forensic-pg10-migration
+  - checkrr-migration
   - default-app-config.yaml
 
 components:
