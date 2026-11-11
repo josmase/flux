@@ -153,7 +153,12 @@ spec:
           # failureThreshold=30 * periodSeconds=10 = 300s (5min) max startup time.
           startupProbe:
             exec:
-              command: ["sh", "-c", "ls /mnt/storage/files/.healthcheck"]
+              command:
+                - sh
+                - -c
+                - >-
+                  curl -sf http://127.0.0.1:8096/health >/dev/null 2>&1
+                  && ls /mnt/storage/files/.healthcheck >/dev/null 2>&1
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 30
