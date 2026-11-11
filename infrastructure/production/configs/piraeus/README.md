@@ -26,10 +26,11 @@ some LINSTOR and node failures, but not total loss of the RustFS server.
 on `linstor-thin`.
 
 The `linstor-final`, `linstor-final-triple`, and
-`linstor-final-bootstrap` classes remain temporarily for existing PVCs and
-storage-migration rollback sources. A bound PVC's storage class cannot be
-changed in place. Migrate and verify those volumes before removing the legacy
-classes or rewriting their PVC declarations.
+`linstor-final-bootstrap` classes have no active PVCs. Their Released PVs are
+retained data and snapshot holds from completed migrations. Keep the classes
+available until each hold has a recorded disposition and its restore path is
+understood; do not use them for new claims. A bound PVC's storage class cannot
+be changed in place.
 
 ## Satellite scheduling and recovery
 

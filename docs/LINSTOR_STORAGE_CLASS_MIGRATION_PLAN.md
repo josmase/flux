@@ -58,9 +58,12 @@ remains Released/Retain. A separate attempted final allocation could not
 complete replication because node 206's thin pool was at its configured free
 space threshold; its empty/incomplete canonical PV remains Released/Retain for
 later LINSTOR cleanup and must not be mistaken for a usable recovery copy.
-The HelmRelease and `apps-observability` Flux Kustomization remain suspended
-until the committed claim binding is reconciled and Prometheus passes its
-post-cutover checks.
+The old active source PV remains Released/Retain, and its older bootstrap PV
+also remains Released/Retain with its Ready LINSTOR snapshot content preserved.
+Prometheus has resumed on the final claim: the HelmRelease and Flux
+Kustomization are Ready, WAL replay completed, the `/-/ready` endpoint and live
+`up` query succeed, and all three LINSTOR replicas are `UpToDate`. The stale
+bootstrap PVC declaration was removed; it was not an active claim.
 
 On 2026-11-11, after confirming all 18 Radarr/Sonarr Deployments were Ready,
 their replacement PVCs were Bound on `linstor`, no pod mounted the source
