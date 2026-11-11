@@ -28,12 +28,4 @@ spec:
             severity: critical
           annotations:
             summary: LINSTOR storage is above 90% usage
-            description: Suspend non-critical backup/snapshot creation and investigate capacity.
-        - alert: LinstorProtectionValidationFailed
-          expr: kube_job_status_failed{job_name=~"linstor-protection-policy-validate.*"} > 0
-          for: 10m
-          labels:
-            severity: critical
-          annotations:
-            summary: LINSTOR protection policy validation failed
-            description: One or more LINSTOR PVCs may not have a valid protection tier.
+            description: Investigate LINSTOR storage capacity before provisioning additional volumes.

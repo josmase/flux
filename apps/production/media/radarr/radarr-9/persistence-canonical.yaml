@@ -8,7 +8,7 @@ metadata:
     storage-migration-phase: canonical-target
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: radarr-9-data-to-canonical
     kind: VolumeSnapshot

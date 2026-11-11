@@ -11,7 +11,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: grafana-data-to-canonical
     kind: VolumeSnapshot

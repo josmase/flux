@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: qui-config
 spec:
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}

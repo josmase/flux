@@ -19,14 +19,6 @@ spec:
           annotations:
             summary: "LINSTOR VG reserve cannot cover another pool extension"
             description: "A worker has less VG free space than one 5% thin-pool extension plus 1 GiB safety. Read the linstor-vg-reserve-check Job logs and suspend new producers before the next extension."
-        - alert: LinstorProtectionGateBlocked
-          expr: kube_job_status_failed{job_name=~"linstor-protection-gate-v1.*"} > 0
-          for: 2m
-          labels:
-            severity: warning
-          annotations:
-            summary: "LINSTOR protection producers are held by a failed safety gate"
-            description: "Read the latest linstor-protection-gate-v1 Job logs and its blockingReasons ConfigMap before changing capacity or resuming producers."
         - alert: K3sEtcdHasNoLeader
           expr: etcd_server_has_leader == 0
           for: 2m

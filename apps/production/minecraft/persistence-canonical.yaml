@@ -8,7 +8,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: minecraft-data-to-canonical
     kind: VolumeSnapshot
@@ -24,7 +24,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: minecraft-modpacks-to-canonical
     kind: VolumeSnapshot

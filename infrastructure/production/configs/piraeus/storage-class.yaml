@@ -3,8 +3,8 @@ kind: StorageClass
 metadata:
   name: linstor
   annotations:
-    # Canonical LINSTOR class. New PVCs receive three diskful replicas on the
-    # shared thin pool; legacy classes remain only for the Jellyfin holdout.
+    # Canonical class for new and migrated PVCs: three diskful replicas on the
+    # shared thin pool. Legacy classes remain until their claims are migrated.
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: linstor.csi.linbit.com
 reclaimPolicy: Retain

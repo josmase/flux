@@ -51,7 +51,7 @@ spec:
   # --- Storage ---
   storage:
     size: 10Gi
-    storageClass: linstor-final-triple
+    storageClass: ${STORAGE_CLASS}
     # Permit controlled PVC recreation when moving instances between storage classes.
     resizeInUseVolumes: false
 
@@ -59,8 +59,9 @@ spec:
     # Keep enough headroom for replicas to retain WAL while recovering from
     # extended outages; 10Gi was exhausted on shared-postgres-13.
     size: 20Gi
-    storageClass: linstor-final-triple
-    resizeInUseVolumes: true
+    storageClass: ${STORAGE_CLASS}
+    # Match PGDATA during the controlled storage-class recreation rollout.
+    resizeInUseVolumes: false
 
   # --- Resources ---
   resources:
@@ -89,14 +90,6 @@ spec:
         - |
           CREATE EXTENSION IF NOT EXISTS pgcrypto;
           CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-
-  # --- Backup (volume snapshots via LINSTOR) ---
-  backup:
-    target: prefer-standby
-    volumeSnapshot:
-      className: linstor-snapshot
-      snapshotOwnerReference: cluster
-    retentionPolicy: "30d"
 
   # --- Managed roles (group roles for reuse) ---
   managed:

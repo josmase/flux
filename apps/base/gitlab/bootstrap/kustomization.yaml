@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - gitlab-postgres.yaml
-  - gitlab-postgres-backup.yaml
   - valkey-ha.yaml

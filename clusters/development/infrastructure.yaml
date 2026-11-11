@@ -55,3 +55,4 @@ spec:
       DOMAIN_EXTERNAL: "local"
       CERT_SECRET_INTERNAL: "local-tls"
       CERT_SECRET_EXTERNAL: "local-tls"
+      STORAGE_CLASS: "standard"

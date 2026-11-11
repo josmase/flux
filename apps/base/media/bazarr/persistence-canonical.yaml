@@ -8,7 +8,7 @@ metadata:
     storage-migration-phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: bazarr-data-to-canonical-v2
     kind: VolumeSnapshot

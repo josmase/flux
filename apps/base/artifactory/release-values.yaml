@@ -27,7 +27,7 @@ artifactory:
 
     persistence:
       existingClaim: artifactory-data-linstor
-      storageClassName: linstor
+      storageClassName: ${STORAGE_CLASS}
       size: 12Gi
 
   # These services share Artifactory's system.yaml. Their heaps are capped at
@@ -186,5 +186,5 @@ artifactory:
       persistence:
         enabled: true
         existingClaim: artifactory-pg17-linstor
-        storageClass: linstor
+        storageClass: ${STORAGE_CLASS}
         size: 5Gi

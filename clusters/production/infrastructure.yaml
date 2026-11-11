@@ -55,3 +55,4 @@ spec:
       DOMAIN_EXTERNAL: "hejsan.xyz"
       CERT_SECRET_INTERNAL: "local-hejsan-xyz-tls"
       CERT_SECRET_EXTERNAL: "hejsan-xyz-tls"
+      STORAGE_CLASS: "linstor"

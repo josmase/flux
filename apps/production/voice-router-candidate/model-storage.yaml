@@ -4,7 +4,7 @@ metadata:
   name: voice-models
   namespace: ollama
 spec:
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   accessModes: [ReadWriteOnce]
   resources:
     requests: {storage: 32Gi}
@@ -15,7 +15,7 @@ metadata:
   name: whisper-models
   namespace: wyoming-voice
 spec:
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   accessModes: [ReadWriteOnce]
   resources:
     requests: {storage: 16Gi}

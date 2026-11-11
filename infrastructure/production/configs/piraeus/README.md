@@ -1,137 +1,74 @@
-# LINSTOR protection policy
+# LINSTOR operations
 
-`linstor-protection-policy.yaml` is the source of truth for workload tiers.
-The validation Job inventories all `linstor-final` PVCs and assigns the
-default tier or an explicit critical/cache override. The backup schedule
-reconciler is deliberately kept separate from validation so a policy change
-cannot silently alter existing remote retention.
+## Backup automation retired
 
-## Backup generation v2
+LINSTOR and CloudNativePG backup producers, bootstrap jobs, retention jobs, and
+their protection-policy controllers have been removed from the Flux resource
+sets. No recurring backup or managed S3 snapshot automation is deployed by
+these manifests.
 
-The active generation writes only to RustFS bucket `linstor-backups-v2` through
-LINSTOR remote `rustfs-linstor-backups-v2`. The obsolete LINSTOR remote and its
-reconciliation credentials are removed; the old `linstor-backups` bucket and
-its objects are retained for recovery and are not deleted by this change.
+Existing LINSTOR backup chains, RustFS objects, CNPG `Backup` objects,
+`VolumeSnapshot` objects, and `VolumeSnapshotContent` objects are preserved.
+The v2 remote, its credentials, and S3 snapshot class remain configured to
+support manual recovery. Do not remove those recovery dependencies or delete
+stored artifacts as part of removing automation. The repository contains
+historical execution records under `docs/LINSTOR_*`; they describe past runs,
+not active backup jobs.
 
-`linstor-backup-generation-manifest` is intentionally unreviewed and empty.
-Set `canonicalVolumeCount` from the full reviewed non-cache LINSTOR inventory,
-including CNPG volumes with their separate coordinated coverage. Populate the
-manifest only after reconciling bound PVC → PV → CSI handle mappings,
-workload references (including scaled-to-zero workloads), and
-`docs/LINSTOR_FINAL_CLASS_MIGRATION_LEDGER.md`. Include only approved
-non-cache LINSTOR resources in `resources.tsv`, with columns namespace, PVC,
-LINSTOR resource handle, tier (`critical` or `standard`), and `yes` for
-retention. Keep CNPG replicas out of this manifest; classify forensic,
-migration, and uncertain claims as holds in the review record. Discover LINSTOR
-volumes by the PV CSI driver `linstor.csi.linbit.com`, including active
-`linstor-final` and `linstor-final-triple` classes.
+RustFS is still a single failure domain. The retained remote protects against
+some LINSTOR and node failures, but not total loss of the RustFS server.
 
-Retention uses full chains. Standard resources receive daily full backups, one
-local full chain, and seven remote daily full chains. Critical resources
-receive daily full backups plus six-hour incrementals, one local full chain,
-and fourteen remote daily full chains. The v2 serial bootstrap Jobs are
-suspended until the reviewed inventory, S3 canary, storage health, and remote
-access pass. Do not set `coverageReady` until all initial backups have remote
-metadata verification and representative restore checks. Record the SHA-256
-of `canonicalVolumeCount`, a newline, and `resources.tsv` as `manifestHash` in
-the generation status. Set `s3CanaryVerified`,
-`canonicalCoverageVerified`, `representativeRestoresVerified`, and
-`cnpgRestoreVerified` only after their corresponding checks pass.
-Set `capacityForecastReady=true` and `forecastFreeBytes` only after measured v2
-sizes show at least 1 TiB free remains.
+## Storage class policy
 
-CNPG uses coordinated volume snapshots every six hours through
-`linstor-snapshot-s3-v2`. The CSI secret `linstor-rustfs-v2-credentials` must be
-provisioned in `piraeus-datastore` as an immutable
-`linstor.csi.linbit.com/s3-credentials.v1` Secret with `access-key` and
-`secret-key` entries. The CSI controller has permission to read only that
-Secret. CNPG Backup retention is 14 days; its suspended-safe retention job
-preserves the newest successful v2 recovery set even if it is older and uses
-`deletionPolicy: Delete` for remote artifact cleanup.
+`linstor` is the canonical class for new LINSTOR PVCs. Production sets
+`STORAGE_CLASS=linstor`; shared application PVC templates use Flux's
+`${STORAGE_CLASS}` substitution. Its placement count is three diskful replicas
+on `linstor-thin`.
 
-The protection gate keeps its existing fields and adds independent storage,
-remote-access, current-generation coverage, and generation status fields. The
-CNPG and LINSTOR bootstrap Jobs are bounded and run serially while recurring
-producers remain gated. The hourly managed snapshot CronJob creates S3 snapshots
-through the v2 remote and stays gated until both snapshot and backup readiness
-have been healthy for 24 hours.
-
-RustFS must retain at least 1 TiB of actual filesystem free space after the
-measured v2 retention forecast. The Ansible RustFS role enforces this absolute
-floor; do not replace it with a percentage threshold.
-
-The current RustFS target is a single failure domain. It protects against
-node and LINSTOR-volume failure, but not total loss of the storage server.
+The `linstor-final`, `linstor-final-triple`, and
+`linstor-final-bootstrap` classes remain temporarily for existing PVCs and
+storage-migration rollback sources. A bound PVC's storage class cannot be
+changed in place. Migrate and verify those volumes before removing the legacy
+classes or rewriting their PVC declarations.
 
 ## Satellite scheduling and recovery
 
 The `worker-network` `LinstorSatelliteConfiguration` pod template owns the
 satellite toleration list; it must include every taint used by nodes selected
-by its affinity. In particular, keep both `workload=gpu-only` and
-`workload=low-risk-only` tolerations here. The cluster-level tolerations are
-not inherited when this pod template supplies its own list.
+by its affinity. Keep both `workload=gpu-only` and
+`workload=low-risk-only` tolerations here. Cluster-level tolerations are not
+inherited when this pod template supplies its own list.
 
 On 2026-10-29, the GPU node was selected for diskless LINSTOR use and had the
 `workload=gpu-only:NoSchedule` taint, but its generated satellite DaemonSet had
-zero desired pods because the pod template tolerated only `low-risk-only`.
-The satellite CR reported `Available=False`, the CSI node init container
-waited for that satellite, and the cluster's `Configured` condition remained
-Unknown even while the controller and three diskful satellites were healthy.
-The controller's resource list also had 16 GPU-node diskless records without
-a reported disk state, which correctly caused the fail-closed replica-health
-check to reject its incomplete result.
-The durable correction is to restore the missing GPU toleration through this
-Flux configuration.
+zero desired pods because its pod template tolerated only `low-risk-only`.
+The satellite reported `Available=False`, the CSI node init container waited
+for it, and the cluster's `Configured` condition remained Unknown even while
+the controller and three diskful satellites were healthy. Recover through
+Flux, then verify the generated DaemonSet, satellite availability, CSI node
+readiness, and `LinstorCluster` availability/configuration over an observation
+window. Do not manually restart storage components, delete LINSTOR resources,
+or bypass storage safety checks to establish availability.
 
-Recover through Flux and verify the generated DaemonSet schedules and readies
-the satellite, its `LinstorSatellite` reports `Available=True`, the CSI node
-pod becomes Ready, and `LinstorCluster` remains `Available=True` and
-`Configured=True` across an observation window. Keep protection gates closed
-until their own storage, replica, VG metadata, and backup checks pass. Do not
-manually restart storage components, delete LINSTOR resources, or bypass a
-gate to establish availability.
-
-Snapshot classes intentionally separate durable, prunable, and S3 snapshots:
-
-- `linstor-snapshot` retains the backend snapshot and remains the class for
-  canonical, recovery, and manually managed snapshots.
-- The hourly `linstor-snapshot-reconcile-v3` job creates retention-managed S3
-  backups with `linstor-snapshot-s3-v2` (`Delete`), so pruning their
-  `VolumeSnapshot` also deletes the corresponding remote object.
-- Before creating new snapshots, the job requires at least one `LinstorSatellite`
-  to report `Available=True` and nonzero `status.freeCapacityBytes`. Kubernetes node readiness
-  alone does not show that LINSTOR has a connected diskful satellite.
-
-Existing `VolumeSnapshotContent` objects keep their current deletion policy.
-Inventory their owner, LINSTOR snapshot, and verified backup before cleaning
-up any retained contents. The CSI snapshotter is limited to two worker threads,
-2 API requests/second with burst 4, and retries from 30 seconds up to 10 minutes
-to reduce control-plane churn while storage satellites are unavailable.
+`linstor-snapshot` retains backend snapshots and remains available for explicit
+recovery and migration snapshots. The S3 snapshot class and existing contents
+are retained for recovery; no scheduled job creates or prunes those snapshots.
 
 ## Existing snapshot inventory and cleanup
 
 Run `utility-scripts/cluster/linstor-snapshot-inventory.py OUTPUT_DIR --collect
 --full-crds --ledger docs/LINSTOR_FINAL_CLASS_MIGRATION_LEDGER.md` from a host
 with production `kubectl` access. Add `--worker HOST` for each reachable
-storage worker to collect read-only `lvs` and `vgs` reports. The output
-directory is private and contains complete snapshot objects, LINSTOR snapshot
-and backup lists, per-CRD counts/JSON sizes, and `snapshot-review.csv`.
-`review_candidate` means investigate; it never authorizes deletion. Missing
-backend data or an unmatched handle must be resolved before making a decision.
+storage worker to collect read-only `lvs` and `vgs` reports. The private output
+includes snapshot objects, LINSTOR snapshot and backup lists, per-CRD counts,
+and `snapshot-review.csv`. `review_candidate` means investigate; it never
+authorizes deletion. Resolve missing backend data or unmatched handles first.
 
-Before cleanup, restore storage health, verify the LINSTOR database backup by
-a restore drill, and document the recovery procedure for the deployed version.
-Cross-check each candidate with the migration ledger, active PVC restore
-references, remote backup dependencies, LINSTOR snapshots, and worker LVs.
-Delete only individually verified obsolete snapshots through CSI or LINSTOR's
-supported snapshot operation, checking Kubernetes content, backend snapshot,
-LV count, and replica health after each small batch. Do not delete LINSTOR CRs
-or clear finalizers. Stop on any mapping mismatch or storage degradation.
-
-## Fresh RustFS capacity reports
-
-The Ansible-managed NAS timer writes `__protection/capacity.json` to the v2 bucket every five minutes using the bucket-scoped identity. The gate reads that one monitoring object with the same scoped identity and requires the expected mergerfs mount, generation and a timestamp less than ten minutes old. After bootstrap measurements, record `retainedForecastBytes` as the measured retention projection including growth allowance, and `forecastFreeBytes` as the reviewed initial free-space projection. The gate subtracts only the retained bytes not already present in the bucket from fresh available bytes and requires at least 1 TiB remaining. Missing, stale or insufficient reports prevent recurring backups and reset the healthy window. The capacity object is outside LINSTOR snapshot retention.
-
-## Bootstrap chain retention
-
-LINSTOR v1.35.2 retains only chains tagged with the relevant schedule. Manually created bootstrap chains need separate handling. Populate the reviewed `linstor-bootstrap-chain-index` from the completed initial full backups. The hourly supplement handles only those exact IDs in the v2 remote and their dependent increments. It removes their local chain after a newer independent full is restorable, then removes their remote chain only when total successful full chains exceed seven (standard) or fourteen (critical). Remote deletion uses a checked dry run and cascade, preserving the replacement full and all legacy remotes and CNPG sets. At most 50 deletions occur per run. Missing/stale/unhealthy retention checks prevent recurrence and reset the health window. No deletion occurs until the recurring backup gate has passed.
+Before cleanup, restore storage health and verify the LINSTOR database recovery
+procedure. Cross-check each candidate with the migration ledger, active PVC
+restore references, remote backup dependencies, LINSTOR snapshots, and worker
+LVs. Delete only individually verified obsolete snapshots through CSI or
+LINSTOR's supported snapshot operation, checking Kubernetes content, backend
+snapshot, LV count, and replica health after each small batch. Do not delete
+LINSTOR CRs or clear finalizers. Stop on any mapping mismatch or storage
+degradation.

@@ -40,7 +40,7 @@ metadata:
   name: immich-model-cache-ml-0-linstor
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 10Gi
@@ -55,7 +55,7 @@ metadata:
   name: immich-model-cache-ml-1-linstor
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 10Gi
@@ -70,7 +70,7 @@ metadata:
   name: immich-model-cache-ml-2-linstor
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 30Gi
@@ -85,7 +85,7 @@ metadata:
   name: immich-model-cache-ml-linstor
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 1Gi

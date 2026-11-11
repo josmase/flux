@@ -8,7 +8,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: reiverr-config-to-canonical
     kind: VolumeSnapshot
@@ -24,7 +24,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: reiverr-plugins-to-canonical
     kind: VolumeSnapshot

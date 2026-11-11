@@ -6,7 +6,7 @@ metadata:
   labels:
     app: media
 spec:
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   accessModes:
     - ReadWriteOnce
   resources:

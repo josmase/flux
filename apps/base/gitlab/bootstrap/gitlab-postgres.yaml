@@ -35,12 +35,13 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
   storage:
     size: 20Gi
-    storageClass: linstor-final-triple
+    storageClass: ${STORAGE_CLASS}
     resizeInUseVolumes: false
   walStorage:
     size: 20Gi
-    storageClass: linstor-final-triple
-    resizeInUseVolumes: true
+    storageClass: ${STORAGE_CLASS}
+    # Match PGDATA during the controlled storage-class recreation rollout.
+    resizeInUseVolumes: false
   resources:
     requests:
       cpu: 250m
@@ -50,12 +51,6 @@ spec:
       memory: 2Gi
   monitoring:
     enablePodMonitor: true
-  backup:
-    target: prefer-standby
-    retentionPolicy: 30d
-    volumeSnapshot:
-      className: linstor-snapshot-s3-v2
-      snapshotOwnerReference: backup
   affinity:
     additionalPodAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:

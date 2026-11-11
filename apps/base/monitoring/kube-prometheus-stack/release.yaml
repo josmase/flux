@@ -63,7 +63,7 @@ spec:
       persistence:
         enabled: true
         existingClaim: grafana-data-linstor
-        storageClassName: linstor
+        storageClassName: ${STORAGE_CLASS}
         accessModes: ["ReadWriteOnce"]
         size: 10Gi
       # Load Gotify tokens as env vars with a prefix (uses Grafana chart envFromSecrets)
@@ -166,7 +166,7 @@ spec:
             metadata:
               name: alertmanager-kube-prometheus-stack-alertmanager-db-linstor
             spec:
-              storageClassName: linstor
+              storageClassName: ${STORAGE_CLASS}
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:

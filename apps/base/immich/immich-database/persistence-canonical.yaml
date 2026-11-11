@@ -18,7 +18,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 9Gi

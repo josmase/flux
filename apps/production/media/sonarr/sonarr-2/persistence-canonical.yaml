@@ -8,4 +8,4 @@ spec:
   resources:
     requests:
       storage: 4Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}

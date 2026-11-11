@@ -19,7 +19,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: artifactory-pg17-to-canonical
     kind: VolumeSnapshot
@@ -46,7 +46,7 @@ spec:
   resources:
     requests:
       storage: 48Gi
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: artifactory-data-to-canonical
     kind: VolumeSnapshot

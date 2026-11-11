@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: qbittorrent-config
 spec:
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}

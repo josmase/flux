@@ -9,7 +9,7 @@ metadata:
     storage-migration-phase: cutover-complete
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: linstor
+  storageClassName: ${STORAGE_CLASS}
   dataSource:
     name: arr-dashboard-data-to-canonical
     kind: VolumeSnapshot
