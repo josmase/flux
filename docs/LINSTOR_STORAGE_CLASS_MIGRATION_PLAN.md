@@ -21,7 +21,7 @@ templates requiring explicit review:
 | Class | References | Resources |
 |---|---:|---|
 | `linstor-final` | 0 | No remaining claim templates; Released PVs remain held for review. |
-| `linstor-final-triple` | 2 | `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates for live claims. |
+| `linstor-final-triple` | 1 | The `kube-prometheus-stack` HelmRelease template for the remaining live claim. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 73 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 79 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 4 | 17 | Remaining active claims and other held PVs. |
+| `linstor-final-triple` | 1 | 20 | Remaining active claims and other held PVs. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 4 bound PVCs and 71 Released PVs on the three legacy classes.
+There is 1 bound PVC and 74 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -113,11 +113,23 @@ snapshot metadata was removed; no valid snapshot was created. The old Retain PV
 and staging copy are the rollback data. This shows migration snapshots still
 depend on the backup remote even though backup automation is disabled.
 
+## Valkey HA migration (2026-11-11)
+
+All three Valkey HA members and Sentinels were stopped cleanly. Each source
+filesystem was copied read-only to a canonical stage PVC and then to its final
+StatefulSet PVC name. Every 9-path source/stage and stage/final manifest matched
+exactly, including file hashes and metadata. The old PVs remain Released/Retain;
+no valid source snapshots existed. The HelmRelease and StatefulSet templates
+now use `${STORAGE_CLASS}`. Valkey and Sentinel returned 3/3 Ready; member 2 is
+master, members 0 and 1 are replicas with `master_link_status: up` and matching
+replication offsets. Flux adopted the canonical PVCs and HelmRelease. Three
+stage PVCs remain on `linstor` as rollback copies until the final class cleanup.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 4 claims remain in the production inventory after the
-Radarr/Sonarr, migrated-source, forensic PG10, Checkrr, standalone Valkey, and
-Gitaly migrations. No legacy class may be removed until each row has a
+One bound claim remains in the production inventory after the
+Radarr/Sonarr, migrated-source, forensic PG10, Checkrr, standalone Valkey,
+Gitaly, and Valkey HA migrations. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
 recovery artifact, validation evidence, and the rollback decision in the
@@ -125,9 +137,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
-| `gitlab/valkey-data-gitlab-valkey-ha-1` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
-| `gitlab/valkey-data-gitlab-valkey-ha-2` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Active Prometheus data. Use the Prometheus operator's supported claim replacement path; quiesce/ snapshot or perform a consistent block copy, validate TSDB and readiness on `${STORAGE_CLASS}`, then cut over. |
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
@@ -231,5 +240,4 @@ row.
 | Current class | Resource | Manifest |
 |---|---|---|
 | `linstor-final-bootstrap` | `PersistentVolumeClaim/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `apps/production/monitoring/prometheus-linstor-copy-pvc.yaml` |
-| `linstor-final-triple` | `HelmRelease/gitlab-valkey-ha` | `apps/base/gitlab/bootstrap/valkey-ha.yaml` |
 | `linstor-final-triple` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
