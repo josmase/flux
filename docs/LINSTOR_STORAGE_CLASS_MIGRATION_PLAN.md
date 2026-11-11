@@ -44,10 +44,11 @@ live LINSTOR claim state:
 |---|---:|---:|---|
 | `linstor` | 80 | 23 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 0 | 21 | No active claims; Released PVs remain held. |
+| `linstor-final-triple` | 0 | 18 | No active claims; Released PVs remain held. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 0 bound PVCs and 75 Released PVs on the three legacy classes.
+There are 0 bound PVCs and 72 Released PVs on the three legacy classes after
+reclaiming the three verified GitLab Valkey HA source volumes on 2026-11-12.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -59,6 +60,16 @@ No PV data or retained snapshots were deleted during this inventory. The three
 legacy StorageClass declarations have since been removed from the production
 Flux source after confirming there are no current PVCs using them; Released PVs
 remain intact and may still refer to the retired class names.
+
+The three old GitLab Valkey HA source PVs (`pvc-02cd7071-7181-49a2-8411-f0b38e094140`,
+`pvc-43aee892-f70c-4222-a31d-53782d54781a`, and
+`pvc-efebf869-b1fa-4602-946d-9c126f91891d`) were deleted with their LINSTOR
+resource definitions. Each had no Kubernetes or LINSTOR snapshots; the three
+canonical targets remain Bound, mounted by the healthy 3/3 Valkey HA members,
+and have three `UpToDate` replicas. The migration ledger records exact
+source/stage/final file-manifest matches. The failed Prometheus allocation
+`pvc-c7dab0d2-e14f-4847-8eeb-c8b686728bd2` has no PV but LINSTOR cleanup is
+still pending on node 206 because its thin pool is at the configured threshold.
 
 Prometheus is now quiesced and its 29,284,368,959 logical-byte TSDB was
 copied from the legacy `linstor-final-triple` PVC to a canonical `linstor`
