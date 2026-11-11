@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - persistence-linstor.yaml
   - snapshot-canonical.yaml
   - persistence-canonical.yaml
   - snapshot-canonical-v2.yaml
