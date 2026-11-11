@@ -35,12 +35,11 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             metadata:
-              # The target PVC was copied while Prometheus was stopped.  The
-              # explicit name prevents the operator from trying to mutate the
-              # immutable storage claim during the cutover.
+              # Keep the claim prefix stable; the StatefulSet appends its name
+              # and ordinal to produce the PVC whose data is migrated offline.
               name: prometheus-kube-prometheus-stack-prometheus-db-triple
             spec:
-              storageClassName: linstor-final-triple
+              storageClassName: ${STORAGE_CLASS}
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
