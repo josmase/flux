@@ -53,7 +53,7 @@ Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
 A current read-only cross-reference found 47 PVs with at least one matching
-Ready `VolumeSnapshotContent` using `Retain`, and 28 without a matching
+Ready `VolumeSnapshotContent` using `Retain`, and 25 without a matching
 Kubernetes snapshot content. The latter are not proven snapshot-free: LINSTOR
 backend snapshots and backup records require a separate per-resource review.
 No PV data or retained snapshots were deleted during this inventory. The three
