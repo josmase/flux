@@ -4,5 +4,4 @@ kind: Kustomization
 namespace: gitlab
 
 resources:
-  - stage-pvc.yaml
   - final-pvc.yaml

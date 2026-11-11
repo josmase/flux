@@ -5,5 +5,4 @@ namespace: gitlab
 
 resources:
   - pvc.yaml
-  - ha-stage-pvcs.yaml
   - ha-final-pvcs.yaml

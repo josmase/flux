@@ -4,7 +4,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - snapshot-canonical.yaml
-  - persistence-canonical.yaml
   - snapshot-canonical-v2.yaml
   - persistence-canonical-v2.yaml
 labels:
