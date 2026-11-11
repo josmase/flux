@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 65 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 69 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 11 | 16 | Remaining active, forensic, and blocked-migration claims. |
+| `linstor-final-triple` | 7 | 16 | Remaining active and blocked-migration claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 11 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 7 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -61,10 +61,22 @@ after replacement validation, source unmount checks, and ready retained
 snapshot-content checks. Their 13 LINSTOR source PVs/resources are gone; their
 canonical targets and snapshot contents remain.
 
+## Forensic PG10 migration (2026-11-11)
+
+The four unmounted forensic data/WAL claims were restored to canonical PVCs
+from their original Ready snapshot sources. All four targets bound on
+`linstor`. Read-only recursive manifests matched exactly for every path,
+SHA-256 file hash, mode, UID/GID, size, mtime, symlink, and extended attribute.
+Two recovery-directory mtimes were synchronized to the source before the final
+exact comparison. The four old PVCs and their Released PVs/LINSTOR resources
+were deleted only after that comparison. The original data and WAL
+`VolumeSnapshotContent` objects remain Ready with `Retain` policy. The new
+canonical claims remain declared in `apps/production/services/forensic-pg10-migration/`.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 11 claims remain in the production inventory after the
-Radarr/Sonarr and migrated-source cleanup. No legacy class may be removed until each row has a
+The following 7 claims remain in the production inventory after the
+Radarr/Sonarr, migrated-source, and forensic PG10 cleanup. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
 recovery artifact, validation evidence, and the rollback decision in the
@@ -72,10 +84,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `cnpg-system/forensic-pg10-data-copy-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
-| `cnpg-system/forensic-pg10-data-recovery-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
-| `cnpg-system/forensic-pg10-wal-copy-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
-| `cnpg-system/forensic-pg10-wal-recovery-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
 | `gitlab/data-gitlab-valkey-0` | `linstor-final-triple` | Unmounted retained claim. Verify StatefulSet ownership and whether its data is still needed; if needed, copy read-only to a `linstor` claim and validate it; otherwise preserve it until its owner approves retirement. |
 | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final-triple` | Active Gitaly repository data. Quiesce Gitaly, snapshot and copy to a `${STORAGE_CLASS}` claim, validate repository checks and application health, then cut over and retain the source through the observation window. |
 | `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
