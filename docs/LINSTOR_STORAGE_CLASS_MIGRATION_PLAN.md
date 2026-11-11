@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 70 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 71 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 6 | 16 | Remaining active claims and other held PVs. |
+| `linstor-final-triple` | 5 | 16 | Remaining active claims and other held PVs. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 6 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 5 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -85,9 +85,19 @@ Ready with `Retain` policy. An earlier target, `checkrr-config-linstor-v5`,
 did not match and remains separate. Checkrr was not re-enabled; SQLite integrity
 was not checked because the available copy image lacks SQLite tooling.
 
+## Retired standalone Valkey migration (2026-11-11)
+
+`gitlab/data-gitlab-valkey-0` was unmounted and not owned by a running
+workload. Its six filesystem entries, including the RDB and AOF files, were
+copied to `gitlab/data-gitlab-valkey-linstor` with the source mounted
+read-only. Recursive file hashes and metadata matched exactly. The old PVC and
+PV were deleted after the canonical target was Bound; no source snapshot
+content existed for this claim. The data is retained on the canonical target
+and is not connected to the active Valkey HA service.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 6 claims remain in the production inventory after the
+The following 5 claims remain in the production inventory after the
 Radarr/Sonarr, migrated-source, and forensic PG10 cleanup. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
@@ -96,7 +106,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `gitlab/data-gitlab-valkey-0` | `linstor-final-triple` | Unmounted retained claim. Verify StatefulSet ownership and whether its data is still needed; if needed, copy read-only to a `linstor` claim and validate it; otherwise preserve it until its owner approves retirement. |
 | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final-triple` | Active Gitaly repository data. Quiesce Gitaly, snapshot and copy to a `${STORAGE_CLASS}` claim, validate repository checks and application health, then cut over and retain the source through the observation window. |
 | `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-1` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
