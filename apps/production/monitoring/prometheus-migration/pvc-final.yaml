@@ -10,6 +10,7 @@ metadata:
   annotations:
     migration.josmase.dev/source-pvc: prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0
 spec:
+  volumeName: pvc-252796fa-4503-4097-8076-5830ec8ccd16
   accessModes: [ReadWriteOnce]
   volumeMode: Filesystem
   resources:

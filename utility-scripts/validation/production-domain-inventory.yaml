@@ -11,8 +11,8 @@ domains:
     count: 15
     sha256: 473ff4229456389f36b135ac4c5829a50c699cf54e939bae717292a2c0d146cd
   apps-observability:
-    count: 25
-    sha256: be78006e7fedc6070be41d309eb3b036c10d842225c14fddc15f9cde15e4c5f1
+    count: 24
+    sha256: 92f94138e79886302ddb10bae8812cb8f443ea8fd98f67b507315a39fc6bf648
   apps-media-foundation:
     count: 2
     sha256: 3cc7429fddbb79ce338eab091405acdd6b8804d8e11fc3814eade47eb2c03819

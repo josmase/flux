@@ -32,21 +32,35 @@ manifest inventory is not proof of live binding or workload use; reconcile it
 against live PVC → PV → CSI handle mappings and workload references before
 touching any claim.
 
-## Production census (2026-11-11)
+## Production census (2026-11-12)
 
 Read-only inspection of the `jumphost-production` context found the following
 live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 79 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 80 | 23 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 1 | 20 | Remaining active claims and other held PVs. |
+| `linstor-final-triple` | 0 | 21 | No active claims; Released PVs remain held. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There is 1 bound PVC and 74 Released PVs on the three legacy classes.
+There are 0 bound PVCs and 75 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
+
+Prometheus is now quiesced and its 29,284,368,959 logical-byte TSDB was
+copied from the legacy `linstor-final-triple` PVC to a canonical `linstor`
+stage volume. A 160-path manifest comparison found zero differences across
+file hashes, ownership, mode, timestamps, symlinks, and extended attributes.
+The verified stage PV was rebound as the deterministic Prometheus claim to
+avoid allocating another 153 GiB three-replica volume. Its original source PV
+remains Released/Retain. A separate attempted final allocation could not
+complete replication because node 206's thin pool was at its configured free
+space threshold; its empty/incomplete canonical PV remains Released/Retain for
+later LINSTOR cleanup and must not be mistaken for a usable recovery copy.
+The HelmRelease and `apps-observability` Flux Kustomization remain suspended
+until the committed claim binding is reconciled and Prometheus passes its
+post-cutover checks.
 
 On 2026-11-11, after confirming all 18 Radarr/Sonarr Deployments were Ready,
 their replacement PVCs were Bound on `linstor`, no pod mounted the source
@@ -127,17 +141,18 @@ stage PVCs remain on `linstor` as rollback copies until the final class cleanup.
 
 ## Disposition plan for every remaining legacy PVC
 
-One bound claim remains in the production inventory after the
-Radarr/Sonarr, migrated-source, forensic PG10, Checkrr, standalone Valkey,
-Gitaly, and Valkey HA migrations. No legacy class may be removed until each row has a
-verified `linstor` replacement or an explicit artifact-retention disposition.
+The active Prometheus claim is now bound to `linstor`; the remaining legacy PVs
+are Released data holds after the Radarr/Sonarr, migrated-source, forensic
+PG10, Checkrr, standalone Valkey, Gitaly, and Valkey HA migrations. No legacy
+class may be removed until each hold has a verified replacement or an explicit
+artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
 recovery artifact, validation evidence, and the rollback decision in the
 migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Active Prometheus data. Use the Prometheus operator's supported claim replacement path; quiesce/ snapshot or perform a consistent block copy, validate TSDB and readiness on `${STORAGE_CLASS}`, then cut over. |
+| `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor` | Bound to the verified TSDB copy. Resume the operator and Flux, validate WAL replay, Prometheus readiness and queries, then retain the old source PV through the observation window. |
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
 clusters have three Ready instances and quorum-synchronous streaming replicas;
@@ -239,5 +254,4 @@ row.
 
 | Current class | Resource | Manifest |
 |---|---|---|
-| `linstor-final-bootstrap` | `PersistentVolumeClaim/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `apps/production/monitoring/prometheus-linstor-copy-pvc.yaml` |
-| `linstor-final-triple` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
+| `linstor` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
