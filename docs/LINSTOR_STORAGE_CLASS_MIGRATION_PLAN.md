@@ -20,8 +20,8 @@ templates requiring explicit review:
 
 | Class | References | Resources |
 |---|---:|---|
-| `linstor-final` | 3 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor`, and the GitLab Gitaly StatefulSet claim template. Gitaly's template is temporarily pinned to its live immutable value until its PVC is migrated and the StatefulSet is recreated. |
-| `linstor-final-triple` | 15 | 13 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr source claims. The 18 Radarr/Sonarr source manifests have been removed. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
+| `linstor-final` | 1 | GitLab Gitaly StatefulSet claim template. It is temporarily pinned to its live immutable value until its PVC is migrated and the StatefulSet is recreated. |
+| `linstor-final-triple` | 7 | Five PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. The PVC declarations cover Checkrr, Minecraft data/modpacks, and a generic qBittorrent template. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
@@ -183,52 +183,18 @@ assume that an old backup or snapshot is restorable solely because it exists.
 
 ## Legacy reference inventory
 
-This is the repository declaration inventory. Confirm namespace, live binding,
-CSI handle, workload use, and migration status against the cluster before
-executing a row.
+This is the remaining literal-class inventory in manifests. Production
+Kustomize overlays may patch a base value before substitution. Compare the
+rendered production claim, live binding, and workload use before changing a
+row.
 
 | Current class | Resource | Manifest |
 |---|---|---|
-| `linstor-final` | `PersistentVolumeClaim/artifactory-data-rightsize-12gi` | `apps/base/artifactory/persistence-rightsize.yaml` |
-| `linstor-final` | `PersistentVolumeClaim/jellyfin-config-pvc-jellyfin-0-linstor` | `apps/base/media/jellyfin/jellyfin/persistence.yaml` |
-| `linstor-final` | `PersistentVolumeClaim/watchtower3d-data` | `apps/base/watchtower3d/persistence.yaml` |
+| `linstor-final` | GitLab Gitaly claim template | `apps/base/gitlab/helmrelease.yaml` |
 | `linstor-final-bootstrap` | `PersistentVolumeClaim/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `apps/production/monitoring/prometheus-linstor-copy-pvc.yaml` |
 | `linstor-final-triple` | `HelmRelease/gitlab-valkey-ha` | `apps/base/gitlab/bootstrap/valkey-ha.yaml` |
 | `linstor-final-triple` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/arr-dashboard-config-triple` | `apps/base/media/arr-dashboard/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/bazarr-config-triple` | `apps/base/media/bazarr/persistence-linstor.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/checkrr-config-triple` | `apps/base/media/checkrr/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-1/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-10/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-11/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-12/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-2/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-3/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-4/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-5/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-6/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-7/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-8/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/radarr/radarr-9/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-1/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-2/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-3/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-4/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-5/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/config-triple` | `apps/production/media/sonarr/sonarr-6/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/gotify-data-triple` | `apps/base/monitoring/gotify/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/grafana-data-triple` | `apps/base/monitoring/grafana-persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/immich-db-triple` | `apps/base/immich/immich-database/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/immich-model-cache-ml-0-triple` | `apps/base/immich/immich-machine-learning/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/immich-model-cache-ml-1-triple` | `apps/base/immich/immich-machine-learning/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/immich-model-cache-ml-2-triple` | `apps/base/immich/immich-machine-learning/persistence-linstor.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/immich-model-cache-ml-triple` | `apps/base/immich/immich-machine-learning/persistence-linstor.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/minecraft-data-triple` | `apps/base/minecraft/persistence-resized.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/minecraft-modpacks-triple` | `apps/base/minecraft/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/prowlarr-config-triple` | `apps/base/media/prowlarr/persistence-linstor.yaml` |
 | `linstor-final-triple` | `PersistentVolumeClaim/qbittorrent-config` | `apps/base/media/qbittorrent-template/persistence.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/qui-config` | `apps/base/media/qui/persistence.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/reiverr-config-triple` | `apps/base/media/reiverr/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/reiverr-plugins-triple` | `apps/base/media/reiverr/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/seerr-config-triple` | `apps/base/media/seerr/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/zero-cache-data-triple` | `apps/base/growlog/zero-cache/persistence-linstor.yaml` |

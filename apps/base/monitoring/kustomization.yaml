@@ -4,7 +4,6 @@ namespace: monitoring
 
 resources:
   - namespace.yaml
-  - grafana-persistence-resized.yaml
   - grafana-snapshot-canonical.yaml
   - grafana-persistence-canonical.yaml
   - alertmanager-snapshot-canonical.yaml

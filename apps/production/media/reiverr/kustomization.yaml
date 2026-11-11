@@ -6,6 +6,3 @@ resources:
   - secret.yaml
   - snapshot-canonical.yaml
   - persistence-canonical.yaml
-
-patches:
-  - path: deployment-canonical.yaml

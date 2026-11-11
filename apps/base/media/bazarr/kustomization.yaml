@@ -3,9 +3,6 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
-  # Replacement PVC only. The Deployment remains on the source claim until
-  # the documented backup/copy/validation cutover is completed.
-  - persistence-linstor.yaml
   - snapshot-canonical.yaml
   - persistence-canonical.yaml
   - ingress.yaml

@@ -11,14 +11,14 @@ domains:
     count: 15
     sha256: 473ff4229456389f36b135ac4c5829a50c699cf54e939bae717292a2c0d146cd
   apps-observability:
-    count: 25
-    sha256: 5ad7b34cd07e60cccb5cbe2fc4b5d87fc211c2d6f91032940e63dc6138333190
+    count: 23
+    sha256: 061908393f91f500bade5a6d6bd95efcfd9b90927d6326df9f7b2de52ffbf68e
   apps-media-foundation:
     count: 2
     sha256: 3cc7429fddbb79ce338eab091405acdd6b8804d8e11fc3814eade47eb2c03819
   apps-media-download:
-    count: 58
-    sha256: 324a9440725c28ab679c5a71d5afc264634f8342231ed291da360fff967025cc
+    count: 54
+    sha256: 94b3791b27034083eb297a3e6ed66dbe1d0750928197687a523cdbafc81755e6
   apps-media-arr:
     count: 93
     sha256: 10d75c9fe5620aa94d40d6c9705684921c74920f4e2fae0d17aa5a69bbbeb288
@@ -26,11 +26,11 @@ domains:
     count: 18
     sha256: 22ddb1af3f3f300d4333da110c3df0ebff3ad7f92f28af2d1a2516cb18941c16
   apps-media-playback:
-    count: 11
-    sha256: 6cc9dbd454d78861c0fb029de3fd35d798a0750c5c5d9e2c8eac95ffdbf6c70f
+    count: 10
+    sha256: 88de30399979147019222f94a271384b94d48a1cdf42157a3eccb7ad5852396b
   apps-photos:
-    count: 29
-    sha256: ce01274c43c4071c130cd5f4c072b3f129114ea35900b95e8720b9f66576aaf8
+    count: 28
+    sha256: 5ddad266507024d7a1521ab436057f77842183c9d1926fbc5a84599347b6dd7c
   apps-gitlab:
     count: 11
     sha256: 69d18ee79df612b4c7bc0895687d5d9b91db0e5ec2320f4d3b1b36a2adf8ee0d

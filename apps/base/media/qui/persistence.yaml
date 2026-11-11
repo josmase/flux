@@ -5,7 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: linstor-final-triple
+  storageClassName: ${STORAGE_CLASS}
   resources:
     requests:
       storage: 1Gi
