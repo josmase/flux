@@ -21,7 +21,7 @@ templates requiring explicit review:
 | Class | References | Resources |
 |---|---:|---|
 | `linstor-final` | 2 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor` |
-| `linstor-final-triple` | 34 | 32 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr source claims, and 18 Radarr/Sonarr `config-triple` sources. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
+| `linstor-final-triple` | 15 | 13 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr source claims. The 18 Radarr/Sonarr source manifests have been removed. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
@@ -47,6 +47,12 @@ live LINSTOR claim state:
 There are 24 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
+
+On 2026-11-11, after confirming all 18 Radarr/Sonarr Deployments were Ready,
+their replacement PVCs were Bound on `linstor`, no pod mounted the source
+claims, and their migration snapshots had `Retain` policy, the old source PVCs
+and PVs were deleted. Their retained `VolumeSnapshotContent` artifacts remain.
+The live legacy PVC census above reflects that cleanup.
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
 clusters have three Ready instances and quorum-synchronous streaming replicas;
