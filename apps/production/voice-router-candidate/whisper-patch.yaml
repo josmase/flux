@@ -8,6 +8,7 @@ spec:
     type: Recreate
   template:
     spec:
+      runtimeClassName: null
       initContainers:
         - name: prepare-pinned-large-v3-turbo
           image: python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
@@ -47,7 +48,7 @@ spec:
             - --language
             - sv
             - --device
-            - cuda
+            - cpu
             - --compute-type
             - int8
             - --beam-size
@@ -58,6 +59,20 @@ spec:
             - '0.8'
             - --vad-clip
             - faster-whisper
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              $patch: delete
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              $patch: delete
+          resources:
+            requests:
+              cpu: 1
+              memory: 3Gi
+              nvidia.com/gpu.shared: null
+            limits:
+              cpu: "4"
+              memory: 6Gi
+              nvidia.com/gpu.shared: null
       volumes:
         - name: whisper-data
           emptyDir: null

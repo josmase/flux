@@ -3,10 +3,12 @@
 This overlay is referenced by `apps/production/services` and is the active
 production voice stack; never add it alongside the base references (duplicate
 objects). It runs the pinned Qwen3 4B model, Whisper large-v3-turbo, and Kokoro
-`af_heart` voice. The Home Assistant router uses this current model set. The
-Whisper init container deletes the previous `medium-pinned` weights only after
-the new model passes checksum verification. Keep the PVCs; do not preserve old
-model files as a rollback path.
+`af_heart` voice. Whisper runs on CPU so it does not contend for VRAM with
+Ollama and Jellyfin on the shared 8 GiB GPU; transcription is slower than the
+previous CUDA configuration. The Home Assistant router uses this current model
+set. The Whisper init container deletes the previous `medium-pinned` weights
+only after the new model passes checksum verification. Keep the PVCs; do not
+preserve old model files as a rollback path.
 
 Whisper receives Home Assistant's conversation-exposed entity names, aliases,
 areas, and floors through its name-reading API using the SOPS-encrypted
