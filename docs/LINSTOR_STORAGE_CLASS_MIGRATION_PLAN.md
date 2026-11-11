@@ -21,7 +21,7 @@ templates requiring explicit review:
 | Class | References | Resources |
 |---|---:|---|
 | `linstor-final` | 2 | `artifactory-data-rightsize-12gi`, `jellyfin-config-pvc-jellyfin-0-linstor` |
-| `linstor-final-triple` | 39 | 37 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, four Immich model-cache claims, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr/zero-cache source claims, and 18 Radarr/Sonarr `config-triple` sources. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
+| `linstor-final-triple` | 35 | 33 PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. PVCs include `minecraft-data-triple`, `minecraft-modpacks-triple`, `grafana-data-triple`, `immich-db-triple`, `gotify-data-triple`, `qbittorrent-config`, Checkrr/Prowlarr/Qui/Arr Dashboard/Reiverr/Seerr/Bazarr/zero-cache source claims, and 18 Radarr/Sonarr `config-triple` sources. See the PVC and HelmRelease manifests under `apps/base` and `apps/production`. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
@@ -41,10 +41,10 @@ live LINSTOR claim state:
 |---|---:|---:|---|
 | `linstor` | 65 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 1 | 52 | Includes active workloads and retained rollback/source claims. |
-| `linstor-final-triple` | 46 | 16 | Includes active workloads and retained rollback/source claims. |
+| `linstor-final-triple` | 42 | 16 | Includes active workloads and retained rollback/source claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 47 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 43 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
