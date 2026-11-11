@@ -20,8 +20,8 @@ templates requiring explicit review:
 
 | Class | References | Resources |
 |---|---:|---|
-| `linstor-final` | 1 | GitLab Gitaly StatefulSet claim template. It is temporarily pinned to its live immutable value until its PVC is migrated and the StatefulSet is recreated. |
-| `linstor-final-triple` | 7 | Five PVC declarations plus the `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates. The PVC declarations cover Checkrr, Minecraft data/modpacks, and a generic qBittorrent template. |
+| `linstor-final` | 0 | No remaining claim templates; Released PVs remain held for review. |
+| `linstor-final-triple` | 2 | `gitlab-valkey-ha` and `kube-prometheus-stack` HelmRelease storage templates for live claims. |
 | `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
@@ -39,12 +39,12 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 71 | 22 | Target class; current manifest is Retain with three replicas. |
+| `linstor` | 73 | 22 | Target class; current manifest is Retain with three replicas. |
 | `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 5 | 16 | Remaining active claims and other held PVs. |
+| `linstor-final-triple` | 4 | 17 | Remaining active claims and other held PVs. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 5 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 4 bound PVCs and 71 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -95,10 +95,29 @@ PV were deleted after the canonical target was Bound; no source snapshot
 content existed for this claim. The data is retained on the canonical target
 and is not connected to the active Valkey HA service.
 
+## Gitaly migration (2026-11-11)
+
+The Gitaly StatefulSet template now uses `${STORAGE_CLASS}`. Gitaly was
+stopped cleanly, and its 50 GiB source claim was copied to a canonical staging
+PVC, then to the deterministic `repo-data-gitlab-gitaly-0` claim. Both copies
+matched across 8,060 paths, file hashes, ownership, modes, timestamps, links,
+and extended attributes. The old PV remains Released/Retain; the canonical
+stage PVC remains available as a rollback copy. The recreated StatefulSet uses
+`linstor`, is 1/1 Ready, and a Git push succeeded. GitLab's read-only check
+reported Gitaly OK and all project namespaces present, though it also reported
+GitLab Shell self-check and Sidekiq status warnings.
+
+The migration snapshot request failed twice because the LINSTOR CSI driver
+could not reach the configured `rustfs-linstor-backups-v2` remote. The failed
+snapshot metadata was removed; no valid snapshot was created. The old Retain PV
+and staging copy are the rollback data. This shows migration snapshots still
+depend on the backup remote even though backup automation is disabled.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 5 claims remain in the production inventory after the
-Radarr/Sonarr, migrated-source, and forensic PG10 cleanup. No legacy class may be removed until each row has a
+The following 4 claims remain in the production inventory after the
+Radarr/Sonarr, migrated-source, forensic PG10, Checkrr, standalone Valkey, and
+Gitaly migrations. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
 recovery artifact, validation evidence, and the rollback decision in the
@@ -106,7 +125,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final-triple` | Active Gitaly repository data. Quiesce Gitaly, snapshot and copy to a `${STORAGE_CLASS}` claim, validate repository checks and application health, then cut over and retain the source through the observation window. |
 | `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-1` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-2` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
@@ -212,10 +230,6 @@ row.
 
 | Current class | Resource | Manifest |
 |---|---|---|
-| `linstor-final` | GitLab Gitaly claim template | `apps/base/gitlab/helmrelease.yaml` |
 | `linstor-final-bootstrap` | `PersistentVolumeClaim/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `apps/production/monitoring/prometheus-linstor-copy-pvc.yaml` |
 | `linstor-final-triple` | `HelmRelease/gitlab-valkey-ha` | `apps/base/gitlab/bootstrap/valkey-ha.yaml` |
 | `linstor-final-triple` | `HelmRelease/kube-prometheus-stack` | `apps/base/monitoring/kube-prometheus-stack/release.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/minecraft-data-triple` | `apps/base/minecraft/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/minecraft-modpacks-triple` | `apps/base/minecraft/persistence-resized.yaml` |
-| `linstor-final-triple` | `PersistentVolumeClaim/qbittorrent-config` | `apps/base/media/qbittorrent-template/persistence.yaml` |
