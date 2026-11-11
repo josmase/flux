@@ -40,11 +40,11 @@ live LINSTOR claim state:
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
 | `linstor` | 65 | 22 | Target class; current manifest is Retain with three replicas. |
-| `linstor-final` | 1 | 52 | Includes active workloads and retained rollback/source claims. |
-| `linstor-final-triple` | 23 | 16 | Includes active workloads and retained rollback/source claims. |
+| `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
+| `linstor-final-triple` | 11 | 16 | Remaining active, forensic, and blocked-migration claims. |
 | `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
 
-There are 24 bound PVCs and 70 Released PVs on the three legacy classes.
+There are 11 bound PVCs and 70 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
 
@@ -54,10 +54,17 @@ claims, and their migration snapshots had `Retain` policy, the old source PVCs
 and PVs were deleted. Their retained `VolumeSnapshotContent` artifacts remain.
 The live legacy PVC census above reflects that cleanup.
 
+Also on 2026-11-11, 13 additional migrated sources (Artifactory data and
+PostgreSQL, Immich PostgreSQL, Arr Dashboard, Bazarr, Jellyfin, Prowlarr,
+Seerr, Reiverr config/plugins, Alertmanager, Gotify, and Grafana) were removed
+after replacement validation, source unmount checks, and ready retained
+snapshot-content checks. Their 13 LINSTOR source PVs/resources are gone; their
+canonical targets and snapshot contents remain.
+
 ## Disposition plan for every remaining legacy PVC
 
-The following 24 claims were present in the production inventory after the
-Radarr/Sonarr cleanup. No legacy class may be removed until each row has a
+The following 11 claims remain in the production inventory after the
+Radarr/Sonarr and migrated-source cleanup. No legacy class may be removed until each row has a
 verified `linstor` replacement or an explicit artifact-retention disposition.
 For every data-bearing move, record source and target handles, a retained
 recovery artifact, validation evidence, and the rollback decision in the
@@ -65,8 +72,6 @@ migration ledger. Do not remove a source just because a target is Bound.
 
 | Current PVC | Class | Planned disposition |
 |---|---|---|
-| `artifactory/artifactory-data-triple` | `linstor-final-triple` | Target `artifactory-data-linstor` is active; validate application data and retained migration snapshot through the observation window, then remove source PVC/PV. |
-| `artifactory/artifactory-pg17-triple` | `linstor-final-triple` | Target `artifactory-pg17-linstor` is active; confirm database health and retained migration snapshot through the observation window, then remove source PVC/PV. |
 | `cnpg-system/forensic-pg10-data-copy-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
 | `cnpg-system/forensic-pg10-data-recovery-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
 | `cnpg-system/forensic-pg10-wal-copy-20261015` | `linstor-final-triple` | Recovery evidence hold. Preserve as-is; inventory checksum, snapshot lineage, and intended restore use. If it must remain live, copy it read-only to `linstor`, validate byte-for-byte, then retain the source until restore acceptance. |
@@ -76,18 +81,7 @@ migration ledger. Do not remove a source just because a target is Bound.
 | `gitlab/valkey-data-gitlab-valkey-ha-0` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-1` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
 | `gitlab/valkey-data-gitlab-valkey-ha-2` | `linstor-final-triple` | Active Valkey HA member. Move one member at a time using the Helm/operator-supported procedure; validate cluster membership and data before moving the next member. |
-| `immich/immich-db-triple` | `linstor-final-triple` | Target `immich-db-linstor` is active; verify PostgreSQL health and retained migration snapshot through the observation window, then remove source PVC/PV. |
-| `media/arr-dashboard-config-triple` | `linstor-final-triple` | Target `arr-dashboard-config-linstor` is active; verify checksum and app health, then remove source after the observation window. |
-| `media/bazarr-config-triple` | `linstor-final-triple` | Target `bazarr-config-linstor-v2` is active; verify checksum and app health, then remove source after the observation window. |
 | `media/checkrr-config-triple` | `linstor-final-triple` | Migration blocked by repeatable CSI snapshot restore filesystem corruption. Keep source authoritative; test a quiesced file-level copy to a fresh `linstor` claim and validate offline before cutover. |
-| `media/jellyfin-config-pvc-jellyfin-0-linstor` | `linstor-final` | Target `jellyfin-config-pvc-jellyfin-0-canonical` is active; verify database/config checksums and service health, then remove source after the observation window. |
-| `media/prowlarr-config-triple` | `linstor-final-triple` | Target `prowlarr-config-linstor` is active; verify checksum and app health, then remove source after the observation window. |
-| `media/reiverr-config-triple` | `linstor-final-triple` | Target `reiverr-config-linstor` is active; verify config checksum and app health, then remove source after the observation window. |
-| `media/reiverr-plugins-triple` | `linstor-final-triple` | Target `reiverr-plugins-linstor` is active; verify plugin checksum and app health, then remove source after the observation window. |
-| `media/seerr-config-triple` | `linstor-final-triple` | Target `seerr-config-linstor` is active; verify checksum and app health, then remove source after the observation window. |
-| `monitoring/alertmanager-kube-prometheus-stack-alertmanager-db-triple-alertmanager-kube-prometheus-stack-alertmanager-0` | `linstor-final-triple` | Target on `linstor` is active; verify Alertmanager readiness and retained migration snapshot through the observation window, then remove source PVC/PV. |
-| `monitoring/gotify-data-triple` | `linstor-final-triple` | Target `gotify-data-linstor` is active; verify checksum and service health, then remove source after the observation window. |
-| `monitoring/grafana-data-triple` | `linstor-final-triple` | Target `grafana-data-linstor` is active; verify database health and retained migration snapshot through the observation window, then remove source PVC/PV. |
 | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Active Prometheus data. Use the Prometheus operator's supported claim replacement path; quiesce/ snapshot or perform a consistent block copy, validate TSDB and readiness on `${STORAGE_CLASS}`, then cut over. |
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
