@@ -37,7 +37,7 @@ patches:
       group: batch
       version: v1
       kind: CronJob
-      name: 'linstor-backup-policy-gate-v1|linstor-snapshot-reconcile-v3|linstor-bootstrap-chain-retention|shared-postgres-gated-backup|shared-postgres-v2-backup-retention'
+      name: 'linstor-backup-policy-gate-v1|linstor-protection-gate-v1|linstor-snapshot-reconcile-v3|linstor-bootstrap-chain-retention|shared-postgres-gated-backup|shared-postgres-v2-backup-retention'
     patch: |-
       - op: add
         path: /spec/suspend
