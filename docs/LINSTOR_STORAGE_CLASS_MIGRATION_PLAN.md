@@ -15,14 +15,17 @@ its data and may leave Flux unable to apply the change.
 
 ## Repository inventory
 
-The remaining literal legacy class references are migration inputs or stateful
-templates requiring explicit review:
+The remaining repository references to legacy class names are the class
+definitions themselves. No active PVC template is configured with one of these
+classes; production sets `STORAGE_CLASS: linstor`, and the claim templates use
+`${STORAGE_CLASS}`. Historical recovery inventories and migration annotations
+still mention old class names but do not create claims.
 
 | Class | References | Resources |
 |---|---:|---|
-| `linstor-final` | 0 | No remaining claim templates; Released PVs remain held for review. |
-| `linstor-final-triple` | 1 | The `kube-prometheus-stack` HelmRelease template for the remaining live claim. |
-| `linstor-final-bootstrap` | 1 | `prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` |
+| `linstor-final` | 1 | `infrastructure/production/configs/piraeus/final-storage-class.yaml` defines the class. |
+| `linstor-final-triple` | 1 | `infrastructure/production/configs/piraeus/triple-storage-class.yaml` defines the class. |
+| `linstor-final-bootstrap` | 1 | `infrastructure/production/configs/piraeus/final-bootstrap-storage-class.yaml` defines the class. |
 
 Some namespaces are assigned by parent Flux Kustomizations and are not written
 in each PVC manifest.
@@ -47,6 +50,15 @@ live LINSTOR claim state:
 There are 0 bound PVCs and 75 Released PVs on the three legacy classes.
 Remaining Released PVs use `Retain`; they may still hold the only copy of data.
 Classify each before deletion.
+
+A current read-only cross-reference found 47 PVs with at least one matching
+Ready `VolumeSnapshotContent` using `Retain`, and 28 without a matching
+Kubernetes snapshot content. The latter are not proven snapshot-free: LINSTOR
+backend snapshots and backup records require a separate per-resource review.
+No PV data or retained snapshots were deleted during this inventory. The three
+legacy StorageClass declarations have since been removed from the production
+Flux source after confirming there are no current PVCs using them; Released PVs
+remain intact and may still refer to the retired class names.
 
 Prometheus is now quiesced and its 29,284,368,959 logical-byte TSDB was
 copied from the legacy `linstor-final-triple` PVC to a canonical `linstor`

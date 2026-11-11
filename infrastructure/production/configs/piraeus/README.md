@@ -25,12 +25,13 @@ some LINSTOR and node failures, but not total loss of the RustFS server.
 `${STORAGE_CLASS}` substitution. Its placement count is three diskful replicas
 on `linstor-thin`.
 
-The `linstor-final`, `linstor-final-triple`, and
-`linstor-final-bootstrap` classes have no active PVCs. Their Released PVs are
-retained data and snapshot holds from completed migrations. Keep the classes
-available until each hold has a recorded disposition and its restore path is
-understood; do not use them for new claims. A bound PVC's storage class cannot
-be changed in place.
+The legacy `linstor-final`, `linstor-final-triple`, and
+`linstor-final-bootstrap` StorageClass definitions have been retired after the
+production PVC census found no claims using them. Their Released PVs and
+LINSTOR data/snapshots remain retained for individual review and recovery. A
+Released PV may reference a class that no longer exists; this does not delete
+its PV or backend data. New claims must use `${STORAGE_CLASS}`. A bound PVC's
+storage class cannot be changed in place.
 
 ## Satellite scheduling and recovery
 
