@@ -13,6 +13,7 @@ resources:
   - ../growlog
   - forensic-pg10-migration
   - checkrr-migration
+  - gitlab-valkey-migration
   - default-app-config.yaml
 
 components:
