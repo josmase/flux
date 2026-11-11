@@ -56,8 +56,12 @@ The verified stage PV was rebound as the deterministic Prometheus claim to
 avoid allocating another 153 GiB three-replica volume. Its original source PV
 remains Released/Retain. A separate attempted final allocation could not
 complete replication because node 206's thin pool was at its configured free
-space threshold; its empty/incomplete canonical PV remains Released/Retain for
-later LINSTOR cleanup and must not be mistaken for a usable recovery copy.
+space threshold. LINSTOR returned `Cannot create new thin volume, free space in
+thin pool linstor_vg/linstor_thin reached threshold` on `kubernetes-node-206`.
+The failed allocation remains Released/Retain for later LINSTOR cleanup and
+must not be mistaken for a usable recovery copy. Check thin-pool headroom before
+the next large PVC or snapshot restore; capacity requests count against each
+replica node.
 The old active source PV remains Released/Retain, and its older bootstrap PV
 also remains Released/Retain with its Ready LINSTOR snapshot content preserved.
 Prometheus has resumed on the final claim: the HelmRelease and Flux
@@ -212,11 +216,13 @@ source data.
    snapshot dependencies, and migration-ledger entries. Mark each legacy claim
    as active, migration target, rollback source, or unused hold. Stop on an
    unmatched handle, incomplete workload mapping, or degraded replica.
-2. **Prepare each active workload.** Confirm at least one usable existing
-   recovery artifact and take a quiesced, manually managed LINSTOR snapshot for
-   each data-bearing claim that must move. The snapshot is a one-time migration
-   aid; do not re-enable scheduled backup or retention jobs. Verify three
-   healthy source replicas and enough thin-pool capacity before restoring.
+2. **Prepare each active workload.** Inspect available recovery artifacts and
+   verify the LINSTOR snapshot remote is reachable before relying on a manual
+   snapshot. A failed snapshot must not be treated as protection. If snapshot
+   creation is unavailable, stop writes cleanly and use a verified file-level
+   copy while retaining the source PV. Do not re-enable scheduled backup or
+   retention jobs. Check source replica health and thin-pool capacity before
+   provisioning the target.
 3. **Create a target claim.** Restore or copy into a new PVC using
    `${STORAGE_CLASS}`. Never patch the bound source claim's class. For database
    volumes, use the application's supported graceful shutdown/copy procedure
@@ -225,10 +231,10 @@ source data.
    database checksums, start the workload on the target, check readiness and
    application data, and confirm LINSTOR has three `UpToDate` replicas. Record
    the source, target, snapshot, checksums, and result in the migration ledger.
-5. **Keep rollback sources through an acceptance window.** Retain source PVCs
-   and snapshots until the target has passed an agreed observation period and
-   a restore from its migration snapshot has been proven. Do not delete
-   finalizers or force-delete CSI/LINSTOR objects.
+5. **Keep rollback sources through an acceptance window.** Retain source PVs
+   and available snapshots until the target has passed an observation period
+   and the required recovery path has been verified. Do not delete finalizers
+   or force-delete CSI/LINSTOR objects.
 6. **Handle operator-managed claims separately.** CNPG and Helm-managed
    StatefulSets use claim templates. Follow each operator's supported
    replacement/recovery workflow; do not edit a live claim template or assume
