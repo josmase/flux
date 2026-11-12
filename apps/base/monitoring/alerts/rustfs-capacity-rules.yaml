@@ -22,8 +22,8 @@ spec:
               kubectl logs -n piraeus-datastore job/{{ $labels.job_name }}
         - alert: RustFSCapacityCheckMissing
           expr: |
-            absent(kube_cronjob_status_last_success_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"})
-            or time() - kube_cronjob_status_last_success_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"} > 900
+            absent(kube_cronjob_status_last_successful_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"})
+            or time() - kube_cronjob_status_last_successful_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"} > 900
           for: 3m
           labels:
             severity: critical
