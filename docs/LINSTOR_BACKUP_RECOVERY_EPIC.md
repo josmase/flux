@@ -100,13 +100,13 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
   - **Acceptance:** all 58 existing records and the unrecognized object are attributed; neither newest unmapped record is counted toward current coverage until verified.
   - **Evidence:** [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) and the linked 58-row record matrix.
 
-### T2 — Prepare an independent backup destination and capacity controls — NOT STARTED
+### T2 — Prepare a backup destination and capacity controls — IN PROGRESS (single-domain risk accepted)
 
 **Definition of done:** A second failure-independent destination is reachable with least-privilege credentials, tested restore access, and sufficient measured retention capacity.
 
-- [ ] T2.1 Select destination outside the RustFS host failure domain.
-  - **Acceptance:** storage location and account/admin recovery path are documented; a RustFS host-loss scenario does not remove both copies.
-- [ ] T2.2 Create scoped credentials and store recovery material securely.
+- [x] T2.1 Select destination outside the RustFS host failure domain. **User-approved exception (2026-11-12):** use only the existing RustFS storage and accept that RustFS host/site loss can remove both primary backup copies. Location: `storage.local.hejsan.xyz`, `/srv/mergerfs/storage` (RustFS bucket `linstor-backups-v2`). Admin/recovery configuration is managed by the storage-server Ansible role; credentials are held in the encrypted storage-server Ansible vault and the Flux SOPS secret. The independent-destination acceptance is explicitly waived by the user and remains a recovery risk.
+  - **Acceptance:** waived by explicit user decision; no second failure-independent destination exists.
+- [x] T2.2 Create scoped credentials and store recovery material securely. **Evidence:** the existing v2 backup identity/policy is bucket-scoped to `linstor-backups-v2`; it grants bucket listing/location/multipart listing and object get/put/delete/multipart actions. The S3 secret is SOPS-encrypted in Flux; the identity keys and RustFS admin keys are in the encrypted storage-server Ansible vault. Authorized operators recover them through the repository’s configured SOPS age access or Ansible Vault process. See [LINSTOR backup destination decisions](LINSTOR_BACKUP_DESTINATION_DECISIONS_2026-11-12.md).
   - **Acceptance:** access is limited to required buckets/prefixes and create/read/delete needs; credentials are absent from plaintext Git and recoverable by an authorized operator.
 - [ ] T2.3 Measure baseline sizes and forecast growth, retention, and overlap.
   - **Acceptance:** forecast uses live data measurements and leaves at least 1 TiB free (or an explicitly approved alternative floor); capacity alerts are tested.
