@@ -191,9 +191,11 @@ stage PVCs remain on `linstor` as rollback copies until the final class cleanup.
 
 ## Disposition plan for every remaining legacy PV
 
-The 2026-11-12 production census has 27 Released PVs using retired class names,
-zero PVCs using those classes, and no LINSTOR `linstor-final*` StorageClass
-objects. These are retained data holds, not pending bound claims. Before a hold
+The 2026-11-12 production census has 74 PVCs on the single LINSTOR
+StorageClass, `linstor`, zero PVCs using retired class names, and no LINSTOR
+`linstor-final*` StorageClass objects. The production Flux substitution sets
+`${STORAGE_CLASS}` to `linstor`. The remaining legacy-class PVs are Released
+data holds, not pending bound claims. Before a hold
 can be removed, identify its current canonical target or decide that the data
 is intentionally retired; verify source use, replica state, recovery artifacts,
 and workload-specific validation. If the data is still needed and no valid
@@ -227,7 +229,6 @@ Do not delete retained snapshot or backup artifacts as part of this process.
 | `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | `gitlab/gitlab-postgres-3-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
 | `pvc-e945814e-6dbb-4843-a5cb-6f2ec44bb338` | `gitlab/gitlab-postgres-1-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
 | `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final` | Compare with the active Gitaly claim and validate repository manifest/recovery path; retain until lineage is clear. |
-| `pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74` | `media/sonarr-2-config-linstor` | `linstor-final` | Reconcile intermittent API visibility first; confirm current claim/PV/resource identity and target contents before any cleanup. |
 | `pvc-f1a1158d-4e46-4660-ada8-677c0f1655ea` | `media/reiverr-plugins-final` | `linstor-final` | Reiverr is absent. Decide service disposition and preserve plugin data until restore or explicit retirement is approved. |
 | `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `gitlab/gitlab-postgresql-linstor` | `linstor-final` | Resolve this older GitLab PostgreSQL generation and verify database recovery before cleanup. |
 
@@ -265,15 +266,13 @@ migration ledger before releasing its source data.
 
 ### Released PV cleanup checkpoint (2026-11-12)
 
-The fresh production census has 27 Released PVs whose `storageClassName`
-starts with `linstor-final`: 14 on `linstor-final`, 11 on
+The fresh production census has 26 Released PVs whose `storageClassName`
+starts with `linstor-final`: 13 on `linstor-final`, 11 on
 `linstor-final-triple`, and 2 on `linstor-final-bootstrap`. All use Retain;
 there are no PVCs bound to those names and no corresponding LINSTOR
 StorageClass objects. Every PV is listed in the per-PV disposition table.
-Their presence does not prove they are disposable. Sonarr-2 API visibility was
-inconsistent during the census, so its PV and LINSTOR identity must be
-reconciled before action. Preserve source data and recovery artifacts until
-each listed decision has evidence.
+Their presence does not prove they are disposable. Preserve source data and
+recovery artifacts until each listed decision has evidence.
 
 Radarr-1 is the first verified cleanup: legacy source PV
 `pvc-091343be-c6ff-4a99-b2cc-2958bf244bef` and all its live LINSTOR resources
@@ -284,11 +283,17 @@ Released PVs; hold ambiguous database, GitLab, and failed-migration sources.
 On 2026-11-12, ten additional old Shared PostgreSQL data/WAL PVs were cleaned
 after confirming their resources were unused and UpToDate, the replacement
 CNPG cluster was healthy 3/3, and their 86 successful LINSTOR snapshots plus
-75 Ready Retain VolumeSnapshotContents were preserved. The two old
+75 Ready Retain VolumeSnapshotContents were preserved. Sonarr-2's stale
+Released PV `pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74` was then reconciled
+against its active canonical claim and removed after confirming the target
+Deployment was 1/1 Ready with three UpToDate replicas. Its unused source
+resource was removed, while its successful LINSTOR snapshot and Ready Retain
+VolumeSnapshotContent remain. The remaining 26 PVs have individual
+dispositions above; retirement of legacy StorageClass definitions is complete,
+but cleanup of a held PV or its backing data requires a separate evidence-based
+decision. The two old
 `shared-postgres-8` PVs remain held: they have no LINSTOR snapshots or matching
-Ready retained content. The remaining 27 PVs have individual dispositions
-above; retirement of legacy StorageClass definitions is complete, but cleanup
-of a held PV or its backing data requires a separate evidence-based decision.
+Ready retained content.
 
 ## Migration sequence
 
