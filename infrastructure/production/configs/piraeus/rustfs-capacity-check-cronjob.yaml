@@ -1,0 +1,83 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rustfs-capacity-check
+  namespace: piraeus-datastore
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 60
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app: rustfs-capacity-check
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: check
+              image: python:3.13-alpine
+              imagePullPolicy: IfNotPresent
+              command: ["python", "/opt/rustfs-capacity/capacity-check.py"]
+              env:
+                - name: RUSTFS_ENDPOINT
+                  value: http://storage.local.hejsan.xyz:9000
+                - name: RUSTFS_BUCKET
+                  value: linstor-backups-v2
+                - name: RUSTFS_REPORT_KEY
+                  value: __protection/capacity.json
+                - name: RUSTFS_GENERATION
+                  value: rustfs-linstor-backups-v2
+                - name: RUSTFS_MOUNTPOINT
+                  value: /srv/mergerfs/storage
+                - name: RUSTFS_EXPECTED_FSTYPE
+                  value: fuse.mergerfs
+                - name: RUSTFS_REPORT_MAX_AGE_SECONDS
+                  value: "600"
+                - name: RUSTFS_MIN_FREE_BYTES
+                  value: "1099511627776"
+                - name: AWS_REGION
+                  value: us-east-1
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: linstor-rustfs-v2-credentials
+                      key: access-key
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: linstor-rustfs-v2-credentials
+                      key: secret-key
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 24Mi
+                limits:
+                  memory: 64Mi
+              volumeMounts:
+                - name: checker
+                  mountPath: /opt/rustfs-capacity
+                  readOnly: true
+          volumes:
+            - name: checker
+              configMap:
+                name: rustfs-capacity-check
+                defaultMode: 0444

@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: rustfs-capacity-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: rustfs-capacity.rules
+      interval: 30s
+      rules:
+        - alert: RustFSCapacityCheckFailed
+          expr: |
+            kube_job_status_failed{namespace="piraeus-datastore", job_name=~"rustfs-capacity-check-.*"} > 0
+          for: 2m
+          labels:
+            severity: critical
+            workload_type: backup-capacity
+          annotations:
+            summary: "RustFS backup capacity check failed"
+            description: |
+              The RustFS capacity report is unreadable, stale, misidentified, or below the 1 TiB free-space floor. Inspect the Job logs:
+              kubectl logs -n piraeus-datastore job/{{ $labels.job_name }}
+        - alert: RustFSCapacityCheckMissing
+          expr: |
+            absent(kube_cronjob_status_last_success_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"})
+            or time() - kube_cronjob_status_last_success_time{namespace="piraeus-datastore", cronjob="rustfs-capacity-check"} > 900
+          for: 3m
+          labels:
+            severity: critical
+            workload_type: backup-capacity
+          annotations:
+            summary: "RustFS backup capacity check is stale"
+            description: "No successful RustFS capacity report check has completed in 15 minutes. Check the rustfs-capacity-check CronJob and its latest Job."

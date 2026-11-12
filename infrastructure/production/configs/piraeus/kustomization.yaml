@@ -14,3 +14,9 @@ resources:
   - snapshot-prunable-class.yaml
   - cnpg-s3-snapshot-class.yaml
   - node-prerequisites.yaml
+  - rustfs-capacity-check-cronjob.yaml
+
+configMapGenerator:
+  - name: rustfs-capacity-check
+    files:
+      - capacity-check.py
