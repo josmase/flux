@@ -7,6 +7,7 @@ spec:
   configuration:
     destinationPath: s3://linstor-backups-v2/cnpg/gitlab-postgres
     endpointURL: http://storage.local.hejsan.xyz:9000
+    s3AddressingStyle: path
     s3Credentials:
       accessKeyId:
         name: linstor-rustfs-v2-credentials
