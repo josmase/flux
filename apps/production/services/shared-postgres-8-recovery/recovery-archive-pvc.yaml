@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-postgres-8-recovery-archive
+  annotations:
+    migration.josmase.dev/source-pv-data: pvc-be2045af-c3fb-47fe-b25e-4bc710fad531
+    migration.josmase.dev/source-pv-wal: pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ${STORAGE_CLASS}
+  resources:
+    requests:
+      storage: 1Gi

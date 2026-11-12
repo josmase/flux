@@ -4,7 +4,4 @@ kind: Kustomization
 namespace: cnpg-system
 
 resources:
-  - data-copy-pvc.yaml
-  - data-recovery-pvc.yaml
-  - wal-copy-pvc.yaml
-  - wal-recovery-pvc.yaml
+  - recovery-archive-pvc.yaml

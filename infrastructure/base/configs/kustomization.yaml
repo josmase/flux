@@ -9,4 +9,3 @@ resources:
   - certificate.yaml
   - nvidia-runtime
   - cloudnative-pg/
-  - nfs-csi-storageclass.yaml
