@@ -100,9 +100,9 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
   - **Acceptance:** all 58 existing records and the unrecognized object are attributed; neither newest unmapped record is counted toward current coverage until verified.
   - **Evidence:** [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) and the linked 58-row record matrix.
 
-### T2 — Prepare a backup destination and capacity controls — IN PROGRESS (single-domain risk accepted)
+### T2 — Prepare a backup destination and capacity controls — DONE (failure-independent destination requirement waived)
 
-**Definition of done:** A second failure-independent destination is reachable with least-privilege credentials, tested restore access, and sufficient measured retention capacity.
+**Definition of done:** A second failure-independent destination is reachable with least-privilege credentials, tested restore access, and sufficient measured retention capacity. The user explicitly waived the second-destination requirement and accepted the RustFS single-domain risk; the remaining destination, credential, capacity, and canary controls were completed for the existing RustFS service.
 
 - [x] T2.1 Select destination outside the RustFS host failure domain. **User-approved exception (2026-11-12):** use only the existing RustFS storage and accept that RustFS host/site loss can remove both primary backup copies. Location: `storage.local.hejsan.xyz`, `/srv/mergerfs/storage` (RustFS bucket `linstor-backups-v2`). Admin/recovery configuration is managed by the storage-server Ansible role; credentials are held in the encrypted storage-server Ansible vault and the Flux SOPS secret. The independent-destination acceptance is explicitly waived by the user and remains a recovery risk.
   - **Acceptance:** waived by explicit user decision; no second failure-independent destination exists.
@@ -110,7 +110,7 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
   - **Acceptance:** access is limited to required buckets/prefixes and create/read/delete needs; credentials are absent from plaintext Git and recoverable by an authorized operator.
 - [x] T2.3 Measure baseline sizes and forecast growth, retention, and overlap. **Evidence:** [LINSTOR capacity forecast](LINSTOR_BACKUP_CAPACITY_FORECAST_2026-11-12.md) combines the 2026-10-21 measured workload baseline with fresh 2026-11-12 RustFS capacity reports; projected free capacity exceeds the 1 TiB floor by more than 84 TiB. The five-minute read-only capacity check succeeded in production. A disposable failed Job exercised the critical Prometheus alert through the `gotify-critical` receiver; the test Job was removed and the alert cleared.
   - **Acceptance:** forecast uses live data measurements and leaves at least 1 TiB free (or an explicitly approved alternative floor); capacity alerts are tested.
-- [ ] T2.4 Test read/write/list/delete with disposable objects and validate endpoint compatibility.
+- [x] T2.4 Test read/write/list/delete with disposable objects and validate endpoint compatibility. **Evidence:** the live path-style RustFS endpoint created and listed a uniquely prefixed disposable object, returned it with matching SHA-256, deleted it with HTTP 204, and returned an empty final prefix listing. See [LINSTOR disposable S3 canary](LINSTOR_BACKUP_S3_CANARY_2026-11-12.md).
   - **Acceptance:** disposable object checksum matches after restore; cleanup is verified without touching existing data.
 
 ### T3 — Produce and verify new-generation baseline backups — NOT STARTED
