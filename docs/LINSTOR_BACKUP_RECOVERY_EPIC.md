@@ -30,7 +30,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | Task | Status | Completion evidence |
 |---|---|---|
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
-| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | IN PROGRESS | T1.1 ownership and recovery-priority matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv) |
+| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | IN PROGRESS | T1.1 ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); T1.3 approved classification and NFS exception: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md) |
 | T2 — Prepare independent backup destination and capacity controls | NOT STARTED | — |
 | T3 — Produce and verify new-generation baseline backups | NOT STARTED | — |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
@@ -60,18 +60,19 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | Shared PostgreSQL/CNPG: data and WAL for instances 1–3 | CNPG-native base backup plus WAL archiving for PITR; coordinated LINSTOR data/WAL snapshot only as a supplemental recovery path. | Restore isolated cluster; verify DBs, roles, extensions, representative queries, and selected-time PITR. |
 | GitLab PostgreSQL/CNPG: data and WAL for instances 1–3 | Same native base-backup/WAL approach; coordinate with GitLab repository and object-storage backups. | Restore isolated database and app; verify expected DB queries and application connectivity. |
 | GitLab Gitaly: `repo-data-gitlab-gitaly-0` | GitLab-supported repository backup, coordinated with DB backup; LINSTOR snapshot as supplementary recovery. | Restore test repository and verify refs, recent commits, and files. Verify object-storage components independently. |
-| GitLab Valkey: three `valkey-data-gitlab-valkey-ha-*` claims | Decide whether AOF state is authoritative or rebuildable. Exclude only after a tested rebuild procedure; otherwise use a Valkey-aware backup. | Rebuild test proves GitLab resumes correctly, or isolated Valkey restore proves AOF and app connectivity. |
+| GitLab object storage | Five Rails buckets and GitLab backup buckets are authoritative and need an independent object copy. Registry blobs are rebuildable under the user's 2026-11-10 decision; track registry metadata recovery separately. | Restore sample authoritative objects and validate checksums; demonstrate Registry rebuild and metadata recovery separately. |
+| GitLab Valkey: three `valkey-data-gitlab-valkey-ha-*` claims | Keep AOF state protected until a queue-drain/rebuild test passes; otherwise use a Valkey-aware backup. | Rebuild test proves GitLab resumes correctly, or isolated Valkey restore proves AOF and app connectivity. |
 | GrowLog: `growlog-media-data-linstor` | Daily application-state backup; document any corresponding database/media backend outside LINSTOR. | Restore isolated workload; validate representative media and app access. |
 | Zero-cache: `zero-cache-data-linstor-v2` | Treat SQLite data as authoritative. Use SQLite-consistent export or quiesce writes before snapshot. | SQLite integrity check passes; representative records match. |
-| Immich: `immich-db-linstor`; four model-cache claims | Native PostgreSQL backup. Exclude reproducible model caches. Independently back up `immich-shared-nfs-omv-pvc` and `immich-external-library-omv-pvc`. | DB metadata queries pass; restore a library photo with matching checksum; prove models can be rebuilt. |
-| Media automation: 12 live Radarr, 6 Sonarr, 5 qBittorrent instances; Arr Dashboard, Bazarr, Prowlarr, Qui, Seerr, Jellyfin, Tdarr | Daily application config/database backups; retain instance identity in index. Protect NFS media payload separately. Quiesce SQLite/database writers or use native export. | Restore one representative of each application family; verify database integrity, settings, IDs, indexers/profiles, and media paths. Spot-check each instance mapping. |
-| Monitoring: Prometheus, Alertmanager, Grafana, Gotify | Prioritize Git-managed config/rules; protect manually managed Grafana/Gotify state. Prometheus history is lower priority unless explicitly required. | Prometheus query, Grafana dashboard/data source, Alertmanager route, and test notification all pass. |
-| Ollama `voice-models`, Wyoming `whisper-models` | Document model names, versions, and retrieval sources; exclude if reproducible rebuild meets RTO. | Rebuild and sample inference pass; add backup only if RTO cannot be met. |
+| Immich: `immich-db-linstor`; four model-cache claims | Native PostgreSQL backup. Exclude reproducible model caches only after the approved rebuild/RTO test. NFS mounts are explicitly excluded from backup; their recovery depends on the original OMV exports. | DB metadata queries pass; test library access against the source NFS export and prove models can be rebuilt. The photo/media files themselves have no backup restore path under the approved exception. |
+| Media automation: 12 live Radarr, 6 Sonarr, 5 qBittorrent instances; Arr Dashboard, Bazarr, Prowlarr, Qui, Seerr, Jellyfin, Tdarr | Daily application config/database backups; retain instance identity in index. NFS media mounts are explicitly excluded from backup; restore depends on the original export. Quiesce SQLite/database writers or use native export. | Restore one representative of each application family; verify database integrity, settings, IDs, indexers/profiles, and media paths against the source NFS export. The media files themselves have no backup restore path under the approved exception. Spot-check each instance mapping. |
+| Monitoring: Prometheus, Alertmanager, Grafana, Gotify | Prioritize Git-managed config/rules; protect manually managed Grafana/Gotify state and retain Prometheus history at standard tier. | Prometheus query, Grafana dashboard/data source, Alertmanager route, and test notification all pass. |
+| Ollama `voice-models`, Wyoming `whisper-models` | Record pinned model names, revisions, and checksums; exclude model files only after the approved rebuild/RTO test. | Rebuild and sample inference pass within the 24-hour standard RTO. |
 | RustDesk `rustdesk-data` | Protect server state and identity/key material needed for client continuity. | Isolated restore allows a test client to connect with expected identity behavior. |
 | Watchtower3D `watchtower3d-data-linstor` | Include until data format and rebuildability are documented. | Isolated restore passes application-state and authentication checks. |
 | Unreferenced recovery/migration claims (four above) | Do not schedule or prune until each owner classifies it as recovery artifact, migration source, or disposable. | Owner and disposition recorded; any retained recovery copy has a named restore procedure. |
 
-Non-LINSTOR NFS/object storage is in scope for each workload's full recovery plan, but it must use the backup mechanism appropriate to that storage backend.
+User-approved T1.3 exception: the four active NFS mounts listed in [the data-classification decisions](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md) are excluded from backup. Their only recovery path is restoration of the original OMV exports; loss of the source storage is outside backup coverage. GitLab object storage remains in scope under its separate bucket-level policy.
 
 ## Tasks and subtasks
 
@@ -92,8 +93,9 @@ Non-LINSTOR NFS/object storage is in scope for each workload's full recovery pla
   - **Acceptance:** every live claim has exactly one owner and disposition; no unknown authoritative data remains.
 - [x] T1.2 Approve RPO/RTO tiers. **Evidence:** user approved the proposed tiers on 2026-11-12: databases and GitLab repositories at 6-hour RPO; standard application state at 24-hour RPO; critical RTO at 4 hours and standard RTO at 24 hours.
   - **Acceptance:** proposed starting targets are reviewed and approved: databases/GitLab repositories at 6-hour RPO; standard application state at 24-hour RPO; 4-hour critical and 24-hour standard RTO, or documented replacements.
-- [ ] T1.3 Confirm which data is authoritative, rebuildable, or outside LINSTOR.
+- [x] T1.3 Confirm which data is authoritative, rebuildable, or outside LINSTOR. **Evidence:** user approved the classification and test plan on 2026-11-12, with the explicit exception that all four active NFS mounts are excluded from backup. GitLab Valkey remains protected pending a successful queue-drain/rebuild or native restore test; model caches remain protected until their rebuild/RTO tests pass; Prometheus history remains standard-tier protected; Registry blobs are rebuildable under the prior 2026-11-10 approval while metadata recovery remains tracked; Watchtower3D remains authoritative.
   - **Acceptance:** Valkey, model caches, Prometheus history, NFS media/photos, GitLab object storage, and Watchtower3D have explicit decisions and restore methods.
+  - **Evidence:** [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md) records the approved classifications, the NFS exception and its source-only recovery path, and the remaining validation gates.
 - [ ] T1.4 Resolve remote object ownership and map remote handles to source workload/PV or document why they are historical.
   - **Acceptance:** all 58 existing records and the unrecognized object are attributed; neither newest unmapped record is counted toward current coverage until verified.
 
@@ -123,7 +125,7 @@ Non-LINSTOR NFS/object storage is in scope for each workload's full recovery pla
 - [ ] T3.4 Create baseline S3 snapshots for remaining included LINSTOR application PVCs, quiescing databases/SQLite or active multi-volume data as required.
   - **Acceptance:** each snapshot is ready, its remote record is restorable, its index maps to a live PVC/PV/owner, and a sample restore verifies data.
 - [ ] T3.5 Capture non-LINSTOR NFS/object-storage baseline coverage.
-  - **Acceptance:** each in-scope NFS/object store has a verified independent copy and sample restore, or is explicitly excluded with owner approval.
+  - **Acceptance:** GitLab object storage has a verified independent copy and sample restore; NFS mounts remain excluded per the approved exception and must not appear in backup producers or capacity forecasts.
 - [ ] T3.6 Write a new-generation manifest/index of baseline artifacts.
   - **Acceptance:** record IDs, source handles, completion times, checksums/test results, owners, and retention labels; no credentials or sensitive data in the manifest.
 
@@ -198,6 +200,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-12 | T0.1–T0.4 | Completed | Switched default context to `jumphost-production`; read-only live mapping and snapshot/backup inventory captured. Details in current-state baseline and checked subtasks. | `86cd1360` (epic baseline; pushed) |
 | 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | `645c0c90` |
 | 2026-11-12 | T1.2 | Completed | User approved the proposed 6-hour database/GitLab repository RPO, 24-hour standard application RPO, 4-hour critical RTO, and 24-hour standard RTO. | `90c25457` |
+| 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | Pending commit |
 
 ## Update procedure
 
