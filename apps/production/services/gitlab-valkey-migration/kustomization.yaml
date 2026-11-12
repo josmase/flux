@@ -4,5 +4,4 @@ kind: Kustomization
 namespace: gitlab
 
 resources:
-  - pvc.yaml
   - ha-final-pvcs.yaml
