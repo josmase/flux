@@ -161,6 +161,32 @@ canonical three-replica StorageClass named `linstor`.
 
 ## Per-service evidence template
 
+## Shared PostgreSQL old-generation cleanup (2026-11-12)
+
+The production `shared-postgres` CNPG cluster is healthy 3/3 on canonical
+`linstor` PGDATA/WAL claims. Ten older Released/Retain source PVs had no
+current PVC; their LINSTOR resources were unused with UpToDate diskful copies
+and the PVs had successful retained snapshots. Their live resources and PV
+objects were removed individually. All 86 successful LINSTOR snapshot records
+and 75 Ready `VolumeSnapshotContent` objects with Retain policy remain.
+
+| Old claim | PV | LINSTOR snapshots retained | Ready Retain contents retained |
+|---|---|---:|---:|
+| `shared-postgres-5` | `pvc-136d880e-535e-4625-bff4-ab497086336d` | 7 | 7 |
+| `shared-postgres-5-wal` | `pvc-97b5b2f1-eb01-4f56-8fbb-dfeda73a89e1` | 6 | 6 |
+| `shared-postgres-6` | `pvc-e514156f-3e85-4981-9c31-1d06861ca38a` | 3 | 3 |
+| `shared-postgres-6-wal` | `pvc-bf839966-ef46-4e8a-af65-a08e68bc928e` | 3 | 3 |
+| `shared-postgres-7` | `pvc-054c6965-69a1-48c1-885c-f6bf3644d8d8` | 1 | 1 |
+| `shared-postgres-7-wal` | `pvc-85d1b371-986d-4f35-bece-0c35d6b7bf1f` | 1 | 1 |
+| `shared-postgres-10` | `pvc-02eaaeb8-1294-4868-bc8b-fb51d1a44220` | 27 | 25 |
+| `shared-postgres-10-wal` | `pvc-6554dac2-1524-4dc3-9562-54d6c8cebe06` | 28 | 25 |
+| `shared-postgres-11` | `pvc-8c63f0bc-109b-4998-b6b0-dd161c5f7819` | 5 | 2 |
+| `shared-postgres-11-wal` | `pvc-f777df1a-90f6-4ff6-9c45-58861416ceb5` | 5 | 2 |
+
+The two older `shared-postgres-8` PVs remain held because neither has LINSTOR
+snapshot records or Ready retained snapshot content. Do not remove those live
+copies until a separate recovery-artifact and lineage review is complete.
+
 ## LLM Switchboard blank migration (2026-09-23)
 
 - The old `llm-switchboard-data-triple` PVC was deleted by explicit request.

@@ -252,6 +252,32 @@ source/target handle, replica health, recovery artifact, content or database
 validation, and cutover outcome in the migration ledger before releasing its
 source data.
 
+### Released PV cleanup checkpoint (2026-11-12)
+
+The live cluster still has 61 Released PV objects whose `storageClassName`
+starts with `linstor-final`; all use Retain. There are no PVCs bound to those
+legacy classes and no legacy StorageClass objects. The PVs comprise 45 on
+`linstor-final`, 14 on `linstor-final-triple`, and 2 on
+`linstor-final-bootstrap`. Twenty-one have a current PVC with the same
+namespace and claim name but an older claim UID; the other 40 have no current
+matching PVC. Every remaining PV maps to a live LINSTOR resource, and 46 have
+LINSTOR snapshot records. These are not proof of disposable data: each PV must
+be mapped to its canonical target and checked for source use, retained
+snapshots, and backup references before removal. Preserve recovery artifacts.
+
+Radarr-1 is the first verified cleanup: legacy source PV
+`pvc-091343be-c6ff-4a99-b2cc-2958bf244bef` and all its live LINSTOR resources
+are gone. Its replacement claim remains Bound on `linstor`, the Deployment is
+1/1 Ready, and its source snapshot remains `SUCCESSFUL` in LINSTOR and Ready
+with Retain policy in Kubernetes. Apply this per-volume gate to the remaining
+Released PVs; hold ambiguous database, GitLab, and failed-migration sources.
+On 2026-11-12, ten additional old Shared PostgreSQL data/WAL PVs were cleaned
+after confirming their resources were unused and UpToDate, the replacement
+CNPG cluster was healthy 3/3, and their 86 successful LINSTOR snapshots plus
+75 Ready Retain VolumeSnapshotContents were preserved. The two old
+`shared-postgres-8` PVs remain held: they have no LINSTOR snapshots or matching
+Ready retained content.
+
 ## Migration sequence
 
 1. **Inventory and classify.** Collect PVC/PV/CSI handles, LINSTOR resource
