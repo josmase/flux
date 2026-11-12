@@ -223,7 +223,6 @@ Do not delete retained snapshot or backup artifacts as part of this process.
 | `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap` | Retain as the prior Prometheus generation until the active TSDB has passed the observation window and recovery checks. |
 | `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | `cnpg-system/shared-postgres-8` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
 | `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
-| `pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f` | `llm-switchboard/llm-switchboard-data-linstor` | `linstor-final` | Determine whether this is the accepted replacement or a separate generation; reconcile contents with the triple source before cleanup. |
 | `pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03` | `gitlab/gitlab-postgres-3` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
 | `pvc-d483fe6c-51e9-43da-adf2-41db960731fd` | `default/zero-cache-snapshot-restore` | `linstor-final-triple` | Identify the restore lineage and whether this is the accepted recovery point; retain until reconciled with the live zero-cache target. |
 | `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | `gitlab/gitlab-postgres-3-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
@@ -266,8 +265,8 @@ migration ledger before releasing its source data.
 
 ### Released PV cleanup checkpoint (2026-11-12)
 
-The fresh production census has 26 Released PVs whose `storageClassName`
-starts with `linstor-final`: 13 on `linstor-final`, 11 on
+The fresh production census has 25 Released PVs whose `storageClassName`
+starts with `linstor-final`: 12 on `linstor-final`, 11 on
 `linstor-final-triple`, and 2 on `linstor-final-bootstrap`. All use Retain;
 there are no PVCs bound to those names and no corresponding LINSTOR
 StorageClass objects. Every PV is listed in the per-PV disposition table.
@@ -288,7 +287,12 @@ Released PV `pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74` was then reconciled
 against its active canonical claim and removed after confirming the target
 Deployment was 1/1 Ready with three UpToDate replicas. Its unused source
 resource was removed, while its successful LINSTOR snapshot and Ready Retain
-VolumeSnapshotContent remain. The remaining 26 PVs have individual
+VolumeSnapshotContent remain. The separate stale LLM Switchboard PV
+`pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f` was also removed after verifying the
+canonical `linstor` claim was Bound with three UpToDate replicas, the old
+resource was Unused, and its successful snapshot and Ready Retain
+VolumeSnapshotContent remained. The workload had no active Deployment or pod;
+its snapshot was preserved for recovery. The remaining 25 PVs have individual
 dispositions above; retirement of legacy StorageClass definitions is complete,
 but cleanup of a held PV or its backing data requires a separate evidence-based
 decision. The two old

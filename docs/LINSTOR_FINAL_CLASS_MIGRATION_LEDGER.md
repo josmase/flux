@@ -194,6 +194,12 @@ copies until a separate recovery-artifact and lineage review is complete.
   StorageClass `linstor` and the Deployment now references it.
 - The workload remains unavailable solely because its referenced registry image
   is missing; storage cutover itself completed.
+- On 2026-11-12, a separate stale Released PV from an older generation,
+  `pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f`, was removed after confirming the
+  canonical PVC remained Bound on `linstor` with three UpToDate replicas. Its
+  LINSTOR resource was unused; the successful snapshot
+  `snapshot-61c4fe9c-fc91-4611-9a11-2e9fcb684a63` and its Ready Retain
+  `VolumeSnapshotContent` remain. No Deployment or pod was active at cleanup.
 
 ## Growlog media blank migration (2026-09-23)
 
