@@ -229,6 +229,37 @@ Do not delete retained snapshot or backup artifacts as part of this process.
 | `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final` | Compare with the active Gitaly claim and validate repository manifest/recovery path; retain until lineage is clear. |
 | `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `gitlab/gitlab-postgresql-linstor` | `linstor-final` | Resolve this older GitLab PostgreSQL generation and verify database recovery before cleanup. |
 
+The following read-only source artifact inventory was refreshed on 2026-11-12.
+VSC means a Ready `VolumeSnapshotContent` with Retain policy. A LINSTOR
+snapshot without a VSC remains a backend-only recovery point; verify its
+restore route before relying on it.
+
+| PV | LINSTOR snapshot state | Ready Retain VSCs |
+|---|---|---:|
+| `pvc-025dcd91-90aa-4ff9-a354-7f92ff740710` | `snapshot-d64024f7-4f46-49e4-a6f8-0cb4b7a58783` Successful | 0 |
+| `pvc-0d695524-cbb4-446b-9d48-a61824bf8053` | None | 0 |
+| `pvc-2050a204-fb97-4b5e-a1e3-fca85bc2b95d` | None | 0 |
+| `pvc-2a4ec4d4-177f-45ad-9ee1-feb1aa3b140b` | None | 0 |
+| `pvc-37e1f48e-9c0e-4758-80ba-35d71dc70a7f` | None | 0 |
+| `pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80` | None | 0 |
+| `pvc-482b82cb-4452-4965-b7d0-068090ffd2f2` | None | 0 |
+| `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b` | None | 0 |
+| `pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a` | `snapshot-a6b520b5-da68-42a4-a552-a9f5df0fae1a` Successful | 0 |
+| `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | None | 0 |
+| `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `back_20261021_070349` Successful | 0 |
+| `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | None | 0 |
+| `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` | `snapshot-fcb2996b-411b-4830-8045-8517a018d7ec` Successful | 1 |
+| `pvc-9799a120-b53e-424e-8eac-0ff5288a252d` | `snapshot-b0882247-6d1e-411f-a0a8-43a90c30ebae` Successful | 1 |
+| `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `snapshot-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2` Successful | 1 |
+| `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | None | 0 |
+| `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | None | 0 |
+| `pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03` | None | 0 |
+| `pvc-d483fe6c-51e9-43da-adf2-41db960731fd` | None | 0 |
+| `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | None | 0 |
+| `pvc-e945814e-6dbb-4843-a5cb-6f2ec44bb338` | None | 0 |
+| `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af` Successful | 0 |
+| `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `snapshot-3dd95f1e-3078-47d0-9160-33fdcf599eeb` Successful | 0 |
+
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
 clusters have three Ready instances and quorum-synchronous streaming replicas;
 each cluster's six target PGDATA/WAL volumes have three UpToDate replicas on
