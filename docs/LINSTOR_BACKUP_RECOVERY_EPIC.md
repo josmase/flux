@@ -90,7 +90,7 @@ Non-LINSTOR NFS/object storage is in scope for each workload's full recovery pla
 
 - [x] T1.1 Assign an owner and business/recovery priority to each workload and each of the four unreferenced claims. **Evidence:** the current 67-claim matrix records Platform Operations as accountable owner, service-level workload owners, priority, disposition, and approved RPO/RTO targets; live PVC inventory was re-read on 2026-11-12. The four unreferenced claims have explicit recovery/retirement dispositions. Two old claims are already terminating and remain protected from force-finalization.
   - **Acceptance:** every live claim has exactly one owner and disposition; no unknown authoritative data remains.
-- [ ] T1.2 Approve RPO/RTO tiers.
+- [x] T1.2 Approve RPO/RTO tiers. **Evidence:** user approved the proposed tiers on 2026-11-12: databases and GitLab repositories at 6-hour RPO; standard application state at 24-hour RPO; critical RTO at 4 hours and standard RTO at 24 hours.
   - **Acceptance:** proposed starting targets are reviewed and approved: databases/GitLab repositories at 6-hour RPO; standard application state at 24-hour RPO; 4-hour critical and 24-hour standard RTO, or documented replacements.
 - [ ] T1.3 Confirm which data is authoritative, rebuildable, or outside LINSTOR.
   - **Acceptance:** Valkey, model caches, Prometheus history, NFS media/photos, GitLab object storage, and Watchtower3D have explicit decisions and restore methods.
@@ -197,6 +197,7 @@ Append one entry after each subtask completion, and commit/push this file update
 |---|---|---|---|---|
 | 2026-11-12 | T0.1–T0.4 | Completed | Switched default context to `jumphost-production`; read-only live mapping and snapshot/backup inventory captured. Details in current-state baseline and checked subtasks. | `86cd1360` (epic baseline; pushed) |
 | 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | `645c0c90` |
+| 2026-11-12 | T1.2 | Completed | User approved the proposed 6-hour database/GitLab repository RPO, 24-hour standard application RPO, 4-hour critical RTO, and 24-hour standard RTO. | Pending commit |
 
 ## Update procedure
 
