@@ -260,6 +260,13 @@ not that a restore drill has passed.
 | `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af` Successful | None found | 0 |
 | `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `snapshot-3dd95f1e-3078-47d0-9160-33fdcf599eeb` Successful | None found | 0 |
 
+The Prometheus RustFS backup restore drill remains untested. On 2026-11-12 the
+three `linstor-thin` pools had 204.72–216.61 GiB free; each source replica
+reported 139.49–141.73 GiB allocated. A one-node restore could leave only about
+63–77 GiB free on its target pool and approach the configured free-space
+threshold. Do not run the drill until capacity is freed or a safe target and
+headroom are planned. The source PV and successful remote backup remain.
+
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
 clusters have three Ready instances and quorum-synchronous streaming replicas;
 each cluster's six target PGDATA/WAL volumes have three UpToDate replicas on
