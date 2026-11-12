@@ -30,7 +30,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | Task | Status | Completion evidence |
 |---|---|---|
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
-| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | NOT STARTED | — |
+| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | IN PROGRESS | T1.1 ownership and recovery-priority matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv) |
 | T2 — Prepare independent backup destination and capacity controls | NOT STARTED | — |
 | T3 — Produce and verify new-generation baseline backups | NOT STARTED | — |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
@@ -48,6 +48,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 - LINSTOR `schedule list` returned `{}`; there are no active LINSTOR recurring schedules. There are zero CNPG `ScheduledBackup` objects.
 - LINSTOR reported 58 remote backup records, all `success=true` and `restorable=true`; newest records are dated 2026-11-05. The two newest resource handles were not found among current PV CSI handles and require ownership investigation.
 - There are nine CNPG `Backup` objects: eight completed and one failed. No scheduled backups exist.
+- A follow-up live read on 2026-11-12 confirmed 67/67 LINSTOR PVCs Bound, with the same four unreferenced claims above. `media/radarr-6-config-linstor` and `media/reiverr-plugins-linstor` have deletion timestamps; preserve their snapshot dependencies and do not force-remove protection finalizers. Claim owners, priorities, approved targets, and current dispositions are recorded in the T1.1 matrix. Data classification and rebuildability decisions remain open under T1.3.
 - The live cluster query did not identify a current LINSTOR PVC for Minecraft, Headscale, Node-RED, or Plex. If these are in scope, identify their live non-LINSTOR storage and backup systems separately.
 - A prior operations note reports one unrecognized remote object. Identify it before cleanup. Preserve backup-system metadata such as `__protection/capacity.json` if present; it is not a workload backup.
 
@@ -83,11 +84,11 @@ Non-LINSTOR NFS/object storage is in scope for each workload's full recovery pla
 - [x] T0.3 Inventory Kubernetes snapshots, LINSTOR schedules, S3 backup records, and CNPG backup objects. **Evidence:** 170 snapshots; zero LINSTOR schedules; zero CNPG ScheduledBackups; 58 restorable records; nine CNPG Backup objects including one failed.
 - [x] T0.4 Record unresolved artifact handles and claims as explicit follow-up work. **Evidence:** two newest remote source handles and unrecognized remote object flagged; four unreferenced PVCs enumerated.
 
-### T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions — NOT STARTED
+### T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions — IN PROGRESS
 
 **Definition of done:** Service owners approve the workload matrix, recovery targets, exclusions, and any non-LINSTOR backup dependencies.
 
-- [ ] T1.1 Assign an owner and business/recovery priority to each workload and each of the four unreferenced claims.
+- [x] T1.1 Assign an owner and business/recovery priority to each workload and each of the four unreferenced claims. **Evidence:** the current 67-claim matrix records Platform Operations as accountable owner, service-level workload owners, priority, disposition, and approved RPO/RTO targets; live PVC inventory was re-read on 2026-11-12. The four unreferenced claims have explicit recovery/retirement dispositions. Two old claims are already terminating and remain protected from force-finalization.
   - **Acceptance:** every live claim has exactly one owner and disposition; no unknown authoritative data remains.
 - [ ] T1.2 Approve RPO/RTO tiers.
   - **Acceptance:** proposed starting targets are reviewed and approved: databases/GitLab repositories at 6-hour RPO; standard application state at 24-hour RPO; 4-hour critical and 24-hour standard RTO, or documented replacements.
@@ -195,6 +196,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | Date (UTC) | Subtask | Status change | Evidence / outcome | Commit |
 |---|---|---|---|---|
 | 2026-11-12 | T0.1–T0.4 | Completed | Switched default context to `jumphost-production`; read-only live mapping and snapshot/backup inventory captured. Details in current-state baseline and checked subtasks. | `86cd1360` (epic baseline; pushed) |
+| 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | Pending push |
 
 ## Update procedure
 

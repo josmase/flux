@@ -1,0 +1,68 @@
+namespace,pvc,phase,deletion_timestamp,accountable_owner,service_owner,priority,rpo_target,rto_target,disposition
+artifactory,artifactory-data-linstor,Bound,,Platform Operations,Artifactory,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+artifactory,artifactory-pg17-linstor,Bound,,Platform Operations,Artifactory PostgreSQL,standard,6h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-1,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-1-wal,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-2,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-2-wal,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-3,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-3-wal,Bound,,Platform Operations,Shared PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+cnpg-system,shared-postgres-8-recovery-archive,Bound,,Platform Operations,Shared PostgreSQL,critical,N/A (recovery-only; no recurring schedule),N/A (disposition/restore path pending),Preserve: only current archive of former PG8 data/WAL; no matching source snapshot or backup found.
+default,growlog-media-data-linstor,Bound,,Platform Operations,GrowLog,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+default,zero-cache-data-linstor-v2,Bound,,Platform Operations,Zero-cache,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-1,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-1-wal,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-2,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-2-wal,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-3,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,gitlab-postgres-3-wal,Bound,,Platform Operations,GitLab PostgreSQL,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,repo-data-gitlab-gitaly-0,Bound,,Platform Operations,GitLab Gitaly,critical,6h,4h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+gitlab,valkey-data-gitlab-valkey-ha-0,Bound,,Platform Operations,GitLab Valkey HA,standard,24h,24h,In scope pending T1.3 decision on authoritative AOF state versus tested rebuild.
+gitlab,valkey-data-gitlab-valkey-ha-1,Bound,,Platform Operations,GitLab Valkey HA,standard,24h,24h,In scope pending T1.3 decision on authoritative AOF state versus tested rebuild.
+gitlab,valkey-data-gitlab-valkey-ha-2,Bound,,Platform Operations,GitLab Valkey HA,standard,24h,24h,In scope pending T1.3 decision on authoritative AOF state versus tested rebuild.
+immich,immich-db-linstor,Bound,,Platform Operations,Immich,standard,6h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+immich,immich-model-cache-ml-0-linstor,Bound,,Platform Operations,Immich,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+immich,immich-model-cache-ml-1-linstor,Bound,,Platform Operations,Immich,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+immich,immich-model-cache-ml-2-linstor,Bound,,Platform Operations,Immich,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+immich,immich-model-cache-ml-linstor,Bound,,Platform Operations,Immich,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+media,arr-dashboard-config-linstor,Bound,,Platform Operations,Arr Dashboard,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,bazarr-config-linstor-v2,Bound,,Platform Operations,Bazarr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,checkrr-config-linstor-v6,Bound,,Platform Operations,Checkrr,standard,N/A (recovery-only; no recurring schedule),N/A (disposition/restore path pending),"Retain prepared canonical target; validate owner, SQLite and app state before any schedule or cleanup."
+media,jellyfin-config-pvc-jellyfin-0-canonical,Bound,,Platform Operations,Jellyfin,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,prowlarr-config-linstor,Bound,,Platform Operations,Prowlarr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qbittorrent-2-qbittorrent-config,Bound,,Platform Operations,qBittorrent 2,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qbittorrent-3-qbittorrent-config,Bound,,Platform Operations,qBittorrent 3,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qbittorrent-4-qbittorrent-config,Bound,,Platform Operations,qBittorrent 4,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qbittorrent-5-qbittorrent-config,Bound,,Platform Operations,qBittorrent 5,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qbittorrent-config,Bound,,Platform Operations,qBittorrent 1,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,qui-config,Bound,,Platform Operations,Qui,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-1-config-linstor,Bound,,Platform Operations,Radarr 1,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-10-config-linstor,Bound,,Platform Operations,Radarr 10,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-11-config-linstor,Bound,,Platform Operations,Radarr 11,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-12-config-linstor,Bound,,Platform Operations,Radarr 12,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-2-config-linstor,Bound,,Platform Operations,Radarr 2,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-3-config-linstor,Bound,,Platform Operations,Radarr 3,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-4-config-linstor,Bound,,Platform Operations,Radarr 4,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-5-config-linstor,Bound,,Platform Operations,Radarr 5,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-6-config-linstor,Bound,2026-11-12T10:10:55Z,Platform Operations,Radarr 6,standard,N/A (recovery-only; no recurring schedule),N/A (disposition/restore path pending),Retiring source PVC; deletionTimestamp present. Preserve snapshot/source dependencies; never force finalizers.
+media,radarr-6-config-linstor-v2,Bound,,Platform Operations,Radarr 6,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-7-config-linstor,Bound,,Platform Operations,Radarr 7,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-8-config-linstor,Bound,,Platform Operations,Radarr 8,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,radarr-9-config-linstor,Bound,,Platform Operations,Radarr 9,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,reiverr-plugins-linstor,Bound,2026-11-12T18:03:33Z,Platform Operations,Reiverr,standard,N/A (recovery-only; no recurring schedule),N/A (disposition/restore path pending),Retired workload recovery artifact; deletionTimestamp present. Preserve snapshot dependencies; never force finalizers.
+media,seerr-config-linstor,Bound,,Platform Operations,Seerr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-1-config-linstor,Bound,,Platform Operations,Sonarr 1,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-2-config-linstor,Bound,,Platform Operations,Sonarr 2,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-3-config-linstor,Bound,,Platform Operations,Sonarr 3,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-4-config-linstor,Bound,,Platform Operations,Sonarr 4,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-5-config-linstor,Bound,,Platform Operations,Sonarr 5,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,sonarr-6-config-linstor,Bound,,Platform Operations,Sonarr 6,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+media,tdarr-config-linstor,Bound,,Platform Operations,Tdarr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+monitoring,alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0,Bound,,Platform Operations,Monitoring,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+monitoring,gotify-data-linstor,Bound,,Platform Operations,Monitoring,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+monitoring,grafana-data-linstor,Bound,,Platform Operations,Monitoring,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+monitoring,prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0,Bound,,Platform Operations,Monitoring,standard,24h,24h,In scope pending T1.3 decision on history retention; Git-managed config remains protected.
+ollama,voice-models,Bound,,Platform Operations,Ollama,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+rustdesk,rustdesk-data,Bound,,Platform Operations,RustDesk,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+watchtower3d,watchtower3d-data-linstor,Bound,,Platform Operations,Watchtower3D,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
+wyoming-voice,whisper-models,Bound,,Platform Operations,Wyoming Voice,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
