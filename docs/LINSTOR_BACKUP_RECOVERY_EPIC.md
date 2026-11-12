@@ -200,7 +200,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-12 | T0.1–T0.4 | Completed | Switched default context to `jumphost-production`; read-only live mapping and snapshot/backup inventory captured. Details in current-state baseline and checked subtasks. | `86cd1360` (epic baseline; pushed) |
 | 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | `645c0c90` |
 | 2026-11-12 | T1.2 | Completed | User approved the proposed 6-hour database/GitLab repository RPO, 24-hour standard application RPO, 4-hour critical RTO, and 24-hour standard RTO. | `90c25457` |
-| 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | Pending commit |
+| 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | `6423bd23` |
 
 ## Update procedure
 
