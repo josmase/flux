@@ -148,6 +148,11 @@ resource were removed; the three source `VolumeSnapshotContent` objects remain
 Ready with `Retain` policy. An earlier target, `checkrr-config-linstor-v5`,
 did not match and remains separate. Checkrr was not re-enabled; SQLite integrity
 was not checked because the available copy image lacks SQLite tooling.
+On 2026-11-12 the separate stale Released `linstor-final` PV
+`pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` and its unused LINSTOR resources
+were removed after confirming v6 remained Bound with three UpToDate replicas;
+its Successful snapshot and Ready Retain snapshot content remain. The v5
+canonical failed-target PVs remain separately tracked for disposition.
 
 ## Retired standalone Valkey migration (2026-11-11)
 
@@ -217,7 +222,6 @@ Do not delete retained snapshot or backup artifacts as part of this process.
 | `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | `gitlab/gitlab-postgres-4` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
 | `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Retain through observation. On 2026-11-12 the canonical PVC had been Bound 147m and its pod Running 142m; the matching RustFS v2 backup reports `Success`, but no restore drill is recorded. Confirm WAL replay, readiness, representative queries, retention, and restore before removal. |
 | `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | `artifactory/data-artifactory-postgresql-final` | `linstor-final` | Identify the active Artifactory PostgreSQL generation and verify database recovery/target before cleanup. |
-| `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` | `media/checkrr-config-linstor` | `linstor-final` | Migration is blocked by source filesystem corruption. Preserve authoritative source; recover/copy only after filesystem-level validation. |
 | `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap` | Retain as the prior Prometheus generation until the active TSDB has passed the observation window and recovery checks. |
 | `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | `cnpg-system/shared-postgres-8` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
 | `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
@@ -249,7 +253,6 @@ not that a restore drill has passed.
 | `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | None | None found | 0 |
 | `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `back_20261021_070349` Successful | `back_20261021_070349` Success; restore untested | 0 |
 | `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | None | None found | 0 |
-| `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` | `snapshot-fcb2996b-411b-4830-8045-8517a018d7ec` Successful | None found | 1 |
 | `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `snapshot-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2` Successful | None found | 1 |
 | `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | None | None found | 0 |
 | `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | None | None found | 0 |
@@ -301,8 +304,8 @@ migration ledger before releasing its source data.
 
 ### Released PV cleanup checkpoint (2026-11-12)
 
-The fresh production census has 22 Released PVs whose `storageClassName`
-starts with `linstor-final`: 10 on `linstor-final`, 11 on
+The fresh production census has 21 Released PVs whose `storageClassName`
+starts with `linstor-final`: 9 on `linstor-final`, 11 on
 `linstor-final-triple`, and 2 on `linstor-final-bootstrap`. All use Retain;
 there are no PVCs bound to those names and no corresponding LINSTOR
 StorageClass objects. Every PV is listed in the per-PV disposition table.
@@ -338,7 +341,12 @@ Artifactory's stale `artifactory-pg17-recovered` PV
 `pvc-9799a120-b53e-424e-8eac-0ff5288a252d` was removed after its active
 `artifactory-pg17-linstor` target had three UpToDate replicas and the exact
 PostgreSQL readiness probe passed. Its Successful snapshot and Ready Retain
-VolumeSnapshotContent remain. The remaining 22 PVs have individual dispositions
+VolumeSnapshotContent remain. Checkrr's stale `linstor-final` PV
+`pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` was removed after confirming the v6
+canonical claim was Bound with three UpToDate replicas, its source resource was
+Unused, and its Successful snapshot plus Ready Retain `VolumeSnapshotContent`
+remained. Checkrr is not running; SQLite integrity still needs validation
+before enabling it. The remaining 21 PVs have individual dispositions
 above; retirement of legacy StorageClass definitions is complete, but cleanup
 of a held PV or its backing data requires a separate evidence-based decision.
 The two old
