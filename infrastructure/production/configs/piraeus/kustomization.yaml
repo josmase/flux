@@ -9,7 +9,6 @@ resources:
   - host-lvm-profile.yaml
   - storage-class.yaml
   - rustfs-v2-credentials.yaml
-  - rustfs-v2-remote-reconcile.yaml
   - linstor-csi-snapshot-watch-rbac.yaml
   - snapshot-class.yaml
   - snapshot-prunable-class.yaml

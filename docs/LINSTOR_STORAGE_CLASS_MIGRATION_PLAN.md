@@ -42,20 +42,22 @@ live LINSTOR claim state:
 
 | StorageClass | Bound PVCs | Released LINSTOR PVs | Notes |
 |---|---:|---:|---|
-| `linstor` | 80 | 23 | Target class; current manifest is Retain with three replicas. |
-| `linstor-final` | 0 | 52 | No live claims; Released PVs remain held for review. |
-| `linstor-final-triple` | 0 | 18 | No active claims; Released PVs remain held. |
-| `linstor-final-bootstrap` | 0 | 2 | No live claims; both old PVs are Released. |
+| `linstor` | 74 | 19 | Target class; current manifest is Retain with three replicas. |
+| `linstor-final` | 0 | 8 | No live claims; Released PVs remain held for review. |
+| `linstor-final-triple` | 0 | 10 | No active claims; Released PVs remain held. |
+| `linstor-final-bootstrap` | 0 | 0 | No live claims or PVs remain. |
 
-There are 0 bound PVCs and 72 Released PVs on the three legacy classes after
-reclaiming the three verified GitLab Valkey HA source volumes on 2026-11-12.
-Remaining Released PVs use `Retain`; they may still hold the only copy of data.
-Classify each before deletion.
+There are 0 bound PVCs and 18 Released PVs on the three legacy classes after
+reclaiming the three verified GitLab Valkey HA source volumes and cleaning
+other individually validated sources. Remaining Released PVs use `Retain`; they
+may still hold the only copy of data. Classify each before deletion.
 
-A current read-only cross-reference found 47 PVs with at least one matching
-Ready `VolumeSnapshotContent` using `Retain`, and 25 without a matching
-Kubernetes snapshot content. The latter are not proven snapshot-free: LINSTOR
-backend snapshots and backup records require a separate per-resource review.
+A prior cross-reference of the then-existing 72 legacy PVs found 47 with at
+least one matching Ready `VolumeSnapshotContent` using `Retain`, and 25 without
+a matching Kubernetes snapshot content. After the cleanups recorded below, a
+fresh cross-reference found no matching VSC for the 18 legacy PVs that remain.
+The absence of a VSC does not prove they are snapshot-free: LINSTOR backend
+snapshots and backup records require a separate per-resource review.
 No PV data or retained snapshots were deleted during this inventory. The three
 legacy StorageClass declarations have since been removed from the production
 Flux source after confirming there are no current PVCs using them; Released PVs
@@ -154,6 +156,25 @@ were removed after confirming v6 remained Bound with three UpToDate replicas;
 its Successful snapshot and Ready Retain snapshot content remain. The v5
 canonical failed-target PVs remain separately tracked for disposition.
 
+A fresh production check on 2026-11-12 found five additional Released PVs on
+the canonical `linstor` class from Checkrr retries: `pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc`
+(`checkrr-config-linstor`), `pvc-d1962717-b0f9-4b22-b77c-b4be1d892554`
+(`checkrr-config-linstor-v3`), `pvc-825ea79a-abac-4e80-8de6-55052386cce1`
+(`checkrr-config-linstor-v4`), and two v5 PVs (`pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8`,
+`pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828`). Each is Retain, has no matching
+Kubernetes `VolumeSnapshotContent`, and its three LINSTOR replicas are unused
+and `UpToDate`. The old targets are not accepted copies: the initial attempt
+failed filesystem consistency checks, v4's manifest differed, and v5 is
+documented as mismatched. Preserve all five while v6 still lacks SQLite
+integrity validation; re-evaluate them only after Checkrr's accepted data and
+application state are validated. The v6 target remains Bound with three
+`UpToDate` replicas.
+
+The newer Released `linstor` PV census found 12 LINSTOR backup snapshots on
+`pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828` (six Successful and six failed
+shipping attempts). Keep every snapshot record; the `back_` name and local
+Successful state do not prove that a remote restore works.
+
 ## Retired standalone Valkey migration (2026-11-11)
 
 `gitlab/data-gitlab-valkey-0` was unmounted and not owned by a running
@@ -170,17 +191,20 @@ The Gitaly StatefulSet template now uses `${STORAGE_CLASS}`. Gitaly was
 stopped cleanly, and its 50 GiB source claim was copied to a canonical staging
 PVC, then to the deterministic `repo-data-gitlab-gitaly-0` claim. Both copies
 matched across 8,060 paths, file hashes, ownership, modes, timestamps, links,
-and extended attributes. The old PV remains Released/Retain; the canonical
-stage PVC remains available as a rollback copy. The recreated StatefulSet uses
-`linstor`, is 1/1 Ready, and a Git push succeeded. GitLab's read-only check
+and extended attributes. The recreated StatefulSet uses `linstor`, is 1/1
+Ready, and a Git push succeeded. GitLab's read-only check
 reported Gitaly OK and all project namespaces present, though it also reported
 GitLab Shell self-check and Sidekiq status warnings.
 
 The migration snapshot request failed twice because the LINSTOR CSI driver
-could not reach the configured `rustfs-linstor-backups-v2` remote. The failed
-snapshot metadata was removed; no valid snapshot was created. The old Retain PV
-and staging copy are the rollback data. This shows migration snapshots still
-depend on the backup remote even though backup automation is disabled.
+could not reach the configured `rustfs-linstor-backups-v2` remote; the failed
+requests were removed. A separate existing backend snapshot,
+`snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af`, is currently Successful on
+nodes 205 and 206, but has no Kubernetes `VolumeSnapshotContent`. The old Retain
+PV was removed on 2026-11-12 after verifying the active canonical copy and
+three UpToDate target replicas. Its LINSTOR resources were removed with the
+supported per-node command; the backend snapshot remained Successful on nodes
+205 and 206. A live inventory found no separate staging PVC.
 
 ## Valkey HA migration (2026-11-11)
 
@@ -217,19 +241,16 @@ Do not delete retained snapshot or backup artifacts as part of this process.
 | `pvc-37e1f48e-9c0e-4758-80ba-35d71dc70a7f` | `gitlab/gitlab-postgres-1` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
 | `pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80` | `cnpg-system/shared-postgres-8-wal` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
 | `pvc-482b82cb-4452-4965-b7d0-068090ffd2f2` | `gitlab/gitlab-postgres-5-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
-| `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b` | `llm-switchboard/llm-switchboard-data-triple` | `linstor-final-triple` | Workload is absent/unavailable. Decide whether to restore the service; if yes, migrate data to a `${STORAGE_CLASS}` PVC and validate before source cleanup. |
 | `pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
 | `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | `gitlab/gitlab-postgres-4` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
 | `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Retain through observation. On 2026-11-12 the canonical PVC had been Bound 147m and its pod Running 142m; the matching RustFS v2 backup reports `Success`, but no restore drill is recorded. Confirm WAL replay, readiness, representative queries, retention, and restore before removal. |
 | `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | `artifactory/data-artifactory-postgresql-final` | `linstor-final` | Identify the active Artifactory PostgreSQL generation and verify database recovery/target before cleanup. |
-| `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap` | Retain as the prior Prometheus generation until the active TSDB has passed the observation window and recovery checks. |
 | `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | `cnpg-system/shared-postgres-8` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
 | `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
 | `pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03` | `gitlab/gitlab-postgres-3` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
 | `pvc-d483fe6c-51e9-43da-adf2-41db960731fd` | `default/zero-cache-snapshot-restore` | `linstor-final-triple` | Identify the restore lineage and whether this is the accepted recovery point; retain until reconciled with the live zero-cache target. |
 | `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | `gitlab/gitlab-postgres-3-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
 | `pvc-e945814e-6dbb-4843-a5cb-6f2ec44bb338` | `gitlab/gitlab-postgres-1-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
-| `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final` | Compare with the active Gitaly claim and validate repository manifest/recovery path; retain until lineage is clear. |
 | `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `gitlab/gitlab-postgresql-linstor` | `linstor-final` | Resolve this older GitLab PostgreSQL generation and verify database recovery before cleanup. |
 
 The following read-only source artifact inventory was refreshed on 2026-11-12.
@@ -248,19 +269,16 @@ not that a restore drill has passed.
 | `pvc-37e1f48e-9c0e-4758-80ba-35d71dc70a7f` | None | None found | 0 |
 | `pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80` | None | None found | 0 |
 | `pvc-482b82cb-4452-4965-b7d0-068090ffd2f2` | None | None found | 0 |
-| `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b` | None | None found | 0 |
 | `pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a` | `snapshot-a6b520b5-da68-42a4-a552-a9f5df0fae1a` Successful | None found | 0 |
 | `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | None | None found | 0 |
 | `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `back_20261021_070349` Successful | `back_20261021_070349` Success; restore untested | 0 |
 | `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | None | None found | 0 |
-| `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `snapshot-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2` Successful | None found | 1 |
 | `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | None | None found | 0 |
 | `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | None | None found | 0 |
 | `pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03` | None | None found | 0 |
 | `pvc-d483fe6c-51e9-43da-adf2-41db960731fd` | None | None found | 0 |
 | `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | None | None found | 0 |
 | `pvc-e945814e-6dbb-4843-a5cb-6f2ec44bb338` | None | None found | 0 |
-| `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af` Successful | None found | 0 |
 | `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `snapshot-3dd95f1e-3078-47d0-9160-33fdcf599eeb` Successful | None found | 0 |
 
 The Prometheus RustFS backup restore drill remains untested. On 2026-11-12 the
@@ -302,11 +320,85 @@ remaining hold's source handle, target handle (if any), replica health,
 recovery artifact, content or database validation, and disposition in the
 migration ledger before releasing its source data.
 
+## Released PVs already using `linstor`
+
+A fresh production inventory found 19 Released PVs on the canonical StorageClass.
+These are stale generations, migration attempts, or recovery-test volumes; they
+do not need class migration, but their data still needs per-volume disposition.
+None of the 19 remaining PVs has a matching Ready Retain
+`VolumeSnapshotContent`. LINSTOR reports backend snapshots on Checkrr v5 and
+Immich's recovery-test volume. Preserve these snapshots and do not infer remote restorability
+from their names or local state.
+
+| PV | Former claim | Recovery evidence | Required disposition |
+|---|---|---|---|
+| `pvc-030fac5a-2014-4f1d-90a4-2aee14ea0256` | `media/radarr-1-config-linstor` | Quiesced read-only comparison found different `radarr.db` and five source-only archives (one manual, four scheduled); no LINSTOR snapshot or matching Ready Retain VSC; all three source replicas were Unused and UpToDate. | Hold until source database differences and archives are reconciled or preserved. Radarr-1 was restored to 1/1 Ready after comparison. |
+| `pvc-114856c2-0803-4030-97a5-2432634f0373` | `media/radarr-4-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-4-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-3243ac8d-f41c-4226-b1be-8e7fc7e3bdd7` | `media/radarr-7-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-7-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-34149619-7bff-4143-a368-a3e45b5bdc4c` | `media/radarr-5-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-5-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-422c5735-8b1a-4c76-83c2-29a157b36079` | `media/radarr-9-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-9-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-572c3295-202e-4af5-933d-5f95e2bf7269` | `media/radarr-6-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Identify whether this is the rejected v1 or accepted v2 generation; compare to active v2 before removing. |
+| `pvc-68bbacbc-dd8e-414a-aab2-de479a94acc1` | `media/radarr-3-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-3-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-77a65034-7d8f-4c55-a67b-fd03046bc356` | `media/radarr-2-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-2-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-aef7def3-53c3-4b7f-afd1-da71fb1083c7` | `media/radarr-12-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-12-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-baa44b24-7899-4f85-8894-0dcdc907eaa9` | `media/radarr-8-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-8-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-c334b48c-a473-4e02-b88f-2af05afc7ca5` | `media/radarr-11-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-11-config-linstor`; retain until exact data match and workload health are verified. |
+| `pvc-d0f2bba3-c641-479a-8cf8-e08c3632cfd8` | `media/radarr-1-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Identify which Radarr-1 generation this duplicates; compare separately from `pvc-030fac5a-2014-4f1d-90a4-2aee14ea0256`. |
+| `pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8` | `media/checkrr-config-linstor-v5` | No Ready Retain VSC; no LINSTOR snapshot listed | Failed v5 target; keep until the v6 SQLite and application validation is complete. |
+| `pvc-825ea79a-abac-4e80-8de6-55052386cce1` | `media/checkrr-config-linstor-v4` | No Ready Retain VSC; no LINSTOR snapshot listed | v4 manifest differed from source; keep until the v6 SQLite and application validation is complete. |
+| `pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828` | `media/checkrr-config-linstor-v5` | 12 LINSTOR backup snapshots: six Successful, six failed; no Ready Retain VSC | Failed/mismatched v5 target; preserve all snapshots and keep until v6 SQLite and application validation is complete. |
+| `pvc-d1962717-b0f9-4b22-b77c-b4be1d892554` | `media/checkrr-config-linstor-v3` | No Ready Retain VSC; no LINSTOR snapshot listed | Identify v3 lineage and compare to v6; keep until Checkrr acceptance is complete. |
+| `pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc` | `media/checkrr-config-linstor` | No Ready Retain VSC; no LINSTOR snapshot listed | Initial target failed filesystem consistency; keep until v6 SQLite and application validation is complete. |
+| `pvc-785ded5b-e24f-4198-ac60-60969e736d1c` | `media/sonarr-2-config-linstor` | Read-only comparison found different database/config/logs, four source-only scheduled ZIPs, and three source-only `asp/key-*.xml` encryption-key files; the target has a different ASP key. The source `sonarr.db` fails SQLite `quick_check` with freelist/page errors; all four ZIPs pass `unzip -t`, but no restore is verified. No LINSTOR snapshot or matching Ready Retain VSC; source replicas are Unused and UpToDate. | Hold. Validate a restore from the source ZIPs and determine whether source ASP keys decrypt credentials still needed by the active app. Preserve the corrupt source DB and key files until the restore path is verified. Sonarr-2 was restored to 1/1 Ready after comparison. |
+| `pvc-2496599f-0230-4952-be1e-3f412ff18497` | `immich/immich-db-recovery-test` | Five Successful and one failed LINSTOR backup snapshots; no Ready Retain VSC | Confirm this is only a disposable restore-test volume and that Immich's active database is authoritative; preserve all snapshots before removing it. |
+
+Radarr-10's old source PV `pvc-0375d1e1-59a8-422f-b624-ac70a8524b09` was
+removed on 2026-11-12 after a quiesced, read-only comparison. Source and target
+had the same 489 Movie IDs, 28 collection IDs, and six original quality
+profiles; the active database had additional history and one additional profile.
+All 309 source-only movie-file paths and 186 source-only subtitle paths were
+absent from the shared media filesystem. The source had no LINSTOR snapshots or
+matching VolumeSnapshotContent, and its three replicas were Unused (two
+UpToDate, one Diskless). Its `radarr.db`, `logs.db` plus sidecars, and four
+valid source-only scheduled ZIPs were copied to
+`/config/RecoveryArtifacts/radarr-10-source-pv-0375d1e1-59a8-422f-b624-ac70a8524b09`
+on the active canonical PVC; all copied files passed SHA-256 verification.
+The main source database passed SQLite `quick_check`; the `logs.db` index
+check inconsistency was also present in the active logs database, and both
+original files were preserved. After deleting the Released PV and its three
+LINSTOR replicas, the canonical claim remained Bound, the Deployment returned
+to 1/1 Ready, and the preserved artifact checksums still matched. The archived
+ZIPs have not been restore-tested.
+
+The superseded Zero-cache v1 PV `pvc-499f5bb4-1d89-4bc8-b656-c8aff9750e27`
+was removed on 2026-11-12 after verifying the active v2 claim was Bound with
+three UpToDate replicas, the service returned `OK` from `/keepalive`, and the
+recorded `replica.db` checksum matched. Its successful LINSTOR snapshots and
+Ready Retain S3-backed `VolumeSnapshotContent`
+`snapcontent-65768843-757e-42d7-adc3-a7e316b6f8cb` remain. No new backup or
+snapshot artifact was deleted.
+Bazarr's discarded first target PV `pvc-f873d3ec-8e80-4eb4-85c3-dc5323820b5d`
+was removed after confirming the accepted v2 PVC was Bound with three
+UpToDate replicas and the 1/1 pod had been Running for 23 hours. The old target
+had no LINSTOR snapshots or Ready Retain VolumeSnapshotContent; all three old
+LINSTOR resources were unused. The active `bazarr-config-linstor-v2` PVC and
+pod remain healthy.
+Sonarr-6's stale Released PV `pvc-b113568f-6947-4b27-bc07-44b82ebc6816` was
+removed after verifying the active canonical claim was Bound with three
+UpToDate replicas and the 1/1 workload pod was Running. Its successful LINSTOR
+snapshot and Ready Retain `VolumeSnapshotContent`
+`snapcontent-ef827cc1-6037-4b88-bc22-b102a9bdcd80` remain.
+Sonarr-2's older Released PV `pvc-72d13fe5-55cd-4e13-b3be-9651a095a810` was
+removed after confirming the canonical claim was Bound with three UpToDate
+replicas and the 1/1 pod was Running. Its Successful LINSTOR snapshot and Ready
+Retain `VolumeSnapshotContent`
+`snapcontent-61991e48-8284-40c5-a1fb-6a86019ccc72` remain.
+
 ### Released PV cleanup checkpoint (2026-11-12)
 
-The fresh production census has 21 Released PVs whose `storageClassName`
-starts with `linstor-final`: 9 on `linstor-final`, 11 on
-`linstor-final-triple`, and 2 on `linstor-final-bootstrap`. All use Retain;
+The fresh production census has 18 Released PVs whose `storageClassName`
+starts with `linstor-final`: 8 on `linstor-final`, 10 on
+`linstor-final-triple`, and none on `linstor-final-bootstrap`. All use Retain;
 there are no PVCs bound to those names and no corresponding LINSTOR
 StorageClass objects. Every PV is listed in the per-PV disposition table.
 Their presence does not prove they are disposable. Preserve source data and
@@ -346,9 +438,33 @@ VolumeSnapshotContent remain. Checkrr's stale `linstor-final` PV
 canonical claim was Bound with three UpToDate replicas, its source resource was
 Unused, and its Successful snapshot plus Ready Retain `VolumeSnapshotContent`
 remained. Checkrr is not running; SQLite integrity still needs validation
-before enabling it. The remaining 21 PVs have individual dispositions
+before enabling it. The remaining 18 legacy-class PVs have individual dispositions
 above; retirement of legacy StorageClass definitions is complete, but cleanup
 of a held PV or its backing data requires a separate evidence-based decision.
+LLM Switchboard's stale source PV `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b`
+was removed after confirming its namespace had no workload, its source
+`router.db` passed SQLite `quick_check` and contained five `requests` rows while
+the canonical database was valid and empty, and all three source replicas were
+Unused and UpToDate. The source had no LINSTOR snapshots or matching
+VolumeSnapshotContent. The raw database and original WAL/SHM sidecars were
+copied to
+`llm-switchboard/llm-switchboard-data-linstor:/RecoveryArtifacts/llm-switchboard-source-pv-4d62538a-2209-417b-ade0-68ecb0dbe71b`
+and passed SHA-256 verification; the canonical database was not replaced.
+The old PV and LINSTOR resource are gone, and the canonical PVC remains Bound.
+Gitaly's Released source PV `pvc-eb581cac-8c15-46c7-8df5-6057452be220` was
+removed after confirming its exact validated canonical copy was active, the
+old LINSTOR resources were Unused, and the target had three UpToDate replicas.
+Its successful LINSTOR snapshot `snapshot-4dba5e79-9dfe-48e2-8724-8408ac12f8af`
+remains on nodes 205 and 206; no Kubernetes VolumeSnapshotContent existed for
+it. The target Gitaly pod remains 1/1 Running. The two old
+Prometheus's stale bootstrap PV `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c`
+was also removed after the canonical TSDB remained Ready for 176 minutes,
+returned successful readiness and live plus one-day-range queries, and had
+three UpToDate LINSTOR replicas. Its Successful snapshot
+`snapshot-29dc032e-6f7f-4ad9-acf5-6ca5f51205d2` remains Ready in a Retain
+`VolumeSnapshotContent`; the PV and its LINSTOR resource instances are gone.
+The active canonical Prometheus PVC remains Bound on `linstor` and its pod is
+2/2 Running.
 The two old
 `shared-postgres-8` PVs remain held: they have no LINSTOR snapshots or matching
 Ready retained content.
@@ -397,6 +513,12 @@ chains, CNPG Backup objects, and snapshot contents remain preserved, and the
 remote credentials/configuration stay available for manual recovery. Confirm
 the relevant source data and recovery artifacts before each migration; do not
 assume that an old backup or snapshot is restorable solely because it exists.
+
+The Flux-managed `linstor-rustfs-v2-remote-reconcile-v3` Job was removed from
+the Piraeus resource set because it could create or modify the S3 remote. The
+remote credentials and S3 VolumeSnapshotClass remain for manual recovery. Live
+cluster reconciliation and any already-created Job were not verifiable from
+this workspace session.
 
 ## Legacy reference inventory
 

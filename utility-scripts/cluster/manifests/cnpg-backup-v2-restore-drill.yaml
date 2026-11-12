@@ -34,10 +34,10 @@ spec:
     labels:
       protection.josmase.dev/restore-drill: "true"
   storage:
-    storageClass: linstor
+    storageClass: ${STORAGE_CLASS}
     size: 10Gi
   walStorage:
-    storageClass: linstor
+    storageClass: ${STORAGE_CLASS}
     size: 20Gi
   resources:
     requests:

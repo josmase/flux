@@ -3,8 +3,10 @@
 import argparse
 import datetime
 import json
+import os
 import pathlib
 import subprocess
+import tempfile
 import time
 
 p = argparse.ArgumentParser(description=__doc__)
@@ -12,7 +14,16 @@ p.add_argument('--manifest', required=True, type=pathlib.Path)
 p.add_argument('--evidence-dir', required=True, type=pathlib.Path)
 p.add_argument('--resume', action='store_true', help='Resume validation of the existing drill using its original private journal')
 a = p.parse_args()
+storage_class = os.environ.get('STORAGE_CLASS')
+if not storage_class:
+    raise SystemExit('STORAGE_CLASS must be set to the canonical LINSTOR StorageClass')
 a.evidence_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
+manifest_text = a.manifest.read_text().replace('${STORAGE_CLASS}', storage_class)
+if '${STORAGE_CLASS}' in manifest_text:
+    raise SystemExit('Unresolved STORAGE_CLASS substitution in restore manifest')
+manifest_dir = tempfile.TemporaryDirectory(prefix='linstor-cnpg-restore-')
+rendered_manifest = pathlib.Path(manifest_dir.name) / a.manifest.name
+rendered_manifest.write_text(manifest_text)
 ns, drill, source = 'cnpg-system', 'shared-postgres-v2-restore-drill', 'shared-postgres'
 prior_records = [json.loads(f.read_text()) for f in sorted(a.evidence_dir.glob('[0-9]*.json'))]
 seq = max((int(f.stem) for f in a.evidence_dir.glob('[0-9]*.json')), default=0)
@@ -29,6 +40,11 @@ def run(argv, data=None):
 
 def get(args):
     return json.loads(run(['kubectl'] + args))
+
+
+storage_definition = get(['get', 'storageclass', storage_class, '-o', 'json'])
+if storage_definition.get('provisioner') != 'linstor.csi.linbit.com':
+    raise SystemExit(f'{storage_class} is not a LINSTOR StorageClass')
 
 
 def wait(label, check):
@@ -85,8 +101,8 @@ if a.resume:
 else:
     source_databases = query(source_pod, 'postgres', listing).splitlines()
     baseline = health()
-    run(['kubectl', 'apply', '--dry-run=server', '-f', str(a.manifest)])
-    run(['kubectl', 'apply', '-f', str(a.manifest)])
+    run(['kubectl', 'apply', '--dry-run=server', '-f', str(rendered_manifest)])
+    run(['kubectl', 'apply', '-f', str(rendered_manifest)])
 
 
 def ready():

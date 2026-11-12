@@ -33,6 +33,11 @@ Released PV may reference a class that no longer exists; this does not delete
 its PV or backend data. New claims must use `${STORAGE_CLASS}`. A bound PVC's
 storage class cannot be changed in place.
 
+One-off recovery utilities also read `STORAGE_CLASS` from the operator's
+environment when creating scratch PVC/PV resources or rendering CNPG recovery
+manifests. Set it from the production substitution (`STORAGE_CLASS=linstor`)
+before running them; they stop if it is unset.
+
 ## Satellite scheduling and recovery
 
 The `worker-network` `LinstorSatelliteConfiguration` pod template owns the

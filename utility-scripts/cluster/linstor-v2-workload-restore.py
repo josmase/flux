@@ -7,6 +7,7 @@ objects are preserved. Failures retain the drill and private command journal.
 import argparse
 import datetime
 import json
+import os
 import pathlib
 import subprocess
 import time
@@ -16,6 +17,9 @@ p.add_argument('workload', choices=['grafana'])
 p.add_argument('--evidence-dir', required=True, type=pathlib.Path)
 p.add_argument('--resume', action='store_true', help='Reuse the reviewed existing scratch resource and preserve its original journal')
 a = p.parse_args()
+storage_class = os.environ.get('STORAGE_CLASS')
+if not storage_class:
+    raise SystemExit('STORAGE_CLASS must be set to the canonical LINSTOR StorageClass')
 a.evidence_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
 ns = 'linstor-workload-restore-validation'
 remote = 'rustfs-linstor-backups-v2'
@@ -43,6 +47,11 @@ def get(argv):
 
 def kube(*argv):
     return get(['kubectl'] + list(argv))
+
+
+storage_definition = kube('get', 'storageclass', storage_class, '-o', 'json')
+if storage_definition.get('provisioner') != 'linstor.csi.linbit.com':
+    raise SystemExit(f'{storage_class} is not a LINSTOR StorageClass')
 
 
 def create(obj):
@@ -134,11 +143,11 @@ if existing_namespace is None:
     create({'apiVersion': 'v1', 'kind': 'Namespace', 'metadata': {'name': ns, 'labels': {'purpose': 'isolated-workload-restore'}}})
     create({'apiVersion': 'networking.k8s.io/v1', 'kind': 'NetworkPolicy', 'metadata': {'name': 'deny-all-network', 'namespace': ns}, 'spec': {'podSelector': {}, 'policyTypes': ['Ingress', 'Egress']}})
     create({'apiVersion': 'v1', 'kind': 'PersistentVolume', 'metadata': {'name': target}, 'spec': {
-        'capacity': pv['spec']['capacity'], 'accessModes': ['ReadWriteOnce'], 'storageClassName': 'linstor',
+        'capacity': pv['spec']['capacity'], 'accessModes': ['ReadWriteOnce'], 'storageClassName': storage_class,
         'persistentVolumeReclaimPolicy': 'Retain', 'claimRef': {'namespace': ns, 'name': 'restored'},
         'csi': {'driver': 'linstor.csi.linbit.com', 'volumeHandle': target, 'fsType': 'ext4'}}})
     create({'apiVersion': 'v1', 'kind': 'PersistentVolumeClaim', 'metadata': {'name': 'restored', 'namespace': ns, 'labels': {'protection.josmase.dev/restore-drill': 'true'}}, 'spec': {
-        'accessModes': ['ReadWriteOnce'], 'volumeName': target, 'storageClassName': 'linstor', 'resources': {'requests': pv['spec']['capacity']}}})
+        'accessModes': ['ReadWriteOnce'], 'volumeName': target, 'storageClassName': storage_class, 'resources': {'requests': pv['spec']['capacity']}}})
 if a.workload == 'gitlab-postgresql':
     uid = 1001
     script = r'''set -eu
