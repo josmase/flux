@@ -30,7 +30,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | Task | Status | Completion evidence |
 |---|---|---|
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
-| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | IN PROGRESS | T1.1 ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); T1.3 approved classification and NFS exception: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md) |
+| T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | DONE | Ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); approved classifications: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md); remote records: [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) |
 | T2 — Prepare independent backup destination and capacity controls | NOT STARTED | — |
 | T3 — Produce and verify new-generation baseline backups | NOT STARTED | — |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
@@ -46,7 +46,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 - The four unreferenced claims are `cnpg-system/shared-postgres-8-recovery-archive`, `media/checkrr-config-linstor-v6`, `media/radarr-6-config-linstor` (the live instance uses `...-v2`), and `media/reiverr-plugins-linstor`.
 - There are 170 `VolumeSnapshot` objects: 163 using `linstor-snapshot` and 7 using `linstor-snapshot-s3-v2` (six in `cnpg-system`, one in `default`). The snapshot-class deletion semantics differ and must be honored.
 - LINSTOR `schedule list` returned `{}`; there are no active LINSTOR recurring schedules. There are zero CNPG `ScheduledBackup` objects.
-- LINSTOR reported 58 remote backup records, all `success=true` and `restorable=true`; newest records are dated 2026-11-05. The two newest resource handles were not found among current PV CSI handles and require ownership investigation.
+- LINSTOR reported 58 remote backup records, all `success=true` and `restorable=true`; newest records are dated 2026-11-05. T1.4 mapped all 58; the two newest handles belong to retired GitLab PostgreSQL serial-2 data/WAL source claims and are not current RPO coverage. The sole non-record file reported by LINSTOR is `__protection/capacity.json`, which is protection metadata and must be preserved. See the [remote reconciliation](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md).
 - There are nine CNPG `Backup` objects: eight completed and one failed. No scheduled backups exist.
 - A follow-up live read on 2026-11-12 confirmed 67/67 LINSTOR PVCs Bound, with the same four unreferenced claims above. `media/radarr-6-config-linstor` and `media/reiverr-plugins-linstor` have deletion timestamps; preserve their snapshot dependencies and do not force-remove protection finalizers. Claim owners, priorities, approved targets, and current dispositions are recorded in the T1.1 matrix. Data classification and rebuildability decisions remain open under T1.3.
 - The live cluster query did not identify a current LINSTOR PVC for Minecraft, Headscale, Node-RED, or Plex. If these are in scope, identify their live non-LINSTOR storage and backup systems separately.
@@ -85,7 +85,7 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 - [x] T0.3 Inventory Kubernetes snapshots, LINSTOR schedules, S3 backup records, and CNPG backup objects. **Evidence:** 170 snapshots; zero LINSTOR schedules; zero CNPG ScheduledBackups; 58 restorable records; nine CNPG Backup objects including one failed.
 - [x] T0.4 Record unresolved artifact handles and claims as explicit follow-up work. **Evidence:** two newest remote source handles and unrecognized remote object flagged; four unreferenced PVCs enumerated.
 
-### T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions — IN PROGRESS
+### T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions — DONE
 
 **Definition of done:** Service owners approve the workload matrix, recovery targets, exclusions, and any non-LINSTOR backup dependencies.
 
@@ -96,8 +96,9 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 - [x] T1.3 Confirm which data is authoritative, rebuildable, or outside LINSTOR. **Evidence:** user approved the classification and test plan on 2026-11-12, with the explicit exception that all four active NFS mounts are excluded from backup. GitLab Valkey remains protected pending a successful queue-drain/rebuild or native restore test; model caches remain protected until their rebuild/RTO tests pass; Prometheus history remains standard-tier protected; Registry blobs are rebuildable under the prior 2026-11-10 approval while metadata recovery remains tracked; Watchtower3D remains authoritative.
   - **Acceptance:** Valkey, model caches, Prometheus history, NFS media/photos, GitLab object storage, and Watchtower3D have explicit decisions and restore methods.
   - **Evidence:** [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md) records the approved classifications, the NFS exception and its source-only recovery path, and the remaining validation gates.
-- [ ] T1.4 Resolve remote object ownership and map remote handles to source workload/PV or document why they are historical.
+- [x] T1.4 Resolve remote object ownership and map remote handles to source workload/PV or document why they are historical. **Evidence:** all 58 current records map to source workloads/PVs or historical claims; the two newest source handles map to old GitLab PostgreSQL serial-2 data/WAL claims and are not counted as current coverage. `__protection/capacity.json` is the only non-record file surfaced by LINSTOR; preserve it as capacity metadata.
   - **Acceptance:** all 58 existing records and the unrecognized object are attributed; neither newest unmapped record is counted toward current coverage until verified.
+  - **Evidence:** [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) and the linked 58-row record matrix.
 
 ### T2 — Prepare an independent backup destination and capacity controls — NOT STARTED
 
@@ -201,6 +202,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | `645c0c90` |
 | 2026-11-12 | T1.2 | Completed | User approved the proposed 6-hour database/GitLab repository RPO, 24-hour standard application RPO, 4-hour critical RTO, and 24-hour standard RTO. | `90c25457` |
 | 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | `6423bd23` |
+| 2026-11-12 | T1.4 | Completed | Mapped all 58 remote backup records to current or historical source claims. The newest two handles are retired GitLab PostgreSQL serial-2 data/WAL; none of the records count as current RPO coverage. Identified `__protection/capacity.json` as the only non-record object in the LINSTOR listing and marked it preserve-only metadata. | Pending commit |
 
 ## Update procedure
 
