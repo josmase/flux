@@ -517,8 +517,14 @@ assume that an old backup or snapshot is restorable solely because it exists.
 The Flux-managed `linstor-rustfs-v2-remote-reconcile-v3` Job was removed from
 the Piraeus resource set because it could create or modify the S3 remote. The
 remote credentials and S3 VolumeSnapshotClass remain for manual recovery. Live
-cluster reconciliation and any already-created Job were not verifiable from
-this workspace session.
+production verification on 2026-11-12 found the previous one-shot Job
+Succeeded; Flux applied `main@sha1:86ed96ce878933d7a01c30ad230cd9282e3bb30a`
+and pruned it. No CNPG `ScheduledBackup` objects remain. At that check, nine
+CNPG `Backup` objects, 171 `VolumeSnapshot` objects, and 177
+`VolumeSnapshotContent` objects remained. The `immich-backup-health-check`
+CronJob only monitors completed backup files; it is not a producer. Existing
+backup and snapshot artifacts were not removed. Production still has one
+LINSTOR StorageClass, and all 74 Bound LINSTOR PVCs use it.
 
 ## Legacy reference inventory
 
