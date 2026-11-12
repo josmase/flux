@@ -196,7 +196,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | Date (UTC) | Subtask | Status change | Evidence / outcome | Commit |
 |---|---|---|---|---|
 | 2026-11-12 | T0.1–T0.4 | Completed | Switched default context to `jumphost-production`; read-only live mapping and snapshot/backup inventory captured. Details in current-state baseline and checked subtasks. | `86cd1360` (epic baseline; pushed) |
-| 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | Pending push |
+| 2026-11-12 | T1.1 | Completed | User approved Platform Operations as accountable owner with service-level workload owners. Re-read live inventory: 67 LINSTOR PVCs Bound and four unreferenced. Recorded claim owner, priority, approved target, and disposition in the linked CSV; flagged the two terminating claims to preserve their snapshot dependencies. | `645c0c90` |
 
 ## Update procedure
 
