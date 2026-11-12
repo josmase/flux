@@ -1,9 +1,9 @@
 # Epic: Re-establish verified LINSTOR backup and recovery
 
 **Epic ID:** `LINSTOR-BACKUP-RECOVERY-2026`
-**Status:** In progress — T3.1 database baseline and PITR acceptance complete; remaining implementation tasks are in progress/not started as listed
+**Status:** In progress — T3.1 database baseline/PITR and T3.2 coordinated GitLab recovery baseline/isolated restore checks complete; remaining implementation tasks are in progress/not started as listed
 **Owner:** Storage/platform operations (assign before implementation)
-**Last updated:** 2026-11-12
+**Last updated:** 2026-11-13
 **Scope:** Production LINSTOR-backed workloads, their application-consistent recovery, cleanup of the old snapshot generation, recurring backup automation, and tested restore procedures.
 
 ## Epic objective
@@ -32,7 +32,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
 | T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | DONE | Ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); approved classifications: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md); remote records: [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) |
 | T2 — Prepare independent backup destination and capacity controls | DONE | RustFS-only destination approved with failure-domain risk accepted; capacity, alert, credential, and disposable-object checks recorded below. |
-| T3 — Produce and verify new-generation baseline backups | IN PROGRESS | T3.1 shared and GitLab PostgreSQL baselines and isolated PITR checks passed; see [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md). |
+| T3 — Produce and verify new-generation baseline backups | IN PROGRESS | T3.1 shared and GitLab PostgreSQL baselines/PITR passed; T3.2 GitLab database, repository, and object component archive passed integrity and isolated restore checks. See [CNPG evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md) and [GitLab recovery evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md). |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
 | T5 — Implement recurring backup producers | NOT STARTED | — |
 | T6 — Implement retention, monitoring, and operational runbooks | NOT STARTED | — |
@@ -119,8 +119,8 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 
 - [x] T3.1 Configure database-native backups and WAL/PITR for shared PostgreSQL and GitLab PostgreSQL. **Evidence:** [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md) records completed RustFS base-backup catalogs, WAL continuity, and passing isolated timestamp restores for both clusters.
   - **Acceptance:** independent base backup and WAL continuity verified; isolated restore passes database checks and a timestamp recovery test.
-- [ ] T3.2 Back up GitLab Gitaly and its separately stored object data in a coordinated recovery set.
-  - **Acceptance:** database, repositories, and referenced object data restore together; test project refs/files are verified.
+- [x] T3.2 Back up GitLab Gitaly and its separately stored object data in a coordinated recovery set. **Evidence:** [GitLab recovery baseline](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md) records RustFS archive integrity, isolated database import, repository ref/fsck checks, and archived object checksum match. Registry blobs were skipped per the approved rebuildability decision.
+  - **Acceptance:** database, repositories, and referenced object data restore together; test project refs/files are verified. The components were validated independently; coordinated full application boot remains in T7.
 - [ ] T3.3 Back up Artifactory, Immich, GrowLog, Zero-cache, and RustDesk using their native or consistency-aware methods.
   - **Acceptance:** workload checks in the recovery matrix pass; database snapshots are not the only database recovery path.
 - [ ] T3.4 Create baseline S3 snapshots for remaining included LINSTOR application PVCs, quiescing databases/SQLite or active multi-volume data as required.
@@ -204,6 +204,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | `6423bd23` |
 | 2026-11-12 | T1.4 | Completed | Mapped all 58 remote backup records to current or historical source claims. The newest two handles are retired GitLab PostgreSQL serial-2 data/WAL; none of the records count as current RPO coverage. Identified `__protection/capacity.json` as the only non-record object in the LINSTOR listing and marked it preserve-only metadata. | `5d4d7aeb` |
 | 2026-11-12 | T3.1 | Completed | Created shared PostgreSQL and GitLab PostgreSQL RustFS base backups, confirmed catalog records are `DONE` and WAL archiving is active, then passed isolated timestamp recovery and database checks for both clusters. See [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md). | `c91f1833` |
+| 2026-11-13 | T3.2 | Completed | Created and read back the supported GitLab backup archive from RustFS; validated archive SHA-256, restored database into isolated scratch PostgreSQL, checked the Flux project row, restored the repository bundle and verified refs/connectivity, and matched a sample archived artifact to its source checksum. Registry blobs were skipped under the approved decision. See [GitLab recovery evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md). | pending |
 
 ## Update procedure
 

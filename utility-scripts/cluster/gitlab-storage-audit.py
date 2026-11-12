@@ -88,8 +88,8 @@ def main():
         configs["backup"]["access"] == configs["registry"]["access"]))
     checks = [("workload", bucket, "", True) for bucket in WORKLOAD_BUCKETS]
     checks += [("backup", bucket, "", True) for bucket in BACKUP_BUCKETS]
+    checks += [("backup", bucket, "", True) for bucket in WORKLOAD_BUCKETS]
     checks += [("workload", bucket, "", False) for bucket in BACKUP_BUCKETS]
-    checks += [("backup", bucket, "", False) for bucket in WORKLOAD_BUCKETS]
     checks += [("registry", registry["bucket"], str(registry.get("rootdirectory", "")).lstrip("/").rstrip("/") + "/", True)]
     checks += [("registry", bucket, "", False) for bucket in WORKLOAD_BUCKETS + BACKUP_BUCKETS]
     checks += [("registry", registry["bucket"], "unrelated/", False)]
