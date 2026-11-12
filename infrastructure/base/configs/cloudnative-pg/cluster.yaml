@@ -4,6 +4,13 @@ metadata:
   name: shared-postgres
   namespace: cnpg-system
 spec:
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: shared-postgres-backup
+        serverName: shared-postgres
+
   # --- Topology ---
   instances: 3
   minSyncReplicas: 1

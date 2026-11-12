@@ -1,0 +1,36 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: gitlab-postgres-backup
+  namespace: gitlab
+spec:
+  configuration:
+    destinationPath: s3://linstor-backups-v2/cnpg/gitlab-postgres
+    endpointURL: http://storage.local.hejsan.xyz:9000
+    s3Credentials:
+      accessKeyId:
+        name: linstor-rustfs-v2-credentials
+        key: access-key
+      secretAccessKey:
+        name: linstor-rustfs-v2-credentials
+        key: secret-key
+    data:
+      compression: gzip
+    wal:
+      compression: gzip
+  retentionPolicy: 14d
+  instanceSidecarConfiguration:
+    env:
+      - name: AWS_DEFAULT_REGION
+        value: us-east-1
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi

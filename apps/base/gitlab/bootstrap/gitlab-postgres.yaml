@@ -4,6 +4,13 @@ metadata:
   name: gitlab-postgres
   namespace: gitlab
 spec:
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: gitlab-postgres-backup
+        serverName: gitlab-postgres
+
   instances: 3
   minSyncReplicas: 1
   maxSyncReplicas: 2
