@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: linstor-rustfs-v2-remote-reconcile-v2
+  name: linstor-rustfs-v2-remote-reconcile-v3
   namespace: piraeus-datastore
   labels:
     app.kubernetes.io/name: linstor-rustfs-v2-remote-reconcile
@@ -25,17 +25,21 @@ spec:
             - |
               controller="linstor-controller.piraeus-datastore.svc:3370"
               remote="rustfs-linstor-backups-v2"
-              endpoint="http://192.168.1.102:9000"
+              endpoint="http://192.168.1.198:9000"
               bucket="linstor-backups-v2"
               region="us-east-1"
               remotes="$(linstor --controllers "$controller" -m remote list)"
               existing="$(printf '%s' "$remotes" | jq -ce --arg remote "$remote" '.s3_remotes[]? | select(.remote_name == $remote)' || true)"
               if [ -n "$existing" ]; then
-                printf '%s' "$existing" | jq -e --arg endpoint "$endpoint" --arg bucket "$bucket" --arg region "$region" \
-                  'select(.endpoint == $endpoint and .bucket == $bucket and .region == $region)' >/dev/null || {
-                  echo "LINSTOR v2 remote exists but has a different target; refusing to replace it." >&2
+                printf '%s' "$existing" | jq -e --arg bucket "$bucket" --arg region "$region" \
+                  'select(.bucket == $bucket and .region == $region)' >/dev/null || {
+                  echo "LINSTOR v2 remote has an unexpected bucket or region; refusing to change it." >&2
                   exit 1
                 }
+                current_endpoint="$(printf '%s' "$existing" | jq -r '.endpoint')"
+                if [ "$current_endpoint" != "$endpoint" ]; then
+                  linstor --controllers "$controller" remote modify s3 --endpoint "$endpoint" "$remote"
+                fi
               else
                 if ! output="$(linstor --controllers "$controller" remote create s3 --use-path-style "$remote" "$endpoint" "$bucket" "$region" "$RUSTFS_ACCESS_KEY" "$RUSTFS_SECRET_KEY" 2>&1)"; then
                   printf '%s\n' "$output" | sed -e "s/$RUSTFS_ACCESS_KEY/[REDACTED]/g" -e "s/$RUSTFS_SECRET_KEY/[REDACTED]/g" >&2
