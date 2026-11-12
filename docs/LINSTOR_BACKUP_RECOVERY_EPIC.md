@@ -1,7 +1,7 @@
 # Epic: Re-establish verified LINSTOR backup and recovery
 
 **Epic ID:** `LINSTOR-BACKUP-RECOVERY-2026`
-**Status:** In progress — planning and live discovery recorded; implementation tasks not started
+**Status:** In progress — T3.1 database baseline and PITR acceptance complete; remaining implementation tasks are in progress/not started as listed
 **Owner:** Storage/platform operations (assign before implementation)
 **Last updated:** 2026-11-12
 **Scope:** Production LINSTOR-backed workloads, their application-consistent recovery, cleanup of the old snapshot generation, recurring backup automation, and tested restore procedures.
@@ -31,8 +31,8 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 |---|---|---|
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
 | T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | DONE | Ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); approved classifications: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md); remote records: [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) |
-| T2 — Prepare independent backup destination and capacity controls | NOT STARTED | — |
-| T3 — Produce and verify new-generation baseline backups | NOT STARTED | — |
+| T2 — Prepare independent backup destination and capacity controls | DONE | RustFS-only destination approved with failure-domain risk accepted; capacity, alert, credential, and disposable-object checks recorded below. |
+| T3 — Produce and verify new-generation baseline backups | IN PROGRESS | T3.1 shared and GitLab PostgreSQL baselines and isolated PITR checks passed; see [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md). |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
 | T5 — Implement recurring backup producers | NOT STARTED | — |
 | T6 — Implement retention, monitoring, and operational runbooks | NOT STARTED | — |
@@ -113,11 +113,11 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 - [x] T2.4 Test read/write/list/delete with disposable objects and validate endpoint compatibility. **Evidence:** the live path-style RustFS endpoint created and listed a uniquely prefixed disposable object, returned it with matching SHA-256, deleted it with HTTP 204, and returned an empty final prefix listing. See [LINSTOR disposable S3 canary](LINSTOR_BACKUP_S3_CANARY_2026-11-12.md).
   - **Acceptance:** disposable object checksum matches after restore; cleanup is verified without touching existing data.
 
-### T3 — Produce and verify new-generation baseline backups — NOT STARTED
+### T3 — Produce and verify new-generation baseline backups — IN PROGRESS
 
 **Definition of done:** Every in-scope authoritative workload has a new, indexed baseline backup in the new generation and an isolated restore test appropriate to its data type.
 
-- [ ] T3.1 Configure database-native backups and WAL/PITR for shared PostgreSQL and GitLab PostgreSQL.
+- [x] T3.1 Configure database-native backups and WAL/PITR for shared PostgreSQL and GitLab PostgreSQL. **Evidence:** [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md) records completed RustFS base-backup catalogs, WAL continuity, and passing isolated timestamp restores for both clusters.
   - **Acceptance:** independent base backup and WAL continuity verified; isolated restore passes database checks and a timestamp recovery test.
 - [ ] T3.2 Back up GitLab Gitaly and its separately stored object data in a coordinated recovery set.
   - **Acceptance:** database, repositories, and referenced object data restore together; test project refs/files are verified.
@@ -203,6 +203,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-12 | T1.2 | Completed | User approved the proposed 6-hour database/GitLab repository RPO, 24-hour standard application RPO, 4-hour critical RTO, and 24-hour standard RTO. | `90c25457` |
 | 2026-11-12 | T1.3 | Completed | User approved the classification/test plan and explicitly excluded all four live NFS mounts from backup; their only recovery path is restoration of the original OMV exports. Valkey and model-cache validation gates remain before any further exclusion; Prometheus history stays protected; GitLab Registry objects remain rebuildable under the earlier approval. | `6423bd23` |
 | 2026-11-12 | T1.4 | Completed | Mapped all 58 remote backup records to current or historical source claims. The newest two handles are retired GitLab PostgreSQL serial-2 data/WAL; none of the records count as current RPO coverage. Identified `__protection/capacity.json` as the only non-record object in the LINSTOR listing and marked it preserve-only metadata. | `5d4d7aeb` |
+| 2026-11-12 | T3.1 | Completed | Created shared PostgreSQL and GitLab PostgreSQL RustFS base backups, confirmed catalog records are `DONE` and WAL archiving is active, then passed isolated timestamp recovery and database checks for both clusters. See [CNPG baseline and PITR evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md). | `106333b5` |
 
 ## Update procedure
 
