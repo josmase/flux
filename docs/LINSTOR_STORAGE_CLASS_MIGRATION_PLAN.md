@@ -189,39 +189,55 @@ master, members 0 and 1 are replicas with `master_link_status: up` and matching
 replication offsets. Flux adopted the canonical PVCs and HelmRelease. Three
 stage PVCs remain on `linstor` as rollback copies until the final class cleanup.
 
-## Disposition plan for every remaining legacy PVC
+## Disposition plan for every remaining legacy PV
 
-The active Prometheus claim is now bound to `linstor`; the remaining legacy PVs
-are Released data holds after the Radarr/Sonarr, migrated-source, forensic
-PG10, Checkrr, standalone Valkey, Gitaly, and Valkey HA migrations. No legacy
-class may be removed until each hold has a verified replacement or an explicit
-artifact-retention disposition.
-For every data-bearing move, record source and target handles, a retained
-recovery artifact, validation evidence, and the rollback decision in the
-migration ledger. Do not remove a source just because a target is Bound.
+The 2026-11-12 production census has 27 Released PVs using retired class names,
+zero PVCs using those classes, and no LINSTOR `linstor-final*` StorageClass
+objects. These are retained data holds, not pending bound claims. Before a hold
+can be removed, identify its current canonical target or decide that the data
+is intentionally retired; verify source use, replica state, recovery artifacts,
+and workload-specific validation. If the data is still needed and no valid
+target exists, copy or restore it to a new PVC using `${STORAGE_CLASS}` (which
+resolves to `linstor`), validate it, and retain the source through acceptance.
+Do not delete retained snapshot or backup artifacts as part of this process.
 
-| Current PVC | Class | Planned disposition |
-|---|---|---|
-| `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor` | Bound to the verified TSDB copy. Resume the operator and Flux, validate WAL replay, Prometheus readiness and queries, then retain the old source PV through the observation window. |
+| PV | Former claim | Class | Required disposition before cleanup |
+|---|---|---|---|
+| `pvc-025dcd91-90aa-4ff9-a354-7f92ff740710` | `gitlab/gitlab-redis-linstor` | `linstor-final` | Map to the active GitLab Redis/Valkey data and prove replication/recovery on its canonical `linstor` target; retain source until validated. |
+| `pvc-0d695524-cbb4-446b-9d48-a61824bf8053` | `gitlab/gitlab-postgres-4-wal` | `linstor-final-triple` | Resolve GitLab CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
+| `pvc-2050a204-fb97-4b5e-a1e3-fca85bc2b95d` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
+| `pvc-2a4ec4d4-177f-45ad-9ee1-feb1aa3b140b` | `gitlab/gitlab-postgres-5` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
+| `pvc-37e1f48e-9c0e-4758-80ba-35d71dc70a7f` | `gitlab/gitlab-postgres-1` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
+| `pvc-435ddd63-fdd1-40bd-84e2-fea3bc030f80` | `cnpg-system/shared-postgres-8-wal` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
+| `pvc-482b82cb-4452-4965-b7d0-068090ffd2f2` | `gitlab/gitlab-postgres-5-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
+| `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b` | `llm-switchboard/llm-switchboard-data-triple` | `linstor-final-triple` | Workload is absent/unavailable. Decide whether to restore the service; if yes, migrate data to a `${STORAGE_CLASS}` PVC and validate before source cleanup. |
+| `pvc-51f1e398-d5a0-4132-8b41-7ea4dfd9e56a` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
+| `pvc-52e441a4-7a3b-41a2-b850-39ddb14cf68f` | `gitlab/gitlab-postgres-4` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
+| `pvc-572e79b6-8de4-4ff4-9380-6a38179b0dd6` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-triple` | Retain through the Prometheus observation window; confirm WAL replay, readiness, representative queries, retention, and recovery artifact before removal. |
+| `pvc-769a31dd-016f-4369-9cad-ab557db7d695` | `artifactory/data-artifactory-postgresql-final` | `linstor-final` | Identify the active Artifactory PostgreSQL generation and verify database recovery/target before cleanup. |
+| `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` | `media/checkrr-config-linstor` | `linstor-final` | Migration is blocked by source filesystem corruption. Preserve authoritative source; recover/copy only after filesystem-level validation. |
+| `pvc-932d366c-304e-49e8-b1e3-f154e0335d6c` | `media/reiverr-config-final` | `linstor-final` | Reiverr is absent. Decide service disposition and preserve configuration until restore or explicit retirement is approved. |
+| `pvc-9799a120-b53e-424e-8eac-0ff5288a252d` | `artifactory/artifactory-pg17-recovered` | `linstor-final-bootstrap` | Preserve as an intentional recovery/bootstrap artifact until its role and the accepted PostgreSQL source are documented. |
+| `pvc-b03417aa-d52e-4cde-b5ba-627670ab361c` | `monitoring/prometheus-kube-prometheus-stack-prometheus-db-linstor-prometheus-kube-prometheus-stack-prometheus-0` | `linstor-final-bootstrap` | Retain as the prior Prometheus generation until the active TSDB has passed the observation window and recovery checks. |
+| `pvc-be2045af-c3fb-47fe-b25e-4bc710fad531` | `cnpg-system/shared-postgres-8` | `linstor-final` | No retained snapshot/backup is recorded. Hold both generation-8 data and WAL until lineage and a recovery route are established. |
+| `pvc-c2a0173f-fd14-4664-9977-39f4013e2036` | `gitlab/gitlab-minio` | `linstor-final` | Identify MinIO generation and object-data target; preserve source and artifacts until object-level recovery/retirement is decided. |
+| `pvc-ca10f411-61cd-4660-969e-aeddf8cbc29f` | `llm-switchboard/llm-switchboard-data-linstor` | `linstor-final` | Determine whether this is the accepted replacement or a separate generation; reconcile contents with the triple source before cleanup. |
+| `pvc-cbf44c0c-48f0-41af-95f6-2480c1340b03` | `gitlab/gitlab-postgres-3` | `linstor-final-triple` | Resolve CNPG generation and validate database recovery before cleanup. |
+| `pvc-d483fe6c-51e9-43da-adf2-41db960731fd` | `default/zero-cache-snapshot-restore` | `linstor-final-triple` | Identify the restore lineage and whether this is the accepted recovery point; retain until reconciled with the live zero-cache target. |
+| `pvc-d7d6dc18-d811-4dee-9513-40be5f222d39` | `gitlab/gitlab-postgres-3-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
+| `pvc-e945814e-6dbb-4843-a5cb-6f2ec44bb338` | `gitlab/gitlab-postgres-1-wal` | `linstor-final-triple` | Resolve CNPG generation and WAL lineage; keep until a usable recovery path is verified. |
+| `pvc-eb581cac-8c15-46c7-8df5-6057452be220` | `gitlab/repo-data-gitlab-gitaly-0` | `linstor-final` | Compare with the active Gitaly claim and validate repository manifest/recovery path; retain until lineage is clear. |
+| `pvc-ed78f9e4-b592-40ea-bc0c-b8829e833f74` | `media/sonarr-2-config-linstor` | `linstor-final` | Reconcile intermittent API visibility first; confirm current claim/PV/resource identity and target contents before any cleanup. |
+| `pvc-f1a1158d-4e46-4660-ada8-677c0f1655ea` | `media/reiverr-plugins-final` | `linstor-final` | Reiverr is absent. Decide service disposition and preserve plugin data until restore or explicit retirement is approved. |
+| `pvc-fc236f99-5ab9-436f-95f8-ed72cbe540e2` | `gitlab/gitlab-postgresql-linstor` | `linstor-final` | Resolve this older GitLab PostgreSQL generation and verify database recovery before cleanup. |
 
 Shared PostgreSQL and GitLab PostgreSQL are now fully on `linstor`. Both
 clusters have three Ready instances and quorum-synchronous streaming replicas;
 each cluster's six target PGDATA/WAL volumes have three UpToDate replicas on
-nodes 204–206. The six old Shared PostgreSQL PVs and their LINSTOR resources
-were deleted after validation, with all twelve ready `VolumeSnapshotContent`
-artifacts retained. GitLab's eight old source PVs remain Released/Retain. Its
-serial-2 Backup-owned snapshot objects were already being deleted when Backup
-resources were removed; the Kubernetes snapshot objects are gone and twelve
-LINSTOR backend snapshot records remain flagged `FAILED_DEPLOYMENT`. Preserve
-these source PVs until the artifact state has been reviewed.
-
-The currently mounted legacy claims include:
-
-| Workload | Mounted legacy data |
-|---|---|
-| GitLab Gitaly | One repository-data claim. |
-| GitLab Valkey HA | Three data claims. |
-| Prometheus | One Prometheus data claim. |
+nodes 204–206. Active workloads use canonical `linstor` claims. Released older
+GitLab PostgreSQL, Redis, and MinIO generations remain listed individually in
+the disposition table; preserve their data and all remaining recovery artifacts
+until their lineage and restore state have been reviewed.
 
 Watchtower3D's source held about 4.2 GB across 460 files. No pre-existing
 snapshot was available, and the one-time CSI snapshot timed out while checking
@@ -236,34 +252,28 @@ CNPG 1.30.1. Each cluster was recreated one replica at a time: rebuild both
 standbys, verify synchronous quorum, then let CNPG fail over and recreate the
 former primary. All six new volumes per cluster are Bound on `linstor` with
 three UpToDate LINSTOR replicas, and SQL checks passed. Shared PostgreSQL's old
-data was cleaned up. GitLab's old source PVs remain Retain because backup-owned
-snapshot cleanup was already in progress and its remaining backend records
-need review. This follows the
+data was cleaned up. Remaining old source PVs stay Retain until their individual
+lineage and recovery disposition have been recorded. This follows the
 [CNPG storage recreation guidance](https://cloudnative-pg.io/docs/current/storage/).
 The same retention rule applies to the Helm-managed Valkey and Prometheus
 claims and the Gitaly StatefulSet claim.
 
-This census is a point-in-time inventory, not acceptance evidence. Shared
-PostgreSQL's six source claims and backing LINSTOR resources have been cleaned
-up; its snapshot artifacts remain. GitLab PostgreSQL's six active source PVCs
-and two stale serial-2 claims are deleted, but all eight Released source PVs
-and LINSTOR resources remain retained. Record each individual claim's
-source/target handle, replica health, recovery artifact, content or database
-validation, and cutover outcome in the migration ledger before releasing its
-source data.
+This census is a point-in-time inventory, not acceptance evidence. Record each
+remaining hold's source handle, target handle (if any), replica health,
+recovery artifact, content or database validation, and disposition in the
+migration ledger before releasing its source data.
 
 ### Released PV cleanup checkpoint (2026-11-12)
 
-The live cluster still has 61 Released PV objects whose `storageClassName`
-starts with `linstor-final`; all use Retain. There are no PVCs bound to those
-legacy classes and no legacy StorageClass objects. The PVs comprise 45 on
-`linstor-final`, 14 on `linstor-final-triple`, and 2 on
-`linstor-final-bootstrap`. Twenty-one have a current PVC with the same
-namespace and claim name but an older claim UID; the other 40 have no current
-matching PVC. Every remaining PV maps to a live LINSTOR resource, and 46 have
-LINSTOR snapshot records. These are not proof of disposable data: each PV must
-be mapped to its canonical target and checked for source use, retained
-snapshots, and backup references before removal. Preserve recovery artifacts.
+The fresh production census has 27 Released PVs whose `storageClassName`
+starts with `linstor-final`: 14 on `linstor-final`, 11 on
+`linstor-final-triple`, and 2 on `linstor-final-bootstrap`. All use Retain;
+there are no PVCs bound to those names and no corresponding LINSTOR
+StorageClass objects. Every PV is listed in the per-PV disposition table.
+Their presence does not prove they are disposable. Sonarr-2 API visibility was
+inconsistent during the census, so its PV and LINSTOR identity must be
+reconciled before action. Preserve source data and recovery artifacts until
+each listed decision has evidence.
 
 Radarr-1 is the first verified cleanup: legacy source PV
 `pvc-091343be-c6ff-4a99-b2cc-2958bf244bef` and all its live LINSTOR resources
@@ -276,7 +286,9 @@ after confirming their resources were unused and UpToDate, the replacement
 CNPG cluster was healthy 3/3, and their 86 successful LINSTOR snapshots plus
 75 Ready Retain VolumeSnapshotContents were preserved. The two old
 `shared-postgres-8` PVs remain held: they have no LINSTOR snapshots or matching
-Ready retained content.
+Ready retained content. The remaining 27 PVs have individual dispositions
+above; retirement of legacy StorageClass definitions is complete, but cleanup
+of a held PV or its backing data requires a separate evidence-based decision.
 
 ## Migration sequence
 
