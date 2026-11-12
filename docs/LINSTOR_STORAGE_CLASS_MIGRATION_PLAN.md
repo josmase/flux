@@ -61,6 +61,26 @@ legacy StorageClass declarations have since been removed from the production
 Flux source after confirming there are no current PVCs using them; Released PVs
 remain intact and may still refer to the retired class names.
 
+## Recovery inventory connectivity (2026-11-12)
+
+The LINSTOR backup queue is empty, but recovery artifacts were not audited or
+removed. `linstor backup list` and resource-filtered `backup list` calls timed
+out while LINSTOR was listing S3 objects. The reports identify an S3 client
+timeout in `BackupToS3.listObjects`. Read-only HTTP liveness checks to the
+configured RustFS endpoint `192.168.1.102:9000` timed out from the LINSTOR
+controller, all four satellite pods, and workers 204–206. Worker 204 has no
+resolved neighbor entry for the IP. Do not prune or delete remote backup
+artifacts, or reclaim any source volume whose lineage depends on them, until
+RustFS reachability and the backup listing are restored.
+
+The LINSTOR thin-pool `data_percent` at that time was 73.41% on worker 204,
+73.51% on worker 205, and 74.98% on worker 206 (metadata remained below 7%).
+The failed Prometheus allocation is still `DELETING` on worker 204, has a
+sync-target resource on worker 205, and is `Unknown` on worker 206. The PV is
+gone and it has no snapshots, but the resource definition cleanup has not
+completed. Preserve the error report and retry only after storage health and
+pool headroom are understood.
+
 The three old GitLab Valkey HA source PVs (`pvc-02cd7071-7181-49a2-8411-f0b38e094140`,
 `pvc-43aee892-f70c-4222-a31d-53782d54781a`, and
 `pvc-efebf869-b1fa-4602-946d-9c126f91891d`) were deleted with their LINSTOR
