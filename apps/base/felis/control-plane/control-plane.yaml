@@ -400,7 +400,7 @@ metadata:
   namespace: felis
 spec:
   progressDeadlineSeconds: 600
-  replicas: 1
+  replicas: 0
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -866,10 +866,10 @@ spec:
     - name: postgres
       port: 5432
       protocol: TCP
-      targetPort: postgres
+      targetPort: 5432
   selector:
-    app.kubernetes.io/component: postgres
-    app.kubernetes.io/name: felis
+    cnpg.io/cluster: felis-postgres-ha
+    cnpg.io/instanceRole: primary
   sessionAffinity: None
   type: ClusterIP
 ---

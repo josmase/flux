@@ -6,20 +6,18 @@ at least one synchronous standby for commits, and permits up to two. Preferred
 pod anti-affinity spreads its instances across nodes when the scheduler can do
 so. Its data and WAL volumes use the production `${STORAGE_CLASS}`.
 
-The cluster is provisioned in parallel with the existing standalone
-`felis-postgres` Deployment. Both use PostgreSQL 18.6, and the new cluster's
-encrypted application Secret uses the current Felis database credentials. The
-API continues to use the existing `felis-postgres` Service while the new
-cluster initializes; the Service selector and Felis configuration are not
-changed as part of provisioning.
+The fresh CNPG database is now the Felis endpoint. The stable
+`felis-postgres` Service selects the CNPG primary so clients keep the same
+database hostname through primary failover. Its target port is numeric because
+CNPG names its container port `postgresql`, while the legacy Deployment used
+the name `postgres`.
 
-Before cutover, migrate the existing Felis database into the CNPG cluster and
-verify its schema migrations and application data. Then make the existing
-`felis-postgres` Service select the CNPG primary, restart the API to refresh
-database connections, and verify Felis operation. Keep the old Deployment,
-PVC, and bootstrap Secret until the cutover is verified and a rollback is no
-longer needed. Treat data migration and service cutover as a separate reviewed
-change; starting this cluster alone does not copy any data.
+No application data was copied from the previous standalone database; the
+production attempt started with a fresh database as authorized. The Felis CLI
+`migrate up -no-backup` command applied all 39 schema migrations, and the API
+was restarted against the CNPG service. The old standalone Deployment is
+scaled to zero. Its PVC, bootstrap Secret, and HBA ConfigMap are retained
+temporarily for rollback; they are not used by the CNPG cluster.
 
 Three database instances provide in-cluster availability, not backup or
 disaster recovery. Felis database and world recovery still need to be included
