@@ -1,7 +1,7 @@
 # Epic: Re-establish verified LINSTOR backup and recovery
 
 **Epic ID:** `LINSTOR-BACKUP-RECOVERY-2026`
-**Status:** In progress — T3.1 database baseline/PITR and T3.2 coordinated GitLab recovery baseline/isolated restore checks complete; remaining implementation tasks are in progress/not started as listed
+**Status:** In progress — T3 baseline is complete for currently in-scope workloads; Artifactory and Immich remain user-deferred. T4 cleanup is next and has not started.
 **Owner:** Storage/platform operations (assign before implementation)
 **Last updated:** 2026-11-13
 **Scope:** Production LINSTOR-backed workloads, their application-consistent recovery, cleanup of the old snapshot generation, recurring backup automation, and tested restore procedures.
@@ -32,7 +32,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | T0 — Live discovery and baseline inventory | DONE | Read-only production inventory captured 2026-11-12; see current-state baseline below. |
 | T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | DONE | Ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); approved classifications: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md); remote records: [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) |
 | T2 — Prepare independent backup destination and capacity controls | DONE | RustFS-only destination approved with failure-domain risk accepted; capacity, alert, credential, and disposable-object checks recorded below. |
-| T3 — Produce and verify new-generation baseline backups | IN PROGRESS | T3.1 shared and GitLab PostgreSQL baselines/PITR passed; T3.2 GitLab database, repository, and object archive passed checks; T3.3 GrowLog, Zero-cache, and RustDesk baselines and component restore checks passed. Artifactory and Immich are user-deferred. Full application drills remain in T7. See [CNPG evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md), [GitLab evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md), and [T3.3 evidence](LINSTOR_T3_3_APP_RECOVERY_BASELINE_2026-11-13.md). |
+| T3 — Produce and verify new-generation baseline backups | DONE for in-scope workloads | T3.1–T3.6 completed for current scope. Artifactory and Immich remain user-deferred with no coverage claim. Full workload-family restores and application-consistency rehearsals remain in T7. See [CNPG evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md), [GitLab evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md), [T3.3 evidence](LINSTOR_T3_3_APP_RECOVERY_BASELINE_2026-11-13.md), [T3.4 evidence](LINSTOR_T3_4_APP_PVC_BASELINE_2026-11-13.md), [T3.5 evidence](LINSTOR_T3_5_NON_LINSTOR_BASELINE_2026-11-13.md), and [T3.6 manifest](LINSTOR_T3_6_BASELINE_MANIFEST_2026-11-13.json). |
 | T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
 | T5 — Implement recurring backup producers | NOT STARTED | — |
 | T6 — Implement retention, monitoring, and operational runbooks | NOT STARTED | — |
@@ -113,7 +113,7 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 - [x] T2.4 Test read/write/list/delete with disposable objects and validate endpoint compatibility. **Evidence:** the live path-style RustFS endpoint created and listed a uniquely prefixed disposable object, returned it with matching SHA-256, deleted it with HTTP 204, and returned an empty final prefix listing. See [LINSTOR disposable S3 canary](LINSTOR_BACKUP_S3_CANARY_2026-11-12.md).
   - **Acceptance:** disposable object checksum matches after restore; cleanup is verified without touching existing data.
 
-### T3 — Produce and verify new-generation baseline backups — IN PROGRESS
+### T3 — Produce and verify new-generation baseline backups — DONE for currently in-scope workloads
 
 **Definition of done:** Every in-scope authoritative workload has a new, indexed baseline backup in the new generation and an isolated restore test appropriate to its data type.
 
@@ -123,11 +123,11 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
   - **Acceptance:** database, repositories, and referenced object data restore together; test project refs/files are verified. The components were validated independently; coordinated full application boot remains in T7.
 - [x] T3.3 Back up Artifactory, Immich, GrowLog, Zero-cache, and RustDesk using their native or consistency-aware methods. **Completed for current in-scope work:** GrowLog, Zero-cache, and RustDesk have RustFS baselines and component restore checks; GrowLog PostgreSQL is covered by the T3.1 native shared PostgreSQL backup; Zero's native WAL2 integrity check passed. Artifactory and Immich are user-deferred and remain open without coverage claims. Full application boots are scheduled for T7. See [T3.3 recovery evidence](LINSTOR_T3_3_APP_RECOVERY_BASELINE_2026-11-13.md).
   - **Acceptance:** in-scope workload recovery-point checks pass; database snapshots are not the only database recovery path. Deferred workloads make no coverage claim.
-- [ ] T3.4 **IN PROGRESS.** All 42 selected in-scope PVC snapshot requests now exist; 40 are `ReadyToUse=true`, while Prometheus and Whisper remain false. The `arr-dashboard` restore to an isolated PVC matched the live SQLite database checksum. The initial 16 requests preceded workload quiescence, so their Ready state alone does not prove application consistency. LINSTOR's signed RustFS `ListObjectsV2` checks still time out, preventing full remote-catalog reconciliation. See [T3.4 live evidence](LINSTOR_T3_4_APP_PVC_BASELINE_2026-11-13.md). Preserve existing objects while remote disposition is unknown; do not count T3.4 complete until all included claims have verified restorable records and consistency-aware recovery points.
+- [x] T3.4 Capture and verify the in-scope application PVC baseline. **DONE.** All 42 snapshots and contents are Ready; 42 unique uploads completed successfully; a signed RustFS listing returned 738 object keys and matched all 42 snapshot IDs. A 42-row index maps current PVC/PV/owner/S3 handle, and an isolated Arr Dashboard restore matched the SQLite checksum. LINSTOR's `backup list` command still times out; direct signed listing was used to verify object presence. The initial 16 snapshots preceded workload quiescence, so application-consistency rehearsals remain in T7. See [T3.4 evidence](LINSTOR_T3_4_APP_PVC_BASELINE_2026-11-13.md).
   - **Acceptance:** each snapshot is ready, its remote record is restorable, its index maps to a live PVC/PV/owner, and a sample restore verifies data.
-- [ ] T3.5 Capture non-LINSTOR NFS/object-storage baseline coverage.
+- [x] T3.5 Capture non-LINSTOR NFS/object-storage baseline coverage. **DONE.** The GitLab archive was read back from RustFS and matched its SHA-256; a sample authoritative artifact matched its archived copy. The four NFS mounts are explicitly excluded and have source-only OMV recovery. The same-host/site RustFS limitation is accepted under T2.1. See [T3.5 evidence](LINSTOR_T3_5_NON_LINSTOR_BASELINE_2026-11-13.md) and [GitLab restore evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md).
   - **Acceptance:** GitLab object storage has a verified independent copy and sample restore; NFS mounts remain excluded per the approved exception and must not appear in backup producers or capacity forecasts.
-- [ ] T3.6 Write a new-generation manifest/index of baseline artifacts.
+- [x] T3.6 Write a new-generation manifest/index of baseline artifacts. **DONE.** [The T3.6 JSON manifest](LINSTOR_T3_6_BASELINE_MANIFEST_2026-11-13.json) records all 42 snapshot IDs, PVC/PV/source handles, owners and targets, upload/snapshot times, retention labels, restore evidence, approved deferrals, NFS exclusions, and credential-free RustFS catalog counts.
   - **Acceptance:** record IDs, source handles, completion times, checksums/test results, owners, and retention labels; no credentials or sensitive data in the manifest.
 
 ### T4 — Purge all old-generation snapshots and backup artifacts — NOT STARTED

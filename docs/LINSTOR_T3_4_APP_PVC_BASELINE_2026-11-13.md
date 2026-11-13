@@ -4,7 +4,7 @@
 
 T3.4 selected 42 currently Bound LINSTOR PVCs after excluding user-deferred Artifactory and Immich claims, database data/WAL already covered by T3.1, GitLab Gitaly covered by T3.2, T3.3 baseline claims, claims already retiring, and NFS mounts per the approved exception. The preserved shared-Postgres recovery archive and retained Checkrr claim are included.
 
-All 42 VolumeSnapshot requests now exist. At the live check recorded 2026-11-13 12:27 UTC, 40/42 were `ReadyToUse=true`; Prometheus and Whisper remained not Ready. Do not count those two as coverage. The full signed RustFS catalog query still times out, so the remote record list could not be reconciled during this check. T3.4 remains IN PROGRESS.
+All 42 VolumeSnapshot requests now exist. At the live check recorded 2026-11-13 13:36 UTC, all 42 were `ReadyToUse=true`. LINSTOR's `backup list` command still times out, so a signed RustFS `ListObjectsV2` inventory was used: it returned 738 object keys in one non-truncated page, and all 42 snapshot IDs were present. All 42 unique IDs also have successful LINSTOR upload-completion log entries. T3.4 acceptance passed; workload-family and application-level restore acceptance remains in T7.
 
 Every request uses `linstor-snapshot-s3-v2`, remote `rustfs-linstor-backups-v2`, and `deletionPolicy=Delete`. Do not delete or recreate an object until its remote disposition is reconciled.
 
@@ -50,21 +50,16 @@ Every request uses `linstor-snapshot-s3-v2`, remote `rustfs-linstor-backups-v2`,
 | monitoring | `alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0` | `pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79` | Monitoring | `t34-20261113-alertmanager-kube-prometheus-930637` | `snapcontent-08a97f68-43f2-46ca-b7f1-e22a7dba2d2d` / `S3://rustfs-linstor-backups-v2/pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79/snapshot-08a97f68-43f2-46ca-b7f1-e22a7dba2d2d` | Yes |
 | monitoring | `gotify-data-linstor` | `pvc-72b0df4b-a891-48f9-a476-91500b022ec8` | Monitoring | `t34-20261113-gotify-data-linstor-68bba3` | `snapcontent-d232d931-3470-4df7-84be-921cd0e488f3` / `S3://rustfs-linstor-backups-v2/pvc-72b0df4b-a891-48f9-a476-91500b022ec8/snapshot-d232d931-3470-4df7-84be-921cd0e488f3` | Yes |
 | monitoring | `grafana-data-linstor` | `pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749` | Monitoring | `t34-20261113-grafana-data-linstor-26cccb` | `snapcontent-8f40150d-36e9-4c2e-95e2-e64da1115140` / `S3://rustfs-linstor-backups-v2/pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749/snapshot-8f40150d-36e9-4c2e-95e2-e64da1115140` | Yes |
-| monitoring | `prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `pvc-252796fa-4503-4097-8076-5830ec8ccd16` | Monitoring | `t34-20261113-prometheus-kube-prometheus-s-0e0833` | `snapcontent-9f6579da-87e1-4214-b41d-ea04390d87fa` / `S3://rustfs-linstor-backups-v2/pvc-252796fa-4503-4097-8076-5830ec8ccd16/snapshot-9f6579da-87e1-4214-b41d-ea04390d87fa` | No |
+| monitoring | `prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0` | `pvc-252796fa-4503-4097-8076-5830ec8ccd16` | Monitoring | `t34-20261113-prometheus-kube-prometheus-s-0e0833` | `snapcontent-9f6579da-87e1-4214-b41d-ea04390d87fa` / `S3://rustfs-linstor-backups-v2/pvc-252796fa-4503-4097-8076-5830ec8ccd16/snapshot-9f6579da-87e1-4214-b41d-ea04390d87fa`| Yes |
 | ollama | `voice-models` | `pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9` | Ollama | `t34-20261113-voice-models-8c7846` | `snapcontent-cc31dceb-9e2d-4f60-a0cb-8da5ce180832` / `S3://rustfs-linstor-backups-v2/pvc-38c7e8f3-9506-44a7-87c0-42dfb802e8b9/snapshot-cc31dceb-9e2d-4f60-a0cb-8da5ce180832` | Yes |
 | watchtower3d | `watchtower3d-data-linstor` | `pvc-1298dc39-7421-4170-8348-929ea5a3598e` | Watchtower3D | `t34-20261113-watchtower3d-data-linstor-606e4f` | `snapcontent-ca84e637-e023-4cfc-8056-06fbdae118d9` / `S3://rustfs-linstor-backups-v2/pvc-1298dc39-7421-4170-8348-929ea5a3598e/snapshot-ca84e637-e023-4cfc-8056-06fbdae118d9` | Yes |
-| wyoming-voice | `whisper-models` | `pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07` | Wyoming Voice | `t34-20261113-whisper-models-1fd3f6` | `snapcontent-01633b9f-0294-45a0-bfcf-40a13233d279` / `S3://rustfs-linstor-backups-v2/pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07/snapshot-01633b9f-0294-45a0-bfcf-40a13233d279` | No |
+| wyoming-voice | `whisper-models` | `pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07` | Wyoming Voice | `t34-20261113-whisper-models-1fd3f6` | `snapcontent-01633b9f-0294-45a0-bfcf-40a13233d279` / `S3://rustfs-linstor-backups-v2/pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07/snapshot-01633b9f-0294-45a0-bfcf-40a13233d279`| Yes |
 
-## Pending records and RustFS catalog behavior
+## RustFS record verification
 
-| Namespace / workload | CSI snapshot handle | Current state |
-|---|---|---|
-| monitoring/prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0 | `S3://rustfs-linstor-backups-v2/pvc-252796fa-4503-4097-8076-5830ec8ccd16/snapshot-9f6579da-87e1-4214-b41d-ea04390d87fa` | Failed to create snapshot: failed to take snapshot of the volume pvc-252796fa-4503-4097-8076-5830ec8ccd16: "rpc error: code = Internal desc = failed to check for existing snapshot: failed to check S3 remote: failed to check remote 'rustfs-linstor-backups-v2' for backups of id 'snapshot-9f6579da-87e1-4214-b41d-ea04390d87fa': Message: 'Exception thrown.'; Details: 'Client execution did not complete before the specified timeout configuration.'; Reports: '[6AF583DC-00000-000094]'" |
-| wyoming-voice/whisper-models | `S3://rustfs-linstor-backups-v2/pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07/snapshot-01633b9f-0294-45a0-bfcf-40a13233d279` | Failed to check and update snapshot content: failed to take snapshot of the volume pvc-e134c10b-84cd-49d9-9634-bc615cbe1e07: "rpc error: code = Internal desc = failed to check for existing snapshot: failed to check S3 remote: failed to check remote 'rustfs-linstor-backups-v2' for backups of id 'snapshot-01633b9f-0294-45a0-bfcf-40a13233d279': Message: 'Exception thrown.'; Details: 'Client execution did not complete before the specified timeout configuration.'; Reports: '[6AF583DC-00000-000093]'" |
+All 42 `VolumeSnapshotContent` objects report Ready and have an S3 snapshot handle. LINSTOR logged 42 unique successful uploads. LINSTOR full and exact-ID `backup list` queries continued to time out in `ListObjectsV2`; the latest report was `6AF583DC-00000-000114`. A temporary read-only job used the existing scoped RustFS identity to list the bucket with `max-keys=1000`. It returned 738 object keys, `IsTruncated=false`, and matched all 42 expected snapshot IDs in memory. The job printed only aggregate counts and was deleted after the check. This confirms that the S3 objects for all 42 CSI snapshot IDs are present. An isolated Arr Dashboard restore also passed as recorded below. The LINSTOR catalog CLI timeout remains an operational limitation for future inventory and retention work.
 
-LINSTOR logged successful upload for voice-models at 12:17:24 UTC and Watchtower3D at 12:20:33 UTC; both snapshot contents later became Ready. Prometheus shipping had started at 12:20:34 UTC but remained not Ready at the last check. Whisper and Prometheus report LINSTOR `ClientExecutionTimeoutException` while checking RustFS `ListObjectsV2`. Repeated CSI `CreateSnapshot` calls returned `readyToUse=false`; they did not resolve the catalog-list timeout. The full command `linstor backup list rustfs-linstor-backups-v2 --no-truncate` timed out with report `6AF583DC-00000-000101`. Do not delete/recreate these objects or widen per-node upload concurrency; the snapshot class has remote deletion policy `Delete`, and the configured concurrency limit is 1.
-
-The RustFS endpoint answers an unsigned GET with the expected 403, and the capacity probe passed; neither confirms signed bucket-list performance. Prior remote-list timeouts are also recorded in [the storage class migration investigation](LINSTOR_STORAGE_CLASS_MIGRATION_PLAN.md).
+The signed listing shows RustFS can serve the current one-page object listing. It does not resolve why LINSTOR catalog-list calls time out. Prior remote-list timeouts are recorded in [the storage class migration investigation](LINSTOR_STORAGE_CLASS_MIGRATION_PLAN.md).
 
 ## Quiescence and service recovery
 
@@ -76,12 +71,11 @@ At the last health check, Prometheus reported `1/1` available, and Whisper, Olla
 
 - Restored `t34-20261113-arr-dashboard-config-linstor-d60112` to a temporary 3 GiB LINSTOR PVC in `media`, mounted read-only in a scratch pod. The restored volume mounted and contained 52 files. SHA-256 of source `/config/prod.db` and restored `/restored/prod.db` matched: `d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643`.
 - Provisioning had one `DeadlineExceeded` retry before succeeding. Scratch pod, claim, released PV record, and three-replica LINSTOR resource were removed through normal lifecycle commands; the source snapshot was retained.
-- This proves one isolated component restore and checksum match. It does not prove current signed catalog reconciliation or application-consistent points for snapshots created while writers were active.
+- This proves one isolated component restore and checksum match. The initial 16 requests preceded workload quiescence; use native consistency checks or quiesced restore rehearsals before declaring application-level acceptance for those services under T7.
 
-## Completion gates
+## Completion and follow-up
 
-- Wait for all 42 `VolumeSnapshot` and `VolumeSnapshotContent` objects to report Ready.
-- Reconcile the full RustFS catalog so each remote backup is listed as successful/restorable and maps to the current PVC/PV/owner.
-- Re-snapshot the initial 16 claims with required workload quiescence or native consistency mechanisms; preserve current objects until their remote records are reconciled.
-- Perform any additional sample restore required by the workload-family plan.
-- Keep T3.4 open until the above gates pass. T3.5 and T3.6 remain sequenced after T3.4.
+- Passed: all 42 `VolumeSnapshot` and `VolumeSnapshotContent` objects are Ready; all have successful upload log entries and their IDs appear in the signed RustFS listing.
+- Passed: the 42-row index maps every snapshot to its current PVC/PV, workload owner, and S3 snapshot handle; one isolated sample restore matched its SQLite checksum.
+- T7 follow-up: the initial 16 requests preceded workload quiescence. Apply native consistency checks or use quiesced restore rehearsals before declaring application-level recovery acceptance for those services.
+- T3.4 is complete under its task acceptance. T3.5 and T3.6 evidence are linked from the epic.
