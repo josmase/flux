@@ -613,7 +613,6 @@ metadata:
   name: felis-api
   namespace: felis
 spec:
-  externalTrafficPolicy: Cluster
   internalTrafficPolicy: Cluster
   ports:
     - name: https
