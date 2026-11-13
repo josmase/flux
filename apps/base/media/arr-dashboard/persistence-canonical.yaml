@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: arr-dashboard-config-linstor
   namespace: media
   labels:
@@ -11,7 +13,7 @@ spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: arr-dashboard-data-to-canonical
+    name: t34-20261113-arr-dashboard-config-linstor-d60112
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:

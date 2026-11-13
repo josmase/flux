@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: jellyfin-config-pvc-jellyfin-0-canonical
   namespace: media
   labels:
@@ -10,7 +12,7 @@ spec:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: jellyfin-config-to-canonical
+    name: t34-20261113-jellyfin-config-pvc-jellyfin-7cce6b
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:

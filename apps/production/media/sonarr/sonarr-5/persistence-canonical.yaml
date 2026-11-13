@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: config-linstor
 spec:
   accessModes:
@@ -10,6 +12,6 @@ spec:
       storage: 4Gi
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: sonarr-5-config-to-canonical
+    name: t34-20261113-sonarr-5-config-linstor-b2ea40
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io

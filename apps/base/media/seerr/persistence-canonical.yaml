@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: seerr-config-linstor
   labels:
     app: seerr
@@ -10,7 +12,7 @@ spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: seerr-data-to-canonical
+    name: t34-20261113-seerr-config-linstor-256312
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:

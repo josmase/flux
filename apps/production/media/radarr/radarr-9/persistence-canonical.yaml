@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: config-linstor
   labels:
     app: radarr-9
@@ -10,7 +12,7 @@ spec:
   accessModes: [ReadWriteOnce]
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: radarr-9-data-to-canonical
+    name: t34-20261113-radarr-9-config-linstor-ff1c3d
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:

@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../../../base/media/sonarr-template
-  - snapshot-canonical.yaml
   - persistence-canonical.yaml
 
 namePrefix: sonarr-5-

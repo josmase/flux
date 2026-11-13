@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
   name: grafana-data-linstor
   namespace: monitoring
   labels:
@@ -13,7 +15,7 @@ spec:
     - ReadWriteOnce
   storageClassName: ${STORAGE_CLASS}
   dataSource:
-    name: grafana-data-to-canonical
+    name: t34-20261113-grafana-data-linstor-26cccb
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   resources:

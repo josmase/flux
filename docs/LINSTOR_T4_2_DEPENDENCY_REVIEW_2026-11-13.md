@@ -23,3 +23,9 @@ Reviewed all 175 old-generation `VolumeSnapshotContent` records from the T4.1 in
 ## T4.2 decision
 
 **BLOCKED — dependency coverage is incomplete.** Do not begin T4.3–T4.5. Next actions: design and review a replacement bootstrap/restore definition for the 24 healthy in-scope migrated PVCs; preserve the seven deferred references; investigate the failed Radarr-6 v1 target and the two terminating PVC finalizers; assign final dispositions to all five orphan contents; finish CNPG Backup/WAL and all local snapshot record mapping; and establish a supported remote delete/list procedure. Then re-evaluate T4.2 acceptance before cleanup.
+
+## Git bootstrap-reference remediation — 2026-11-13
+
+The 24 in-scope PVC manifests with a Ready new-generation S3 baseline now point to that baseline snapshot and carry `kustomize.toolkit.fluxcd.io/ssa: IfNotPresent`. This leaves the immutable `dataSource` on existing bound claims alone while making the Git declaration use the current baseline if a claim is recreated. The legacy migration `VolumeSnapshot` manifests for those claims were removed from their Kustomize resource lists so a later cleanup cannot cause Flux to recreate them. The changes were rendered through Kustomize for all 24 PVCs and the rendered names, annotations, and baseline references matched the T3.6 manifest. The pinned production domain membership inventory was updated for the four boundaries whose resource sets changed.
+
+This only updates desired Git state. Existing live PVCs still report their original immutable snapshot data sources, the old snapshot objects remain protected in the cluster by prune protection, and no snapshot or backend artifact was deleted. Live Flux reconciliation is pending. T4.2 remains blocked on the unresolved Radarr-6 v1 and Reiverr cases, five orphan contents, CNPG and historical dependency mapping, the LINSTOR remote catalog timeout, and user-deferred Artifactory/Immich records.
