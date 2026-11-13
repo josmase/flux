@@ -30,7 +30,7 @@ spec:
       secret:
         name: felis-postgres-ha-app
       dataChecksums: true
-      locale: en_US.UTF-8
+      locale: C.UTF-8
       encoding: UTF-8
 
   storage:
