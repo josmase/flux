@@ -7,4 +7,5 @@ metadata:
     metallb.io/loadBalancerIPs: "${FELIS_ENTRYPOINT_IP}"
     metallb.io/allow-shared-ip: felis-entrypoint
 spec:
+  loadBalancerIP: "${FELIS_ENTRYPOINT_IP}"
   type: LoadBalancer

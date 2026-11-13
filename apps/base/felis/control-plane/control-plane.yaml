@@ -898,6 +898,23 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: felis-postgres-data
+  namespace: felis
+  labels:
+    app.kubernetes.io/component: postgres
+    app.kubernetes.io/name: felis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   finalizers:
     - kubernetes.io/pvc-protection
   labels:
