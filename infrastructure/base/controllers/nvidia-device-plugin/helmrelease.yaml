@@ -49,7 +49,7 @@ spec:
           sharing:
             timeSlicing:
               # Expose four schedulable slots backed by the single physical GPU:
-              # Jellyfin, Ollama, Whisper, and Kokoro TTS.
+              # Jellyfin and other shared GPU workloads.
               renameByDefault: true
               failRequestsGreaterThanOne: true
               resources:

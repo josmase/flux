@@ -1,0 +1,5 @@
+# Retained so the protected voice-models PVC and its data remain intact.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ollama

@@ -1,18 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../../base/ollama
+  # Keep the protected model-data namespace/PVC without an active Ollama pod.
+  - ollama-namespace.yaml
   - ../../base/wyoming-voice
-  - ../../base/kokoro-tts
   - model-storage.yaml
   - whisper-homeassistant-context-secret.yaml
 configMapGenerator:
   - name: voice-model-preparation
-    namespace: ollama
-    files: [prepare-models.py, models.lock.json, Modelfile]
-  - name: voice-model-preparation
     namespace: wyoming-voice
     files: [prepare-models.py, models.lock.json]
 patches:
-  - path: ollama-patch.yaml
   - path: whisper-patch.yaml

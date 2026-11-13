@@ -55,7 +55,7 @@ def prepare_model(model, target, remove_after_verify=None):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--manifest',default='models.lock.json')
-    parser.add_argument('--model',choices=['qwen','whisper'],required=True)
+    parser.add_argument('--model',choices=['whisper'],required=True)
     parser.add_argument('--directory',required=True)
     parser.add_argument('--remove-after-verify')
     args=parser.parse_args()
