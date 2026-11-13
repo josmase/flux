@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: blog
-          image: registry.local.hejsan.xyz/josmase/apps/blog:2026-11-12-7b8ca265
+          image: registry.local.hejsan.xyz/josmase/apps/blog:2026-11-13-97faeada
           imagePullPolicy: IfNotPresent
           resources:
             limits:
