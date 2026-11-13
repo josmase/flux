@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - snapshot-canonical.yaml
   - persistence-canonical-v2.yaml
 labels:
   - includeSelectors: true

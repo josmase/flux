@@ -20,11 +20,11 @@ domains:
     count: 50
     sha256: 9e0d186f40e018f5b5ceeaa86e23a3b018c625144aa5cf652106b3d8f247505b
   apps-media-arr:
-    count: 77
-    sha256: b2b28a70fd35fbce3becf74f6a599154a5dc7b88887f1b3c7fc3e8f5d1629de6
+    count: 72
+    sha256: 165ca3d8e1ae6d7350c18e7e8a2705f09d0ea3dc30cbc5709ef34194558e73b2
   apps-media-configarr:
-    count: 18
-    sha256: 22ddb1af3f3f300d4333da110c3df0ebff3ad7f92f28af2d1a2516cb18941c16
+    count: 14
+    sha256: f9db607dd55ccf28faa564cf960e87cf9a7aa35c791a3a2b483e024a770263f5
   apps-media-playback:
     count: 9
     sha256: 11af05057a07a8d99f273b8ed78a0118d4f362a35eb597f84da2158bde33ce9e
@@ -44,8 +44,8 @@ domains:
     count: 10
     sha256: 53a1fb38ece244c0767b902270843e78ddaef8d9f8bb11c75dbb8e9858d97930
   apps-services:
-    count: 81
-    sha256: affc770589835d757762b0d9f9aa649c13ef606164960650177f4e8c59be969b
+    count: 80
+    sha256: 02b5a53d01596471c8abd41f1bebccbd97e947d8999e7b4b8bcd284d9fdcf2f6
   apps-home:
     count: 3
     sha256: db64f602e4e48ee9a0f64163fc8fdc913bbf1f56986fd98b09ab6ed31d4e4a91
