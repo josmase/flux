@@ -4,3 +4,4 @@ resources:
   - cluster.yaml
   - object-store.yaml
   - provisioner-rbac.yaml
+  - scheduled-backup.yaml

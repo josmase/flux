@@ -5,4 +5,5 @@ resources:
   - namespace.yaml
   - gitlab-postgres.yaml
   - gitlab-postgres-object-store.yaml
+  - gitlab-postgres-scheduled-backup.yaml
   - valkey-ha.yaml

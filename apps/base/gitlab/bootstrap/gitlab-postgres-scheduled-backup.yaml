@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: gitlab-postgres-daily
+  namespace: gitlab
+spec:
+  schedule: "0 0 3 * * *"
+  backupOwnerReference: self
+  immediate: false
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  target: prefer-standby
+  cluster:
+    name: gitlab-postgres
