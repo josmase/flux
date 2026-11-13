@@ -2,6 +2,83 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: apps-felis-crd
+  namespace: flux-system
+spec:
+  suspend: true
+  interval: 10m
+  retryInterval: 1m
+  timeout: 5m
+  dependsOn:
+    - name: infra-configs
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/felis/crd
+  prune: true
+  deletionPolicy: Orphan
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-felis-control-plane
+  namespace: flux-system
+spec:
+  suspend: true
+  interval: 10m
+  retryInterval: 1m
+  timeout: 15m
+  dependsOn:
+    - name: infra-configs
+    - name: apps-felis-crd
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/felis/control-plane
+  prune: true
+  deletionPolicy: Orphan
+  wait: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps-felis-game
+  namespace: flux-system
+spec:
+  suspend: true
+  interval: 10m
+  retryInterval: 1m
+  timeout: 15m
+  dependsOn:
+    - name: apps-felis-control-plane
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/felis/game
+  prune: true
+  deletionPolicy: Orphan
+  wait: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: apps-storage
   namespace: flux-system
 spec:
@@ -204,12 +281,6 @@ spec:
     secretRef:
       name: sops-age
   postBuild:
-    substitute:
-      QBITTORRENT_1_PEER_IP: "192.168.1.184"
-      QBITTORRENT_2_PEER_IP: "192.168.1.185"
-      QBITTORRENT_3_PEER_IP: "192.168.1.186"
-      QBITTORRENT_4_PEER_IP: "192.168.1.187"
-      QBITTORRENT_5_PEER_IP: "192.168.1.188"
     substituteFrom:
       - kind: ConfigMap
         name: cluster-vars

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-allow-game-from-velocity
+  namespace: minecraft
+spec:
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.201/32
+        - ipBlock:
+            cidr: 192.168.1.202/32
+        - ipBlock:
+            cidr: 192.168.1.203/32
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 192.168.1.205/32
+        - ipBlock:
+            cidr: 192.168.1.206/32
+        - ipBlock:
+            cidr: 192.168.1.119/32
+      ports:
+        - port: 25565
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      felis.lolicon.best/component: server
+      felis.lolicon.best/managed-by: felis-operator
+  policyTypes:
+    - Ingress

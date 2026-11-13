@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+  namespace: felis
+  annotations:
+    metallb.io/loadBalancerIPs: "${FELIS_ENTRYPOINT_IP}"
+    metallb.io/allow-shared-ip: felis-entrypoint
+spec:
+  type: LoadBalancer

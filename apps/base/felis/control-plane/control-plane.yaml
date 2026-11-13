@@ -1,0 +1,971 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api
+  namespace: felis
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+      app.kubernetes.io/name: felis
+      app.kubernetes.io/part-of: felis-control-plane
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: api
+        app.kubernetes.io/name: felis
+        app.kubernetes.io/part-of: felis-control-plane
+    spec:
+      containers:
+        - args:
+            - --config
+            - /etc/felis/felis.toml
+            - --internal-addr
+            - :8081
+            - --https-addr
+            - :8443
+            - --tls-cert
+            - /etc/felis/tls/tls.crt
+            - --tls-key
+            - /etc/felis/tls/tls.key
+          command:
+            - /usr/local/bin/felis
+            - api
+          env:
+            - name: FELIS_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: felis-service-token
+            - name: FELIS_LIMBO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: felis-limbo-token
+            - name: FELIS_BUILD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: felis-build-token
+            - name: FELIS_OPS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: felis-ops-token
+            - name: FELIS_IMAGE
+              value: ${FELIS_API_IMAGE}
+            - name: FELIS_PANEL_NODEPORT
+              value: "30443"
+            - name: FELIS_API_BASE_URL
+              value: http://felis-api-internal.felis.svc.cluster.local:8081
+            - name: FELIS_BACKUP_PVC
+              value: felis-backups
+            - name: FELIS_UPLOADS_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: access_key_id
+                  name: felis-uploads-s3
+                  optional: true
+            - name: FELIS_UPLOADS_S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: secret_access_key
+                  name: felis-uploads-s3
+                  optional: true
+            - name: FELIS_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: felis-smtp
+                  optional: true
+            - name: FELIS_REGISTRY_PRUNE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: prune
+                  name: felis-registry-auth
+                  optional: true
+          image: ${FELIS_API_IMAGE}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: api
+          ports:
+            - containerPort: 8080
+              name: external
+              protocol: TCP
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+            - containerPort: 8081
+              name: internal
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/felis
+              name: config
+              readOnly: true
+            - mountPath: /etc/felis/tls
+              name: tls
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /var/lib/felis/uploads
+              name: uploads
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccount: felis-api
+      serviceAccountName: felis-api
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          secret:
+            defaultMode: 420
+            secretName: felis-config
+        - name: tls
+          secret:
+            defaultMode: 420
+            secretName: ${FELIS_TLS_SECRET}
+        - emptyDir: {}
+          name: tmp
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: felis-uploads
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: artifacts
+    app.kubernetes.io/name: felis
+  name: felis-artifacts
+  namespace: felis
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: artifacts
+      app.kubernetes.io/name: felis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: artifacts
+        app.kubernetes.io/name: felis
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - args:
+            - --listen
+            - :8090
+            - --dir
+            - /cache
+            - --max-bytes
+            - "9663676416"
+          command:
+            - /usr/local/bin/felis
+            - artifact-cache
+          image: ${FELIS_API_IMAGE}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: artifacts
+          ports:
+            - containerPort: 8090
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8090
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "1"
+              memory: 256Mi
+            requests:
+              cpu: 20m
+              memory: 32Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /cache
+              name: cache
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: cache
+          persistentVolumeClaim:
+            claimName: felis-artifacts
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator
+  namespace: felis
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: operator
+      app.kubernetes.io/name: felis
+      app.kubernetes.io/part-of: felis-control-plane
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: operator
+        app.kubernetes.io/name: felis
+        app.kubernetes.io/part-of: felis-control-plane
+    spec:
+      containers:
+        - args:
+            - --namespace
+            - minecraft
+            - --metrics-bind-address
+            - :8080
+            - --health-probe-bind-address
+            - :8081
+          command:
+            - /usr/local/bin/felis
+            - operator
+          env:
+            - name: FELIS_IMAGE
+              value: ${FELIS_API_IMAGE}
+            - name: FELIS_ARTIFACT_CACHE
+              value: http://felis-artifacts.felis.svc:8090
+            - name: FELIS_CONTROL_NAMESPACE
+              value: felis
+          image: ${FELIS_API_IMAGE}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: operator
+          ports:
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+            - containerPort: 8081
+              name: health
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccount: felis-operator
+      serviceAccountName: felis-operator
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: tmp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: postgres
+    app.kubernetes.io/name: felis
+  name: felis-postgres
+  namespace: felis
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: postgres
+      app.kubernetes.io/name: felis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: postgres
+        app.kubernetes.io/name: felis
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - args:
+            - postgres
+            - -c
+            - hba_file=/etc/felis-postgres/pg_hba.conf
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: superuser-password
+                  name: felis-postgres
+                  optional: true
+          image: docker.io/library/postgres:18.6-trixie@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - pg_ctl -D "$PGDATA" -m fast -w -t 50 stop
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -q
+                - -h
+                - 127.0.0.1
+                - -p
+                - "5432"
+            failureThreshold: 6
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: postgres
+          ports:
+            - containerPort: 5432
+              hostIP: 127.0.0.1
+              name: postgres
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -q
+                - -h
+                - 127.0.0.1
+                - -p
+                - "5432"
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          startupProbe:
+            exec:
+              command:
+                - pg_isready
+                - -q
+                - -h
+                - 127.0.0.1
+                - -p
+                - "5432"
+            failureThreshold: 120
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: data
+            - mountPath: /var/run/postgresql
+              name: socket
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /dev/shm
+              name: shm
+            - mountPath: /etc/felis-postgres
+              name: hba
+              readOnly: true
+            - mountPath: /docker-entrypoint-initdb.d
+              name: bootstrap
+              readOnly: true
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: false
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 999
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: felis-postgres-data
+        - emptyDir: {}
+          name: socket
+        - emptyDir: {}
+          name: tmp
+        - emptyDir:
+            medium: Memory
+            sizeLimit: 256Mi
+          name: shm
+        - configMap:
+            defaultMode: 420
+            name: felis-postgres-hba
+          name: hba
+        - name: bootstrap
+          secret:
+            defaultMode: 292
+            items:
+              - key: init.sql
+                path: 001-felis.sql
+            secretName: felis-postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/name: felis
+  name: registry
+  namespace: felis
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: registry
+      app.kubernetes.io/name: felis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: registry
+        app.kubernetes.io/name: felis
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: REGISTRY_HTTP_ADDR
+              value: 127.0.0.1:5001
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+            - name: REGISTRY_STORAGE_CACHE_BLOBDESCRIPTOR
+              value: none
+          image: docker.io/library/registry:2.8.3@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373
+          imagePullPolicy: IfNotPresent
+          name: registry
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/registry
+              name: data
+            - mountPath: /tmp
+              name: tmp
+        - args:
+            - --listen=:5000
+            - --upstream=http://127.0.0.1:5001
+            - --auth-dir=/etc/felis-registry-auth
+            - --maint-listen=127.0.0.1:5002
+            - --maint-dir=/run/felis-maint
+            - --data-dir=/var/lib/registry
+          command:
+            - /usr/local/bin/felis
+            - registry-gate
+          image: ${FELIS_API_IMAGE}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /livez
+              port: registry
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: registry-gate
+          ports:
+            - containerPort: 5000
+              name: registry
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: registry
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 20m
+              memory: 32Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/felis-registry-auth
+              name: registry-auth
+              readOnly: true
+            - mountPath: /run/felis-maint
+              name: maint
+            - mountPath: /var/lib/registry
+              name: data
+              readOnly: true
+        - command:
+            - /bin/sh
+            - -c
+            - |
+              set -u
+              # sh as PID 1 ignores SIGTERM unless it traps it, and runs the trap only once the
+              # foreground child exits: sleep in the background and wait, so a pod delete does
+              # not sit out the grace period.
+              trap 'exit 0' TERM
+              nap() { sleep "$1" & wait $!; }
+              maint="http://127.0.0.1:${FELIS_GC_MAINT_PORT}"
+              stamp=/var/lib/registry/.felis-last-gc
+              while :; do
+                now=$(date +%s)
+                last=$(cat "$stamp" 2>/dev/null || echo 0)
+                case "$last" in ''|*[!0-9]*) last=0 ;; esac
+                if [ $((now - last)) -ge "$FELIS_GC_INTERVAL_SECONDS" ]; then
+                  tries=0
+                  until wget -q -O /dev/null --post-data '' "$maint/readonly?lease=3600"; do
+                    tries=$((tries + 1))
+                    [ "$tries" -ge 180 ] && break
+                    nap 10
+                  done
+                  if [ "$tries" -lt 180 ]; then
+                    echo "felis-gc: registry is read-only; collecting"
+                    if registry garbage-collect /etc/docker/registry/config.yml > /tmp/gc.log 2>&1; then
+                      date +%s > "$stamp"
+                      echo "felis-gc: done ($(grep -c 'blob eligible for deletion' /tmp/gc.log) blob(s) deleted)"
+                    else
+                      echo "felis-gc: garbage-collect failed:" >&2
+                      tail -n 20 /tmp/gc.log >&2
+                    fi
+                    wget -q -O /dev/null --post-data '' "$maint/readwrite" \
+                      || echo "felis-gc: could not hand the read-only window back; it lapses with its lease" >&2
+                  else
+                    echo "felis-gc: pushes never went quiet for 30 minutes; trying again later" >&2
+                  fi
+                fi
+                nap 600
+              done
+          env:
+            - name: FELIS_GC_MAINT_PORT
+              value: "5002"
+            - name: FELIS_GC_INTERVAL_SECONDS
+              value: "86400"
+          image: docker.io/library/registry:2.8.3@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373
+          imagePullPolicy: IfNotPresent
+          name: registry-gc
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 10m
+              memory: 16Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/registry
+              name: data
+            - mountPath: /tmp
+              name: tmp
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: registry
+        - emptyDir: {}
+          name: tmp
+        - emptyDir: {}
+          name: maint
+        - name: registry-auth
+          secret:
+            defaultMode: 288
+            optional: true
+            secretName: felis-registry-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api
+  namespace: felis
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: https
+      port: 30443
+      protocol: TCP
+      targetPort: https
+  selector:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api-internal
+  namespace: felis
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: internal
+      port: 8081
+      protocol: TCP
+      targetPort: internal
+  selector:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: artifacts
+    app.kubernetes.io/name: felis
+  name: felis-artifacts
+  namespace: felis
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: http
+      port: 8090
+      protocol: TCP
+      targetPort: 8090
+  selector:
+    app.kubernetes.io/component: artifacts
+    app.kubernetes.io/name: felis
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator-metrics
+  namespace: felis
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: metrics
+      port: 8080
+      protocol: TCP
+      targetPort: metrics
+  selector:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: postgres
+    app.kubernetes.io/name: felis
+  name: felis-postgres
+  namespace: felis
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: postgres
+  selector:
+    app.kubernetes.io/component: postgres
+    app.kubernetes.io/name: felis
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/name: felis
+  name: registry
+  namespace: felis
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: registry
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/name: felis
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/component: artifacts
+    app.kubernetes.io/name: felis
+  name: felis-artifacts
+  namespace: felis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-uploads
+  namespace: felis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ${STORAGE_CLASS}
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/name: felis
+  name: registry
+  namespace: felis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ${STORAGE_CLASS}
+  volumeMode: Filesystem
+---
+apiVersion: v1
+data:
+  pg_hba.conf: |
+    # Rendered by felis (internal/platform/postgres.go); edits are overwritten.
+    local all all                trust
+    host  all postgres 0.0.0.0/0 reject
+    host  all postgres ::/0      reject
+    host  all all      0.0.0.0/0 scram-sha-256
+    host  all all      ::/0      scram-sha-256
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: postgres
+    app.kubernetes.io/name: felis
+  name: felis-postgres-hba
+  namespace: felis

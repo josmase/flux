@@ -5,8 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: watchtower3d
 spec:
-  type: LoadBalancer
-  loadBalancerIP: ${WATCHTOWER3D_METRICS_IP}
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: watchtower3d
   ports:

@@ -15,6 +15,15 @@ data:
   DOMAIN_INTERNAL: local.hejsan.xyz
   ENVIRONMENT: production
   LETSENCRYPT_SERVER: https://acme-v02.api.letsencrypt.org/directory
+  FELIS_ENTRYPOINT_IP: 192.168.1.182
+  FELIS_ROOT_DOMAIN: minecraft.hejsan.xyz
+  FELIS_PANEL_HOSTNAME: console.hejsan.xyz
+  FELIS_ADMIN_HOSTNAME: op-console.hejsan.xyz
+  FELIS_TLS_SECRET: hejsan-xyz-tls
+  FELIS_API_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/api:2026-11-12-899b2e0e
+  FELIS_LOGIN_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/login:2026-11-12-616ffb56
+  FELIS_LOBBY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/lobby:2026-11-12-68e62bcd
+  FELIS_PAPER_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/paper:2026-11-12-44c2c996
+  FELIS_VELOCITY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/velocity:2026-11-12-f40b342f
   RUSTDESK_LB_IP: 192.168.1.183
-  WATCHTOWER3D_METRICS_IP: 192.168.1.189
   STORAGE_CLASS: linstor

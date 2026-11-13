@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: qbittorrent-peer
 spec:
-  type: LoadBalancer
-  loadBalancerIP: ${QBITTORRENT_5_PEER_IP}
+  type: ClusterIP
   ports:
     - $patch: replace
     - name: peer-tcp
