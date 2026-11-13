@@ -1,0 +1,497 @@
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: image-build
+    app.kubernetes.io/managed-by: felis-build
+  name: felis-build
+  namespace: felis-build
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api
+  namespace: felis
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator
+  namespace: felis
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: world-restore
+    app.kubernetes.io/managed-by: felis-restore
+  name: felis-restore
+  namespace: minecraft
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api-builds
+  namespace: felis-build
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - get
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api-leases
+  namespace: felis
+rules:
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+  - apiGroups:
+      - coordination.k8s.io
+    resourceNames:
+      - felis-api-loops
+    resources:
+      - leases
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator-hibernate
+  namespace: felis
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator-leases
+  namespace: felis
+rules:
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+  - apiGroups:
+      - coordination.k8s.io
+    resourceNames:
+      - felis-operator
+    resources:
+      - leases
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api
+  namespace: minecraft
+rules:
+  - apiGroups:
+      - felis.lolicon.best
+    resources:
+      - minecraftservers
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - create
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - get
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets/scale
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - pods/attach
+    verbs:
+      - create
+  - apiGroups:
+      - metrics.k8s.io
+    resources:
+      - pods
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator
+  namespace: minecraft
+rules:
+  - apiGroups:
+      - felis.lolicon.best
+    resources:
+      - minecraftservers
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - felis.lolicon.best
+    resources:
+      - minecraftservers/status
+    verbs:
+      - update
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+    verbs:
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api-builds
+  namespace: felis-build
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-api-builds
+subjects:
+  - kind: ServiceAccount
+    name: felis-api
+    namespace: felis
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api-leases
+  namespace: felis
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-api-leases
+subjects:
+  - kind: ServiceAccount
+    name: felis-api
+    namespace: felis
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator-hibernate
+  namespace: felis
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-operator-hibernate
+subjects:
+  - kind: ServiceAccount
+    name: felis-operator
+    namespace: felis
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator-leases
+  namespace: felis
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-operator-leases
+subjects:
+  - kind: ServiceAccount
+    name: felis-operator
+    namespace: felis
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-api
+  namespace: minecraft
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-api
+subjects:
+  - kind: ServiceAccount
+    name: felis-api
+    namespace: felis
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/name: felis
+    app.kubernetes.io/part-of: felis-control-plane
+  name: felis-operator
+  namespace: minecraft
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: felis-operator
+subjects:
+  - kind: ServiceAccount
+    name: felis-operator
+    namespace: felis
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: image-build
+    app.kubernetes.io/managed-by: felis-build
+  name: felis-build-limits
+  namespace: felis-build
+spec:
+  limits:
+    - default:
+        cpu: "1"
+        ephemeral-storage: 1Gi
+        memory: 1Gi
+      defaultRequest:
+        cpu: 100m
+        ephemeral-storage: 64Mi
+        memory: 128Mi
+      type: Container
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: image-build
+    app.kubernetes.io/managed-by: felis-build
+  name: felis-build-quota
+  namespace: felis-build
+spec:
+  hard:
+    persistentvolumeclaims: "0"
+    pods: "8"

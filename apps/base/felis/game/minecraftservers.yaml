@@ -1,0 +1,105 @@
+apiVersion: felis.lolicon.best/v1alpha1
+kind: MinecraftServer
+metadata:
+  name: lobby
+  namespace: minecraft
+  labels:
+    felis.lolicon.best/system-role: lobby
+spec:
+  autostartPolicy: public
+  desiredState: Running
+  displayName: Lobby
+  fallbackServer: login
+  idle: {}
+  image: ${FELIS_LOBBY_IMAGE}
+  javaMemory: 512M
+  lifecycle: {}
+  motd: {}
+  notify: {}
+  rcon:
+    enabled: true
+    secretRef:
+      key: password
+      name: lobby-rcon
+  reaperExempt: true
+  recovery: {}
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 1Gi
+  startup: {}
+  storage:
+    size: 2Gi
+    storageClassName: ${STORAGE_CLASS}
+  subdomain: lobby
+---
+apiVersion: felis.lolicon.best/v1alpha1
+kind: MinecraftServer
+metadata:
+  name: login
+  namespace: minecraft
+  labels:
+    felis.lolicon.best/system-role: login
+spec:
+  autostartPolicy: public
+  desiredState: Running
+  displayName: Login
+  env:
+    - name: FELIS_API_BASE_URL
+      value: http://felis-api-internal.felis.svc.cluster.local:8081
+    - name: FELIS_ROOT_DOMAIN
+      value: ${FELIS_ROOT_DOMAIN}
+    - name: FELIS_PANEL_HOSTNAME
+      value: ${FELIS_PANEL_HOSTNAME}
+    - name: FELIS_LOBBY_SERVER
+      value: lobby
+  idle: {}
+  image: ${FELIS_LOGIN_IMAGE}
+  javaMemory: 256M
+  lifecycle: {}
+  motd: {}
+  notify: {}
+  reaperExempt: true
+  recovery: {}
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      memory: 512Mi
+  startup:
+    healthHTTPPort: 8080
+  storage:
+    size: 1Gi
+    storageClassName: ${STORAGE_CLASS}
+  subdomain: login
+---
+apiVersion: felis.lolicon.best/v1alpha1
+kind: MinecraftServer
+metadata:
+  name: paper
+  namespace: minecraft
+spec:
+  autostartPolicy: public
+  desiredState: Running
+  displayName: Paper
+  fallbackServer: lobby
+  idle:
+    autoStopEnabled: true
+    emptySecondsBeforeStop: 600
+  image: ${FELIS_PAPER_IMAGE}
+  javaMemory: 1G
+  rcon:
+    enabled: true
+    secretRef:
+      key: password
+      name: paper-rcon
+  resources:
+    limits:
+      memory: 3Gi
+    requests:
+      memory: 2Gi
+  storage:
+    size: 5Gi
+    storageClassName: ${STORAGE_CLASS}
+  subdomain: paper

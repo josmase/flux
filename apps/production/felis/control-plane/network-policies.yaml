@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-registry-ingress
+  namespace: felis
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis-build
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: api
+              app.kubernetes.io/part-of: felis-control-plane
+        - ipBlock:
+            cidr: 192.168.1.201/32
+        - ipBlock:
+            cidr: 192.168.1.202/32
+        - ipBlock:
+            cidr: 192.168.1.203/32
+        - ipBlock:
+            cidr: 192.168.1.204/32
+        - ipBlock:
+            cidr: 192.168.1.205/32
+        - ipBlock:
+            cidr: 192.168.1.206/32
+        - ipBlock:
+            cidr: 192.168.1.119/32
+      ports:
+        - port: 5000
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: registry
+      app.kubernetes.io/name: felis
+  policyTypes:
+    - Ingress

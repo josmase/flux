@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: felis-velocity
+  namespace: felis
+spec:
+  type: ClusterIP
+  externalTrafficPolicy: Cluster
+  selector:
+    app: felis-velocity
+  ports:
+    - name: game
+      port: 25565
+      targetPort: game
+      protocol: TCP

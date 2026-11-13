@@ -1,0 +1,127 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-allow-rcon-from-control-plane
+  namespace: minecraft
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                  - api
+                  - operator
+            matchLabels:
+              app.kubernetes.io/part-of: felis-control-plane
+      ports:
+        - port: 25575
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      felis.lolicon.best/component: server
+      felis.lolicon.best/managed-by: felis-operator
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-default-deny-ingress
+  namespace: minecraft
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-login-to-internal-api
+  namespace: minecraft
+spec:
+  egress:
+    - ports:
+        - port: 8081
+          protocol: TCP
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: api
+              app.kubernetes.io/part-of: felis-control-plane
+  podSelector:
+    matchLabels:
+      felis.lolicon.best/component: server
+      felis.lolicon.best/managed-by: felis-operator
+      felis.lolicon.best/server: login
+      felis.lolicon.best/system-role: login
+  policyTypes:
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  name: felis-server-egress
+  namespace: minecraft
+spec:
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 0.0.0.0/8
+              - 10.0.0.0/8
+              - 100.64.0.0/10
+              - 127.0.0.0/8
+              - 169.254.0.0/16
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 224.0.0.0/4
+              - 240.0.0.0/4
+        - ipBlock:
+            cidr: ::/0
+            except:
+              - ::1/128
+              - fc00::/7
+              - fe80::/10
+              - ff00::/8
+    - ports:
+        - port: 8090
+          protocol: TCP
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: artifacts
+              app.kubernetes.io/name: felis
+  podSelector:
+    matchLabels:
+      felis.lolicon.best/component: server
+      felis.lolicon.best/managed-by: felis-operator
+  policyTypes:
+    - Egress

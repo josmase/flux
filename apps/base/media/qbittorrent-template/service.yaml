@@ -16,7 +16,7 @@ kind: Service
 metadata:
   name: qbittorrent-peer
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: qbittorrent
   ports:

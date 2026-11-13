@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: felis-velocity
+  namespace: felis
+  labels:
+    app: felis-velocity
+    app.kubernetes.io/name: felis-velocity
+    app.kubernetes.io/part-of: felis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: felis-velocity
+  template:
+    metadata:
+      labels:
+        app: felis-velocity
+        app.kubernetes.io/name: felis-velocity
+        app.kubernetes.io/part-of: felis
+    spec:
+      automountServiceAccountToken: false
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: velocity
+          image: ${FELIS_VELOCITY_IMAGE}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: FELIS_ROOT_DOMAIN
+              value: ${FELIS_ROOT_DOMAIN}
+            - name: FELIS_LOGIN_SERVER
+              value: login
+            - name: FELIS_LOBBY_SERVER
+              value: lobby
+          ports:
+            - name: game
+              containerPort: 25565
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: game
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: game
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 1536Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: runtime
+              mountPath: /run/felis
+              readOnly: true
+            - name: runtime
+              mountPath: /velocity/velocity.toml
+              subPath: velocity.toml
+              readOnly: true
+            - name: plugin-config
+              mountPath: /velocity/plugins/felis-link/felis-link.properties
+              subPath: felis-link.properties
+              readOnly: true
+            - name: logs
+              mountPath: /velocity/logs
+            - name: viaversion-config
+              mountPath: /velocity/plugins/ViaVersion
+            - name: viabackwards-config
+              mountPath: /velocity/plugins/ViaBackwards
+            - name: viarewind-config
+              mountPath: /velocity/plugins/ViaRewind
+      volumes:
+        - name: runtime
+          secret:
+            secretName: felis-velocity-runtime
+            defaultMode: 0440
+        - name: plugin-config
+          secret:
+            secretName: felis-velocity-plugin-config
+            defaultMode: 0440
+        - name: logs
+          emptyDir: {}
+        - name: viaversion-config
+          emptyDir: {}
+        - name: viabackwards-config
+          emptyDir: {}
+        - name: viarewind-config
+          emptyDir: {}

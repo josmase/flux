@@ -1,0 +1,710 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: minecraftservers.felis.lolicon.best
+spec:
+  conversion:
+    strategy: None
+  group: felis.lolicon.best
+  names:
+    kind: MinecraftServer
+    listKind: MinecraftServerList
+    plural: minecraftservers
+    singular: minecraftserver
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: |-
+            MinecraftServer is the lifecycle source-of-truth for a single managed
+            Minecraft server (spec §4). The operator reconciles the StatefulSet, Service
+            and PVC from this object; readiness is gated exclusively on an RCON probe.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: MinecraftServerSpec is the desired state (spec §4 spec.*).
+              properties:
+                args:
+                  description: Args are extra arguments appended after the jar.
+                  items:
+                    type: string
+                  type: array
+                autostartPolicy:
+                  description: AutostartPolicy controls who may wake the server (spec §8).
+                  enum:
+                    - public
+                    - allowlist
+                    - ownerOnly
+                  type: string
+                description:
+                  description: Description is free-form operator/owner notes.
+                  type: string
+                desiredState:
+                  description: |-
+                    DesiredState toggles the server up or down (default Stopped). Hibernated
+                    keeps the process frozen with its memory in swap; only the operator sets it.
+                  enum:
+                    - Running
+                    - Stopped
+                    - Hibernated
+                  type: string
+                displayName:
+                  description: DisplayName is the human-facing name shown in the panel and MOTD.
+                  type: string
+                env:
+                  description: Env are extra environment variables injected into the server container.
+                  items:
+                    description: |-
+                      EnvVar is a name/value pair injected into the server container. It is a
+                      deliberately narrow subset of corev1.EnvVar (no valueFrom) so the CRD cannot
+                      be used to exfiltrate arbitrary cluster secrets.
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                      - name
+                    type: object
+                  type: array
+                extraPorts:
+                  items:
+                    properties:
+                      port:
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      protocol:
+                        enum:
+                          - TCP
+                          - UDP
+                        type: string
+                    required:
+                      - protocol
+                      - port
+                    type: object
+                  maxItems: 5
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - protocol
+                    - port
+                  x-kubernetes-list-type: map
+                fallbackServer:
+                  description: |-
+                    FallbackServer is the Velocity server name traffic routes to while this
+                    server is stopped or starting.
+                  type: string
+                idle:
+                  description: Idle configures empty-server auto-stop (spec §8).
+                  properties:
+                    action:
+                      description: |-
+                        Action is what the idle server does: hibernate freezes the process and
+                        swaps its memory to disk, stop shuts it down. Empty means hibernate.
+                      enum:
+                        - hibernate
+                        - stop
+                      type: string
+                    autoStopEnabled:
+                      description: AutoStopEnabled turns on idle auto-stop.
+                      type: boolean
+                    emptySecondsBeforeStop:
+                      description: |-
+                        EmptySecondsBeforeStop is how long the server may sit empty before the
+                        operator scales it down.
+                      format: int32
+                      maximum: 604800
+                      minimum: 0
+                      type: integer
+                  type: object
+                image:
+                  description: Image is the fully-qualified container image (loader-agnostic).
+                  type: string
+                jar:
+                  description: |-
+                    Jar is the server jar path/name inside the image, if the entrypoint
+                    needs it explicitly.
+                  type: string
+                javaFlags:
+                  description: JavaFlags are additional JVM flags (e.g. Aikar's flags).
+                  items:
+                    type: string
+                  type: array
+                javaMemory:
+                  description: JavaMemory is the heap sizing passed as -Xmx/-Xms (e.g. "4G").
+                  type: string
+                lifecycle:
+                  description: Lifecycle tunes graceful shutdown (spec §7).
+                  properties:
+                    stopCommands:
+                      items:
+                        maxLength: 1024
+                        type: string
+                      maxItems: 16
+                      type: array
+                    terminationGracePeriodSeconds:
+                      description: TerminationGracePeriodSeconds is the pod grace period (default 300).
+                      format: int64
+                      maximum: 3600
+                      minimum: 0
+                      type: integer
+                  type: object
+                motd:
+                  description: Motd holds the per-phase MOTD strings surfaced to status pings.
+                  properties:
+                    failed:
+                      type: string
+                    running:
+                      type: string
+                    starting:
+                      type: string
+                    stopped:
+                      type: string
+                  type: object
+                nodeName:
+                  type: string
+                notify:
+                  description: Notify picks the lifecycle events mailed to the server's owner.
+                  properties:
+                    problems:
+                      description: Problems covers crashes, failed starts and host restarts; nil means true.
+                      type: boolean
+                    started:
+                      type: boolean
+                    stopped:
+                      type: boolean
+                  type: object
+                onlineMode:
+                  description: |-
+                    OnlineMode mirrors server.properties online-mode. Wake/claim semantics
+                    only hold when the Velocity proxy enforces online-mode=true (spec §8).
+                  type: boolean
+                rcon:
+                  description: |-
+                    Rcon configures the RCON endpoint the operator probes for readiness and
+                    uses for graceful shutdown (spec §5, §7).
+                  properties:
+                    enabled:
+                      description: Enabled must be true for readiness probing and graceful shutdown.
+                      type: boolean
+                    port:
+                      description: Port is the RCON TCP port (default 25575).
+                      format: int32
+                      maximum: 65535
+                      minimum: 0
+                      type: integer
+                    secretRef:
+                      description: SecretRef points at the Secret holding the RCON password.
+                      properties:
+                        key:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                        - key
+                        - name
+                      type: object
+                  type: object
+                  x-kubernetes-validations:
+                    - message: the allow-rcon NetworkPolicy admits only port 25575; leave port unset
+                      rule: '!has(self.port) || self.port == 0 || self.port == 25575'
+                reaperExempt:
+                  description: ReaperExempt opts this server out of the world reaper entirely (spec §18).
+                  type: boolean
+                recovery:
+                  description: Recovery decides what follows a crash or a host restart; system servers always resume and restart.
+                  properties:
+                    maxCrashRestarts:
+                      description: MaxCrashRestarts is how many crashes in a row are restarted before the server is stopped; zero means 3.
+                      format: int32
+                      maximum: 20
+                      minimum: 0
+                      type: integer
+                    restartOnCrash:
+                      description: RestartOnCrash restarts the process after it exits or stops responding; nil means true.
+                      type: boolean
+                    resumeAfterHostRestart:
+                      description: ResumeAfterHostRestart starts a server that was running again after its host restarts; nil means true.
+                      type: boolean
+                  type: object
+                resources:
+                  description: Resources are the container resource requests/limits.
+                  properties:
+                    claims:
+                      description: |-
+                        Claims lists the names of resources, defined in spec.resourceClaims,
+                        that are used by this container.
+
+                        This is an alpha field and requires enabling the
+                        DynamicResourceAllocation feature gate.
+
+                        This field is immutable. It can only be set for containers.
+                      items:
+                        description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                        properties:
+                          name:
+                            description: |-
+                              Name must match the name of one entry in pod.spec.resourceClaims of
+                              the Pod where this field is used. It makes that resource available
+                              inside a container.
+                            type: string
+                          request:
+                            description: |-
+                              Request is the name chosen for a request in the referenced claim.
+                              If empty, everything from the claim is made available, otherwise
+                              only the result of this request.
+                            type: string
+                        required:
+                          - name
+                        type: object
+                      type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
+                    limits:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: |-
+                        Limits describes the maximum amount of compute resources allowed.
+                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                      type: object
+                    requests:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: |-
+                        Requests describes the minimum amount of compute resources required.
+                        If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                        otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                      type: object
+                  type: object
+                software:
+                  description: |-
+                    Software, when set, makes Image a runtime image (a plain Java runtime)
+                    and the server software data on the world volume: before every start an
+                    install step brings the volume to what Software names, and the server is
+                    started from there. Without it, Image is a server image that starts the
+                    server itself.
+                  properties:
+                    build:
+                      description: |-
+                        Build is the Paper/Purpur build or the Fabric/Quilt/Forge/NeoForge
+                        loader version.
+                      maxLength: 64
+                      pattern: ^[0-9A-Za-z][0-9A-Za-z.+_-]*$
+                      type: string
+                    forwarding:
+                      description: |-
+                        Forwarding is how the proxy's player identity reaches the server:
+                        velocity (the installer adds and configures what the software needs) or
+                        none (players join under offline-mode UUIDs).
+                      enum:
+                        - velocity
+                        - none
+                      type: string
+                    jar:
+                      description: Jar is a custom server's jar, relative to the server directory.
+                      maxLength: 255
+                      type: string
+                    java:
+                      description: Java is the major version of the runtime image the server starts on.
+                      enum:
+                        - 8
+                        - 17
+                        - 21
+                        - 25
+                      format: int32
+                      type: integer
+                    minecraftVersion:
+                      description: MinecraftVersion is the game version ("1.21.4", "26.3").
+                      maxLength: 64
+                      pattern: ^[0-9A-Za-z][0-9A-Za-z.+_-]*$
+                      type: string
+                    type:
+                      description: Type is the kind of server software.
+                      enum:
+                        - paper
+                        - purpur
+                        - fabric
+                        - quilt
+                        - forge
+                        - neoforge
+                        - vanilla
+                        - custom
+                      type: string
+                  required:
+                    - java
+                    - type
+                  type: object
+                  x-kubernetes-validations:
+                    - message: a custom server names a jar and no version; every other type names a Minecraft version and no jar
+                      rule: 'self.type == ''custom'' ? has(self.jar) && !has(self.minecraftVersion) && !has(self.build) : has(self.minecraftVersion) && !has(self.jar)'
+                startup:
+                  description: Startup bounds how long Starting may last before Failed (spec §5).
+                  properties:
+                    healthHTTPPath:
+                      description: HealthHTTPPath is the path for the HTTP readiness probe (default "/healthz" when HealthHTTPPort is set).
+                      type: string
+                    healthHTTPPort:
+                      description: HealthHTTPPort, when > 0, switches the pod readiness probe from the default plain-TCP check on the game port to an HTTP GET on this container port. It exists for RCON-less loaders (notably LOOHP/Limbo) where the felis-limbo plugin reports true readiness only after the first server tick.
+                      format: int32
+                      maximum: 65535
+                      minimum: 0
+                      type: integer
+                    readinessTimeoutSeconds:
+                      description: ReadinessTimeoutSeconds is the budget for the first successful RCON probe.
+                      format: int32
+                      maximum: 86400
+                      minimum: 0
+                      type: integer
+                    timeoutSeconds:
+                      description: TimeoutSeconds is the overall budget before the server is marked Failed.
+                      format: int32
+                      maximum: 86400
+                      minimum: 0
+                      type: integer
+                  type: object
+                storage:
+                  description: Storage configures the world PVC.
+                  properties:
+                    claimName:
+                      type: string
+                    size:
+                      description: Size is the requested PVC capacity (e.g. "10Gi").
+                      type: string
+                    storageClassName:
+                      description: StorageClassName selects the StorageClass; empty uses the default.
+                      type: string
+                  type: object
+                subdomain:
+                  description: |-
+                    Subdomain is the per-server label under the deployment zone. It is the
+                    only routing identity; the operator never hardcodes the parent domain.
+                  type: string
+              required:
+                - image
+                - subdomain
+              type: object
+              x-kubernetes-validations:
+                - message: Extra ports cannot expose a managed TCP port.
+                  rule: '!has(self.extraPorts) || self.extraPorts.all(p, p.protocol != ''TCP'' || (p.port != 25565 && p.port != 25575 && (!has(self.rcon) || !has(self.rcon.port) || p.port != self.rcon.port) && (!has(self.startup) || !has(self.startup.healthHTTPPort) || p.port != self.startup.healthHTTPPort)))'
+            status:
+              description: MinecraftServerStatus is the observed state (spec §4 status.*).
+              properties:
+                autoRestarts:
+                  description: |-
+                    AutoRestarts counts how often the operator recreated the pod of a start
+                    that timed out (at most 3, with a doubling backoff); reaching Ready or
+                    stopping resets it.
+                  format: int32
+                  type: integer
+                autoStop:
+                  description: AutoStop records why the operator stopped the server.
+                  properties:
+                    at:
+                      format: date-time
+                      type: string
+                    generation:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                  required:
+                    - at
+                    - generation
+                    - reason
+                  type: object
+                conditions:
+                  description: Conditions are the standard metav1 conditions (Ready, RconReached, ...).
+                  items:
+                    description: Condition contains details for one aspect of the current state of this API Resource.
+                    properties:
+                      lastTransitionTime:
+                        description: |-
+                          lastTransitionTime is the last time the condition transitioned from one status to another.
+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                crashes:
+                  description: Crashes counts crashes in a row; it starts over after an hour without one and when a person starts the server.
+                  format: int32
+                  type: integer
+                emptySince:
+                  description: |-
+                    EmptySince is when the operator first observed 0 online players during
+                    a Running phase (spec §8 idle auto-stop). It is reset when a player joins
+                    or the server restarts or stops, so the empty-duration counter starts fresh
+                    each time the server becomes unoccupied. A zero sampled within three minutes
+                    of a run's first ready probe stamps nothing: the players it came up for may
+                    not be in yet.
+                  format: date-time
+                  type: string
+                endpoint:
+                  description: Endpoint is where the proxy should route traffic.
+                  properties:
+                    address:
+                      description: Address is the host:port the proxy should dial.
+                      type: string
+                    mode:
+                      description: Mode is "direct" or "fallback".
+                      type: string
+                  type: object
+                events:
+                  description: Events are the latest lifecycle events, oldest first.
+                  items:
+                    properties:
+                      at:
+                        format: date-time
+                        type: string
+                      crashes:
+                        format: int32
+                        type: integer
+                      exitCode:
+                        format: int32
+                        type: integer
+                      limit:
+                        format: int32
+                        type: integer
+                      reason:
+                        type: string
+                      seq:
+                        format: int64
+                        type: integer
+                      stopping:
+                        type: boolean
+                      type:
+                        type: string
+                    required:
+                      - at
+                      - seq
+                      - type
+                    type: object
+                  maxItems: 20
+                  type: array
+                extraPorts:
+                  items:
+                    properties:
+                      nodePort:
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      port:
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      protocol:
+                        enum:
+                          - TCP
+                          - UDP
+                        type: string
+                    required:
+                      - protocol
+                      - port
+                      - nodePort
+                    type: object
+                  maxItems: 5
+                  type: array
+                hibernation:
+                  description: Hibernation tracks a frozen process; absent when the server is not hibernating.
+                  properties:
+                    container:
+                      description: Container is the ID of the frozen container.
+                      type: string
+                    cpuRequest:
+                      description: CPURequest is the pod's CPU request before the freeze.
+                      type: string
+                    job:
+                      description: Job names the node Job carrying out the current freeze or thaw.
+                      type: string
+                    memoryLimit:
+                      description: MemoryLimit is the pod's memory limit before the freeze.
+                      type: string
+                    memoryRequest:
+                      description: MemoryRequest is the pod's memory request before the freeze.
+                      type: string
+                    message:
+                      description: Message explains why a wake is waiting.
+                      type: string
+                    node:
+                      description: Node is where the frozen process lives.
+                      type: string
+                    since:
+                      description: Since is when the freeze began.
+                      format: date-time
+                      type: string
+                    stage:
+                      description: Stage is Freezing, Frozen, Growing, Thawing or Killing.
+                      type: string
+                    swappedBytes:
+                      description: SwappedBytes is the memory moved to swap.
+                      format: int64
+                      type: integer
+                  required:
+                    - since
+                    - stage
+                  type: object
+                lastAutoRestartAt:
+                  description: LastAutoRestartAt is when the operator last recreated the pod.
+                  format: date-time
+                  type: string
+                lastCrash:
+                  description: LastCrash describes the latest unexpected exit.
+                  properties:
+                    at:
+                      format: date-time
+                      type: string
+                    exitCode:
+                      format: int32
+                      type: integer
+                    reason:
+                      type: string
+                  required:
+                    - at
+                    - exitCode
+                  type: object
+                liveMotd:
+                  description: LiveMotd is the MOTD currently advertised for the active phase.
+                  type: string
+                nodeName:
+                  type: string
+                observedGeneration:
+                  description: ObservedGeneration is the spec generation this status reflects.
+                  format: int64
+                  type: integer
+                phase:
+                  description: Phase is the coarse lifecycle phase.
+                  type: string
+                players:
+                  description: Players is the last observed player count.
+                  properties:
+                    max:
+                      format: int32
+                      type: integer
+                    online:
+                      format: int32
+                      type: integer
+                  required:
+                    - max
+                    - online
+                  type: object
+                ready:
+                  description: |-
+                    Ready is true only after a successful RCON probe (loader-agnostic; a
+                    status ping is never sufficient — spec §5).
+                  type: boolean
+                readySignalAt:
+                  description: |-
+                    ReadySignalAt is when the first RCON probe of the current run succeeded.
+                    Every Starting or Stopping pass clears it, so each start is measured once.
+                  format: date-time
+                  type: string
+                run:
+                  description: Run is what the operator last saw of the server's pod and host.
+                  properties:
+                    bootID:
+                      type: string
+                    node:
+                      type: string
+                    podUID:
+                      type: string
+                    restarts:
+                      format: int32
+                      type: integer
+                  type: object
+                startRequestedAt:
+                  description: |-
+                    StartRequestedAt is when the current start attempt was first observed
+                    (the first Starting reconcile after desiredState=Running). It anchors the
+                    felis_start_duration_seconds histogram (spec §23): the operator observes
+                    ReadySignalAt-StartRequestedAt the moment readiness is first reached, then
+                    clears this on stop so the next start re-anchors. Persisted in status
+                    because the two endpoints fall in different reconcile passes.
+                  format: date-time
+                  type: string
+                stopNoticeAt:
+                  description: |-
+                    StopNoticeAt is when the operator told the players on a server that it is
+                    about to stop (desiredState flipped to Stopped with players online). The stop
+                    itself waits until StopNoticeWindow has passed since then; the stamp is cleared
+                    once the server is scaled down, or when desiredState goes back to Running first.
+                  format: date-time
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
