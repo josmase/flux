@@ -22,8 +22,14 @@ T4.3 targets all 154 parented old-generation VolumeSnapshots and six old orphan 
 
 No old-generation object had been removed when this inventory was captured.
 
-## Execution log — batches 1–6
+## Execution log — first checkpoint, batches 1–6
 
 The first five unreferenced media snapshots were deleted as batch 1; batches 2–6 removed 25 CNPG snapshots. Each parent VolumeSnapshot and its Retain VSC was deleted with exact UID preconditions and allowed to finish through the normal controller and sidecar lifecycle. After each batch, the exact target UIDs were absent, all corresponding `InCluster` LINSTOR snapshots remained present, new Delete-policy VSC UIDs and the 15 deferred snapshots were unchanged, and the 75 PVC/82 PV identities plus LINSTOR health remained unchanged.
 
-Post-batch inventory: 186 VolumeSnapshots and 192 VSCs remain. All 15 deferred Artifactory/Immich snapshots and all 47 new-generation Delete-policy contents are present. The T4.3 plan records 30 completed targets and 130 pending targets with timestamps and per-target verification results.
+At the first checkpoint, 186 VolumeSnapshots and 192 VSCs remained. All 15 deferred Artifactory/Immich snapshots and all 47 new-generation Delete-policy contents were present. The plan recorded 30 completed targets and 130 pending targets.
+
+## Execution log — second checkpoint, batches 7–16
+
+Ten additional batches removed 50 more old Retain metadata pairs, all from CNPG history. The 80 completed targets now comprise five media snapshots and 75 CNPG snapshots. The current Kubernetes inventory is 136 VolumeSnapshots and 142 VSCs; all 15 deferred snapshots and all 47 new-generation Delete-policy contents remain. The plan records 80 completed targets and 80 pending targets.
+
+After every batch, target UIDs disappeared through normal lifecycle; all corresponding local LINSTOR snapshots remained present; unrelated VolumeSnapshot/VSC UIDs, PVC/PV UIDs, and LINSTOR health were unchanged. LINSTOR health remains 252 `UpToDate`, 6 `Diskless`, and 528 `Established` replication states.
