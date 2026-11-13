@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linstor-backup-shipping-timeout
+  namespace: piraeus-datastore
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      containers:
+        - name: configure
+          image: quay.io/piraeusdatastore/piraeus-server:v1.34.2
+          imagePullPolicy: IfNotPresent
+          command: [/bin/sh, -ec]
+          args:
+            - |
+              controller=linstor-controller.piraeus-datastore.svc:3370
+              current="$(linstor --controllers "$controller" -m controller list-properties | jq -r '.[0][] | select(.key == "BackupShipping/BackupTimeout") | .value')"
+              if [ "$current" != "60" ]; then
+                linstor --controllers "$controller" controller set-property BackupShipping/BackupTimeout 60
+              fi
+              current="$(linstor --controllers "$controller" -m controller list-properties | jq -r '.[0][] | select(.key == "BackupShipping/BackupTimeout") | .value')"
+              test "$current" = "60"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi

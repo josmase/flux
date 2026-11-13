@@ -15,6 +15,8 @@ stored artifacts as part of removing automation. The repository contains
 historical execution records under `docs/LINSTOR_*`; they describe past runs,
 not active backup jobs.
 
+LINSTOR backup catalog requests use `BackupShipping/BackupTimeout`. The five-second default timed out against the configured RustFS remote; the Git-managed one-shot Job sets it to 60 seconds and skips reapplying it when already correct. This setting only bounds catalog/API request time and does not enable a producer or retention job.
+
 RustFS is still a single failure domain. The retained remote protects against
 some LINSTOR and node failures, but not total loss of the RustFS server.
 
