@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: felis-api
+  namespace: felis
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          env:
+            - name: FELIS_PANEL_NODEPORT
+              value: "443"

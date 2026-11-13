@@ -3,9 +3,10 @@ kind: Kustomization
 resources:
   - ../../../base/felis/control-plane
   - network-policies.yaml
+  - felis-web-ingressroute.yaml
   - secrets/secret.sops.yaml
   - secrets/postgres-ha.sops.yaml
 
 patches:
-  - path: felis-api-service.patch.yaml
+  - path: felis-api-traefik.patch.yaml
   - path: registry-service.patch.yaml
