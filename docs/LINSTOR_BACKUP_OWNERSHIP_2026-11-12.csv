@@ -27,7 +27,7 @@ immich,immich-model-cache-ml-2-linstor,Bound,,Platform Operations,Immich,standar
 immich,immich-model-cache-ml-linstor,Bound,,Platform Operations,Immich,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
 media,arr-dashboard-config-linstor,Bound,,Platform Operations,Arr Dashboard,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
 media,bazarr-config-linstor-v2,Bound,,Platform Operations,Bazarr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
-media,checkrr-config-linstor-v6,Bound,,Platform Operations,Checkrr,standard,N/A (recovery-only; no recurring schedule),N/A (disposition/restore path pending),"Retain prepared canonical target; validate owner, SQLite and app state before any schedule or cleanup."
+media,checkrr-config-linstor-v6,Bound,,Platform Operations,Checkrr,standard,N/A (recovery-only; no recurring schedule),N/A (recovery-only; service remains disabled),Retain recovery-only baseline through T7; bbolt source-to-restore checksum and isolated no-op app-open passed; production config/Secret absent.
 media,jellyfin-config-pvc-jellyfin-0-canonical,Bound,,Platform Operations,Jellyfin,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
 media,prowlarr-config-linstor,Bound,,Platform Operations,Prowlarr,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
 media,qbittorrent-2-qbittorrent-config,Bound,,Platform Operations,qBittorrent 2,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.

@@ -148,8 +148,7 @@ the source mounted read-only. A recursive manifest of all 17 paths matched
 exactly, including SHA-256 file hashes and metadata. The old PVC/PV and LINSTOR
 resource were removed; the three source `VolumeSnapshotContent` objects remain
 Ready with `Retain` policy. An earlier target, `checkrr-config-linstor-v5`,
-did not match and remains separate. Checkrr was not re-enabled; SQLite integrity
-was not checked because the available copy image lacks SQLite tooling.
+did not match and remains separate. Checkrr was not re-enabled. The `checkrr.db` file is bbolt, not SQLite; a credential-free scratch restore from the T3.6 v6 baseline matched the source SHA-256 before Checkrr v3.6.1 opened it with a no-integration/no-op configuration (exit 0). Production Checkrr remains disabled, and its Secret is absent.
 On 2026-11-12 the separate stale Released `linstor-final` PV
 `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` and its unused LINSTOR resources
 were removed after confirming v6 remained Bound with three UpToDate replicas;
@@ -165,9 +164,7 @@ the canonical `linstor` class from Checkrr retries: `pvc-fc5a9155-eb8a-4794-909a
 Kubernetes `VolumeSnapshotContent`, and its three LINSTOR replicas are unused
 and `UpToDate`. The old targets are not accepted copies: the initial attempt
 failed filesystem consistency checks, v4's manifest differed, and v5 is
-documented as mismatched. Preserve all five while v6 still lacks SQLite
-integrity validation; re-evaluate them only after Checkrr's accepted data and
-application state are validated. The v6 target remains Bound with three
+documented as mismatched. These retry PVs remain rejected/mismatched copies. The v6 bbolt source-to-restore checksum and isolated no-op app-open test passed on 2026-11-14; Checkrr remains disabled because the production Secret/configuration is absent. The old Checkrr snapshot definitions were cleaned under T4.6 after this validation; see the T4.6 report. The v6 target remains Bound with three
 `UpToDate` replicas.
 
 The newer Released `linstor` PV census found 12 LINSTOR backup snapshots on
@@ -344,11 +341,11 @@ from their names or local state.
 | `pvc-baa44b24-7899-4f85-8894-0dcdc907eaa9` | `media/radarr-8-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-8-config-linstor`; retain until exact data match and workload health are verified. |
 | `pvc-c334b48c-a473-4e02-b88f-2af05afc7ca5` | `media/radarr-11-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Compare against active `radarr-11-config-linstor`; retain until exact data match and workload health are verified. |
 | `pvc-d0f2bba3-c641-479a-8cf8-e08c3632cfd8` | `media/radarr-1-config-linstor` | No LINSTOR snapshot or Ready Retain VSC found | Identify which Radarr-1 generation this duplicates; compare separately from `pvc-030fac5a-2014-4f1d-90a4-2aee14ea0256`. |
-| `pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8` | `media/checkrr-config-linstor-v5` | No Ready Retain VSC; no LINSTOR snapshot listed | Failed v5 target; keep until the v6 SQLite and application validation is complete. |
-| `pvc-825ea79a-abac-4e80-8de6-55052386cce1` | `media/checkrr-config-linstor-v4` | No Ready Retain VSC; no LINSTOR snapshot listed | v4 manifest differed from source; keep until the v6 SQLite and application validation is complete. |
-| `pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828` | `media/checkrr-config-linstor-v5` | 12 LINSTOR backup snapshots: six Successful, six failed; no Ready Retain VSC | Failed/mismatched v5 target; preserve all snapshots and keep until v6 SQLite and application validation is complete. |
-| `pvc-d1962717-b0f9-4b22-b77c-b4be1d892554` | `media/checkrr-config-linstor-v3` | No Ready Retain VSC; no LINSTOR snapshot listed | Identify v3 lineage and compare to v6; keep until Checkrr acceptance is complete. |
-| `pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc` | `media/checkrr-config-linstor` | No Ready Retain VSC; no LINSTOR snapshot listed | Initial target failed filesystem consistency; keep until v6 SQLite and application validation is complete. |
+| `pvc-72d128ec-eae7-4f47-b4fe-cd004703f4f8` | `media/checkrr-config-linstor-v5` | No Ready Retain VSC; no LINSTOR snapshot listed | Failed v5 target; retained as a Released PV. The v6 bbolt checksum/app-open gate passed in scratch; production Checkrr remains disabled. |
+| `pvc-825ea79a-abac-4e80-8de6-55052386cce1` | `media/checkrr-config-linstor-v4` | No Ready Retain VSC; no LINSTOR snapshot listed | v4 manifest differed from source; retained as a Released PV. The v6 bbolt checksum/app-open gate passed in scratch; production Checkrr remains disabled. |
+| `pvc-9ddd71b8-6959-49bb-b9ef-b260e328a828` | `media/checkrr-config-linstor-v5` | 12 old LINSTOR backup snapshots at initial census; one exact backup was deleted by the T4.5 expiry operation before this separate hold was reconciled, and the other 11 remained until v6 validation. No Ready Retain VSC. | Failed/mismatched v5 target; keep the Released PV. The v6 bbolt checksum/app-open gate then passed in scratch; T4.6 removed the remaining old Checkrr snapshots. See [T4.5](LINSTOR_T4_5_CLEANUP_2026-11-13.md) and [T4.6](LINSTOR_T4_6_CLEANUP_2026-11-13.md). |
+| `pvc-d1962717-b0f9-4b22-b77c-b4be1d892554` | `media/checkrr-config-linstor-v3` | No Ready Retain VSC; no LINSTOR snapshot listed | v3 lineage was not accepted; retained as a Released PV. The v6 bbolt checksum/app-open gate passed in scratch; production Checkrr remains disabled. |
+| `pvc-fc5a9155-eb8a-4794-909a-b9f2f29a1ffc` | `media/checkrr-config-linstor` | No Ready Retain VSC; no LINSTOR snapshot listed | Initial target failed filesystem consistency; retained as a Released PV. The v6 bbolt checksum/app-open gate passed in scratch; production Checkrr remains disabled. |
 | `pvc-785ded5b-e24f-4198-ac60-60969e736d1c` | `media/sonarr-2-config-linstor` | Read-only comparison found different database/config/logs, four source-only scheduled ZIPs, and three source-only `asp/key-*.xml` encryption-key files; the target has a different ASP key. The source `sonarr.db` fails SQLite `quick_check` with freelist/page errors; all four ZIPs pass `unzip -t`, but no restore is verified. No LINSTOR snapshot or matching Ready Retain VSC; source replicas are Unused and UpToDate. | Hold. Validate a restore from the source ZIPs and determine whether source ASP keys decrypt credentials still needed by the active app. Preserve the corrupt source DB and key files until the restore path is verified. Sonarr-2 was restored to 1/1 Ready after comparison. |
 | `pvc-2496599f-0230-4952-be1e-3f412ff18497` | `immich/immich-db-recovery-test` | Five Successful and one failed LINSTOR backup snapshots; no Ready Retain VSC | Confirm this is only a disposable restore-test volume and that Immich's active database is authoritative; preserve all snapshots before removing it. |
 
@@ -437,8 +434,7 @@ VolumeSnapshotContent remain. Checkrr's stale `linstor-final` PV
 `pvc-8a887b03-3b3a-489a-ae4d-67e70f2b9c8a` was removed after confirming the v6
 canonical claim was Bound with three UpToDate replicas, its source resource was
 Unused, and its Successful snapshot plus Ready Retain `VolumeSnapshotContent`
-remained. Checkrr is not running; SQLite integrity still needs validation
-before enabling it. The remaining 18 legacy-class PVs have individual dispositions
+remained. Checkrr is not running. The v6 bbolt copy passed a source-to-restore SHA-256 check and isolated no-op app-open test; production configuration is absent, so the service remains disabled. The remaining 18 legacy-class PVs have individual dispositions
 above; retirement of legacy StorageClass definitions is complete, but cleanup
 of a held PV or its backing data requires a separate evidence-based decision.
 LLM Switchboard's stale source PV `pvc-4d62538a-2209-417b-ade0-68ecb0dbe71b`

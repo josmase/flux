@@ -238,8 +238,8 @@
       "service_owner": "Checkrr",
       "priority": "standard",
       "rpo_target": "N/A (recovery-only; no recurring schedule)",
-      "rto_target": "N/A (disposition/restore path pending)",
-      "disposition": "Retain prepared canonical target; validate owner, SQLite and app state before any schedule or cleanup.",
+      "rto_target": "N/A (recovery-only; service remains disabled)",
+      "disposition": "Retain recovery-only baseline through T7. Source-to-restore bbolt SHA-256 matched before isolated Checkrr v3.6.1 no-op app-open; production Secret/configuration is absent and the service remains disabled.",
       "volumesnapshot": "t34-20261113-checkrr-config-linstor-v6-78b5a3",
       "volumesnapshot_uid": "75f98b38-0b34-455f-afb8-c09507a52c90",
       "volumesnapshot_content": "snapcontent-75f98b38-0b34-455f-afb8-c09507a52c90",
@@ -253,7 +253,7 @@
       "backup_epic_label": "linstor-backup-recovery-2026",
       "backup_task_label": "t3-4",
       "retention_label": "baseline-protected; retain through old-generation cleanup and T7 acceptance",
-      "checksum_or_restore_test": null
+      "checksum_or_restore_test": "Independently restored to scratch; source and restored bbolt file SHA-256 matched before app run (8f0c57d5ef26258bbbe74b3bd4faaa7608e3b4fa6b3076bbfba5d6c0902f4a99). Checkrr v3.6.1 opened/updated the scratch copy with no integrations enabled and exited 0. Production app configuration was not tested."
     },
     {
       "record_id": "snapshot-a45f16db-b65f-4c5c-89ce-cfeafd382bdb",
@@ -1262,7 +1262,7 @@
       "remote_catalog_evidence": "LINSTOR backup catalog exact full record found and independently restored; signed RustFS inventory observation not claimed."
     }
   ],
-  "updated_at_utc": "2026-11-13T20:24:00Z",
+  "updated_at_utc": "2026-11-14T00:00:00Z",
   "recovery_only_records": [
     "snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340",
     "snapshot-b1a58cc0-e340-4c76-8766-4883b9410800"
