@@ -1,7 +1,7 @@
 # Epic: Re-establish verified LINSTOR backup and recovery
 
 **Epic ID:** `LINSTOR-BACKUP-RECOVERY-2026`
-**Status:** In progress — T3 baseline is complete for currently in-scope workloads; Artifactory and Immich remain user-deferred. T4 cleanup is next and has not started.
+**Status:** In progress — T3 baseline is complete for currently in-scope workloads; Artifactory and Immich remain user-deferred. T4.1 inventory is complete; T4.2 dependency review is blocked and no cleanup has started.
 **Owner:** Storage/platform operations (assign before implementation)
 **Last updated:** 2026-11-13
 **Scope:** Production LINSTOR-backed workloads, their application-consistent recovery, cleanup of the old snapshot generation, recurring backup automation, and tested restore procedures.
@@ -33,7 +33,7 @@ Statuses: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `DONE`. A subtask marked `BLO
 | T1 — Confirm ownership, workload scope, RPO/RTO, and exclusions | DONE | Ownership matrix: [LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv](LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv); approved classifications: [LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md](LINSTOR_BACKUP_CLASSIFICATION_DECISIONS_2026-11-12.md); remote records: [LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md](LINSTOR_BACKUP_REMOTE_RECONCILIATION_2026-11-12.md) |
 | T2 — Prepare independent backup destination and capacity controls | DONE | RustFS-only destination approved with failure-domain risk accepted; capacity, alert, credential, and disposable-object checks recorded below. |
 | T3 — Produce and verify new-generation baseline backups | DONE for in-scope workloads | T3.1–T3.6 completed for current scope. Artifactory and Immich remain user-deferred with no coverage claim. Full workload-family restores and application-consistency rehearsals remain in T7. See [CNPG evidence](LINSTOR_CNPG_PITR_BASELINE_2026-11-12.md), [GitLab evidence](LINSTOR_GITLAB_RECOVERY_BASELINE_2026-11-13.md), [T3.3 evidence](LINSTOR_T3_3_APP_RECOVERY_BASELINE_2026-11-13.md), [T3.4 evidence](LINSTOR_T3_4_APP_PVC_BASELINE_2026-11-13.md), [T3.5 evidence](LINSTOR_T3_5_NON_LINSTOR_BASELINE_2026-11-13.md), and [T3.6 manifest](LINSTOR_T3_6_BASELINE_MANIFEST_2026-11-13.json). |
-| T4 — Purge all old-generation snapshots and backup artifacts | NOT STARTED | — |
+| T4 — Purge all old-generation snapshots and backup artifacts | BLOCKED at T4.2 | T4.1 inventory complete; dependency gaps and user-deferred Artifactory/Immich are documented in [T4.2 review](LINSTOR_T4_2_DEPENDENCY_REVIEW_2026-11-13.md). No deletion started. |
 | T5 — Implement recurring backup producers | NOT STARTED | — |
 | T6 — Implement retention, monitoring, and operational runbooks | NOT STARTED | — |
 | T7 — Complete workload restore drills and production acceptance | NOT STARTED | — |
@@ -130,14 +130,14 @@ User-approved T1.3 exception: the four active NFS mounts listed in [the data-cla
 - [x] T3.6 Write a new-generation manifest/index of baseline artifacts. **DONE.** [The T3.6 JSON manifest](LINSTOR_T3_6_BASELINE_MANIFEST_2026-11-13.json) records all 42 snapshot IDs, PVC/PV/source handles, owners and targets, upload/snapshot times, retention labels, restore evidence, approved deferrals, NFS exclusions, and credential-free RustFS catalog counts.
   - **Acceptance:** record IDs, source handles, completion times, checksums/test results, owners, and retention labels; no credentials or sensitive data in the manifest.
 
-### T4 — Purge all old-generation snapshots and backup artifacts — NOT STARTED
+### T4 — Purge all old-generation snapshots and backup artifacts — BLOCKED at T4.2
 
 **Definition of done:** All old-generation snapshot/backup artifacts have been removed through supported lifecycle operations, reconciled to the pre-cleanup inventory, while the new baseline and live PVC/PV resources remain intact.
 
-- [ ] T4.1 Re-inventory immediately before cleanup and freeze all producers/pruners.
-  - **Acceptance:** record fresh object UIDs, PV/claimRefs, snapshot handles, LINSTOR names, backup IDs, CNPG Backup UIDs, and current replica/LV health; no new producer runs during cleanup.
-- [ ] T4.2 Check active restore references, owners, dependencies, and new-baseline coverage for every old artifact.
-  - **Acceptance:** no old artifact is the only usable recovery copy; no PVC, recovery procedure, or migration ledger depends on a deletion target.
+- [x] T4.1 Re-inventory immediately before cleanup and freeze all producers/pruners. **DONE.** Fresh inventory captured 215 VolumeSnapshots, 220 contents, 764 LINSTOR snapshot records / 2168 node copies, 240 resource-health rows, 11 CNPG Backup objects, and RustFS listing evidence. No producer/pruner was active; safety capacity monitor remains enabled. See [T4.1 report](LINSTOR_T4_1_PRE_CLEANUP_INVENTORY_2026-11-13.md).
+  - **Acceptance:** recorded fresh object UIDs, PV/claimRefs, snapshot handles, LINSTOR names, backup IDs, CNPG Backup UIDs, and replica/LV health; no producer ran during inventory.
+- [ ] T4.2 Check active restore references, owners, dependencies, and new-baseline coverage for every old artifact. **BLOCKED.** Eleven old media snapshots match a new baseline source PVC, but full restore rehearsals remain pending; CNPG and remaining historical mappings are incomplete; five orphan retained contents need disposition; Artifactory and Immich remain explicitly deferred/preserved. See [T4.2 dependency review](LINSTOR_T4_2_DEPENDENCY_REVIEW_2026-11-13.md) and [row-level matrix](LINSTOR_T4_2_DEPENDENCY_REVIEW_2026-11-13.csv).
+  - **Acceptance:** not met: exact dependency and usable recovery coverage are not established for all old artifacts.
 - [ ] T4.3 Delete old `VolumeSnapshot` objects and associated content in small, UID-guarded batches using supported CSI operations.
   - **Acceptance:** per batch, expected snapshot/content objects disappear and unrelated objects are unchanged; `Delete` class remote effects and `Retain` class behavior are verified.
 - [ ] T4.4 Remove corresponding retained local LINSTOR snapshots through supported LINSTOR/CSI operations.

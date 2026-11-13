@@ -1,0 +1,12 @@
+namespace,name,uid,phase,started_at,stopped_at,backup_name
+cnpg-system,shared-postgres-baseline-20261112,8888d2ee-25bc-494a-beaf-01eefc420f05,completed,2026-11-12T21:56:14Z,2026-11-12T22:02:06Z,backup-20261112215612
+cnpg-system,shared-postgres-linstor-final-20260917,c4a954a3-35b2-491c-b794-5cb01b43acc8,completed,2026-09-17T19:06:35Z,2026-09-17T19:06:43Z,shared-postgres-linstor-final-20260917
+cnpg-system,shared-postgres-linstor-standby-20260917,ac88ec77-042a-4f4c-b224-dce24a4f4df8,completed,2026-09-17T18:18:38Z,2026-09-17T18:18:46Z,shared-postgres-linstor-standby-20260917
+cnpg-system,shared-postgres-primary-recovery-validation-20261014,51bd1392-0920-46b7-a7ae-d4dcf7bcc85d,completed,2026-10-14T20:47:14Z,2026-10-14T20:49:45Z,shared-postgres-primary-recovery-validation-20261014
+cnpg-system,shared-postgres-recovery-validation-20261014,973004e7-f901-4090-943f-ad5fa4c8bb48,completed,2026-10-14T20:46:45Z,2026-10-14T20:47:02Z,shared-postgres-recovery-validation-20261014
+cnpg-system,shared-postgres-replica-recovery-20261015,cffbf40c-1f30-4886-b906-61780fa61165,completed,2026-10-15T17:04:57Z,2026-10-15T17:06:32Z,shared-postgres-replica-recovery-20261015
+cnpg-system,shared-postgres-rustfs-access-validated-20261014,9755d680-f789-4b16-9fe3-cf3ea5a72a11,completed,2026-10-14T20:59:33Z,2026-10-14T21:03:11Z,shared-postgres-rustfs-access-validated-20261014
+cnpg-system,shared-postgres-v2-202610221000,8e9973f7-7035-403c-8aeb-ed830cea206a,failed,2026-10-22T10:00:01Z,,shared-postgres-v2-202610221000
+cnpg-system,shared-postgres-v2-bootstrap,2421cdac-631c-4f13-a616-7c55b1e2605f,completed,2026-10-20T20:06:39Z,2026-10-20T20:11:15Z,shared-postgres-v2-bootstrap
+cnpg-system,shared-postgres-v2-gate-recovery-20261024,481438fb-85da-44fb-9e49-1144d73ceb0c,completed,2026-10-24T17:55:31Z,2026-10-24T18:02:34Z,shared-postgres-v2-gate-recovery-20261024
+gitlab,gitlab-postgres-baseline-20261112,c4ef3b94-b8a9-4f4f-b8a1-20de55ecba80,completed,2026-11-12T22:17:41Z,2026-11-12T22:19:11Z,backup-20261112221740
