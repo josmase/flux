@@ -47,3 +47,7 @@ After Flux fetched and applied revision `e3b73307`, all three affected Kustomiza
 The remaining 60 parented snapshots and six orphan Retain contents were removed in exact-UID batches of five. A guard initially stopped safely on Watchtower3D because the Kubernetes API represented its absent CSI handle as `null` while the plan recorded blank. The orphan review and live checks confirmed exact content UID, Retain policy, zero backend copies, no parent/source PVC, and a Ready current S3 baseline. After normalizing only the absent-handle representation, the exact metadata object was removed through the standard sidecar lifecycle; no CSI or LINSTOR snapshot deletion was invoked.
 
 T4.3 is complete: all 154 old parented snapshots and six in-scope orphan contents are absent; the 160 corresponding Retain-backed local snapshots remain for T4.4. All 15 user-deferred Artifactory/Immich snapshots and 47 new-generation Delete-policy contents remain present. PV/PVC identities and LINSTOR resource/replica health remained unchanged. The row-level plan records all UIDs, batch timestamps, and verification outcomes.
+
+## T4.4 scope clarification
+
+The completed T4.3 plan contains 160 Retain metadata rows, not 160 local LINSTOR snapshots. Fresh backend reconciliation found 151 local LINSTOR snapshot definitions, seven S3-backed records reserved for T4.5, and two orphan contents with no backend snapshot. T4.4's exact local snapshot and per-worker LV baseline is in [the T4.4 inventory](LINSTOR_T4_4_PRE_CLEANUP_INVENTORY_2026-11-13.md).
