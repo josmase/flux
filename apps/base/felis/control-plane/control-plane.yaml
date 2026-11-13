@@ -677,7 +677,7 @@ spec:
               # not sit out the grace period.
               trap 'exit 0' TERM
               nap() { sleep "$1" & wait $!; }
-              maint="http://127.0.0.1:${FELIS_GC_MAINT_PORT}"
+              maint="http://127.0.0.1:$${FELIS_GC_MAINT_PORT}"
               stamp=/var/lib/registry/.felis-last-gc
               while :; do
                 now=$(date +%s)

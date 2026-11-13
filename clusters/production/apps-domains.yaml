@@ -5,7 +5,7 @@ metadata:
   name: apps-felis-crd
   namespace: flux-system
 spec:
-  suspend: true
+  suspend: false
   interval: 10m
   retryInterval: 1m
   timeout: 5m
@@ -25,7 +25,7 @@ metadata:
   name: apps-felis-control-plane
   namespace: flux-system
 spec:
-  suspend: true
+  suspend: false
   interval: 10m
   retryInterval: 1m
   timeout: 15m
