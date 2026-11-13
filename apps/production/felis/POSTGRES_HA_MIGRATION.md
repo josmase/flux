@@ -13,11 +13,11 @@ CNPG names its container port `postgresql`, while the legacy Deployment used
 the name `postgres`.
 
 No application data was copied from the previous standalone database; the
-production attempt started with a fresh database as authorized. The Felis CLI
-`migrate up -no-backup` command applied all 39 schema migrations, and the API
-was restarted against the CNPG service. The old standalone Deployment is
-scaled to zero. Its PVC, bootstrap Secret, and HBA ConfigMap are retained
-temporarily for rollback; they are not used by the CNPG cluster.
+production deployment started with a fresh database as authorized. The Felis
+CLI `migrate up -no-backup` command applied all 39 schema migrations, and the
+API was restarted against the CNPG service. The retired standalone Deployment,
+PVC, bootstrap Secret, and HBA ConfigMap are removed from GitOps and pruned.
+The old database is not retained for rollback.
 
 Three database instances provide in-cluster availability, not backup or
 disaster recovery. Felis database and world recovery still need to be included
