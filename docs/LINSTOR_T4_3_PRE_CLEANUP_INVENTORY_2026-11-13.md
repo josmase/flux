@@ -21,3 +21,9 @@ This fresh inventory supersedes the earlier T4.1 count summary for T4.3. Exact o
 T4.3 targets all 154 parented old-generation VolumeSnapshots and six old orphan VSC records, in batches of five. For each parented snapshot, delete the exact VolumeSnapshot through an API UID precondition, wait for normal controller removal, then delete the exact Retain VSC through an API UID precondition and wait for normal sidecar removal. Deferred Artifactory/Immich records and all 47 new-generation Delete-policy contents remain untouched. T4.4 later deletes only exact local LINSTOR snapshot IDs recorded in this plan after fresh dependency and health checks.
 
 No old-generation object had been removed when this inventory was captured.
+
+## Execution log — batches 1–6
+
+The first five unreferenced media snapshots were deleted as batch 1; batches 2–6 removed 25 CNPG snapshots. Each parent VolumeSnapshot and its Retain VSC was deleted with exact UID preconditions and allowed to finish through the normal controller and sidecar lifecycle. After each batch, the exact target UIDs were absent, all corresponding `InCluster` LINSTOR snapshots remained present, new Delete-policy VSC UIDs and the 15 deferred snapshots were unchanged, and the 75 PVC/82 PV identities plus LINSTOR health remained unchanged.
+
+Post-batch inventory: 186 VolumeSnapshots and 192 VSCs remain. All 15 deferred Artifactory/Immich snapshots and all 47 new-generation Delete-policy contents are present. The T4.3 plan records 30 completed targets and 130 pending targets with timestamps and per-target verification results.
