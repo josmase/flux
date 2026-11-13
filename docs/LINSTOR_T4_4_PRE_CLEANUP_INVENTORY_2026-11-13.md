@@ -31,3 +31,11 @@ The 18 missing physical LV entries were absent before T4.4 began and remain iden
 - PV and PVC UIDs were captured in the private pre-cleanup snapshot and will be checked after each batch. User-deferred snapshot identities and all new-generation Delete-policy content UIDs are also protected by the batch runner.
 
 No T4.4 backend snapshot deletion had occurred at the time of this inventory. The first batch is limited to five exact local snapshot definitions and their recorded worker LVs.
+
+## Execution log — T4.4 closeout
+
+All 151 planned definitions were deleted through the supported LINSTOR snapshot CLI in batches of five (the final batch contained one definition). Each definition UUID was checked immediately before deletion. After every batch, the runner compared the complete LINSTOR snapshot-definition set, all three full worker LVM inventories, PVC/PV and Kubernetes snapshot UID sets, and live resource/replica health against the expected delta.
+
+The 384 physical target LVs were removed exactly: 128 on `kubernetes-node-204`, 137 on `kubernetes-node-205`, and 119 on `kubernetes-node-206`. Eighteen LV names expected from LINSTOR's snapshot node-volume entries were already absent at the pre-cleanup baseline; the plan recorded these as no-op deltas. All 151 snapshot definitions are now absent, and the total LINSTOR snapshot-definition count is 613 (down from 764).
+
+Final audit: live health remains 270 `UpToDate`, 6 `Diskless`, and 564 `Established`; Kubernetes inventory remains 62 `VolumeSnapshot`, 62 `VolumeSnapshotContent`, 81 PVC, and 88 PV objects. The seven S3-backed records were not touched and remain for T4.5. The 15 Artifactory/Immich records and all 47 new-generation Delete-policy contents remain unchanged. T4.4 is complete; remote RustFS and CNPG Backup cleanup is a separate T4.5 operation.
