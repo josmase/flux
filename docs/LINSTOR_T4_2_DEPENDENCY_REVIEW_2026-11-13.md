@@ -1,5 +1,7 @@
 # T4.2 old-artifact dependency review — 2026-11-13
 
+> **Final status update (2026-11-13): T4.2 is complete for the approved scope.** Earlier sections below record interim blockers and are retained as history; this outcome supersedes the earlier `BLOCKED` decision.
+
 ## Scope and result
 
 Reviewed all 175 old-generation `VolumeSnapshotContent` records from the T4.1 inventory against the 42-record T3.6 baseline manifest, current T3 scope decisions, and live PVC snapshot data-source references. The row-level review is in [the dependency matrix](LINSTOR_T4_2_DEPENDENCY_REVIEW_2026-11-13.csv); all 33 live PVC references and their exact UIDs are in [the reference inventory](LINSTOR_T4_2_ACTIVE_PVC_SNAPSHOT_REFERENCES_2026-11-13.csv) and [the current PV/baseline/replica crosswalk](LINSTOR_T4_2_ACTIVE_PVC_CROSSWALK_2026-11-13.csv). Orphaned content identities and per-record decisions are in [the orphan review](LINSTOR_T4_2_ORPHAN_CONTENT_REVIEW_2026-11-13.csv). This is an initial dependency review, not deletion authorization: no old artifact is marked safe to delete and no cleanup operation was run.
@@ -23,7 +25,20 @@ Reviewed all 175 old-generation `VolumeSnapshotContent` records from the T4.1 in
 
 ## T4.2 decision
 
-**BLOCKED — remaining lifecycle dependencies prevent cleanup start.** Do not begin T4.3–T4.5 until T4.2 acceptance is met. Retention is decided for the 86 CNPG rows, 30 baseline-mapped historical rows, and 53 eligible remote records; all 11 source-matched media restore rehearsals have evidence, including Radarr-4 isolated application/API parity after SQLite `.recover` with three historical command rows absent. Remaining work: resolve or explicitly exclude the two Reiverr historical records, the six currently unparented contents, including the preserved Radarr-6 v1 content through a supported lifecycle; preserve the three user-deferred Artifactory/Immich remote records and all deferred snapshots. The LINSTOR list/delete-dry-run timeout is resolved. See [retention decisions](LINSTOR_T4_2_RETENTION_DECISIONS_2026-11-13.md). No old-generation LINSTOR snapshot data or RustFS backup chain has been deleted; only the Radarr-6 VolumeSnapshot metadata was removed through its UID-preconditioned CSI lifecycle, with Retain content and local copies preserved.
+**Interim decision (superseded): BLOCKED — remaining lifecycle dependencies prevented cleanup start at the time of this review. Do not begin T4.3–T4.5 until T4.2 acceptance is met. Retention is decided for the 86 CNPG rows, 30 baseline-mapped historical rows, and 53 eligible remote records; all 11 source-matched media restore rehearsals have evidence, including Radarr-4 isolated application/API parity after SQLite `.recover` with three historical command rows absent. Remaining work: resolve or explicitly exclude the two Reiverr historical records, the six currently unparented contents, including the preserved Radarr-6 v1 content through a supported lifecycle; preserve the three user-deferred Artifactory/Immich remote records and all deferred snapshots. The LINSTOR list/delete-dry-run timeout is resolved. See [retention decisions](LINSTOR_T4_2_RETENTION_DECISIONS_2026-11-13.md). No old-generation LINSTOR snapshot data or RustFS backup chain has been deleted; only the Radarr-6 VolumeSnapshot metadata was removed through its UID-preconditioned CSI lifecycle, with Retain content and local copies preserved.
+
+## Final acceptance — 2026-11-13
+
+The outstanding Reiverr and orphan dispositions are resolved with record-level coverage:
+
+- Reiverr config was recovered from the exact old local migration snapshot and the exact old RustFS full backup. Their SQLite SHA-256 values matched (`f87daf16…fcb02`); both passed `integrity_check=ok`, had seven user tables, and had no foreign-key violations. A new full v2 recovery-only baseline was created from the recovered config and independently restored with the same SHA-256 and checks.
+- Reiverr plugins has a new full v2 recovery-only baseline. The exact new RustFS record independently restored in deny-all scratch; the read-only SQLite check passed with 38 tables and zero foreign-key violations. The application is absent, so no application-level restore is claimed.
+- Radarr-6 v1's source claim and parent snapshot are gone through the existing supported lifecycle. Its retained VSC is mapped to the current Ready Radarr-6 v2 baseline and a later Retain-safe cleanup path.
+- All six orphan VSCs have exact UIDs, owner/source/dependency status, and a T4.3/T4.4 disposition in [the orphan review](LINSTOR_T4_2_ORPHAN_CONTENT_REVIEW_2026-11-13.csv). Four map to exact local LINSTOR snapshots. The pilot validation record and unready Watchtower3D record have no local backend snapshot; their metadata cleanup must preserve Retain semantics and must not invoke a backend delete.
+- The updated T3.6 manifest has 44 baseline records, including two recovery-only Reiverr points retained through T7. Artifactory/Immich remain explicitly deferred and preserved; NFS mounts remain excluded at the user's direction.
+- After evidence capture, all four read-only recovery pods, four scratch PVCs/PVs, four temporary LINSTOR resource definitions, and three temporary local restore snapshots were removed. The deny-all scratch namespace remains only to hold the Ready config recovery VolumeSnapshot; both Reiverr recovery-only RustFS baselines remain intact.
+
+This closes T4.2's dependency/retention gate; it does not claim any old data has already been deleted. T4.3 must start from a fresh inventory and use the exact small-batch lifecycle and verification rules in the epic. No finalizers may be cleared or objects force-deleted.
 
 ## Git bootstrap-reference remediation — 2026-11-13
 

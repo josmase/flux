@@ -1229,11 +1229,43 @@
       "backup_epic_label": "linstor-backup-recovery-2026",
       "backup_task_label": "t4-2-recovery-only",
       "retention_label": "retain-through-T7-acceptance",
-      "checksum_or_restore_test": null
+      "checksum_or_restore_test": "Exact full RustFS record independently restored into isolated LINSTOR resource; read-only SQLite integrity_check=ok, 38 user tables, 0 foreign-key violations. No application deployment or app-level recovery claimed."
+    },
+    {
+      "record_id": "snapshot-b1a58cc0-e340-4c76-8766-4883b9410800",
+      "namespace": "backup-recovery-scratch",
+      "pvc": "reiverr-config-remote (recovery-only import from exact historical RustFS record)",
+      "source_pvc_uid": "43a24d6b-217c-4924-8880-50fce2336409",
+      "pv": "t42-reiverr-config-remote-pv (temporary static Retain PV; cleanup after evidence capture)",
+      "source_volume_handle": "t42-reiverr-config-remote-20261113",
+      "accountable_owner": "Platform Operations",
+      "service_owner": "Reiverr (recovery-only; service deployment absent)",
+      "priority": "standard",
+      "rpo_target": "N/A (recovery-only; no recurring producer)",
+      "rto_target": "N/A (application is not deployed; application restore not claimed)",
+      "disposition": "Recovery-only new full RustFS v2 baseline from exact historical config backup. Old local snapshot restore and exact old remote backup had identical SHA-256; this baseline was independently restored and passed SQLite integrity and foreign-key checks. Retain through T7 acceptance.",
+      "volumesnapshot": "t42-20261113-reiverr-config-recovery-baseline",
+      "volumesnapshot_uid": "b1a58cc0-e340-4c76-8766-4883b9410800",
+      "volumesnapshot_content": "snapcontent-b1a58cc0-e340-4c76-8766-4883b9410800",
+      "volumesnapshot_content_uid": "4ca506b0-5700-4950-866d-1b9de0373620",
+      "volume_snapshot_class": "linstor-snapshot-s3-v2",
+      "remote_uri": "S3://rustfs-linstor-backups-v2/t42-reiverr-config-remote-20261113/snapshot-b1a58cc0-e340-4c76-8766-4883b9410800",
+      "remote_object_id_observed_in_signed_rustfs_listing": false,
+      "rustfs_upload_completed": true,
+      "snapshot_created_at_utc": "2026-11-13T20:17:32Z",
+      "ready_to_use": true,
+      "restore_size": "1Gi",
+      "backup_epic_label": "linstor-backup-recovery-2026",
+      "backup_task_label": "t4-2-recovery-only",
+      "retention_label": "retain-through-T7-acceptance",
+      "checksum_or_restore_test": "Exact new full backup independently restored to isolated LINSTOR resource; read-only SQLite SHA-256 f87daf16c39e0f44c5be05916f256eea328327ce1394b6f0aef4892ac31fcb02 matched source; integrity_check=ok, 7 user tables, 0 foreign-key violations. No application deployment or app-level recovery claimed.",
+      "remote_catalog_evidence": "LINSTOR backup catalog exact full record found and independently restored; signed RustFS inventory observation not claimed."
     }
   ],
-  "updated_at_utc": "2026-11-13T19:54:57Z",
+  "updated_at_utc": "2026-11-13T20:24:00Z",
   "recovery_only_records": [
-    "snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340"
-  ]
+    "snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340",
+    "snapshot-b1a58cc0-e340-4c76-8766-4883b9410800"
+  ],
+  "recovery_only_snapshot_ids_added_after_t3_6": 2
 }
