@@ -211,6 +211,7 @@ Append one entry after each subtask completion, and commit/push this file update
 | 2026-11-13 | T3.6 | Completed | Published a 42-record JSON manifest with source PVC/PV/volume handles, owner/RPO/RTO, snapshot and upload times, S3 IDs, restore evidence, retention labels, NFS exclusions, and deferred workloads. Credentials are not included. See [T3.6 manifest](LINSTOR_T3_6_BASELINE_MANIFEST_2026-11-13.json). | `90d211f5` |
 | 2026-11-13 | T4.1 | Completed | Captured fresh Kubernetes snapshot/content UIDs and handles, 2168 LINSTOR node-snapshot copies, 240 resource-health rows, 11 CNPG Backup objects, RustFS catalog observations, and producer/pruner state. No cleanup started. See [T4.1 inventory](LINSTOR_T4_1_PRE_CLEANUP_INVENTORY_2026-11-13.md). | `a0f099f1` |
 | 2026-11-13 | T4.2 | Blocked | Exact dependencies and usable recovery coverage remain incomplete: CNPG and historical artifacts need record-level mapping, five orphan contents need disposition, and user-deferred Artifactory/Immich are preserved. See [T4.2 dependency review](LINSTOR_T4_2_DEPENDENCY_REVIEW_2026-11-13.md). No deletion started. | `a0f099f1` |
+| 2026-11-13 | T4.2 follow-up | Blocker confirmed | Live PVC inspection found 32 references to old-generation snapshot data sources plus a dangling Reiverr reference on a Terminating PVC. Added per-PVC and per-snapshot UIDs to the dependency matrix; all referenced artifacts remain on hold. See [active reference inventory](LINSTOR_T4_2_ACTIVE_PVC_SNAPSHOT_REFERENCES_2026-11-13.csv). | `4d6049d5` |
 
 ## Update procedure
 
