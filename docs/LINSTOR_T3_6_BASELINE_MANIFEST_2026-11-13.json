@@ -16,7 +16,8 @@
     "is_truncated": false,
     "t3_4_snapshot_ids_matched": 42,
     "t3_4_snapshot_ids_expected": 42,
-    "credential_values_recorded": false
+    "credential_values_recorded": false,
+    "recovery_only_snapshot_ids_added_after_t3_6": 1
   },
   "snapshot_class": {
     "name": "linstor-snapshot-s3-v2",
@@ -1198,6 +1199,41 @@
       "backup_task_label": "t3-4",
       "retention_label": "baseline-protected; retain through old-generation cleanup and T7 acceptance",
       "checksum_or_restore_test": null
+    },
+    {
+      "record_id": "snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340",
+      "namespace": "media",
+      "pvc": "reiverr-plugins-linstor (recovery-only; source PVC completed its pre-existing deletion)",
+      "source_pvc_uid": "3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "pv": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "pv_uid": "87ae7a24-cd38-437a-b05d-71aac6913d3f",
+      "pv_reclaim_policy": "Retain",
+      "source_volume_handle": "pvc-3118762c-dbff-47bc-b3de-8851d331b9ca",
+      "accountable_owner": "Platform Operations",
+      "service_owner": "Reiverr (recovery-only; service deployment absent)",
+      "priority": "standard",
+      "rpo_target": "N/A (recovery-only; no recurring producer)",
+      "rto_target": "N/A (application is not deployed; application restore not claimed)",
+      "disposition": "Recovery-only full RustFS v2 baseline created from the terminating PVC before normal deletion completed; retain through T7 acceptance. Three LINSTOR replicas were UpToDate after PVC removal. Application-level recovery remains unverified.",
+      "volumesnapshot": "t34-20261113-reiverr-plugins-recovery-baseline",
+      "volumesnapshot_uid": "2bbbd7d1-fd00-45df-94cb-e30613139340",
+      "volumesnapshot_content": "snapcontent-2bbbd7d1-fd00-45df-94cb-e30613139340",
+      "volumesnapshot_content_uid": "48faae51-e0ca-444e-a387-cd147ad97e7b",
+      "volume_snapshot_class": "linstor-snapshot-s3-v2",
+      "remote_uri": "S3://rustfs-linstor-backups-v2/pvc-3118762c-dbff-47bc-b3de-8851d331b9ca/snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340",
+      "remote_object_id_observed_in_signed_rustfs_listing": true,
+      "rustfs_upload_completed": true,
+      "snapshot_created_at_utc": "2026-11-13T19:54:22Z",
+      "ready_to_use": true,
+      "restore_size": "1Gi",
+      "backup_epic_label": "linstor-backup-recovery-2026",
+      "backup_task_label": "t4-2-recovery-only",
+      "retention_label": "retain-through-T7-acceptance",
+      "checksum_or_restore_test": null
     }
+  ],
+  "updated_at_utc": "2026-11-13T19:54:57Z",
+  "recovery_only_records": [
+    "snapshot-2bbbd7d1-fd00-45df-94cb-e30613139340"
   ]
 }
