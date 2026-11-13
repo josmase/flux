@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - namespaces.yaml
   - control-plane.yaml
+  - postgres-ha.yaml
   - rbac.yaml
   - network-policies.yaml
