@@ -4,6 +4,7 @@ resources:
   - ../../../base/felis/control-plane
   - network-policies.yaml
   - secrets/secret.sops.yaml
+  - secrets/postgres-ha.sops.yaml
 
 patches:
   - path: felis-api-service.patch.yaml
