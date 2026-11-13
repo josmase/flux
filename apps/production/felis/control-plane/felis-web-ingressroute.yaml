@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: felis-web
+  namespace: felis
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`${FELIS_PANEL_HOSTNAME}`) || Host(`${FELIS_ADMIN_HOSTNAME}`)
+      kind: Rule
+      services:
+        - name: felis-api
+          port: 30443
+          scheme: https
+  tls:
+    secretName: ${FELIS_TLS_SECRET}
