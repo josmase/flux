@@ -16,5 +16,23 @@
     "matches_t3_4_baseline_sha256": true,
     "sqlite_cli_available_in_app_container": false
   },
+  "preflight_restore_rehearsal": {
+    "performed_at_utc": "2026-11-14T14:13Z",
+    "purpose": "Validate RustFS remote restore mechanics ahead of the scheduled pilot; this does not satisfy T5.4 pilot acceptance.",
+    "backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261113_103715^snapshot-62168fce-43e2-4315-9e9e-059b22a1b803",
+    "backup_status": "Success",
+    "isolated_namespace_network_policy": "default deny all",
+    "source_path": "media/arr-dashboard-config-linstor:/config/prod.db",
+    "restored_sha256": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "matches_t3_4_baseline_sha256": true,
+    "sqlite_integrity_check": "ok",
+    "temporary_linstor_resource_definition_deleted": true,
+    "temporary_linstor_snapshot_deleted": true,
+    "temporary_kubernetes_pv_deleted": true,
+    "temporary_namespace_deleted": true,
+    "original_remote_backup_unchanged": true,
+    "production_resource_health_after_cleanup": "all three replicas UpToDate; all nodes Ok",
+    "source_production_volume_modified": false
+  },
   "completed_at_utc": ""
 }
