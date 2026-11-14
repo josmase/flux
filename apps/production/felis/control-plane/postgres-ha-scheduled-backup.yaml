@@ -4,7 +4,7 @@ metadata:
   name: felis-postgres-daily
   namespace: felis
 spec:
-  schedule: "0 0 11 * * *"
+  schedule: "0 0 9 * * *"
   backupOwnerReference: self
   immediate: true
   method: plugin

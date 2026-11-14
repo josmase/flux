@@ -12,7 +12,7 @@ python3 utility-scripts/cluster/backup-protection-readiness.py
 
 ## Live result
 
-The gate exited `1` as designed. Live inventory contained 76 Bound LINSTOR PVCs. The updated ownership matrix accounts for 66 scheduled claims; the Felis artifact cache is recorded as rebuildable and excluded from recurring backup. There were 43 Ready RustFS v2 PVC baseline mappings and two enabled CNPG plugin schedules.
+The gate exited `1` as designed. Live inventory contained 76 Bound LINSTOR PVCs. The updated ownership matrix accounts for 66 scheduled claims; the Felis artifact cache is recorded as rebuildable and excluded from recurring backup. There were 43 Ready RustFS v2 PVC baseline mappings, two enabled CNPG plugin schedules, and no active LINSTOR backup schedules or schedule definitions.
 
 Eight protection checks remain:
 
@@ -24,6 +24,8 @@ Eight protection checks remain:
 6. `felis/felis-postgres-ha` has no Barman ObjectStore/WAL plugin configured in live state.
 7. `felis/felis-postgres-ha` has no enabled plugin ScheduledBackup in live state.
 8. `felis/felis-postgres-ha` has no completed plugin base backup in live state.
+9. LINSTOR has no active RustFS v2 schedules for the 47 eligible application PVC resources.
+10. LINSTOR has none of the six approved sharded schedule definitions with the intended timing and seven-chain retention.
 
 No production claim, backup object, snapshot, or database was modified during this inventory run. The gate must remain closed for broad schedule rollout and all pruning until these checks pass.
 
@@ -33,5 +35,6 @@ No production claim, backup object, snapshot, or database was modified during th
 - The Felis CNPG GitOps declaration now has a separate RustFS ObjectStore and daily plugin ScheduledBackup, with existing RustFS credentials reflected into the Felis namespace. Live plugin activation and first backup are still pending reconciliation and verification.
 - GitLab's supported Toolbox backup CronJob is configured for every six hours, UTC, with `Forbid` concurrency, `awscli`, and a 10 GiB generic ephemeral `local-path` scratch volume. The gate now requires the CronJob policy and a successful run within the six-hour RPO before accepting Gitaly coverage.
 - The four application PVCs remain unscheduled until their first uploaded snapshots and application-consistency checks are complete. Minecraft worlds require a save/flush before snapshotting; registry garbage-collection overlap must be excluded for its baseline.
+- The [T5.2 schedule plan](LINSTOR_T5_2_SCHEDULE_PLAN_2026-11-14.csv) maps all 66 scheduled claims to their producer. Its 47 LINSTOR candidates map to healthy LVM thin resources and six staggered daily UTC windows (03:10, 07:10, 11:10, 15:10, 19:10, and 23:10; maximum eight resources per window), with seven full backup chains retained. The [read-only planner and guarded reconciler](../utility-scripts/cluster/linstor-schedule-reconcile.py) confirmed the current mappings. Apply mode requires the pre-schedule protection gate and refuses unresolved Felis/Minecraft consistency checks; no schedule was enabled by the planner run.
 
 The latest repository commit containing the first GitLab PostgreSQL schedule fix is local but not pushed because the configured GitLab token is expired. All work after that commit is also local until GitLab authentication is renewed.

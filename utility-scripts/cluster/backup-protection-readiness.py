@@ -13,6 +13,8 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import json
+import re
+import argparse
 import subprocess
 import sys
 from pathlib import Path
@@ -53,6 +55,59 @@ def kubectl_json(*args: str) -> dict[str, Any]:
     return value
 
 
+def linstor_schedule_rows() -> list[tuple[str, str, str]]:
+    result = subprocess.run(
+        [
+            "kubectl", "-n", "piraeus-datastore", "exec", "deploy/linstor-controller", "--",
+            "linstor", "schedule", "list-by-resource", "--active-only", "--pastable",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    if result.returncode:
+        raise GateError("LINSTOR active schedule inventory failed")
+    rows: list[tuple[str, str, str]] = []
+    for line in result.stdout.splitlines():
+        if "|" not in line:
+            continue
+        columns = [part.strip() for part in line.strip().strip("|").split("|")]
+        if len(columns) < 3 or columns[0].lower() == "resource":
+            continue
+        if not re.fullmatch(r"(?:pvc-[a-f0-9-]+|[a-zA-Z0-9_.-]+)", columns[0]):
+            continue
+        rows.append((columns[0], columns[1], columns[2]))
+    return rows
+
+
+def linstor_schedule_definitions() -> dict[str, tuple[str, str, str, str, str]]:
+    result = subprocess.run(
+        [
+            "kubectl", "-n", "piraeus-datastore", "exec", "deploy/linstor-controller", "--",
+            "linstor", "schedule", "list", "--pastable",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    if result.returncode:
+        raise GateError("LINSTOR schedule definition inventory failed")
+    definitions: dict[str, tuple[str, str, str, str, str]] = {}
+    for line in result.stdout.splitlines():
+        if "|" not in line:
+            continue
+        columns = [part.strip() for part in line.strip().strip("|").split("|")]
+        if len(columns) < 6 or columns[0].lower() == "name":
+            continue
+        if columns[0].startswith("linstor-standard-shard-"):
+            definitions[columns[0]] = (columns[1], columns[2], columns[3], columns[4], columns[5])
+        else:
+            definitions[columns[0]] = (columns[1], columns[2], columns[3], columns[4], columns[5])
+    return definitions
+
+
 def identity(metadata: dict[str, Any]) -> tuple[str, str]:
     return str(metadata.get("namespace", "default")), str(metadata.get("name", ""))
 
@@ -91,10 +146,18 @@ def scheduled_owner(row: dict[str, str]) -> bool:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--pre-schedule",
+        action="store_true",
+        help="check all protection prerequisites while the LINSTOR schedules are being staged",
+    )
+    args = parser.parse_args()
     blockers: list[str] = []
     try:
         owners = owner_rows()
         pvc_list = kubectl_json("get", "pvc", "-A")
+        pv_list = kubectl_json("get", "pv")
         vss_list = kubectl_json("get", "volumesnapshots.snapshot.storage.k8s.io", "-A")
         vsc_list = kubectl_json("get", "volumesnapshotcontents.snapshot.storage.k8s.io")
         clusters_list = kubectl_json("get", "clusters.postgresql.cnpg.io", "-A")
@@ -102,6 +165,8 @@ def main() -> int:
         schedules_list = kubectl_json("get", "scheduledbackups.postgresql.cnpg.io", "-A")
         backups_list = kubectl_json("get", "backups.postgresql.cnpg.io", "-A")
         cronjobs_list = kubectl_json("get", "cronjobs", "-A")
+        active_linstor_schedules = linstor_schedule_rows()
+        linstor_schedules = linstor_schedule_definitions()
     except (OSError, subprocess.TimeoutExpired, GateError) as exc:
         print(f"BLOCKED: inventory collection failed: {exc}", file=sys.stderr)
         return 2
@@ -162,6 +227,70 @@ def main() -> int:
             continue
         if key not in ready_snapshot_pvcs:
             blockers.append(f"scheduled PVC {key[0]}/{key[1]} has no Ready RustFS v2 baseline")
+
+    linstor_native_owners = {"Shared PostgreSQL", "Felis PostgreSQL", "GitLab PostgreSQL", "GitLab Gitaly"}
+    expected_resources: dict[str, str] = {}
+    pv_by_name = {
+        (item.get("metadata") or {}).get("name", ""): item
+        for item in pv_list["items"]
+    }
+    pv_by_claim = {
+        identity((item.get("spec") or {}).get("claimRef") or {}): item
+        for item in pv_list["items"]
+        if (item.get("spec") or {}).get("claimRef")
+    }
+    for key in sorted(live_expected):
+        row = owners[key]
+        if row.get("service_owner") in linstor_native_owners:
+            continue
+        pvc = live_pvcs[key]
+        pv_name = ((pvc.get("spec") or {}).get("volumeName"))
+        pv = pv_by_name.get(pv_name or "") or pv_by_claim.get(key)
+        csi = ((pv or {}).get("spec") or {}).get("csi") or {}
+        handle = csi.get("volumeHandle")
+        if csi.get("driver") != "linstor.csi.linbit.com" or not handle:
+            blockers.append(f"scheduled PVC {key[0]}/{key[1]} has no LINSTOR CSI resource mapping")
+            continue
+        expected_resources[handle] = f"{key[0]}/{key[1]}"
+
+    active_v2 = [row for row in active_linstor_schedules if row[1] == "rustfs-linstor-backups-v2"]
+    active_other = [row for row in active_linstor_schedules if row[1] != "rustfs-linstor-backups-v2"]
+    expected_schedule_by_resource = {
+        resource: f"linstor-standard-shard-{index % 6:02d}"
+        for index, (resource, _) in enumerate(
+            sorted(expected_resources.items(), key=lambda item: item[1])
+        )
+    }
+    actual_resources = {row[0] for row in active_v2}
+    unexpected = actual_resources - expected_schedule_by_resource.keys()
+    missing = expected_schedule_by_resource.keys() - actual_resources
+    if unexpected:
+        blockers.append(f"LINSTOR RustFS v2 schedules include {len(unexpected)} unapproved resource(s)")
+    if missing and not args.pre_schedule:
+        blockers.append(f"LINSTOR RustFS v2 schedules are missing {len(missing)} eligible resource(s)")
+    if active_other:
+        blockers.append(f"LINSTOR has {len(active_other)} active backup schedule(s) to a non-v2 remote")
+    seen: set[str] = set()
+    for resource, remote, schedule_name in active_v2:
+        if resource in seen:
+            blockers.append(f"LINSTOR resource {resource} has duplicate active S3 schedules")
+        seen.add(resource)
+        expected_schedule = expected_schedule_by_resource.get(resource)
+        if expected_schedule and schedule_name != expected_schedule:
+            blockers.append(f"LINSTOR resource {resource} uses {schedule_name}; expected {expected_schedule}")
+    if not args.pre_schedule:
+        expected_definitions = {
+            f"linstor-standard-shard-{index:02d}": (
+                f"10 {3 + index * 4} * * *", "", "1", "7", "RETRY"
+            )
+            for index in range(6)
+        }
+        if set(linstor_schedules) != set(expected_definitions):
+            blockers.append("LINSTOR schedule definitions do not match the six-shard approved set")
+        else:
+            for name, policy in expected_definitions.items():
+                if linstor_schedules[name] != policy:
+                    blockers.append(f"LINSTOR schedule {name} has an unapproved timing or retention policy")
 
     gitlab_backup_schedule = next(
         (
@@ -259,6 +388,7 @@ def main() -> int:
 
     print(f"Live LINSTOR PVCs: {len(live_pvcs)}; approved scheduled claims present: {len(live_expected)}")
     print(f"Ready RustFS v2 PVC baselines: {len(ready_snapshot_pvcs)}; enabled CNPG plugin schedules: {len(scheduled_clusters)}")
+    print(f"Active LINSTOR backup resources: {len(active_linstor_schedules)}; eligible LINSTOR PVCs: {len(expected_resources)}")
     if blockers:
         print(f"BLOCKED: {len(blockers)} scope/protection gate(s) failed:", file=sys.stderr)
         for blocker in blockers:
