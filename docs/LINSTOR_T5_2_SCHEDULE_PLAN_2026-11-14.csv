@@ -56,7 +56,7 @@ media,sonarr-5-config-linstor,Sonarr 5,standard,24h,LINSTOR S3 schedule,pvc-44a3
 media,sonarr-6-config-linstor,Sonarr 6,standard,24h,LINSTOR S3 schedule,pvc-136dea81-494a-47d3-b6b7-2c62b8f05762,Ready,linstor-standard-shard-05,10 23 * * *,7,
 media,tdarr-config-linstor,Tdarr,standard,24h,LINSTOR S3 schedule,pvc-cdf6fb8b-1795-4755-9530-3c5ed19d0f50,Ready,linstor-standard-shard-00,10 3 * * *,7,
 minecraft,world-lobby-0,Minecraft Lobby,standard,24h,LINSTOR S3 schedule,pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281,Missing,linstor-standard-shard-01,10 7 * * *,7,RCON save-all flush before each backup
-minecraft,world-login-0,Minecraft Login,standard,24h,LINSTOR S3 schedule,pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00,Missing,linstor-standard-shard-02,10 11 * * *,7,RCON save-all flush before each backup
+minecraft,world-login-0,Minecraft Login,standard,24h,LINSTOR S3 schedule,pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00,Missing,linstor-standard-shard-02,10 11 * * *,7,No RCON is configured for the login runtime; identify a supported consistency/export method and validate restore before enabling backups
 monitoring,alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0,Monitoring,standard,24h,LINSTOR S3 schedule,pvc-0ab2b8c9-45cb-41fb-91cf-6ca82c45bc79,Ready,linstor-standard-shard-03,10 15 * * *,7,
 monitoring,gotify-data-linstor,Monitoring,standard,24h,LINSTOR S3 schedule,pvc-72b0df4b-a891-48f9-a476-91500b022ec8,Ready,linstor-standard-shard-04,10 19 * * *,7,
 monitoring,grafana-data-linstor,Monitoring,standard,24h,LINSTOR S3 schedule,pvc-a7454fe4-bc59-4c6c-a04a-e903e1bb5749,Ready,linstor-standard-shard-05,10 23 * * *,7,

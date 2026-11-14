@@ -152,6 +152,10 @@ def main() -> int:
         action="store_true",
         help="check all protection prerequisites while the LINSTOR schedules are being staged",
     )
+    parser.add_argument(
+        "--pilot-resource",
+        help="require exactly one approved LINSTOR pilot resource instead of broad schedule coverage",
+    )
     args = parser.parse_args()
     blockers: list[str] = []
     try:
@@ -261,13 +265,23 @@ def main() -> int:
             sorted(expected_resources.items(), key=lambda item: item[1])
         )
     }
+    if args.pilot_resource:
+        if args.pilot_resource not in expected_schedule_by_resource:
+            blockers.append("requested LINSTOR pilot resource is outside the approved live workload plan")
+        else:
+            expected_schedule_by_resource = {
+                args.pilot_resource: expected_schedule_by_resource[args.pilot_resource]
+            }
     actual_resources = {row[0] for row in active_v2}
     unexpected = actual_resources - expected_schedule_by_resource.keys()
     missing = expected_schedule_by_resource.keys() - actual_resources
     if unexpected:
         blockers.append(f"LINSTOR RustFS v2 schedules include {len(unexpected)} unapproved resource(s)")
     if missing and not args.pre_schedule:
-        blockers.append(f"LINSTOR RustFS v2 schedules are missing {len(missing)} eligible resource(s)")
+        if args.pilot_resource:
+            blockers.append("LINSTOR RustFS v2 pilot resource is not actively scheduled")
+        else:
+            blockers.append(f"LINSTOR RustFS v2 schedules are missing {len(missing)} eligible resource(s)")
     if active_other:
         blockers.append(f"LINSTOR has {len(active_other)} active backup schedule(s) to a non-v2 remote")
     seen: set[str] = set()
@@ -279,18 +293,28 @@ def main() -> int:
         if expected_schedule and schedule_name != expected_schedule:
             blockers.append(f"LINSTOR resource {resource} uses {schedule_name}; expected {expected_schedule}")
     if not args.pre_schedule:
-        expected_definitions = {
+        approved_definitions = {
             f"linstor-standard-shard-{index:02d}": (
                 f"10 {3 + index * 4} * * *", "", "1", "7", "RETRY"
             )
             for index in range(6)
         }
-        if set(linstor_schedules) != set(expected_definitions):
-            blockers.append("LINSTOR schedule definitions do not match the six-shard approved set")
-        else:
-            for name, policy in expected_definitions.items():
-                if linstor_schedules[name] != policy:
+        if args.pilot_resource:
+            required_name = expected_schedule_by_resource.get(args.pilot_resource)
+            if required_name and required_name not in linstor_schedules:
+                blockers.append("LINSTOR pilot schedule definition is missing")
+            if set(linstor_schedules) - set(approved_definitions):
+                blockers.append("LINSTOR schedule definitions include an unapproved pilot policy")
+            for name, policy in linstor_schedules.items():
+                if name in approved_definitions and policy != approved_definitions[name]:
                     blockers.append(f"LINSTOR schedule {name} has an unapproved timing or retention policy")
+        else:
+            if set(linstor_schedules) != set(approved_definitions):
+                blockers.append("LINSTOR schedule definitions do not match the six-shard approved set")
+            else:
+                for name, policy in approved_definitions.items():
+                    if linstor_schedules[name] != policy:
+                        blockers.append(f"LINSTOR schedule {name} has an unapproved timing or retention policy")
 
     gitlab_backup_schedule = next(
         (

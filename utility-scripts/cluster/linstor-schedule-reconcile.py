@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Plan or safely reconcile the approved LINSTOR-to-RustFS schedules.
 
-The default mode is read-only. `--apply` requires every protection prerequisite
-to pass, a current live-to-plan PVC/resource mapping, healthy LINSTOR thin
-resources, and resolved application-specific consistency gates. It enables
-the schedule only on explicitly listed resource definitions; it never enables
-a controller-wide or resource-group schedule.
+The default mode is read-only. `--pilot --apply` enables only the reviewed T5.4
+pilot resource after the protection gate and that resource's baseline and
+consistency checks pass. Broad `--apply` additionally requires recorded pilot
+acceptance and every application-consistency gate to pass. It enables schedules
+only on explicitly listed resource definitions; it never enables a
+controller-wide or resource-group schedule.
 """
 
 from __future__ import annotations
@@ -21,8 +22,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 PLAN = ROOT / "docs/LINSTOR_T5_2_SCHEDULE_PLAN_2026-11-14.csv"
 GATE = ROOT / "utility-scripts/cluster/backup-protection-readiness.py"
+PILOT_EVIDENCE = ROOT / "docs/LINSTOR_T5_4_PILOT_EVIDENCE_2026-11-14.json"
 NAMESPACE = "piraeus-datastore"
 REMOTE = "rustfs-linstor-backups-v2"
+PILOT_CLAIM = "media/arr-dashboard-config-linstor"
 SCHEDULES = {
     f"linstor-standard-shard-{index:02d}": {
         "full": f"10 {3 + index * 4} * * *",
@@ -136,12 +139,40 @@ def linstor_resource_health() -> dict[str, bool]:
     return result
 
 
-def gate(pre_schedule: bool) -> tuple[int, str]:
+def gate(pre_schedule: bool, pilot_resource: str | None = None) -> tuple[int, str]:
     args = [sys.executable, str(GATE)]
     if pre_schedule:
         args.append("--pre-schedule")
+    if pilot_resource:
+        args.extend(["--pilot-resource", pilot_resource])
     result = subprocess.run(args, capture_output=True, text=True, timeout=300)
     return result.returncode, (result.stdout + result.stderr).strip()
+
+
+def require_pilot_acceptance(plan: list[dict[str, str]]) -> None:
+    try:
+        evidence = json.loads(PILOT_EVIDENCE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ReconcileError("T5.4 pilot evidence is missing or invalid; broad rollout is blocked") from exc
+    row = next((item for item in plan if f"{item['namespace']}/{item['pvc']}" == PILOT_CLAIM), None)
+    if not row:
+        raise ReconcileError("approved T5.4 pilot claim is missing from the current plan")
+    required = {
+        "status": "PASS",
+        "claim": PILOT_CLAIM,
+        "baseline_snapshot": "t34-20261113-arr-dashboard-config-linstor-d60112",
+        "schedule_name": row["schedule_name"],
+        "remote_backup_restorable": True,
+        "restore_sha256_match": True,
+        "resource_health_unchanged": True,
+    }
+    if any(evidence.get(key) != value for key, value in required.items()):
+        raise ReconcileError("T5.4 pilot evidence does not prove a successful restorable LINSTOR pilot")
+    interval = evidence.get("observed_interval_hours")
+    if not isinstance(interval, (int, float)) or interval < 24:
+        raise ReconcileError("T5.4 pilot evidence does not cover a full standard RPO interval")
+    if not evidence.get("completed_at_utc") or not evidence.get("backup_id"):
+        raise ReconcileError("T5.4 pilot evidence is missing its completion time or successful backup ID")
 
 
 def current_schedules() -> dict[str, dict[str, str]]:
@@ -174,13 +205,24 @@ def active_bindings() -> list[tuple[str, str, str]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true", help="reconcile planned schedules after all gates pass")
+    parser.add_argument(
+        "--pilot",
+        action="store_true",
+        help=f"enable only the reviewed T5.4 pilot resource ({PILOT_CLAIM}); broad rollout requires recorded pilot acceptance",
+    )
     args = parser.parse_args()
     try:
         plan = parse_plan()
+        selected = [
+            row for row in plan
+            if not args.pilot or f"{row['namespace']}/{row['pvc']}" == PILOT_CLAIM
+        ]
+        if args.pilot and len(selected) != 1:
+            raise ReconcileError("the approved T5.4 pilot claim is missing or duplicated in the plan")
         handles = live_handle_map()
         health = linstor_resource_health()
         unresolved = [
-            row for row in plan
+            row for row in selected
             if row.get("consistency_gate")
             and not row["consistency_gate"].startswith("Keep protected")
         ]
@@ -198,8 +240,8 @@ def main() -> int:
                 print(f"  - {failure}", file=sys.stderr)
             return 1
 
-        print(f"Planned LINSTOR S3 resources: {len(plan)}")
-        for row in plan:
+        print(f"Planned LINSTOR S3 resources in this scope: {len(selected)} (full plan: {len(plan)})")
+        for row in selected:
             print(
                 f"{row['namespace']}/{row['pvc']}\t{row['linstor_resource']}\t"
                 f"{row['schedule_name']}\t{row['daily_full_cron_utc']}"
@@ -211,26 +253,38 @@ def main() -> int:
         if not args.apply:
             print("PLAN ONLY: no LINSTOR schedules were changed")
             return 0
-        if unresolved:
-            raise ReconcileError("application consistency gates must be resolved before enabling schedules")
+        if args.pilot:
+            pilot = selected[0]
+            if pilot.get("s3_v2_baseline") != "Ready":
+                raise ReconcileError("T5.4 pilot claim has no Ready RustFS v2 baseline")
+            if pilot.get("consistency_gate"):
+                raise ReconcileError("T5.4 pilot claim still has an application-consistency gate")
+        else:
+            if unresolved:
+                raise ReconcileError("application consistency gates must be resolved before broad rollout")
+            require_pilot_acceptance(plan)
 
         code, output = gate(pre_schedule=True)
         if code:
             print(output, file=sys.stderr)
             raise ReconcileError("protection prerequisites have not all passed")
 
-        expected_pairs = {
-            row["linstor_resource"]: row["schedule_name"] for row in plan
-        }
+        expected_pairs = {row["linstor_resource"]: row["schedule_name"] for row in selected}
         existing_bindings = active_bindings()
         for resource, remote, schedule_name in existing_bindings:
             if remote != REMOTE:
                 raise ReconcileError("an active schedule targets a non-v2 remote")
             if expected_pairs.get(resource) != schedule_name:
                 raise ReconcileError("an active schedule differs from the reviewed resource plan")
+        if args.pilot and any(resource not in expected_pairs for resource, _, _ in existing_bindings):
+            raise ReconcileError("an active schedule exists outside the selected pilot scope")
 
         current = current_schedules()
-        for name, policy in SCHEDULES.items():
+        selected_schedule_names = (
+            {row["schedule_name"] for row in selected} if args.pilot else set(SCHEDULES)
+        )
+        for name in sorted(selected_schedule_names):
+            policy = SCHEDULES[name]
             if name in current:
                 if current[name] != policy:
                     raise ReconcileError(f"existing LINSTOR schedule {name} has different retention or timing")
@@ -244,17 +298,23 @@ def main() -> int:
             )
 
         already = {(resource, schedule) for resource, remote, schedule in existing_bindings if remote == REMOTE}
-        for row in plan:
+        for row in selected:
             resource, schedule = row["linstor_resource"], row["schedule_name"]
             if (resource, schedule) in already:
                 continue
             linstor("backup", "schedule", "enable", "--rd", resource, REMOTE, schedule)
 
-        code, output = gate(pre_schedule=False)
+        if args.pilot:
+            code, output = gate(pre_schedule=False, pilot_resource=selected[0]["linstor_resource"])
+        else:
+            code, output = gate(pre_schedule=False)
         print(output)
         if code:
             raise ReconcileError("schedules were applied, but the final protection gate did not pass; retain state for review")
-        print("PASS: LINSTOR schedules match the approved live workload plan")
+        if args.pilot:
+            print("PILOT ENABLED: only the reviewed T5.4 resource is scheduled; collect a full-interval backup and restore before broad rollout")
+        else:
+            print("PASS: LINSTOR schedules match the approved live workload plan")
         return 0
     except (OSError, subprocess.TimeoutExpired, ReconcileError) as exc:
         print(f"BLOCKED: {exc}", file=sys.stderr)
