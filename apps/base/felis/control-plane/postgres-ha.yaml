@@ -59,7 +59,7 @@ spec:
       memory: 2Gi
 
   monitoring:
-    enablePodMonitor: true
+    enablePodMonitor: false
 
   affinity:
     additionalPodAntiAffinity:

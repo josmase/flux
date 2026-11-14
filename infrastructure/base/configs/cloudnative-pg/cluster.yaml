@@ -81,7 +81,7 @@ spec:
 
   # --- Monitoring ---
   monitoring:
-    enablePodMonitor: true
+    enablePodMonitor: false
 
   # --- Bootstrap ---
   bootstrap:

@@ -8,6 +8,7 @@ resources:
   - linstor-rules.yaml
   - linstor-control-plane-rules.yaml
   - rustfs-capacity-rules.yaml
+  - backup-producer-rules.yaml
 
 labels:
   - pairs:

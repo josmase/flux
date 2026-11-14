@@ -1,0 +1,122 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: backup-producer-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: backup-producer.rules
+      interval: 30s
+      rules:
+        - alert: LinstorWorkloadBackupFailed
+          expr: |
+            kube_job_status_failed{
+              namespace=~"felis|minecraft",
+              job_name=~"linstor-workload-quiesce-.*"
+            } > 0
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: backup
+          annotations:
+            summary: "LINSTOR workload-aware backup failed"
+            description: "The consistency-aware backup job {{ $labels.namespace }}/{{ $labels.job_name }} failed. Check whether it restored the workload, then inspect the Job log and the matching LINSTOR local/remote records."
+        - alert: LinstorWorkloadBackupMissing
+          expr: |
+            kube_cronjob_spec_suspend{
+              namespace=~"felis|minecraft",
+              cronjob=~"linstor-workload-quiesce-.*"
+            } == 0
+            unless on (namespace, cronjob)
+            (
+              kube_cronjob_status_last_successful_time{
+                namespace=~"felis|minecraft",
+                cronjob=~"linstor-workload-quiesce-.*"
+              } > time() - 86400
+            )
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: backup
+          annotations:
+            summary: "LINSTOR workload-aware backup is missing or stale"
+            description: "Active coordinator {{ $labels.namespace }}/{{ $labels.cronjob }} has no successful upload in 24 hours. Check the Job history, application restoration state, and exact LINSTOR backup record."
+        - alert: GitLabAppBackupFailed
+          expr: |
+            kube_job_status_failed{
+              namespace="gitlab",
+              job_name=~"gitlab-toolbox-backup-.*"
+            } > 0
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: backup
+          annotations:
+            summary: "GitLab application backup failed"
+            description: "GitLab Toolbox backup Job {{ $labels.job_name }} failed. Check the Job logs and verify the archive and repository stages reached RustFS."
+        - alert: GitLabAppBackupMissing
+          expr: |
+            kube_cronjob_spec_suspend{
+              namespace="gitlab",
+              cronjob="gitlab-toolbox-backup"
+            } == 0
+            unless on (namespace, cronjob)
+            (
+              kube_cronjob_status_last_successful_time{
+                namespace="gitlab",
+                cronjob="gitlab-toolbox-backup"
+              } > time() - 27000
+            )
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: backup
+          annotations:
+            summary: "GitLab application backup is missing or stale"
+            description: "The six-hour Toolbox backup CronJob has no successful run in 7.5 hours. Check Job logs and validate the exact RustFS archive object."
+        - alert: CNPGPluginBackupFailed
+          expr: |
+            barman_cloud_cloudnative_pg_io_last_failed_backup_timestamp{
+              pod=~"(shared-postgres|felis-postgres-ha|gitlab-postgres)-.*"
+            } > 0
+            and on (pod)
+            (
+              barman_cloud_cloudnative_pg_io_last_failed_backup_timestamp{
+                pod=~"(shared-postgres|felis-postgres-ha|gitlab-postgres)-.*"
+              }
+              >
+              barman_cloud_cloudnative_pg_io_last_available_backup_timestamp{
+                pod=~"(shared-postgres|felis-postgres-ha|gitlab-postgres)-.*"
+              }
+            )
+          for: 2m
+          labels:
+            severity: critical
+            workload_type: database-backup
+          annotations:
+            summary: "CNPG Barman backup failed"
+            description: "The Barman Cloud plugin reports a failed backup newer than the latest successful recovery point for {{ $labels.pod }}. Inspect the Backup resource and plugin sidecar logs."
+        - alert: CNPGPluginBaseBackupStale
+          expr: |
+            time() - barman_cloud_cloudnative_pg_io_last_available_backup_timestamp{
+              pod=~"(shared-postgres|felis-postgres-ha|gitlab-postgres)-.*"
+            } > 93600
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: database-backup
+          annotations:
+            summary: "CNPG Barman base backup is stale"
+            description: "No successful Barman base backup has been available for over 26 hours for {{ $labels.pod }}. Check the ScheduledBackup, ObjectStore, WAL status, and plugin logs."
+        - alert: LinstorRestoreDrillFailed
+          expr: |
+            kube_job_status_failed{
+              job_name=~"linstor-backup-restore-.*"
+            } > 0
+          for: 1m
+          labels:
+            severity: critical
+            workload_type: backup-restore
+          annotations:
+            summary: "LINSTOR backup restore drill failed"
+            description: "Restore drill Job {{ $labels.namespace }}/{{ $labels.job_name }} failed. Stop follow-on cleanup and preserve the Job logs, target PVC, and exact source backup ID for recovery."
