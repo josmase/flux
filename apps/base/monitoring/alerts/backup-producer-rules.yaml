@@ -120,3 +120,26 @@ spec:
           annotations:
             summary: "LINSTOR backup restore drill failed"
             description: "Restore drill Job {{ $labels.namespace }}/{{ $labels.job_name }} failed. Stop follow-on cleanup and preserve the Job logs, target PVC, and exact source backup ID for recovery."
+        - alert: LinstorPvcInventoryDrift
+          expr: |
+            kube_persistentvolumeclaim_info{storageclass="linstor",namespace="artifactory",persistentvolumeclaim!~"^(?:artifactory-data-linstor|artifactory-pg17-linstor)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="cnpg-system",persistentvolumeclaim!~"^(?:shared-postgres-1|shared-postgres-1-wal|shared-postgres-2|shared-postgres-2-wal|shared-postgres-3|shared-postgres-3-wal|shared-postgres-8-recovery-archive)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="default",persistentvolumeclaim!~"^(?:growlog-media-data-linstor|zero-cache-data-linstor-v2)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="felis",persistentvolumeclaim!~"^(?:felis-artifacts|felis-postgres-ha-1|felis-postgres-ha-1-wal|felis-postgres-ha-2|felis-postgres-ha-2-wal|felis-postgres-ha-3|felis-postgres-ha-3-wal|felis-uploads|registry)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="gitlab",persistentvolumeclaim!~"^(?:gitlab-postgres-1|gitlab-postgres-1-wal|gitlab-postgres-2|gitlab-postgres-2-wal|gitlab-postgres-3|gitlab-postgres-3-wal|repo-data-gitlab-gitaly-0|valkey-data-gitlab-valkey-ha-0|valkey-data-gitlab-valkey-ha-1|valkey-data-gitlab-valkey-ha-2)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="immich",persistentvolumeclaim!~"^(?:immich-db-linstor|immich-model-cache-ml-0-linstor|immich-model-cache-ml-1-linstor|immich-model-cache-ml-2-linstor|immich-model-cache-ml-linstor)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="media",persistentvolumeclaim!~"^(?:arr-dashboard-config-linstor|bazarr-config-linstor-v2|checkrr-config-linstor-v6|jellyfin-config-pvc-jellyfin-0-canonical|prowlarr-config-linstor|qbittorrent-2-qbittorrent-config|qbittorrent-3-qbittorrent-config|qbittorrent-4-qbittorrent-config|qbittorrent-5-qbittorrent-config|qbittorrent-config|qui-config|radarr-1-config-linstor|radarr-10-config-linstor|radarr-11-config-linstor|radarr-12-config-linstor|radarr-2-config-linstor|radarr-3-config-linstor|radarr-4-config-linstor|radarr-5-config-linstor|radarr-6-config-linstor|radarr-6-config-linstor-v2|radarr-7-config-linstor|radarr-8-config-linstor|radarr-9-config-linstor|reiverr-plugins-linstor|seerr-config-linstor|sonarr-1-config-linstor|sonarr-2-config-linstor|sonarr-3-config-linstor|sonarr-4-config-linstor|sonarr-5-config-linstor|sonarr-6-config-linstor|tdarr-config-linstor)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="minecraft",persistentvolumeclaim!~"^(?:world-lobby-0|world-login-0)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="monitoring",persistentvolumeclaim!~"^(?:alertmanager-kube-prometheus-stack-alertmanager-db-linstor-alertmanager-kube-prometheus-stack-alertmanager-0|gotify-data-linstor|grafana-data-linstor|prometheus-kube-prometheus-stack-prometheus-db-triple-prometheus-kube-prometheus-stack-prometheus-0)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="ollama",persistentvolumeclaim!~"^(?:voice-models)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="rustdesk",persistentvolumeclaim!~"^(?:rustdesk-data)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="watchtower3d",persistentvolumeclaim!~"^(?:watchtower3d-data-linstor)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace="wyoming-voice",persistentvolumeclaim!~"^(?:whisper-models)$"}
+            or kube_persistentvolumeclaim_info{storageclass="linstor",namespace!~"^(?:artifactory|cnpg-system|default|felis|gitlab|immich|media|minecraft|monitoring|ollama|rustdesk|watchtower3d|wyoming-voice)$"}
+          for: 5m
+          labels:
+            severity: warning
+            workload_type: backup
+          annotations:
+            summary: "LINSTOR PVC inventory differs from the reviewed ownership matrix"
+            description: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} uses LINSTOR but is absent from the reviewed T1 inventory. Classify it and update the ownership and protection plans before scheduling or cleanup."
