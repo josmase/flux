@@ -534,7 +534,10 @@ spec:
                   done
                   if [ "$tries" -lt 180 ]; then
                     echo "felis-gc: registry is read-only; collecting"
-                    if registry garbage-collect /etc/docker/registry/config.yml > /tmp/gc.log 2>&1; then
+                    if [ ! -d /var/lib/registry/docker/registry/v2/repositories ]; then
+                      date +%s > "$stamp"
+                      echo "felis-gc: no repositories directory; skipping collection for an empty store"
+                    elif registry garbage-collect /etc/docker/registry/config.yml > /tmp/gc.log 2>&1; then
                       date +%s > "$stamp"
                       echo "felis-gc: done ($(grep -c 'blob eligible for deletion' /tmp/gc.log) blob(s) deleted)"
                     else
