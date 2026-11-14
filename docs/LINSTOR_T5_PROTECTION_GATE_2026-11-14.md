@@ -164,3 +164,7 @@ Re-read the exact RPO catch-up record `pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_
 ## T5.4 exact restore command preflight — 2026-11-14 16:38 UTC
 
 Read the live controller CLI help for `linstor backup restore`. The verified syntax for the scheduled-run drill is `linstor backup restore rustfs-linstor-backups-v2 <target-node> <unique-scratch-resource> --id <scheduled-backup-id>`. The helper already used for T3.6 restores follows this exact-ID path; when T5.4's scheduled record exists, use a new scratch resource name and the record's exact ID so the operation downloads the named RustFS backup into a distinct resource. Never use `--resource` (which selects latest) or `--force-restore`; require the target resource to be absent before starting. This was a help-only read and made no cluster changes.
+
+## T5.4 live schedule timestamp — 2026-11-14 16:39 UTC
+
+LINSTOR's active-only `schedule list-by-resource` output still shows the pilot resource `pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc` on `rustfs-linstor-backups-v2` / `linstor-standard-shard-01`. Its live `next_exec_time` and `next_planned_full` are both `1794726600000` milliseconds, which converts to `2026-11-15 07:10:00 UTC`. This confirms the first scheduled full run is still upcoming; no schedule was changed.
