@@ -1,0 +1,36 @@
+{
+  "task": "T5.2",
+  "captured_at_utc": "2026-11-14T11:30:06Z",
+  "source": {
+    "namespace": "felis",
+    "pvc": "felis-uploads",
+    "pvc_uid": "323137aa-9bf0-43bc-96c0-e913bea91641",
+    "pv": "pvc-323137aa-9bf0-43bc-96c0-e913bea91641",
+    "pv_uid": "6d6b0ef2-e501-4ecb-ad91-4acc5ede91c2",
+    "linstor_resource": "pvc-323137aa-9bf0-43bc-96c0-e913bea91641"
+  },
+  "quiesce": {
+    "method": "Scale felis-api to zero and wait for its Pod to terminate before snapshot creation",
+    "quiesced": true,
+    "api_restored_after_snapshot_ready": true,
+    "api_ready_replicas_after_restore": 1
+  },
+  "snapshot": {
+    "name": "t5-20261114-felis-uploads",
+    "uid": "43d36fb5-e125-4eba-899b-c5f13713e2cb",
+    "volume_snapshot_class": "linstor-snapshot-s3-v2",
+    "creation_time_utc": "2026-11-14T11:30:06Z",
+    "ready_to_use": true,
+    "content": "snapcontent-43d36fb5-e125-4eba-899b-c5f13713e2cb",
+    "content_uid": "03e55b43-bb08-47a3-b997-97bd7d05db8c",
+    "snapshot_handle": "S3://rustfs-linstor-backups-v2/pvc-323137aa-9bf0-43bc-96c0-e913bea91641/snapshot-43d36fb5-e125-4eba-899b-c5f13713e2cb",
+    "content_ready_to_use": true,
+    "deletion_policy": "Delete"
+  },
+  "retention": "Keep the VolumeSnapshot and VolumeSnapshotContent through T7 acceptance; deletion removes the RustFS object.",
+  "limitations": [
+    "This is an initial baseline only; it has not been restored or application-validated.",
+    "felis offsite status reports off-site copy is not configured.",
+    "Recurring protection still needs verified upload write semantics or a quiesce orchestrator."
+  ]
+}

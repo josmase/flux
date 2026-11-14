@@ -87,6 +87,12 @@ While the Registry was held read-only, created `felis/t5-20261114-registry` from
 
 The Registry baseline check now passes, and the broad gate is down to five blockers: three missing PVC baselines (`felis/felis-uploads`, `minecraft/world-lobby-0`, `minecraft/world-login-0`), 46 missing LINSTOR schedules, and incomplete six-shard definitions. Registry recurring protection remains gated because native LINSTOR schedules have no maintenance hooks; implement a controlled pre/post-read-only orchestrator before assigning the Registry to its daily shard.
 
+## Felis uploads baseline — 2026-11-14
+
+Created `felis/t5-20261114-felis-uploads` after scaling only `felis-api` to zero and waiting for its Pod to terminate. The VolumeSnapshot and VolumeSnapshotContent both became Ready on the RustFS v2 snapshot class. The API was restored to one ready replica immediately after snapshot readiness. See [sanitized baseline evidence](LINSTOR_T5_2_FELIS_UPLOADS_BASELINE_2026-11-14.json). The class deletion policy is `Delete`; retain both Kubernetes snapshot objects through T7 acceptance. Felis reports that its own off-site copy is not configured, so this snapshot is the present baseline. Recurring uploads protection still needs verified upload completion/atomic-write semantics or a quiesce orchestrator.
+
+The read-only protection gate was rerun after the snapshot. It reports `BLOCKED: 4`: both Minecraft world PVCs still lack Ready baselines, 46 eligible LINSTOR resources lack schedules, and the six-shard definitions are incomplete. Live inventory remains 76 LINSTOR PVCs, 45 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR resource, and 47 eligible LINSTOR PVCs. No broad schedule rollout is authorized by this gate.
+
 ## Felis uploads producer investigation — 2026-11-14
 
 The Felis API's documented read-only `felis offsite status -config /etc/felis/felis.toml` reports that off-site copy is not configured and uploads exist only on this machine. No app-level backup configuration was changed. The PVC remains unsnapshotted until the upload writer's completion/atomic-write behavior is established or a supported quiesce operation is identified; the T5.2 schedule plan retains that gate.
