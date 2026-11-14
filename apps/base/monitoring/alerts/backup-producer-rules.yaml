@@ -170,6 +170,18 @@ spec:
           annotations:
             summary: "CNPG Barman base backup is stale"
             description: "No successful Barman base backup has been available for over 26 hours for {{ $labels.pod }}. Check the ScheduledBackup, ObjectStore, WAL status, and plugin logs."
+        - alert: CNPGWALArchiveRPOExceeded
+          expr: |
+            cnpg_pg_stat_archiver_seconds_since_last_archival{
+              pod=~"(shared-postgres|felis-postgres-ha|gitlab-postgres)-.*"
+            } > 21600
+          for: 5m
+          labels:
+            severity: critical
+            workload_type: database-backup
+          annotations:
+            summary: "CNPG WAL archive age exceeds the six-hour RPO"
+            description: "The primary {{ $labels.pod }} has not archived a WAL segment in over six hours. Investigate the Barman plugin, RustFS reachability, and pending WAL backlog; record the last known recoverable point before any restart or failover."
         - alert: LinstorRestoreDrillFailed
           expr: |
             kube_job_status_failed{
