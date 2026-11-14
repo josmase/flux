@@ -175,6 +175,20 @@ spec:
 
       toolbox:
         backups:
+          cron:
+            enabled: true
+            schedule: "0 */6 * * *"
+            timeZone: UTC
+            concurrencyPolicy: Forbid
+            failedJobsHistoryLimit: 3
+            successfulJobsHistoryLimit: 3
+            backoffLimit: 2
+            extraArgs: "--s3tool awscli"
+            persistence:
+              enabled: true
+              size: 10Gi
+              storageClass: local-path
+              useGenericEphemeralVolume: true
           objectStorage:
             backend: s3
             config:

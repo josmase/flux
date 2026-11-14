@@ -66,3 +66,14 @@ ollama,voice-models,Bound,,Platform Operations,Ollama,standard,24h,24h,In scope 
 rustdesk,rustdesk-data,Bound,,Platform Operations,RustDesk,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
 watchtower3d,watchtower3d-data-linstor,Bound,,Platform Operations,Watchtower3D,standard,24h,24h,Active workload claim; protection method and any exclusion to be finalized in T1.3/T3.
 wyoming-voice,whisper-models,Bound,,Platform Operations,Wyoming Voice,standard,24h,24h,In scope pending T1.3 rebuildability and RTO decision; do not exclude before verified rebuild.
+felis,felis-artifacts,Bound,,Platform Operations,Felis Artifact Cache,standard,N/A (rebuildable cache; no recurring schedule),N/A (rebuildable cache),Ephemeral artifact cache from the Felis artifact-cache service; contents are regenerated from source and limited to cache data.
+felis,felis-postgres-ha-1,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG data PVC; protect with native Barman base backups and continuous WAL archiving.
+felis,felis-postgres-ha-1-wal,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG WAL PVC; protected through native Barman WAL archiving, not a CSI volume snapshot.
+felis,felis-postgres-ha-2,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG data PVC; protect with native Barman base backups and continuous WAL archiving.
+felis,felis-postgres-ha-2-wal,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG WAL PVC; protected through native Barman WAL archiving, not a CSI volume snapshot.
+felis,felis-postgres-ha-3,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG data PVC; protect with native Barman base backups and continuous WAL archiving.
+felis,felis-postgres-ha-3-wal,Bound,,Platform Operations,Felis PostgreSQL,critical,6h,4h,Live CNPG WAL PVC; protected through native Barman WAL archiving, not a CSI volume snapshot.
+felis,felis-uploads,Bound,,Platform Operations,Felis API,standard,24h,24h,Live authoritative upload data; protect with recurring RustFS v2 snapshots and verify application restore.
+felis,registry,Bound,,Platform Operations,Felis Container Registry,standard,24h,24h,Live container registry content; protect with recurring RustFS v2 snapshots until an explicit rebuildability decision is recorded.
+minecraft,world-lobby-0,Bound,,Platform Operations,Minecraft Lobby,standard,24h,24h,Live game world; protect after an application-consistent save and verify isolated restore.
+minecraft,world-login-0,Bound,,Platform Operations,Minecraft Login,standard,24h,24h,Live game world; protect after an application-consistent save and verify isolated restore.

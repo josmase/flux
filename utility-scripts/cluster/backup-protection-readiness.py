@@ -23,6 +23,7 @@ OWNERSHIP = ROOT / "docs/LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv"
 DEFERRED_OWNERS = {"Artifactory", "Artifactory PostgreSQL", "Immich"}
 CNPG_CLUSTERS = {
     ("cnpg-system", "shared-postgres"),
+    ("felis", "felis-postgres-ha"),
     ("gitlab", "gitlab-postgres"),
 }
 PLUGIN = "barman-cloud.cloudnative-pg.io"
@@ -100,7 +101,7 @@ def main() -> int:
         stores_list = kubectl_json("get", "objectstores.barmancloud.cnpg.io", "-A")
         schedules_list = kubectl_json("get", "scheduledbackups.postgresql.cnpg.io", "-A")
         backups_list = kubectl_json("get", "backups.postgresql.cnpg.io", "-A")
-        capacity_list = kubectl_json("get", "cronjobs", "-n", "piraeus-datastore")
+        cronjobs_list = kubectl_json("get", "cronjobs", "-A")
     except (OSError, subprocess.TimeoutExpired, GateError) as exc:
         print(f"BLOCKED: inventory collection failed: {exc}", file=sys.stderr)
         return 2
@@ -155,10 +156,39 @@ def main() -> int:
 
     for key in sorted(live_expected):
         row = owners[key]
-        if row.get("service_owner") in {"Shared PostgreSQL", "GitLab PostgreSQL"}:
+        if row.get("service_owner") in {"Shared PostgreSQL", "Felis PostgreSQL", "GitLab PostgreSQL"}:
+            continue
+        if row.get("service_owner") == "GitLab Gitaly":
             continue
         if key not in ready_snapshot_pvcs:
             blockers.append(f"scheduled PVC {key[0]}/{key[1]} has no Ready RustFS v2 baseline")
+
+    gitlab_backup_schedule = next(
+        (
+            item
+            for item in cronjobs_list["items"]
+            if (item.get("metadata") or {}).get("namespace") == "gitlab"
+            and "backup" in (item.get("metadata") or {}).get("name", "").lower()
+        ),
+        None,
+    )
+    if not gitlab_backup_schedule:
+        blockers.append("GitLab Gitaly lacks a GitLab Toolbox app-backup CronJob")
+    else:
+        spec = gitlab_backup_schedule.get("spec") or {}
+        if (
+            spec.get("suspend") is True
+            or spec.get("schedule") != "0 */6 * * *"
+            or spec.get("concurrencyPolicy") != "Forbid"
+        ):
+            blockers.append("GitLab Toolbox app-backup CronJob is suspended or does not meet the six-hour non-overlap policy")
+        try:
+            last_success = timestamp((gitlab_backup_schedule.get("status") or {}).get("lastSuccessfulTime"))
+            age = (dt.datetime.now(dt.timezone.utc) - last_success).total_seconds()
+        except (TypeError, ValueError):
+            age = float("inf")
+        if age < -120 or age > 6 * 60 * 60:
+            blockers.append("GitLab Toolbox app-backup CronJob has no successful run within the six-hour RPO")
 
     live_clusters: dict[tuple[str, str], dict[str, Any]] = {
         identity(item.get("metadata") or {}): item for item in clusters_list["items"]
@@ -213,8 +243,9 @@ def main() -> int:
     capacity_job = next(
         (
             item
-            for item in capacity_list["items"]
-            if (item.get("metadata") or {}).get("name") == "rustfs-capacity-check"
+            for item in cronjobs_list["items"]
+            if (item.get("metadata") or {}).get("namespace") == "piraeus-datastore"
+            and (item.get("metadata") or {}).get("name") == "rustfs-capacity-check"
         ),
         None,
     )

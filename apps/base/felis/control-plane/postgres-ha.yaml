@@ -4,6 +4,13 @@ metadata:
   name: felis-postgres-ha
   namespace: felis
 spec:
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: felis-postgres-backup
+        serverName: felis-postgres-ha
+
   instances: 3
   minSyncReplicas: 1
   maxSyncReplicas: 2
