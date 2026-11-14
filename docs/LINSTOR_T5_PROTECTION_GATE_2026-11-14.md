@@ -105,6 +105,10 @@ Felis documentation confirms the system Login server uses LOOHP/Limbo, has no RC
 
 The latest read-only protection gate reports `BLOCKED: 2`: 46 eligible LINSTOR resources lack schedules and the six-shard definitions are incomplete. All 47 eligible PVCs now have Ready RustFS v2 baselines; live inventory remains 76 LINSTOR PVCs, three enabled CNPG plugin schedules, one active LINSTOR resource, and 47 eligible LINSTOR PVCs. Broad schedule rollout remains gated pending the pilot's full interval and restore acceptance.
 
+## Six-shard definitions reconciled — 2026-11-14
+
+Added the five missing LINSTOR definitions using the schedule plan's exact cron windows and policy (`keep-local=1`, `keep-remote=7`, `RETRY(10)`). The definitions do not create backups unless a resource is explicitly bound. Re-read the live active binding inventory and confirmed only the approved Arr Dashboard pilot remains active. The read-only gate now reports `BLOCKED: 1`: 46 eligible resources lack schedules. All 47 eligible PVC baselines and all six definitions are present; broad bindings remain gated pending T5.4 pilot acceptance and consistency orchestration.
+
 ## Workload-aware LINSTOR backup interface investigation — 2026-11-14
 
 The live controller's `linstor backup create --help` confirms that a remote backup can use an explicitly created local snapshot through `--source-snapshot`. LINBIT's official client release notes list this option as supported in client 1.27.0. This gives a possible orchestration path: quiesce a writer, create a named LINSTOR local snapshot, release the writer after the local snapshot is complete, then ship that source snapshot to the configured RustFS remote. This avoids relying on a native schedule to call application hooks. Retention, incremental-chain behavior, idempotency, and backup completion detection still need a disposable end-to-end validation before using that path for Felis or Minecraft production resources. See [LINBIT's client release notes](https://lists.linbit.com/pipermail/drbd-announce/2025-November/000853.html) and [user guide](https://linbit.com/drbd-user-guide/linstor-guide-1_0-en/).
