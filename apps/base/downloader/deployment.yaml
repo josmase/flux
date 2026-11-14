@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: downloader
-          image: registry.local.hejsan.xyz/josmase/apps/downloader:2026-11-12-ac66a8be
+          image: registry.local.hejsan.xyz/josmase/apps/downloader:2026-11-14-f53a430e
           imagePullPolicy: IfNotPresent
           resources:
             limits:
