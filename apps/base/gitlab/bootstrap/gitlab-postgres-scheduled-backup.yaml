@@ -4,9 +4,9 @@ metadata:
   name: gitlab-postgres-daily
   namespace: gitlab
 spec:
-  schedule: "0 0 3 * * *"
+  schedule: "0 0 6 * * *"
   backupOwnerReference: self
-  immediate: false
+  immediate: true
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
