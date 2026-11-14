@@ -67,7 +67,7 @@ Flux main `5521b144` exposes the existing encrypted RustFS GitLab backup identit
 
 The RustFS capacity report had become stale because its S3 ListObjectsV2 request exceeded the reporter's 20-second timeout. The Ansible reporter now allows 60 seconds per S3 request and 120 seconds for the one-shot service; the scoped role was applied to the storage host and the service logged a successful fresh report. Ansible main is `599a736`.
 
-The live readiness gate was rerun after both fixes. Its broad result reports `BLOCKED: 6`, with 76 live LINSTOR PVCs, 43 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR pilot resource, and 47 eligible LINSTOR PVCs. Remaining checks are missing baselines for `felis/felis-uploads`, `felis/registry`, `minecraft/world-lobby-0`, and `minecraft/world-login-0`, 46 missing resource schedules, and incomplete six-shard definitions. Broad schedule apply remains gated.
+The live readiness gate was rerun after the Registry baseline. Its broad result reports `BLOCKED: 5`, with 76 live LINSTOR PVCs, 44 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR pilot resource, and 47 eligible LINSTOR PVCs. Remaining checks are missing baselines for `felis/felis-uploads`, `minecraft/world-lobby-0`, and `minecraft/world-login-0`, 46 missing resource schedules, and incomplete six-shard definitions. Broad schedule apply remains gated.
 
 ## T5.4 pilot update — 2026-11-14
 
@@ -78,3 +78,15 @@ The T5.4 evidence record is `IN_PROGRESS`; no remote backup or restore is claime
 ## Felis Registry consistency investigation — 2026-11-14
 
 Read-only inspection found all three Registry pod containers Ready. The `registry-gc` sidecar repeatedly enters its maintenance read-only window, then fails `registry garbage-collect` because `/docker/registry/v2/repositories` is absent; it retries after ten minutes. The mounted Registry volume currently contains zero files and uses about 20 KiB. No writes or maintenance state were changed during this inspection. This does not establish that the Registry is rebuildable or that an empty-volume baseline would protect future content. Resolve the GC storage-path error, verify where registry content is expected to live, and validate the maintenance lease before creating the baseline or recurring schedule. Keep the Registry PVC unscheduled until then.
+
+## Felis Registry baseline and GC follow-up — 2026-11-14
+
+Flux main `50113387` adds an empty-store guard to the Registry GC sidecar. The update reconciled successfully; live sidecar logs show it acquired the read-only maintenance lease and skipped collection because the repositories directory is absent. It no longer retries the known empty-store case every ten minutes.
+
+While the Registry was held read-only, created `felis/t5-20261114-registry` from the live PVC. The VolumeSnapshot and VolumeSnapshotContent both report Ready; the S3 handle is under `rustfs-linstor-backups-v2`. The built-in `/readwrite` endpoint returned success immediately after snapshot readiness. The original volume contained zero files and was about 20 KiB. See [sanitized baseline evidence](LINSTOR_T5_2_FELIS_REGISTRY_BASELINE_2026-11-14.json). The S3 snapshot class has deletion policy `Delete`; retain both Kubernetes snapshot objects through T7 acceptance.
+
+The Registry baseline check now passes, and the broad gate is down to five blockers: three missing PVC baselines (`felis/felis-uploads`, `minecraft/world-lobby-0`, `minecraft/world-login-0`), 46 missing LINSTOR schedules, and incomplete six-shard definitions. Registry recurring protection remains gated because native LINSTOR schedules have no maintenance hooks; implement a controlled pre/post-read-only orchestrator before assigning the Registry to its daily shard.
+
+## Felis uploads producer investigation — 2026-11-14
+
+The Felis API's documented read-only `felis offsite status -config /etc/felis/felis.toml` reports that off-site copy is not configured and uploads exist only on this machine. No app-level backup configuration was changed. The PVC remains unsnapshotted until the upload writer's completion/atomic-write behavior is established or a supported quiesce operation is identified; the T5.2 schedule plan retains that gate.

@@ -14,7 +14,7 @@ felis,felis-postgres-ha-2-wal,Felis PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-7
 felis,felis-postgres-ha-3,Felis PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-33d051a1-fb06-481c-8a58-59ac1dae5b40,Not required,,,,
 felis,felis-postgres-ha-3-wal,Felis PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-bff3e0e2-5458-4c73-9b27-f37bc7752e31,Not required,,,,
 felis,felis-uploads,Felis API,standard,24h,LINSTOR S3 schedule,pvc-323137aa-9bf0-43bc-96c0-e913bea91641,Missing,linstor-standard-shard-02,10 11 * * *,7,Verify upload completion/atomic-write semantics during restore drill
-felis,registry,Felis Container Registry,standard,24h,LINSTOR S3 schedule,pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d,Missing,linstor-standard-shard-03,10 15 * * *,7,Avoid overlap with registry writes and garbage collection
+felis,registry,Felis Container Registry,standard,24h,LINSTOR S3 schedule,pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d,Ready,linstor-standard-shard-03,10 15 * * *,7,"Initial empty-store baseline captured under the Registry read-only lease; recurring backups still need a pre/post-maintenance orchestrator to quiesce writes and avoid GC"
 gitlab,gitlab-postgres-1,GitLab PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-b76f19a8-5997-4d7b-9cd4-ec5d3d2594a3,Not required,,,,
 gitlab,gitlab-postgres-1-wal,GitLab PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-3075e930-7345-4ead-975f-9a56f5ef0467,Not required,,,,
 gitlab,gitlab-postgres-2,GitLab PostgreSQL,critical,6h,CNPG Barman/WAL,pvc-c524ca4a-736e-42f4-8f3b-c9ed7dcab880,Not required,,,,

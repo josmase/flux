@@ -1,0 +1,36 @@
+{
+  "task": "T5.2",
+  "captured_at_utc": "2026-11-14T11:13:50Z",
+  "source": {
+    "namespace": "felis",
+    "pvc": "registry",
+    "pvc_uid": "1c2eb97f-abb1-4f93-82c6-34d465e0e14d",
+    "pv": "pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d",
+    "pv_uid": "c2dfc0a4-697f-48a6-a4ba-300cfa597be2",
+    "linstor_resource": "pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d",
+    "pre_snapshot_volume_files": 0,
+    "pre_snapshot_volume_size": "20 KiB"
+  },
+  "quiesce": {
+    "method": "Felis Registry built-in read-only maintenance lease",
+    "lease_acquired": true,
+    "lease_released_after_snapshot_ready": true
+  },
+  "snapshot": {
+    "name": "t5-20261114-registry",
+    "uid": "e006a82c-fb47-4437-8025-520a0070ded0",
+    "volume_snapshot_class": "linstor-snapshot-s3-v2",
+    "creation_time_utc": "2026-11-14T11:13:50Z",
+    "ready_to_use": true,
+    "content": "snapcontent-e006a82c-fb47-4437-8025-520a0070ded0",
+    "content_uid": "e6d21e07-9b96-426e-8954-4a63c521565e",
+    "snapshot_handle": "S3://rustfs-linstor-backups-v2/pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d/snapshot-e006a82c-fb47-4437-8025-520a0070ded0",
+    "content_ready_to_use": true,
+    "deletion_policy": "Delete"
+  },
+  "retention": "Keep the VolumeSnapshot and VolumeSnapshotContent through T7 acceptance; deletion removes the RustFS object.",
+  "limitations": [
+    "This records the empty Registry volume at capture time; it does not establish Registry rebuildability.",
+    "Recurring snapshots remain blocked until a quiesce orchestrator can acquire and release the maintenance lease around each upload."
+  ]
+}
