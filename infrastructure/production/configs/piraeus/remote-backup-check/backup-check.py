@@ -49,6 +49,21 @@ def main() -> int:
     if not isinstance(schedules, list) or not schedules:
         raise CheckError("no active LINSTOR resource schedules were returned")
 
+    unexpected = [
+        (schedule.get("rsc_name"), schedule.get("remote_name"))
+        for schedule in schedules
+        if not schedule.get("rsc_name") or schedule.get("remote_name") != REMOTE
+    ]
+    if unexpected:
+        for resource, remote in unexpected:
+            print(
+                f"MISMATCH active resource {resource or '<missing>'} targets "
+                f"unexpected remote {remote!r}; expected {REMOTE!r}",
+                file=sys.stderr,
+                flush=True,
+            )
+        return 1
+
     catalog = linstor_json("backup", "list", REMOTE)
     records = catalog.get("linstor")
     if not isinstance(records, dict):
@@ -59,12 +74,6 @@ def main() -> int:
     for schedule in schedules:
         resource = schedule.get("rsc_name")
         remote = schedule.get("remote_name")
-        if not resource or remote != REMOTE:
-            failures.append(
-                f"active resource {resource or '<missing>'} targets unexpected remote {remote!r}"
-            )
-            continue
-
         matches = [record for record in records.values() if record.get("origin_rsc") == resource]
         if not matches:
             failures.append(f"{resource}: no remote backup record exists in {REMOTE}")
