@@ -30,7 +30,7 @@ spec:
                 },
                 "cronjob", "$1", "owner_name", "(.*)"
               )
-              > on (namespace, cronjob)
+              > on (namespace, cronjob) group_left()
               (
                 kube_cronjob_status_last_successful_time{
                   namespace=~"felis|minecraft",
@@ -94,7 +94,7 @@ spec:
                 },
                 "cronjob", "$1", "owner_name", "(.*)"
               )
-              > on (namespace, cronjob)
+              > on (namespace, cronjob) group_left()
               (
                 kube_cronjob_status_last_successful_time{
                   namespace="gitlab",
