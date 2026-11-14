@@ -156,3 +156,7 @@ The default schedule reconciler validated all 43 reviewed LINSTOR S3 resource ma
 ## T5.4 live recheck — 2026-11-14 16:28 UTC
 
 The read-only LINSTOR planner again validated all 43 reviewed mappings and reported `PLAN ONLY`; no schedules or workloads changed. The pilot-scoped readiness gate passed against live inventory: 76 LINSTOR PVCs, 66 approved scheduled claims, 47 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR backup resource, and 43 eligible LINSTOR PVCs. The reviewed pilot remains `media/arr-dashboard-config-linstor` on `linstor-standard-shard-01` at 07:10 UTC. Its first scheduled backup is due 2026-11-15 07:10 UTC, and the full observation interval ends no earlier than 10:48:15 UTC. The scheduled backup ID, isolated restore, matching checksum, and unchanged-health observation remain pending. Broad rollout remains gated on T5.4 acceptance and four coordinator producers.
+
+## T5.4 recovery-point health check — 2026-11-14 16:35 UTC
+
+Re-read the exact RPO catch-up record `pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261114_145205`: LINSTOR reports `success=true`, `restorable=true`, `shipping=false`, and a completed single full backup. All three pilot replicas remain `UpToDate` with established replication, and all four LINSTOR nodes report `ONLINE`. This confirms the fresh recovery point and source health remain available before the scheduled run; it does not satisfy the recurring-schedule or 24-hour T5.4 acceptance.
