@@ -31,6 +31,25 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: prepare-velocity-config
+          image: ${FELIS_VELOCITY_IMAGE}
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - cp /run/felis/velocity.toml /config/velocity.toml && chmod u+w /config/velocity.toml
+          volumeMounts:
+            - name: runtime
+              mountPath: /run/felis
+              readOnly: true
+            - name: velocity-config
+              mountPath: /config
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
       containers:
         - name: velocity
           image: ${FELIS_VELOCITY_IMAGE}
@@ -72,31 +91,46 @@ spec:
             - name: runtime
               mountPath: /run/felis
               readOnly: true
-            - name: runtime
+            - name: velocity-config
               mountPath: /velocity/velocity.toml
               subPath: velocity.toml
+            - name: runtime
+              mountPath: /velocity/forwarding.secret
+              subPath: forwarding.secret
               readOnly: true
             - name: plugin-config
               mountPath: /velocity/plugins/felis-link/felis-link.properties
               subPath: felis-link.properties
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            - name: lang
+              mountPath: /velocity/lang
             - name: logs
               mountPath: /velocity/logs
             - name: viaversion-config
-              mountPath: /velocity/plugins/ViaVersion
+              mountPath: /velocity/plugins/viaversion
             - name: viabackwards-config
-              mountPath: /velocity/plugins/ViaBackwards
+              mountPath: /velocity/plugins/viabackwards
             - name: viarewind-config
-              mountPath: /velocity/plugins/ViaRewind
+              mountPath: /velocity/plugins/viarewind
+            - name: bstats-config
+              mountPath: /velocity/plugins/bStats
       volumes:
         - name: runtime
           secret:
             secretName: felis-velocity-runtime
             defaultMode: 0440
+        - name: velocity-config
+          emptyDir: {}
         - name: plugin-config
           secret:
             secretName: felis-velocity-plugin-config
             defaultMode: 0440
+        - name: tmp
+          emptyDir: {}
+        - name: lang
+          emptyDir: {}
         - name: logs
           emptyDir: {}
         - name: viaversion-config
@@ -104,4 +138,6 @@ spec:
         - name: viabackwards-config
           emptyDir: {}
         - name: viarewind-config
+          emptyDir: {}
+        - name: bstats-config
           emptyDir: {}
