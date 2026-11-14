@@ -34,5 +34,24 @@
     "production_resource_health_after_cleanup": "all three replicas UpToDate; all nodes Ok",
     "source_production_volume_modified": false
   },
+  "rpo_catchup_full_backup": {
+    "created_at_utc": "2026-11-14T14:52:05Z",
+    "finished_at_utc": "2026-11-14T14:53:53Z",
+    "backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261114_145205",
+    "full_backup": true,
+    "remote_status": "Success",
+    "download_size_mib": 178.44,
+    "source_sha256_before": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "source_sha256_after": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "isolated_restore_target": "backup-v2-pilot-arr-dashboard-20261114",
+    "restored_sha256": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "sqlite_integrity_check": "ok",
+    "restore_namespace_network_policy": "default deny all",
+    "restore_pvc_mount": "read-only",
+    "temporary_restore_resource_snapshot_pv_namespace_deleted": true,
+    "production_resource_health_after_cleanup": "all three replicas UpToDate; all nodes Ok",
+    "purpose": "Close the >24-hour RPO gap before the first scheduled run. This one-time manual full backup and restore does not prove the recurring schedule or satisfy T5.4 pilot acceptance.",
+    "scheduled_pilot_run_still_pending": true
+  },
   "completed_at_utc": ""
 }
