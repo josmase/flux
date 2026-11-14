@@ -10,7 +10,22 @@ spec:
       rules:
         - alert: RustFSCapacityCheckFailed
           expr: |
-            kube_job_status_failed{namespace="piraeus-datastore", job_name=~"rustfs-capacity-check-.*"} > 0
+            kube_job_status_failed{
+              namespace="piraeus-datastore",
+              job_name=~"rustfs-capacity-check-.*"
+            } > 0
+            and on (namespace, job_name)
+            (
+              kube_job_created{
+                namespace="piraeus-datastore",
+                job_name=~"rustfs-capacity-check-.*"
+              }
+              > on (namespace) group_left
+              kube_cronjob_status_last_successful_time{
+                namespace="piraeus-datastore",
+                cronjob="rustfs-capacity-check"
+              }
+            )
           for: 2m
           labels:
             severity: critical

@@ -14,6 +14,37 @@ spec:
               namespace=~"felis|minecraft",
               job_name=~"linstor-workload-quiesce-.*"
             } > 0
+            and on (namespace, job_name)
+            (
+              label_replace(
+                kube_job_created{
+                  namespace=~"felis|minecraft",
+                  job_name=~"linstor-workload-quiesce-.*"
+                }
+                * on (namespace, job_name) group_left (owner_name)
+                kube_job_owner{
+                  namespace=~"felis|minecraft",
+                  job_name=~"linstor-workload-quiesce-.*",
+                  owner_kind="CronJob",
+                  owner_name=~"linstor-workload-quiesce-.*"
+                },
+                "cronjob", "$1", "owner_name", "(.*)"
+              )
+              > on (namespace, cronjob)
+              (
+                kube_cronjob_status_last_successful_time{
+                  namespace=~"felis|minecraft",
+                  cronjob=~"linstor-workload-quiesce-.*"
+                }
+                or on (namespace, cronjob)
+                (
+                  kube_cronjob_spec_suspend{
+                    namespace=~"felis|minecraft",
+                    cronjob=~"linstor-workload-quiesce-.*"
+                  } * 0
+                )
+              )
+            )
           for: 1m
           labels:
             severity: critical
@@ -47,6 +78,37 @@ spec:
               namespace="gitlab",
               job_name=~"gitlab-toolbox-backup-.*"
             } > 0
+            and on (namespace, job_name)
+            (
+              label_replace(
+                kube_job_created{
+                  namespace="gitlab",
+                  job_name=~"gitlab-toolbox-backup-.*"
+                }
+                * on (namespace, job_name) group_left (owner_name)
+                kube_job_owner{
+                  namespace="gitlab",
+                  job_name=~"gitlab-toolbox-backup-.*",
+                  owner_kind="CronJob",
+                  owner_name="gitlab-toolbox-backup"
+                },
+                "cronjob", "$1", "owner_name", "(.*)"
+              )
+              > on (namespace, cronjob)
+              (
+                kube_cronjob_status_last_successful_time{
+                  namespace="gitlab",
+                  cronjob="gitlab-toolbox-backup"
+                }
+                or on (namespace, cronjob)
+                (
+                  kube_cronjob_spec_suspend{
+                    namespace="gitlab",
+                    cronjob="gitlab-toolbox-backup"
+                  } * 0
+                )
+              )
+            )
           for: 1m
           labels:
             severity: critical
