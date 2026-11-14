@@ -93,6 +93,18 @@ Created `felis/t5-20261114-felis-uploads` after scaling only `felis-api` to zero
 
 The read-only protection gate was rerun after the snapshot. It reports `BLOCKED: 4`: both Minecraft world PVCs still lack Ready baselines, 46 eligible LINSTOR resources lack schedules, and the six-shard definitions are incomplete. Live inventory remains 76 LINSTOR PVCs, 45 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR resource, and 47 eligible LINSTOR PVCs. No broad schedule rollout is authorized by this gate.
 
+## Minecraft Lobby baseline — 2026-11-14
+
+Felis documentation confirms system servers are excluded from `felis backup-now`; Lobby's RCON supports the platform's documented live-copy sequence. For the initial baseline, disabled saving over the existing RCON endpoint, ran `save-all flush`, created `minecraft/t5-20261114-lobby`, waited for both the snapshot and its content to report Ready, then issued `save-on` and confirmed saving was restored. The Lobby Pod remained Ready with no restart. See [sanitized baseline evidence](LINSTOR_T5_2_MINECRAFT_LOBBY_BASELINE_2026-11-14.json). Its snapshot class deletion policy is `Delete`, so retain both Kubernetes snapshot objects through T7 acceptance. Native LINSTOR schedules have no application hooks, so recurring Lobby protection still needs an orchestrator that applies the same freeze/flush/snapshot/unfreeze sequence.
+
+The read-only protection gate was rerun. It reported `BLOCKED: 3`: `minecraft/world-login-0` had no Ready baseline, 46 eligible LINSTOR resources lacked schedules, and the six-shard definitions were incomplete. Live inventory at this point remained 76 LINSTOR PVCs, 46 Ready RustFS v2 baselines, three enabled CNPG plugin schedules, one active LINSTOR resource, and 47 eligible LINSTOR PVCs. Broad schedule rollout remained gated.
+
+## Minecraft Login baseline — 2026-11-14
+
+Felis documentation confirms the system Login server uses LOOHP/Limbo, has no RCON, and is excluded from `felis backup-now`. For the initial baseline, set the operator-managed `MinecraftServer` desired state to `Stopped`, waited for `login-0` to terminate, created `minecraft/t5-20261114-login`, waited for its snapshot and content to report Ready, then restored desired state to `Running` and verified `login-0` Ready. The Pod had a 300-second termination grace period; only the bounded baseline operation interrupted new player authentication. See [sanitized baseline evidence](LINSTOR_T5_2_MINECRAFT_LOGIN_BASELINE_2026-11-14.json). Its snapshot class deletion policy is `Delete`, so retain both Kubernetes snapshot objects through T7 acceptance. Recurring Login protection needs an orchestrator that gracefully stops the server, waits for quiescence, snapshots, and restores it.
+
+The latest read-only protection gate reports `BLOCKED: 2`: 46 eligible LINSTOR resources lack schedules and the six-shard definitions are incomplete. All 47 eligible PVCs now have Ready RustFS v2 baselines; live inventory remains 76 LINSTOR PVCs, three enabled CNPG plugin schedules, one active LINSTOR resource, and 47 eligible LINSTOR PVCs. Broad schedule rollout remains gated pending the pilot's full interval and restore acceptance.
+
 ## Felis uploads producer investigation — 2026-11-14
 
 The Felis API's documented read-only `felis offsite status -config /etc/felis/felis.toml` reports that off-site copy is not configured and uploads exist only on this machine. No app-level backup configuration was changed. The PVC remains unsnapshotted until the upload writer's completion/atomic-write behavior is established or a supported quiesce operation is identified; the T5.2 schedule plan retains that gate.

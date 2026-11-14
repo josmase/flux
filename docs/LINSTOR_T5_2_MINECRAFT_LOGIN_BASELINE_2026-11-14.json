@@ -1,0 +1,37 @@
+{
+  "task": "T5.2",
+  "captured_at_utc": "2026-11-14T11:42:39Z",
+  "source": {
+    "namespace": "minecraft",
+    "pvc": "world-login-0",
+    "pvc_uid": "36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00",
+    "pv": "pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00",
+    "pv_uid": "b8685c60-cfd8-4a0f-affe-33ba4da3dfeb",
+    "linstor_resource": "pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00"
+  },
+  "quiesce": {
+    "method": "Set MinecraftServer desiredState=Stopped and wait for Pod termination before snapshot",
+    "quiesced": true,
+    "desired_state_restored_to_running": true,
+    "pod_ready_after_restore": true,
+    "termination_grace_period_seconds": 300
+  },
+  "snapshot": {
+    "name": "t5-20261114-login",
+    "uid": "81484494-b5d2-44fb-b215-f0ac08ee8306",
+    "volume_snapshot_class": "linstor-snapshot-s3-v2",
+    "creation_time_utc": "2026-11-14T11:42:39Z",
+    "ready_to_use": true,
+    "content": "snapcontent-81484494-b5d2-44fb-b215-f0ac08ee8306",
+    "content_uid": "40f88465-e4a5-4d3d-be20-04228fe5c20e",
+    "content_ready_to_use": true,
+    "snapshot_handle": "S3://rustfs-linstor-backups-v2/pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00/snapshot-81484494-b5d2-44fb-b215-f0ac08ee8306",
+    "deletion_policy": "Delete"
+  },
+  "retention": "Keep the VolumeSnapshot and VolumeSnapshotContent through T7 acceptance; deletion removes the RustFS object.",
+  "limitations": [
+    "This is an initial baseline only; it has not been restored or application-validated.",
+    "Felis backup-now excludes the system Login server; LOOHP/Limbo has no RCON.",
+    "Recurring protection needs an orchestrator that gracefully stops Login around every LINSTOR snapshot."
+  ]
+}

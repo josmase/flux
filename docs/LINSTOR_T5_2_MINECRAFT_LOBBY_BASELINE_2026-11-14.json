@@ -1,0 +1,38 @@
+{
+  "task": "T5.2",
+  "captured_at_utc": "2026-11-14T11:38:04Z",
+  "source": {
+    "namespace": "minecraft",
+    "pvc": "world-lobby-0",
+    "pvc_uid": "702f006e-6a90-4ab8-9f81-ae3f6da58281",
+    "pv": "pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281",
+    "pv_uid": "ca6af37e-5f59-454c-9e26-cb0d1d0bb3f7",
+    "linstor_resource": "pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281"
+  },
+  "quiesce": {
+    "method": "RCON save-off, save-all flush, snapshot, save-on",
+    "save_off_confirmed": true,
+    "save_all_flush_completed": true,
+    "save_on_confirmed": true,
+    "lobby_pod_ready_after_snapshot": true,
+    "pod_restarts_after_snapshot": 0
+  },
+  "snapshot": {
+    "name": "t5-20261114-lobby",
+    "uid": "02740b68-8bb2-41fa-9a8a-dd67648d2d12",
+    "volume_snapshot_class": "linstor-snapshot-s3-v2",
+    "creation_time_utc": "2026-11-14T11:38:04Z",
+    "ready_to_use": true,
+    "content": "snapcontent-02740b68-8bb2-41fa-9a8a-dd67648d2d12",
+    "content_uid": "2deeadcb-bc7f-4fd0-81f9-fe2c6f1d570e",
+    "content_ready_to_use": true,
+    "snapshot_handle": "S3://rustfs-linstor-backups-v2/pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281/snapshot-02740b68-8bb2-41fa-9a8a-dd67648d2d12",
+    "deletion_policy": "Delete"
+  },
+  "retention": "Keep the VolumeSnapshot and VolumeSnapshotContent through T7 acceptance; deletion removes the RustFS object.",
+  "limitations": [
+    "This is an initial baseline only; it has not been restored or application-validated.",
+    "Felis backup-now excludes system Lobby and Login servers.",
+    "Recurring protection needs an orchestrator that quiesces writes with RCON around each LINSTOR snapshot."
+  ]
+}
