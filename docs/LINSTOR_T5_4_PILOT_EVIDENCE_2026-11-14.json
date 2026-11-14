@@ -9,5 +9,12 @@
   "remote_backup_restorable": false,
   "restore_sha256_match": false,
   "resource_health_unchanged": false,
+  "pre_run_source_observation": {
+    "observed_at_utc": "2026-11-14T14:06Z",
+    "path": "media/arr-dashboard-config-linstor:/config/prod.db",
+    "sha256": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "matches_t3_4_baseline_sha256": true,
+    "sqlite_cli_available_in_app_container": false
+  },
   "completed_at_utc": ""
 }
