@@ -11,3 +11,5 @@ spec:
           env:
             - name: FELIS_PANEL_NODEPORT
               value: "443"
+            - name: FELIS_PASSKEY_RP_ID
+              value: hejsan.xyz
