@@ -17,3 +17,4 @@ resources:
   - backup-shipping-timeout.yaml
   - capacity-check
   - workload-quiesce
+  - remote-backup-check

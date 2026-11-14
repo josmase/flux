@@ -1,0 +1,91 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linstor-remote-backup-check
+  namespace: piraeus-datastore
+spec:
+  schedule: "*/15 * * * *"
+  timeZone: Etc/UTC
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app: linstor-remote-backup-check
+            app.kubernetes.io/component: backup-integrity-monitor
+            app.kubernetes.io/part-of: linstor-backup
+        spec:
+          serviceAccountName: linstor-remote-backup-checker
+          automountServiceAccountToken: true
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            - name: install-kubectl
+              image: docker.io/bitnami/kubectl@sha256:8919c149c2e3d6860e0143c117900e64d71395172aaef0e01e604bb98c8e7ce0
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-ec"]
+              args:
+                - cp /opt/bitnami/kubectl/bin/kubectl /opt/backup-tools/kubectl && chmod 0555 /opt/backup-tools/kubectl
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 16Mi
+                limits:
+                  memory: 32Mi
+              volumeMounts:
+                - name: tools
+                  mountPath: /opt/backup-tools
+          containers:
+            - name: check
+              image: python:3.13-alpine
+              imagePullPolicy: IfNotPresent
+              command: ["python", "/opt/backup-check/backup-check.py"]
+              env:
+                - name: KUBECTL
+                  value: /opt/backup-tools/kubectl
+                - name: LINSTOR_BACKUP_REMOTE
+                  value: rustfs-linstor-backups-v2
+                - name: MAX_BACKUP_AGE_SECONDS
+                  value: "90000"
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 64Mi
+              volumeMounts:
+                - name: tools
+                  mountPath: /opt/backup-tools
+                  readOnly: true
+                - name: checker
+                  mountPath: /opt/backup-check
+                  readOnly: true
+          volumes:
+            - name: tools
+              emptyDir: {}
+            - name: checker
+              configMap:
+                name: linstor-remote-backup-check
+                defaultMode: 0444
