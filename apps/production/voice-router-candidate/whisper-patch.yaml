@@ -30,7 +30,7 @@ spec:
             - {name: preparation, mountPath: /preparation}
       containers:
         - name: whisper
-          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper@sha256:2338b3144a58b2d1c22001669a1d07dac4ab39e084d2983895f463a4b38b1bba
+          image: artifactory.local.hejsan.xyz/gitlab-registry/josmase/infrastructure/wyoming-voice/whisper@sha256:69bb97894644c3fd7b2bf6476398a9b784bd0da0b362924853a9bab9976eb285
           env:
             - name: WYO_WHISPER_HASS_TOKEN_FILE
               value: /run/secrets/homeassistant/token
