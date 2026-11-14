@@ -31,6 +31,12 @@ Ten protection checks remain:
 
 No production claim, backup object, snapshot, or database was modified during this inventory run. The gate must remain closed for broad schedule rollout and all pruning until these checks pass.
 
+## Recovery update — 2026-11-14 01:12 UTC
+
+The Felis control-plane rollout created its `ScheduledBackup` with `immediate: true` while the new CNPG cluster was still registering the Barman plugin and injecting its instance sidecars. The first run failed with `requested plugin is not available`; the CNPG cluster then settled healthy. Live checks confirmed all three PostgreSQL instances Ready, Barman plugin `0.16.0` registered, the `plugin-barman-cloud` sidecar injected, and continuous archiving healthy. A one-off plugin `Backup` completed from `felis-postgres-ha-2` at 01:11:59 UTC; its status reports plugin `barman-cloud.cloudnative-pg.io` and the RustFS ObjectStore reports a successful recovery point at that time.
+
+The Felis GitOps schedule now sets `immediate: false` to avoid repeating this startup race. Its regular daily UTC schedule remains enabled. The completed one-off backup provides the initial baseline; the earlier failed `Backup` object remains as failure evidence. The protection gate was rerun after recovery: eight checks remain open (four PVC baseline gaps, GitLab Toolbox backup recency, 47 LINSTOR schedules, six schedule definitions, and RustFS capacity report freshness). Felis CNPG ObjectStore, schedule, and completed-backup checks now pass. Broad LINSTOR rollout and pruning remain gated.
+
 ## GitOps work prepared
 
 - The T1 ownership matrix now records the nine live Felis claims and two Minecraft worlds discovered after the original 67-claim T0 inventory. Felis PostgreSQL data and WAL claims use the approved critical database targets (6-hour RPO, 4-hour RTO). Felis uploads, registry content, and the two game worlds use the approved standard targets. The `felis-artifacts` claim is an explicitly rebuildable cache: its live workload is the `artifact-cache` service, writes only under `/cache`, and caps the cache at 9 GiB.

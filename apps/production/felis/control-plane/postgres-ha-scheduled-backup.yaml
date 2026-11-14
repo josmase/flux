@@ -6,7 +6,10 @@ metadata:
 spec:
   schedule: "0 0 9 * * *"
   backupOwnerReference: self
-  immediate: true
+  # Let the Cluster become Ready and load the plugin sidecar before the
+  # scheduled producer starts its first backup. Run the initial backup only
+  # after live readiness has been verified.
+  immediate: false
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
