@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import json
 import subprocess
 import sys
@@ -35,6 +36,12 @@ SCHEDULES = {
         "on_failure": "RETRY(10)",
     }
     for index in range(6)
+}
+WORKLOAD_COORDINATORS = {
+    "felis/felis-uploads": ("felis", "linstor-workload-quiesce-felis-uploads", "0 11 * * *", "felis-uploads"),
+    "felis/registry": ("felis", "linstor-workload-quiesce-felis-registry", "0 15 * * *", "felis-registry"),
+    "minecraft/world-lobby-0": ("minecraft", "linstor-workload-quiesce-minecraft-lobby", "0 7 * * *", "minecraft-lobby"),
+    "minecraft/world-login-0": ("minecraft", "linstor-workload-quiesce-minecraft-login", "0 11 * * *", "minecraft-login"),
 }
 
 
@@ -60,6 +67,56 @@ def kubectl_json(*args: str) -> dict[str, Any]:
     return value
 
 
+def kubectl_object(*args: str) -> dict[str, Any]:
+    try:
+        value = json.loads(run(["kubectl", *args, "-o", "json"]))
+    except (json.JSONDecodeError, ReconcileError) as exc:
+        raise ReconcileError("Kubernetes object query failed") from exc
+    if not isinstance(value, dict):
+        raise ReconcileError("Kubernetes response was not an object")
+    return value
+
+
+def verify_workload_coordinators(plan: list[dict[str, str]]) -> None:
+    for row in plan:
+        claim = f"{row['namespace']}/{row['pvc']}"
+        expected = WORKLOAD_COORDINATORS.get(claim)
+        if not expected:
+            continue
+        namespace, name, schedule, target = expected
+        cronjob = kubectl_object("-n", namespace, "get", "cronjob", name)
+        spec = cronjob.get("spec", {})
+        if spec.get("suspend", False) or spec.get("schedule") != schedule:
+            raise ReconcileError(f"workload consistency CronJob for {claim} is suspended or has the wrong schedule")
+        pod_spec = spec.get("jobTemplate", {}).get("spec", {}).get("template", {}).get("spec", {})
+        if pod_spec.get("serviceAccountName") != "linstor-workload-quiesce":
+            raise ReconcileError(f"workload consistency CronJob for {claim} uses an unexpected ServiceAccount")
+        command = next((c.get("command", []) for c in pod_spec.get("containers", []) if c.get("name") == "coordinator"), [])
+        if "--execute" not in command or "--prune-retention" not in command or "--target" not in command or target not in command:
+            raise ReconcileError(f"workload consistency CronJob for {claim} does not execute the reviewed coordinator target")
+        volumes = pod_spec.get("volumes", [])
+        if not any(v.get("configMap", {}).get("name") == "linstor-workload-quiesce" for v in volumes):
+            raise ReconcileError(f"workload consistency CronJob for {claim} has no coordinator ConfigMap")
+        last_success = (cronjob.get("status") or {}).get("lastSuccessfulTime")
+        try:
+            succeeded_at = dt.datetime.fromisoformat(last_success.replace("Z", "+00:00"))
+            age = (dt.datetime.now(dt.timezone.utc) - succeeded_at.astimezone(dt.timezone.utc)).total_seconds()
+        except (AttributeError, ValueError):
+            age = float("inf")
+        if age < -120 or age > 24 * 60 * 60:
+            raise ReconcileError(f"workload consistency CronJob for {claim} has no successful run within its 24-hour RPO")
+    lobby_policy = kubectl_object("-n", "minecraft", "get", "networkpolicy", "felis-allow-rcon-from-control-plane")
+    allowed = any(
+        peer.get("namespaceSelector", {}).get("matchLabels", {}).get("kubernetes.io/metadata.name") == "minecraft"
+        and peer.get("podSelector", {}).get("matchLabels", {}).get("app.kubernetes.io/component") == "linstor-workload-quiesce"
+        and any(p.get("port") == 25575 for p in rule.get("ports", []))
+        for rule in lobby_policy.get("spec", {}).get("ingress", [])
+        for peer in rule.get("from", [])
+    )
+    if not allowed:
+        raise ReconcileError("Minecraft Lobby coordinator is not allowed to reach its RCON port")
+
+
 def linstor(*args: str, machine: bool = False) -> str:
     prefix = ["kubectl", "-n", NAMESPACE, "exec", "deploy/linstor-controller", "--", "linstor"]
     if machine:
@@ -83,7 +140,7 @@ def parse_plan() -> list[dict[str, str]]:
         rows = list(csv.DictReader(handle))
     if not rows:
         raise ReconcileError("schedule plan is empty")
-    return [row for row in rows if row["backup_producer"] == "LINSTOR S3 schedule"]
+    return rows
 
 
 def live_handle_map() -> dict[str, str]:
@@ -212,7 +269,8 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
-        plan = parse_plan()
+        full_plan = parse_plan()
+        plan = [row for row in full_plan if row["backup_producer"] == "LINSTOR S3 schedule"]
         selected = [
             row for row in plan
             if not args.pilot or f"{row['namespace']}/{row['pvc']}" == PILOT_CLAIM
@@ -225,9 +283,16 @@ def main() -> int:
             row for row in selected
             if row.get("consistency_gate")
             and not row["consistency_gate"].startswith("Keep protected")
+            and f"{row['namespace']}/{row['pvc']}" not in WORKLOAD_COORDINATORS
+        ]
+        coordinated = [
+            row for row in full_plan
+            if row["backup_producer"] == "LINSTOR S3 workload coordinator"
         ]
         failures: list[str] = []
-        for row in plan:
+        for row in full_plan:
+            if row["backup_producer"] not in {"LINSTOR S3 schedule", "LINSTOR S3 workload coordinator"}:
+                continue
             claim = f"{row['namespace']}/{row['pvc']}"
             handle = handles.get(claim)
             if not handle or handle != row["linstor_resource"]:
@@ -250,6 +315,8 @@ def main() -> int:
             print(f"Application consistency gates still open: {len(unresolved)}")
             for row in unresolved:
                 print(f"  - {row['namespace']}/{row['pvc']}: {row['consistency_gate']}")
+        if coordinated:
+            print(f"Workload-aware quiesce coordinators required before broad apply: {len(coordinated)}")
         if not args.apply:
             print("PLAN ONLY: no LINSTOR schedules were changed")
             return 0
@@ -263,6 +330,7 @@ def main() -> int:
             if unresolved:
                 raise ReconcileError("application consistency gates must be resolved before broad rollout")
             require_pilot_acceptance(plan)
+            verify_workload_coordinators(full_plan)
 
         pilot_resource = selected[0]["linstor_resource"] if args.pilot else None
         code, output = gate(pre_schedule=True, pilot_resource=pilot_resource)

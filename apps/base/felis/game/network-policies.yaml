@@ -22,6 +22,17 @@ spec:
       ports:
         - port: 25575
           protocol: TCP
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: minecraft
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: linstor-workload-quiesce
+              app.kubernetes.io/part-of: linstor-backup
+      ports:
+        - port: 25575
+          protocol: TCP
   podSelector:
     matchLabels:
       felis.lolicon.best/component: server

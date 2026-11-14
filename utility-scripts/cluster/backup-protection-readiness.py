@@ -22,6 +22,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 OWNERSHIP = ROOT / "docs/LINSTOR_BACKUP_OWNERSHIP_2026-11-12.csv"
+SCHEDULE_PLAN = ROOT / "docs/LINSTOR_T5_2_SCHEDULE_PLAN_2026-11-14.csv"
 DEFERRED_OWNERS = {"Artifactory", "Artifactory PostgreSQL", "Immich"}
 CNPG_CLUSTERS = {
     ("cnpg-system", "shared-postgres"),
@@ -30,6 +31,12 @@ CNPG_CLUSTERS = {
 }
 PLUGIN = "barman-cloud.cloudnative-pg.io"
 CAPACITY_MAX_AGE_SECONDS = 600
+COORDINATED_WORKLOADS = {
+    ("felis", "felis-uploads"): ("linstor-workload-quiesce-felis-uploads", "0 11 * * *", "pvc-323137aa-9bf0-43bc-96c0-e913bea91641", "felis-uploads"),
+    ("felis", "registry"): ("linstor-workload-quiesce-felis-registry", "0 15 * * *", "pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d", "felis-registry"),
+    ("minecraft", "world-lobby-0"): ("linstor-workload-quiesce-minecraft-lobby", "0 7 * * *", "pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281", "minecraft-lobby"),
+    ("minecraft", "world-login-0"): ("linstor-workload-quiesce-minecraft-login", "0 11 * * *", "pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00", "minecraft-login"),
+}
 
 
 class GateError(RuntimeError):
@@ -253,6 +260,8 @@ def main() -> int:
         row = owners[key]
         if row.get("service_owner") in linstor_native_owners:
             continue
+        if key in COORDINATED_WORKLOADS:
+            continue
         pvc = live_pvcs[key]
         pv_name = ((pvc.get("spec") or {}).get("volumeName"))
         pv = pv_by_name.get(pv_name or "") or pv_by_claim.get(key)
@@ -265,11 +274,28 @@ def main() -> int:
 
     active_v2 = [row for row in active_linstor_schedules if row[1] == "rustfs-linstor-backups-v2"]
     active_other = [row for row in active_linstor_schedules if row[1] != "rustfs-linstor-backups-v2"]
-    expected_schedule_by_resource = {
-        resource: f"linstor-standard-shard-{index % 6:02d}"
-        for index, (resource, _) in enumerate(
-            sorted(expected_resources.items(), key=lambda item: item[1])
-        )
+    try:
+        with SCHEDULE_PLAN.open(newline="", encoding="utf-8") as handle:
+            schedule_plan = list(csv.DictReader(handle))
+    except OSError as exc:
+        print(f"BLOCKED: LINSTOR schedule plan is unavailable: {exc}", file=sys.stderr)
+        return 2
+    planned_schedule_by_claim = {
+        (row["namespace"], row["pvc"]): row["schedule_name"]
+        for row in schedule_plan
+        if row.get("backup_producer") == "LINSTOR S3 schedule"
+    }
+    expected_schedule_by_resource: dict[str, str] = {}
+    for resource, claim in expected_resources.items():
+        schedule_name = planned_schedule_by_claim.get(tuple(claim.split("/", 1)))
+        if not schedule_name:
+            blockers.append(f"LINSTOR resource {resource} has no native schedule assignment in the reviewed plan")
+        else:
+            expected_schedule_by_resource[resource] = schedule_name
+    coordinated_resources = {
+        COORDINATED_WORKLOADS[key][2]
+        for key in live_expected
+        if key in COORDINATED_WORKLOADS
     }
     if args.pilot_resource:
         if args.pilot_resource not in expected_schedule_by_resource:
@@ -278,7 +304,9 @@ def main() -> int:
             expected_schedule_by_resource = {
                 args.pilot_resource: expected_schedule_by_resource[args.pilot_resource]
             }
-    actual_resources = {row[0] for row in active_v2}
+    if coordinated_resources & {row[0] for row in active_v2}:
+        blockers.append("workload-coordinated resources must not also have a native LINSTOR schedule")
+    actual_resources = {row[0] for row in active_v2 if row[0] not in coordinated_resources}
     unexpected = actual_resources - expected_schedule_by_resource.keys()
     missing = expected_schedule_by_resource.keys() - actual_resources
     if unexpected:
@@ -298,6 +326,34 @@ def main() -> int:
         expected_schedule = expected_schedule_by_resource.get(resource)
         if expected_schedule and schedule_name != expected_schedule:
             blockers.append(f"LINSTOR resource {resource} uses {schedule_name}; expected {expected_schedule}")
+
+    if not args.pre_schedule and not args.pilot_resource:
+        for (namespace, _pvc), (name, expected_cron, _resource, target) in COORDINATED_WORKLOADS.items():
+            job = next(
+                (item for item in cronjobs_list["items"]
+                 if identity(item.get("metadata") or {}) == (namespace, name)),
+                None,
+            )
+            if not job:
+                blockers.append(f"workload-aware backup coordinator {namespace}/{name} is missing")
+                continue
+            spec = job.get("spec") or {}
+            if spec.get("suspend") is True or spec.get("schedule") != expected_cron or spec.get("concurrencyPolicy") != "Forbid":
+                blockers.append(f"workload-aware backup coordinator {namespace}/{name} is suspended or has an unapproved schedule")
+                continue
+            pod_spec = ((spec.get("jobTemplate") or {}).get("spec") or {}).get("template", {}).get("spec", {})
+            if pod_spec.get("serviceAccountName") != "linstor-workload-quiesce":
+                blockers.append(f"workload-aware backup coordinator {namespace}/{name} uses an unexpected ServiceAccount")
+            command = next((container.get("command", []) for container in pod_spec.get("containers", []) if container.get("name") == "coordinator"), [])
+            if "--execute" not in command or "--prune-retention" not in command or "--target" not in command or target not in command:
+                blockers.append(f"workload-aware backup coordinator {namespace}/{name} lacks execution or managed-retention mode")
+            try:
+                last_success = timestamp((job.get("status") or {}).get("lastSuccessfulTime"))
+                age = (dt.datetime.now(dt.timezone.utc) - last_success).total_seconds()
+            except (TypeError, ValueError):
+                age = float("inf")
+            if age < -120 or age > 24 * 60 * 60:
+                blockers.append(f"workload-aware backup coordinator {namespace}/{name} has no successful run within the 24-hour RPO")
     if not args.pre_schedule:
         approved_definitions = {
             f"linstor-standard-shard-{index:02d}": (
