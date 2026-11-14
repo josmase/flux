@@ -32,7 +32,7 @@ SCHEDULES = {
         "incremental": "",
         "keep_local": "1",
         "keep_remote": "7",
-        "on_failure": "RETRY",
+        "on_failure": "RETRY(10)",
     }
     for index in range(6)
 }
@@ -264,7 +264,8 @@ def main() -> int:
                 raise ReconcileError("application consistency gates must be resolved before broad rollout")
             require_pilot_acceptance(plan)
 
-        code, output = gate(pre_schedule=True)
+        pilot_resource = selected[0]["linstor_resource"] if args.pilot else None
+        code, output = gate(pre_schedule=True, pilot_resource=pilot_resource)
         if code:
             print(output, file=sys.stderr)
             raise ReconcileError("protection prerequisites have not all passed")
@@ -293,8 +294,8 @@ def main() -> int:
                 "schedule", "create", name, policy["full"],
                 "--keep-local", policy["keep_local"],
                 "--keep-remote", policy["keep_remote"],
-                "--on-failure", policy["on_failure"],
-                "--max-retries", "10",
+                "--on-failure", policy["on_failure"].split("(", 1)[0],
+                "--max-retries", policy["on_failure"].split("(", 1)[1].rstrip(")"),
             )
 
         already = {(resource, schedule) for resource, remote, schedule in existing_bindings if remote == REMOTE}

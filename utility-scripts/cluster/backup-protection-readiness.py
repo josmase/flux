@@ -223,21 +223,27 @@ def main() -> int:
                 if cstatus.get("readyToUse") is True and cstatus.get("snapshotHandle"):
                     ready_snapshot_pvcs.add(key)
 
+    pv_by_name = {
+        (item.get("metadata") or {}).get("name", ""): item
+        for item in pv_list["items"]
+    }
     for key in sorted(live_expected):
         row = owners[key]
         if row.get("service_owner") in {"Shared PostgreSQL", "Felis PostgreSQL", "GitLab PostgreSQL"}:
             continue
         if row.get("service_owner") == "GitLab Gitaly":
             continue
+        if args.pilot_resource:
+            pvc = live_pvcs[key]
+            pv = pv_by_name.get(((pvc.get("spec") or {}).get("volumeName")) or "", {})
+            csi = ((pv.get("spec") or {}).get("csi") or {})
+            if csi.get("volumeHandle") != args.pilot_resource:
+                continue
         if key not in ready_snapshot_pvcs:
             blockers.append(f"scheduled PVC {key[0]}/{key[1]} has no Ready RustFS v2 baseline")
 
     linstor_native_owners = {"Shared PostgreSQL", "Felis PostgreSQL", "GitLab PostgreSQL", "GitLab Gitaly"}
     expected_resources: dict[str, str] = {}
-    pv_by_name = {
-        (item.get("metadata") or {}).get("name", ""): item
-        for item in pv_list["items"]
-    }
     pv_by_claim = {
         identity((item.get("spec") or {}).get("claimRef") or {}): item
         for item in pv_list["items"]
@@ -295,7 +301,7 @@ def main() -> int:
     if not args.pre_schedule:
         approved_definitions = {
             f"linstor-standard-shard-{index:02d}": (
-                f"10 {3 + index * 4} * * *", "", "1", "7", "RETRY"
+                f"10 {3 + index * 4} * * *", "", "1", "7", "RETRY(10)"
             )
             for index in range(6)
         }

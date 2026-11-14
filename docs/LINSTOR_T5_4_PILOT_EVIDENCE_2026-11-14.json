@@ -1,8 +1,9 @@
 {
-  "status": "NOT_RUN",
+  "status": "IN_PROGRESS",
   "claim": "media/arr-dashboard-config-linstor",
   "baseline_snapshot": "t34-20261113-arr-dashboard-config-linstor-d60112",
   "schedule_name": "linstor-standard-shard-01",
+  "pilot_started_at_utc": "2026-11-14T10:48:15Z",
   "observed_interval_hours": 0,
   "backup_id": "",
   "remote_backup_restorable": false,
