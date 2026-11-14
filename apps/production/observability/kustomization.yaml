@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../base/monitoring
   - ../monitoring
+  - alertmanagerconfig-workload-alerts.yaml
 
 components:
   - ../components/prune-protection

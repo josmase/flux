@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: workload-alerts
+  namespace: default
+  labels:
+    app.kubernetes.io/name: alertmanager-config
+spec:
+  inhibitRules:
+    - equal: [alertname, namespace, deployment]
+      sourceMatch:
+        - name: severity
+          matchType: =~
+          regex: true
+          value: ^critical$
+      targetMatch:
+        - name: severity
+          matchType: =~
+          regex: true
+          value: ^warning$
+    - equal: [namespace, deployment]
+      sourceMatch:
+        - name: alertname
+          matchType: =~
+          regex: true
+          value: ^DeploymentReplicasMismatch$
+      targetMatch:
+        - name: alertname
+          matchType: =~
+          regex: true
+          value: ^PodNotHealthy$
+  receivers:
+    - name: default
+      webhookConfigs:
+        - url: http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook
+          sendResolved: true
+    - name: workload-critical
+      webhookConfigs:
+        - url: http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook
+          sendResolved: true
+    - name: workload-warnings
+      webhookConfigs:
+        - url: http://alertmanager-gotify-bridge.monitoring.svc.cluster.local:8080/gotify_webhook
+          sendResolved: true
+  route:
+    groupBy: [alertname, cluster, service, namespace]
+    groupInterval: 5m
+    groupWait: 30s
+    receiver: default
+    repeatInterval: 12h
+    routes:
+      - continue: false
+        groupWait: 10s
+        matchers:
+          - name: severity
+            matchType: =~
+            regex: true
+            value: ^critical$
+        receiver: workload-critical
+        repeatInterval: 1h
+      - continue: false
+        groupWait: 30s
+        matchers:
+          - name: severity
+            matchType: =~
+            regex: true
+            value: ^warning$
+        receiver: workload-warnings
+        repeatInterval: 4h
