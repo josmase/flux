@@ -1,14 +1,14 @@
 {
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "claim": "media/arr-dashboard-config-linstor",
   "baseline_snapshot": "t34-20261113-arr-dashboard-config-linstor-d60112",
   "schedule_name": "linstor-standard-shard-01",
   "pilot_started_at_utc": "2026-11-14T10:48:15Z",
-  "observed_interval_hours": 0,
-  "backup_id": "",
-  "remote_backup_restorable": false,
-  "restore_sha256_match": false,
-  "resource_health_unchanged": false,
+  "observed_interval_hours": 29.4,
+  "backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261115_071000",
+  "remote_backup_restorable": true,
+  "restore_sha256_match": true,
+  "resource_health_unchanged": true,
   "pre_run_source_observation": {
     "observed_at_utc": "2026-11-14T14:06Z",
     "path": "media/arr-dashboard-config-linstor:/config/prod.db",
@@ -53,5 +53,40 @@
     "purpose": "Close the >24-hour RPO gap before the first scheduled run. This one-time manual full backup and restore does not prove the recurring schedule or satisfy T5.4 pilot acceptance.",
     "scheduled_pilot_run_still_pending": true
   },
-  "completed_at_utc": ""
+  "scheduled_pilot_backup": {
+    "created_at_utc": "2026-11-15T07:10:00Z",
+    "finished_at_utc": "2026-11-15T07:11:05Z",
+    "backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261115_071000",
+    "full_backup": true,
+    "remote_status": "Success",
+    "remote_restorable": true,
+    "remote_shipping": false,
+    "backup_count": 1,
+    "source_sha256_at_2026_11_15T15_53Z": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "matches_pre_run_source_reference": true,
+    "source_unchanged_after_restore_and_cleanup": true
+  },
+  "scheduled_pilot_restore": {
+    "restored_at_utc": "2026-11-15T16:02Z",
+    "exact_backup_id": "pvc-812c0c05-b96b-4385-a4b6-7d0e9e64fdfc_back_20261115_071000",
+    "target_resource": "backup-v2-pilot-arr-dashboard-20261115",
+    "target_node": "kubernetes-node-205",
+    "independent_rustfs_download": true,
+    "restored_sha256": "d68fe3e61b44afe27c6b883276e435b7b67d9a66569771794b1cfa1029da5643",
+    "matches_source_sha256": true,
+    "sqlite_integrity_check": "ok",
+    "namespace_network_policy": "default deny ingress and egress",
+    "restore_pvc_mount": "read-only",
+    "verifier_service_account_token_mounted": false,
+    "temporary_pod_resource_snapshot_pv_namespace_deleted": true,
+    "remote_backup_preserved": true,
+    "production_source_volume_modified": false,
+    "production_resource_health_after_cleanup": "all three replicas UpToDate with Established replication; all LINSTOR nodes ONLINE"
+  },
+  "post_cleanup_inventory_gate": {
+    "status": "BLOCKED",
+    "unapproved_live_claims": ["minecraft/felis-backups", "minecraft/world-lucas-0"],
+    "broad_schedule_rollout_allowed": false
+  },
+  "completed_at_utc": "2026-11-15T16:12:07Z"
 }
