@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pancakeslicer
+  labels:
+    app.kubernetes.io/name: pancakeslicer
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pancakeslicer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pancakeslicer
+    spec:
+      containers:
+        - name: pancakeslicer
+          image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:v0.4.9
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 6868
+              protocol: TCP
+          env:
+            - name: ORCA_WEB_MAX_JOBS
+              value: "2"
+            - name: ORCA_WEB_PRINTER_NETWORK
+              value: lan
+            - name: PANCAKE_STAGE_CACHE_MAX_MB
+              value: "1024"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              memory: 8Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pancakeslicer-data
