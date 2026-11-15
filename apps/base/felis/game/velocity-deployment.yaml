@@ -102,6 +102,8 @@ spec:
               mountPath: /velocity/plugins/felis-link/felis-link.properties
               subPath: felis-link.properties
               readOnly: true
+            - name: felis-link-data
+              mountPath: /velocity/plugins/felis-link
             - name: tmp
               mountPath: /tmp
             - name: lang
@@ -127,6 +129,8 @@ spec:
           secret:
             secretName: felis-velocity-plugin-config
             defaultMode: 0440
+        - name: felis-link-data
+          emptyDir: {}
         - name: tmp
           emptyDir: {}
         - name: lang
