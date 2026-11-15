@@ -21,13 +21,6 @@ spec:
       # Use NVIDIA runtime for GPU support
       runtimeClassName: nvidia
 
-      # Tolerate GPU node taint to allow scheduling on dedicated GPU node
-      tolerations:
-        - key: "workload"
-          operator: "Equal"
-          value: "gpu-only"
-          effect: "NoSchedule"
-
       serviceAccountName: jellyfin-log-watcher
 
       # The LinuxServer image needs a root entrypoint to initialize its local

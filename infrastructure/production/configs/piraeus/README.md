@@ -44,9 +44,15 @@ before running them; they stop if it is unset.
 
 The `worker-network` `LinstorSatelliteConfiguration` pod template owns the
 satellite toleration list; it must include every taint used by nodes selected
-by its affinity. Keep both `workload=gpu-only` and
-`workload=low-risk-only` tolerations here. Cluster-level tolerations are not
-inherited when this pod template supplies its own list.
+by its affinity. The GPU worker is untainted for general scheduling, while the
+low-risk worker keeps its `workload=low-risk-only` taint. Cluster-level
+tolerations are not inherited when this pod template supplies its own list.
+
+The GPU worker remains a diskless LINSTOR client so workloads can mount remote
+volumes, but it must not host a storage pool or replicas. The standard storage
+pool excludes nodes labeled `gpu=true`; the final pool requires its separate
+`storage.josmase.io/linstor-final=true` label. Keep the `gpu=true` label because
+Jellyfin, Whisper, and the NVIDIA device plugin use it to stay on that node.
 
 On 2026-10-29, the GPU node was selected for diskless LINSTOR use and had the
 `workload=gpu-only:NoSchedule` taint, but its generated satellite DaemonSet had

@@ -14,12 +14,8 @@ spec:
             operator: DoesNotExist
           - key: storage.josmase.io/linstor-disabled
             operator: DoesNotExist
-  # The GPU worker can attach remote DRBD volumes as a diskless client.
+  # GPU worker can attach remote DRBD volumes as a diskless client.
   tolerations:
-    - key: workload
-      operator: Equal
-      value: gpu-only
-      effect: NoSchedule
     - key: workload
       operator: Equal
       value: low-risk-only
