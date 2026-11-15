@@ -31,6 +31,25 @@ spec:
             cidr: 192.168.1.206/32
         - ipBlock:
             cidr: 192.168.1.119/32
+        # Host-network Velocity sources Pod traffic from the node's Flannel
+        # address for remote Pods (.0) and CNI bridge address for local Pods (.1).
+        # Include only the /32 gateway addresses on schedulable worker nodes.
+        - ipBlock:
+            cidr: 10.42.3.0/32
+        - ipBlock:
+            cidr: 10.42.3.1/32
+        - ipBlock:
+            cidr: 10.42.4.0/32
+        - ipBlock:
+            cidr: 10.42.4.1/32
+        - ipBlock:
+            cidr: 10.42.6.0/32
+        - ipBlock:
+            cidr: 10.42.6.1/32
+        - ipBlock:
+            cidr: 10.42.7.0/32
+        - ipBlock:
+            cidr: 10.42.7.1/32
       ports:
         - port: 25565
           protocol: TCP
