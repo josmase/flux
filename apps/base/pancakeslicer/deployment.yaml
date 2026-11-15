@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: pancakeslicer
-          image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:v0.4.9
+          image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:0.4.9
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
