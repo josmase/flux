@@ -7,6 +7,16 @@ metadata:
 spec:
   ingress:
     - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchLabels:
+              app: felis-velocity
+      ports:
+        - port: 25565
+          protocol: TCP
+    - from:
         - ipBlock:
             cidr: 192.168.1.201/32
         - ipBlock:
