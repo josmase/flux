@@ -20,7 +20,7 @@ data:
   FELIS_PANEL_HOSTNAME: console.hejsan.xyz
   FELIS_ADMIN_HOSTNAME: op-console.hejsan.xyz
   FELIS_TLS_SECRET: hejsan-xyz-tls
-  FELIS_API_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/api:2026-11-14-8569a880
+  FELIS_API_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/api:2026-11-14-8bf6eb9f
   FELIS_LOGIN_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/login:2026-11-12-616ffb56
   FELIS_LOBBY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/lobby:2026-11-12-68e62bcd
   FELIS_VELOCITY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/velocity:2026-11-15-ae3962f8
