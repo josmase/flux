@@ -2,6 +2,38 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   annotations: {}
+  name: felis-live-file-agent-from-api
+  namespace: minecraft
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: felis
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: api
+              app.kubernetes.io/part-of: felis-control-plane
+      ports:
+        - port: 27661
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      felis.lolicon.best/component: server
+      felis.lolicon.best/managed-by: felis-operator
+    matchExpressions:
+      - key: felis.lolicon.best/system-role
+        operator: In
+        values:
+          - login
+          - lobby
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
   name: felis-allow-rcon-from-control-plane
   namespace: minecraft
 spec:
