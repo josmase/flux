@@ -18,11 +18,6 @@ spec:
     spec:
       nodeSelector:
         gpu: "true"
-      tolerations:
-        - key: workload
-          operator: Equal
-          value: gpu-only
-          effect: NoSchedule
       runtimeClassName: nvidia
       terminationGracePeriodSeconds: 30
       containers:

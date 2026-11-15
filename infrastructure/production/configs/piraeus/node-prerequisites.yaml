@@ -36,10 +36,6 @@ spec:
       tolerations:
         - key: workload
           operator: Equal
-          value: gpu-only
-          effect: NoSchedule
-        - key: workload
-          operator: Equal
           value: low-risk-only
           effect: NoSchedule
       initContainers:
