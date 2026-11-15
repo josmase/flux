@@ -73,33 +73,3 @@ spec:
     size: 1Gi
     storageClassName: ${STORAGE_CLASS}
   subdomain: login
----
-apiVersion: felis.lolicon.best/v1alpha1
-kind: MinecraftServer
-metadata:
-  name: paper
-  namespace: minecraft
-spec:
-  autostartPolicy: public
-  desiredState: Running
-  displayName: Paper
-  fallbackServer: lobby
-  idle:
-    autoStopEnabled: true
-    emptySecondsBeforeStop: 600
-  image: ${FELIS_PAPER_IMAGE}
-  javaMemory: 1G
-  rcon:
-    enabled: true
-    secretRef:
-      key: password
-      name: paper-rcon
-  resources:
-    limits:
-      memory: 3Gi
-    requests:
-      memory: 2Gi
-  storage:
-    size: 5Gi
-    storageClassName: ${STORAGE_CLASS}
-  subdomain: paper

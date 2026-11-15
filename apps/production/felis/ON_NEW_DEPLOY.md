@@ -1,6 +1,6 @@
 # On a new deploy
 
-This procedure covers the manual work required after the suspended Felis Flux stages are deliberately enabled. The Kind trial verified control-plane bootstrap, login/lobby, and a real client reaching the lobby. It did not verify production backup/restore or real-client entry into Paper.
+This procedure records the manual work required during initial Felis deployment. The Kind trial verified control-plane bootstrap, login/lobby, and a real client reaching the lobby. It did not verify production backup/restore or real-client entry into a user-created game server. Paper and its world data have been removed; the Flux game stage does not declare a game server.
 
 ## Before enabling the stages
 
@@ -28,7 +28,7 @@ This procedure covers the manual work required after the suspended Felis Flux st
 - If DNS resolves but the client stays at “Connecting to server,” check that `apps-felis-game` is not suspended and that `felis-velocity` has a ready Pod and Service endpoint. A suspended game stage leaves DNS intact but deploys no listener.
 - If the client reaches Velocity but gets `velocity.error.connecting-server-error`, inspect Velocity's log for the selected backend address. The production `login` entry must target `login.minecraft.svc.cluster.local:25565`; a leftover `127.0.0.1:1` placeholder is refused because Velocity runs in its own Pod.
 - Velocity's `velocity.toml` is supplied by a mode-0440 Secret but Velocity may rewrite it during startup migrations. The Deployment copies it into a writable `emptyDir` and grants the copied file owner write permission before launch. Mount the existing `forwarding.secret` beside it at `/velocity/forwarding.secret` so Velocity loads the configured key instead of trying to create one. Keep the source Secret read-only and give Velocity writable `emptyDir` mounts for `/tmp`, `/velocity/lang`, the lowercase Via plugin config directories, and `/velocity/plugins/bStats` while keeping the container root filesystem read-only.
-- Verify Paper starts with a fresh world and that a real client can enter it. Paper entry was not proven by the Kind trial and remains a production acceptance check.
+- Create a user game server through the operator console when needed, then verify it starts and a real client can enter it. The current Flux game stage provides only the login/lobby systems and proxy.
 - If passkey setup shows “Could not verify this Passkey,” inspect the API response for `invalid_attestation` and confirm the API accepts the exact browser origin. `FELIS_PASSKEY_RP_ID=hejsan.xyz` is the shared WebAuthn RP ID; it does not replace the allowed origins `https://console.hejsan.xyz` and `https://op-console.hejsan.xyz`.
 - Verify API/panel TLS through Traefik on TCP 443, and verify each Felis MetalLB service port: TCP 5000 (registry) and TCP 25565 (Minecraft).
 - Check registry pulls from eligible K3s nodes and confirm backend game ports, RCON, metrics, and PostgreSQL remain internal.
