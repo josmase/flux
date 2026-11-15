@@ -81,6 +81,18 @@ spec:
                   key: secret_access_key
                   name: felis-uploads-s3
                   optional: true
+            - name: FELIS_OFFSITE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: access-key
+                  name: linstor-rustfs-v2-credentials
+                  optional: true
+            - name: FELIS_OFFSITE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: secret-key
+                  name: linstor-rustfs-v2-credentials
+                  optional: true
             - name: FELIS_SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:

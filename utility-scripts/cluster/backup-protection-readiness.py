@@ -6,6 +6,8 @@ not Secret objects or credential values. It compares live LINSTOR PVCs with
 the approved T1 ownership matrix, requires a Ready RustFS v2 baseline for each
 scheduled application PVC, requires plugin backup/schedule coverage for the
 two approved CNPG clusters, and checks the live RustFS capacity guard.
+Felis-native world/archive protection is accepted only while the Felis
+offsite status command reports a healthy recent RustFS copy.
 """
 
 from __future__ import annotations
@@ -36,6 +38,10 @@ COORDINATED_WORKLOADS = {
     ("felis", "registry"): ("linstor-workload-quiesce-felis-registry", "0 15 * * *", "pvc-1c2eb97f-abb1-4f93-82c6-34d465e0e14d", "felis-registry"),
     ("minecraft", "world-lobby-0"): ("linstor-workload-quiesce-minecraft-lobby", "0 7 * * *", "pvc-702f006e-6a90-4ab8-9f81-ae3f6da58281", "minecraft-lobby"),
     ("minecraft", "world-login-0"): ("linstor-workload-quiesce-minecraft-login", "0 11 * * *", "pvc-36d3b8f1-52bb-4b8c-8fc2-13e364e8bb00", "minecraft-login"),
+}
+FELIS_NATIVE_WORKLOADS = {
+    ("minecraft", "felis-backups"),
+    ("minecraft", "world-lucas-0"),
 }
 
 
@@ -113,6 +119,20 @@ def linstor_schedule_definitions() -> dict[str, tuple[str, str, str, str, str]]:
         else:
             definitions[columns[0]] = (columns[1], columns[2], columns[3], columns[4], columns[5])
     return definitions
+
+
+def felis_offsite_status() -> tuple[int, str]:
+    result = subprocess.run(
+        [
+            "kubectl", "-n", "felis", "exec", "deploy/felis-api", "--",
+            "felis", "offsite", "status", "-config", "/etc/felis/felis.toml",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    return result.returncode, (result.stdout + result.stderr).strip()
 
 
 def identity(metadata: dict[str, Any]) -> tuple[str, str]:
@@ -236,6 +256,8 @@ def main() -> int:
     }
     for key in sorted(live_expected):
         row = owners[key]
+        if key in FELIS_NATIVE_WORKLOADS:
+            continue
         if row.get("service_owner") in {"Shared PostgreSQL", "Felis PostgreSQL", "GitLab PostgreSQL"}:
             continue
         if row.get("service_owner") == "GitLab Gitaly":
@@ -259,6 +281,8 @@ def main() -> int:
     for key in sorted(live_expected):
         row = owners[key]
         if row.get("service_owner") in linstor_native_owners:
+            continue
+        if key in FELIS_NATIVE_WORKLOADS:
             continue
         if key in COORDINATED_WORKLOADS:
             continue
@@ -285,6 +309,24 @@ def main() -> int:
         for row in schedule_plan
         if row.get("backup_producer") == "LINSTOR S3 schedule"
     }
+    planned_by_claim = {
+        (row["namespace"], row["pvc"]): row
+        for row in schedule_plan
+    }
+    live_felis_claims = FELIS_NATIVE_WORKLOADS & live_expected
+    for key in sorted(live_felis_claims):
+        row = planned_by_claim.get(key)
+        if not row or not row.get("backup_producer", "").startswith("Felis native"):
+            blockers.append(f"Felis native protection for {key[0]}/{key[1]} is missing from the reviewed plan")
+    if live_felis_claims:
+        status_code, status_output = felis_offsite_status()
+        if status_code != 0:
+            detail = re.sub(r"\s+", " ", status_output)[:240]
+            blockers.append(
+                "Felis RustFS offsite copy is not healthy (status command failed"
+                + (f": {detail}" if detail else "")
+                + ")"
+            )
     expected_schedule_by_resource: dict[str, str] = {}
     for resource, claim in expected_resources.items():
         schedule_name = planned_schedule_by_claim.get(tuple(claim.split("/", 1)))
