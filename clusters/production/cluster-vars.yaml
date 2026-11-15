@@ -23,6 +23,6 @@ data:
   FELIS_API_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/api:2026-11-14-8569a880
   FELIS_LOGIN_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/login:2026-11-12-616ffb56
   FELIS_LOBBY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/lobby:2026-11-12-68e62bcd
-  FELIS_VELOCITY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/velocity:2026-11-15-e6d5035e
+  FELIS_VELOCITY_IMAGE: artifactory.local.hejsan.xyz/gitlab-registry/josmase/minecraft/velocity:2026-11-15-ae3962f8
   RUSTDESK_LB_IP: 192.168.1.183
   STORAGE_CLASS: linstor
