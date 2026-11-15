@@ -18,6 +18,9 @@ spec:
       labels:
         app.kubernetes.io/name: pancakeslicer
     spec:
+      securityContext:
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: pancakeslicer
           image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:0.4.9
