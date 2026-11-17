@@ -7,47 +7,11 @@ metadata:
 spec:
   ingress:
     - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: felis-build
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: felis
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/component: api
-              app.kubernetes.io/part-of: felis-control-plane
         - ipBlock:
-            cidr: 192.168.1.201/32
-        - ipBlock:
-            cidr: 192.168.1.202/32
-        - ipBlock:
-            cidr: 192.168.1.203/32
-        - ipBlock:
-            cidr: 192.168.1.204/32
-        - ipBlock:
-            cidr: 192.168.1.205/32
-        - ipBlock:
-            cidr: 192.168.1.206/32
-        - ipBlock:
-            cidr: 192.168.1.119/32
-        # K3s sends host-originated cross-node traffic through the source node's
-        # Flannel interface address (PodCIDR base address). NetworkPolicy sees
-        # that address instead of the node LAN IP. Keep these synced with PodCIDRs.
-        - ipBlock:
-            cidr: 10.42.0.0/32
-        - ipBlock:
-            cidr: 10.42.1.0/32
-        - ipBlock:
-            cidr: 10.42.2.0/32
-        - ipBlock:
-            cidr: 10.42.3.0/32
-        - ipBlock:
-            cidr: 10.42.4.0/32
-        - ipBlock:
-            cidr: 10.42.6.0/32
-        - ipBlock:
-            cidr: 10.42.7.0/32
+            # Cluster PodCIDR includes node Flannel source addresses used by
+            # containerd. This covers future nodes automatically. It also lets
+            # every cluster pod reach the registry on this port.
+            cidr: 10.42.0.0/16
       ports:
         - port: 5000
           protocol: TCP

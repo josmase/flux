@@ -4,7 +4,7 @@ Felis names game images as `registry.felis.svc:5000/...`. K3s containerd pulls a
 
 The mirror endpoint is the registry LoadBalancer Service on the Felis MetalLB VIP. The registry, API/panel, and Velocity Services share `.182` on distinct ports under the same MetalLB sharing key. Registry reads are anonymous; Felis authenticates writes. No pull credentials belong on the nodes. Keep the role in the dedicated `felis-registry-nodes.yml` playbook so registry-specific host changes stay separate from general node tuning.
 
-The Flux deployment exposes registry TCP 5000 on the existing MetalLB pool. The registry NetworkPolicy allows the cluster node addresses and each node's Flannel interface address (the base IP of its PodCIDR): K3s sends host-originated cross-node traffic through that address, which is what NetworkPolicy sees. Keep these source `/32`s synchronized with node PodCIDRs when nodes are added or removed. Before unsuspending the Felis game stage, apply the Ansible playbook to all K3s nodes, confirm the registry endpoint is reachable from each node, and verify a fresh pull for a disposable Felis server image.
+The Flux deployment exposes registry TCP 5000 on the existing MetalLB pool. The registry NetworkPolicy allows the K3s cluster PodCIDR, `10.42.0.0/16`, so host-originated pulls work regardless of a node's Flannel source address, including on newly added nodes. This also lets any pod in that CIDR reach registry TCP 5000; registry reads are anonymous, while writes remain authenticated by Felis. Before unsuspending the Felis game stage, apply the Ansible playbook to all K3s nodes, confirm the registry endpoint is reachable from each node, and verify a fresh pull for a disposable Felis server image.
 
 ## Possible future improvement: Artifactory
 
