@@ -31,6 +31,23 @@ spec:
             cidr: 192.168.1.206/32
         - ipBlock:
             cidr: 192.168.1.119/32
+        # K3s masquerades host-originated cross-node traffic to the destination
+        # node's CNI bridge gateway before NetworkPolicy enforcement. Keep the
+        # per-node gateway IPs allowed as the registry pod can move between nodes.
+        - ipBlock:
+            cidr: 10.42.0.1/32
+        - ipBlock:
+            cidr: 10.42.1.1/32
+        - ipBlock:
+            cidr: 10.42.2.1/32
+        - ipBlock:
+            cidr: 10.42.3.1/32
+        - ipBlock:
+            cidr: 10.42.4.1/32
+        - ipBlock:
+            cidr: 10.42.6.1/32
+        - ipBlock:
+            cidr: 10.42.7.1/32
       ports:
         - port: 5000
           protocol: TCP
