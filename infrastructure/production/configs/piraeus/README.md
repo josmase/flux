@@ -22,10 +22,11 @@ some LINSTOR and node failures, but not total loss of the RustFS server.
 
 ## Storage class policy
 
-`linstor` is the canonical class for new LINSTOR PVCs. Production sets
-`STORAGE_CLASS=linstor`; shared application PVC templates use Flux's
-`${STORAGE_CLASS}` substitution. Its placement count is three diskful replicas
-on `linstor-thin`.
+`${STORAGE_CLASS}` names the canonical default StorageClass; production sets it
+to `linstor`. The class is marked default so PVCs that omit `storageClassName`,
+including user-created Felis worlds, use it automatically. Shared application
+PVC templates also use the same Flux variable explicitly. Its placement count
+is three diskful replicas on `linstor-thin`.
 
 The legacy `linstor-final`, `linstor-final-triple`, and
 `linstor-final-bootstrap` StorageClass definitions have been retired after the
