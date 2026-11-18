@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: node-red
-          image: artifactory.local.hejsan.xyz/docker/nodered/node-red:4.1.17-20@sha256:9bb5e3154f0d1594fe7d2dbb2cad6df84ebae245e3aac317ad9a030137c1074b
+          image: artifactory.local.hejsan.xyz/docker/nodered/node-red:4.1.18-20@sha256:28d2abc4ad2e71b5af61b3d5f4154ef18c73032580f62d9c269798a9cfb60e43
           ports:
             - containerPort: 1880
               name: http
