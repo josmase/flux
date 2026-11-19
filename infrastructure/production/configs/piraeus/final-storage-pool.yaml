@@ -13,6 +13,8 @@ spec:
             operator: In
             values:
               - "true"
+          - key: storage.josmase.io/replicas-disabled
+            operator: DoesNotExist
   storagePools:
     - name: linstor-thin
       lvmThinPool:
