@@ -23,7 +23,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: pancakeslicer
-          image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:0.4.9
+          image: artifactory.local.hejsan.xyz/docker/zimengxiong/pancakeslicer:0.5.4@sha256:e459165bea44395d0cc70fe760e02e9a8214bbcdc41ac3ff5164c69e5345060d
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
