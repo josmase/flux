@@ -33,8 +33,3 @@ spec:
       name: headlamp
     clusterRoleBinding:
       create: false
-    tolerations:
-      - key: workload
-        operator: Equal
-        value: low-risk-only
-        effect: NoSchedule

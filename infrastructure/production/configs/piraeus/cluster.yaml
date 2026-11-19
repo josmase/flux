@@ -14,12 +14,13 @@ spec:
             operator: DoesNotExist
           - key: storage.josmase.io/linstor-disabled
             operator: DoesNotExist
-  # GPU worker can attach remote DRBD volumes as a diskless client.
+  # Diskless workers can attach remote DRBD volumes; tolerate the GPU node's
+  # soft scheduling preference so its satellite remains available there.
   tolerations:
-    - key: workload
+    - key: gpu.josmase.io/workload
       operator: Equal
-      value: low-risk-only
-      effect: NoSchedule
+      value: gpu
+      effect: PreferNoSchedule
   # Avoid draining multiple replica nodes concurrently during maintenance.
   maxConcurrentEvacuations: 1
   # Two workers are restored after controlled snapshot cleanup.

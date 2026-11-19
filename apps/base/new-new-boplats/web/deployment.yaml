@@ -19,11 +19,6 @@ spec:
       app: new-new-boplats-web
   template:
     spec:
-      tolerations:
-        - key: workload
-          operator: Equal
-          value: low-risk-only
-          effect: NoSchedule
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname

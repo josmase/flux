@@ -14,9 +14,16 @@ spec:
       labels:
         app: jellyfin
     spec:
+      priorityClassName: jellyfin-gpu
       # Select the GPU-enabled node
       nodeSelector:
         gpu: "true"
+
+      tolerations:
+        - key: gpu.josmase.io/workload
+          operator: Equal
+          value: gpu
+          effect: PreferNoSchedule
 
       # Use NVIDIA runtime for GPU support
       runtimeClassName: nvidia

@@ -17,7 +17,7 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       tolerations:
-        - key: workload
+        - key: gpu.josmase.io/workload
           operator: Equal
-          value: low-risk-only
-          effect: NoSchedule
+          value: gpu
+          effect: PreferNoSchedule
