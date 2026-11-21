@@ -90,10 +90,10 @@ spec:
               mountPath: /mnt/storage
           resources:
             limits:
-              memory: 256Mi
+              memory: 1Gi
               cpu: 250m
             requests:
-              memory: 64Mi
+              memory: 256Mi
               cpu: 50m
         - name: category-reconciler
           image: python:3.13-alpine
