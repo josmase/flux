@@ -5,7 +5,9 @@ metadata:
   namespace: gitlab
 spec:
   interval: 5m
-  timeout: 15m
+  # Chart 10.6 crosses GitLab's 19.6 minor line; leave room for DB migrations
+  # and the cluster's observed image-pull and Sidekiq initialization time.
+  timeout: 45m
   upgrade:
     force: true
     remediation:
@@ -16,8 +18,8 @@ spec:
   chart:
     spec:
       chart: gitlab
-      # Chart 10.5.9 contains GitLab EE 19.5.8, the critical security patch.
-      version: "10.5.9"
+      # Chart 10.6.1 contains the latest GitLab EE release, 19.6.1.
+      version: "10.6.1"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
