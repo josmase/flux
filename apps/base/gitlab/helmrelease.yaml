@@ -10,6 +10,9 @@ spec:
   timeout: 45m
   upgrade:
     force: true
+    # Chart 10.6 reshapes Deployment lists; use client-side apply with force
+    # to avoid SSA merging old and new list entries into invalid pod specs.
+    serverSideApply: disabled
     remediation:
       # Chart 10 introduces migration-bearing changes. Do not let the
       # controller automatically roll a partially migrated release back.
