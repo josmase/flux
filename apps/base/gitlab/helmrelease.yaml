@@ -16,7 +16,8 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "10.5.4"
+      # Chart 10.5.9 contains GitLab EE 19.5.8, the critical security patch.
+      version: "10.5.9"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
